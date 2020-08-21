@@ -1,0 +1,13 @@
+name: snapd
+version: 0.0.0-dev.1
+description: snapd interface library
+homepage: https://github.com/canonical/snapd.dart
+
+environment:
+  sdk: '>=2.7.2 <3.0.0'
+
+dependencies:
+  http: ^0.12.2
+
+dev_dependencies:
+  pedantic: ^1.9.0
