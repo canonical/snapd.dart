@@ -77,6 +77,16 @@ class HttpUnixClient extends BaseClient {
     message += '\r\n';
     _socket.write(message);
 
+    if (request is Request) {
+      _socket.write(request.body);
+    } else if (request is MultipartRequest) {
+      // FIXME(robert-ancell): Needs to be implemented.
+      assert(false);
+    } else if (request is StreamedRequest) {
+      // FIXME(robert-ancell): Needs to be implemented.
+      assert(false);
+    }
+
     var req = _HttpRequest(request);
     _requests.add(req);
     return req.completer.future;
