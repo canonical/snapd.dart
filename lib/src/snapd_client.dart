@@ -13,6 +13,22 @@ class SnapdSnap {
   }
 }
 
+class SnapdLoginResponse {
+  final int id;
+  final String username;
+  final String email;
+  final String macaroon;
+  final List<String> discharges;
+
+  SnapdLoginResponse(
+      this.id, this.username, this.email, this.macaroon, this.discharges);
+
+  @override
+  String toString() {
+    return 'SnapdLoginResponse(id: ${id}, username: ${username}, email: ${email}, macaroon: ${macaroon}, discharges: ${discharges})';
+  }
+}
+
 class SnapdClient {
   var _client = HttpUnixClient('/var/run/snapd.socket');
 
@@ -51,6 +67,28 @@ class SnapdClient {
     return snaps;
   }
 
+  /// Logs into the snap store.
+  Future<SnapdLoginResponse> login(String email, String password,
+      {String otp}) async {
+    var request = {'email': email, 'password': password};
+    if (otp != null) {
+      request['otp'] = otp;
+    }
+    var result = await _postSync('/v2/login', request);
+    return SnapdLoginResponse(result['id'], result['username'], result['email'],
+        result['macaroon'], result['discharges']);
+  }
+
+  /// Logs out of the snap store.
+  Future logout() async {
+    await _postSync('/v2/logout');
+  }
+
+  /// Terminates all active connections. If a client remains unclosed, the Dart process may not terminate.
+  void close() {
+    _client.close();
+  }
+
   /// Does a synchronous request to snapd.
   Future<dynamic> _getSync(String path,
       [Map<String, String> queryParameters]) async {
@@ -61,8 +99,13 @@ class SnapdClient {
     return snapResponse['result'];
   }
 
-  /// Terminates all active connections. If a client remains unclosed, the Dart process may not terminate.
-  void close() {
-    _client.close();
+  /// Does a synchronous request to snapd.
+  Future<dynamic> _postSync(String path, dynamic request) async {
+    var response = await _client.post(Uri.http('localhost', path),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(request));
+    var snapResponse = json.decode(response.body);
+    // FIXME(robert-ancell): Handle error results
+    return snapResponse['result'];
   }
 }
