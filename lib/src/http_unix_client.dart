@@ -64,7 +64,9 @@ class HttpUnixClient extends BaseClient {
     var stream = request.finalize();
 
     var message = '';
-    message += '${request.method} ${request.url.path} HTTP/1.1\r\n';
+    var url = request.url;
+    message +=
+        '${request.method} ${url.path}${url.hasQuery ? '?' : ''}${url.query} HTTP/1.1\r\n';
     message += 'Host:\r\n';
     if (request.contentLength != null) {
       message += 'Content-Length: ${request.contentLength}\r\n';
