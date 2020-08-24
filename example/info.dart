@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:snapd/snapd.dart';
 
 void main(List<String> args) async {

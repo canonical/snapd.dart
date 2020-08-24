@@ -11,8 +11,7 @@ enum _HttpParserState {
   content,
   chunkHeader,
   chunk,
-  chunkTrailer,
-  error,
+  chunkTrailer
 }
 
 class _HttpRequest {
@@ -44,24 +43,23 @@ class HttpUnixClient extends BaseClient {
   Socket _socket;
 
   // Requests in process.
-  var _requests = <_HttpRequest>[];
+  final _requests = <_HttpRequest>[];
 
   // Data read from the socket.
-  var _buffer = <int>[];
+  final _buffer = <int>[];
 
   var _parserState = _HttpParserState.status;
   var _chunkLength = -1;
   var _chunkRead = -1;
 
   /// Creates a new HTTP client that communicates on a Unix domain socket on [path].
-  HttpUnixClient(this.path) {}
+  HttpUnixClient(this.path);
 
   @override
   Future<StreamedResponse> send(BaseRequest request) async {
     var address = InternetAddress(path, type: InternetAddressType.unix);
     _socket = await Socket.connect(address, 0);
     _socket.listen(_processData);
-    var stream = request.finalize();
 
     var message = '';
     var url = request.url;
@@ -104,20 +102,21 @@ class HttpUnixClient extends BaseClient {
     while (!done) {
       var request = _requests[0];
 
-      if (_parserState == _HttpParserState.status)
+      if (_parserState == _HttpParserState.status) {
         done = _processStatus(request);
-      else if (_parserState == _HttpParserState.header)
+      } else if (_parserState == _HttpParserState.header) {
         done = _processHeader(request);
-      else if (_parserState == _HttpParserState.content)
+      } else if (_parserState == _HttpParserState.content) {
         done = _processContent(request);
-      else if (_parserState == _HttpParserState.chunkHeader)
+      } else if (_parserState == _HttpParserState.chunkHeader) {
         done = _processChunkHeader(request);
-      else if (_parserState == _HttpParserState.chunk)
+      } else if (_parserState == _HttpParserState.chunk) {
         done = _processChunk(request);
-      else if (_parserState == _HttpParserState.chunkTrailer)
+      } else if (_parserState == _HttpParserState.chunkTrailer) {
         done = _processChunkTrailer(request);
-      else
+      } else {
         done = true;
+      }
     }
   }
 

@@ -149,7 +149,7 @@ class Snap {
       this.website});
 
   @override
-  toString() {
+  String toString() {
     return "Snap('${name}')";
   }
 }
@@ -181,7 +181,7 @@ class SnapdLoginResponse {
 
 /// Manages a connection to the snapd server.
 class SnapdClient {
-  var _client = HttpUnixClient('/var/run/snapd.socket');
+  final _client = HttpUnixClient('/var/run/snapd.socket');
   String _macaroon;
   List<String> _discharges;
   String _userAgent = 'snapd.dart';
@@ -203,7 +203,7 @@ class SnapdClient {
   }
 
   /// Sets the user agent sent in requests to snapd.
-  String set userAgent(String value) => _userAgent = value;
+  set userAgent(String value) => _userAgent = value;
 
   /// Searches for snaps.
   ///
@@ -329,7 +329,9 @@ class SnapdClient {
     List<String> tracks;
     if (json['tracks'] != null) {
       tracks = <String>[];
-      for (var t in json['tracks']) tracks.add(t);
+      for (var t in json['tracks']) {
+        tracks.add(t);
+      }
     }
     return Snap(
         apps: apps,
