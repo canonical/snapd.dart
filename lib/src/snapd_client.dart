@@ -2,6 +2,17 @@ import 'dart:convert';
 
 import 'http_unix_client.dart';
 
+/// Describes an app provided by a snap.
+class SnapApp {
+  /// Name of the app.
+  final String name;
+
+  /// Desktop file the app uses.
+  final String desktopFile;
+
+  SnapApp(this.name, {this.desktopFile});
+}
+
 /// Describes a snap publisher.
 class SnapPublisher {
   /// Unique ID for this publisher.
@@ -38,43 +49,75 @@ class SnapMedia {
 
 /// Describes a snap package.
 class Snap {
-  /// Unique ID for this snap.
-  final String id;
-
-  /// Unique name for this snap.
-  final String name;
-
-  /// Single line summary.
-  final String summary;
-
-  /// Multi line description.
-  final String description;
-
-  /// Version of this snap.
-  final String version;
-
-  /// Revision of this snap.
-  final String revision;
-
-  /// Publisher information.
-  final SnapPublisher publisher;
+  /// Apps this snap provides.
+  final List<SnapApp> apps;
 
   /// Channel this snap is tracking.
   final String channel;
 
+  /// Contact URL.
+  final String contact;
+
+  /// Multi line description.
+  final String description;
+
+  /// Download size in bytes.
+  final int downloadSize;
+
+  /// Unique ID for this snap.
+  final String id;
+
+  /// Installed size in bytes.
+  final int installedSize;
+
+  /// Package license.
+  final String license;
+
   /// Media associated with this snap.
   final List<SnapMedia> media;
 
+  /// Unique name for this snap. Use [title] for displaying.
+  final String name;
+
+  /// Publisher information.
+  final SnapPublisher publisher;
+
+  /// Revision of this snap.
+  final String revision;
+
+  /// Single line summary.
+  final String summary;
+
+  /// Title of this snap.
+  final String title;
+
+  /// Type of snap.
+  final String type;
+
+  /// Version of this snap.
+  final String version;
+
+  /// Website URL.
+  final String website;
+
   Snap(
-      {this.id,
-      this.name,
-      this.summary,
-      this.description,
-      this.version,
-      this.revision,
-      this.publisher,
+      {this.apps,
       this.channel,
-      this.media});
+      this.contact,
+      this.description,
+      this.downloadSize,
+      this.id,
+      this.installedSize,
+      this.license,
+      this.media,
+      this.name,
+      this.publisher,
+      this.revision,
+      this.summary,
+      this.title,
+      this.type,
+      this.version,
+      this.website});
 
   @override
   toString() {
@@ -219,6 +262,12 @@ class SnapdClient {
 
   /// Convert a JSON snap representation to a Snap object.
   Snap _makeSnap(dynamic json) {
+    var apps = <SnapApp>[];
+    if (json['apps'] != null) {
+      for (var a in json['apps']) {
+        apps.add(SnapApp(a['name'], desktopFile: a['desktop-file']));
+      }
+    }
     SnapPublisher publisher;
     var p = json['publisher'];
     if (p != null) {
@@ -236,14 +285,22 @@ class SnapdClient {
       }
     }
     return Snap(
+        apps: apps,
         channel: json['channel'],
+        contact: json['contact'],
         description: json['description'],
+        downloadSize: json['download-size'],
         id: json['id'],
+        installedSize: json['installed-size'],
+        license: json['license'],
         media: media,
         name: json['name'],
         publisher: publisher,
         revision: json['revision'],
         summary: json['summary'],
-        version: json['version']);
+        title: json['title'],
+        type: json['type'],
+        version: json['version'],
+        website: json['website']);
   }
 }
