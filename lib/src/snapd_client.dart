@@ -39,12 +39,12 @@ class SnapPublisher {
   final String username;
 
   /// Name to use when displaying this publisher.
-  final String display_name;
+  final String displayName;
 
   /// Validation level for this publisher.
   final String validation;
 
-  SnapPublisher({this.id, this.username, this.display_name, this.validation});
+  SnapPublisher({this.id, this.username, this.displayName, this.validation});
 }
 
 /// Describes a piece of media associated with a snap.
@@ -73,7 +73,7 @@ class Snap {
   final String channel;
 
   /// Channels available for this snap.
-  final List<SnapChannel> channels;
+  final Map<String, SnapChannel> channels;
 
   /// Contact URL.
   final String contact;
@@ -105,11 +105,17 @@ class Snap {
   /// Revision of this snap.
   final String revision;
 
+  /// URL linking to the snap store page on this snap.
+  final String storeUrl;
+
   /// Single line summary.
   final String summary;
 
   /// Title of this snap.
   final String title;
+
+  /// Tracks this snap uses.
+  final List<String> tracks;
 
   /// Type of snap.
   final String type;
@@ -134,8 +140,10 @@ class Snap {
       this.name,
       this.publisher,
       this.revision,
+      this.storeUrl,
       this.summary,
       this.title,
+      this.tracks,
       this.type,
       this.version,
       this.website});
@@ -283,21 +291,23 @@ class SnapdClient {
 
   /// Convert a JSON snap representation to a Snap object.
   Snap _makeSnap(dynamic json) {
-    var apps = <SnapApp>[];
+    List<SnapApp> apps;
     if (json['apps'] != null) {
+      apps = <SnapApp>[];
       for (var a in json['apps']) {
         apps.add(SnapApp(a['name'], desktopFile: a['desktop-file']));
       }
     }
-    var channels = <SnapChannel>[];
+    Map<String, SnapChannel> channels;
     if (json['channels'] != null) {
-      for (var c in json['channels']) {
-        channels.add(SnapChannel(
+      channels = <String, SnapChannel>{};
+      json['channels'].forEach((name, c) {
+        channels[name] = SnapChannel(
             confinement: c['confinement'],
             revision: c['revision'],
             size: c['size'],
-            version: c['version']));
-      }
+            version: c['version']);
+      });
     }
     SnapPublisher publisher;
     var p = json['publisher'];
@@ -305,15 +315,21 @@ class SnapdClient {
       publisher = SnapPublisher(
           id: p['id'],
           username: p['username'],
-          display_name: p['display-name'],
+          displayName: p['display-name'],
           validation: p['validation']);
     }
-    var media = <SnapMedia>[];
+    List<SnapMedia> media;
     if (json['media'] != null) {
+      media = <SnapMedia>[];
       for (var m in json['media']) {
         media.add(SnapMedia(m['type'], m['url'],
             width: m['width'], height: m['height']));
       }
+    }
+    List<String> tracks;
+    if (json['tracks'] != null) {
+      tracks = <String>[];
+      for (var t in json['tracks']) tracks.add(t);
     }
     return Snap(
         apps: apps,
@@ -329,8 +345,10 @@ class SnapdClient {
         name: json['name'],
         publisher: publisher,
         revision: json['revision'],
+        storeUrl: json['store-url'],
         summary: json['summary'],
         title: json['title'],
+        tracks: tracks,
         type: json['type'],
         version: json['version'],
         website: json['website']);
