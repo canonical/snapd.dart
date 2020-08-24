@@ -112,6 +112,7 @@ class SnapdClient {
   var _client = HttpUnixClient('/var/run/snapd.socket');
   String _macaroon;
   List<String> _discharges;
+  String _userAgent = 'snapd.dart';
 
   /// Sets the authorization used in the connection to snapd.
   void setAuthorization(String macaroon, List<String> discharges) {
@@ -128,6 +129,9 @@ class SnapdClient {
     }
     return snaps;
   }
+
+  /// Sets the user agent sent in requests to snapd.
+  String set userAgent(String value) => _userAgent = value;
 
   /// Searches for snaps.
   ///
@@ -200,6 +204,9 @@ class SnapdClient {
   /// Makes base HTTP headers to send.
   Map<String, String> _makeHeaders() {
     var headers = <String, String>{};
+    if (_userAgent != null) {
+      headers['User-Agent'] = _userAgent;
+    }
     if (_macaroon != null) {
       var authorization = 'Macaroon root="${_macaroon}"';
       for (var discharge in _discharges) {
