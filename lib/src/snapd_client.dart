@@ -11,6 +11,23 @@ class SnapdPublisher {
   SnapdPublisher({this.id, this.username, this.display_name, this.validation});
 }
 
+/// Describes a piece of media associated with a snap.
+class SnapdMedia {
+  /// Media type
+  String type;
+
+  /// URL of media.
+  String url;
+
+  /// Width of media in pixels.
+  final int width;
+
+  /// Height of media in pixels.
+  final int height;
+
+  SnapdMedia(this.type, this.url, {this.width, this.height});
+}
+
 class SnapdSnap {
   /// Unique ID for this snap.
   final String id;
@@ -36,6 +53,9 @@ class SnapdSnap {
   /// Channel this snap is tracking.
   final String channel;
 
+  /// Media associated with this snap.
+  final List<SnapdMedia> media;
+
   SnapdSnap(
       {this.id,
       this.name,
@@ -44,7 +64,8 @@ class SnapdSnap {
       this.version,
       this.revision,
       this.publisher,
-      this.channel});
+      this.channel,
+      this.media});
 
   @override
   toString() {
@@ -159,10 +180,18 @@ class SnapdClient {
           display_name: p['display-name'],
           validation: p['validation']);
     }
+    var media = <SnapdMedia>[];
+    if (json['media'] != null) {
+      for (var m in json['media']) {
+        media.add(SnapdMedia(m['type'], m['url'],
+            width: m['width'], height: m['height']));
+      }
+    }
     return SnapdSnap(
         channel: json['channel'],
         description: json['description'],
         id: json['id'],
+        media: media,
         name: json['name'],
         publisher: publisher,
         revision: json['revision'],
