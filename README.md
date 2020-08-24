@@ -1,6 +1,6 @@
 [![Pub Package](https://img.shields.io/pub/v/snapd.svg)](https://pub.dev/packages/snapd)
 
-A library to interface with the [Snap daemon](https://snapcraft.io/).
+Provides a client to access snapd, which allows you to manage, search and install [snaps](https://snapcraft.io/) on a Linux system.
 
 ## Example
 

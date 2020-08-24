@@ -2,8 +2,7 @@ name: snapd
 version: 0.0.0-dev.3
 
 description:
-  Provides a client to access snapd, which is the local daemon that manages [snaps](https://snapcraft.io/).
-  This is useful if you want to get information about installed snaps, or find and install more from the [snap store](https://snapcraft.io/store).
+  Provides a client to access snapd, which allows you to manage, search and install snaps on a Linux system.
 
 homepage: https://github.com/canonical/snapd.dart
 
