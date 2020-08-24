@@ -13,6 +13,23 @@ class SnapApp {
   SnapApp(this.name, {this.desktopFile});
 }
 
+/// Described a channel available for a snap.
+class SnapChannel {
+  /// Confinement of this snap in this channel.
+  final String confinement;
+
+  /// Revision of this snap in this channel.
+  final String revision;
+
+  /// Size of the snap in this channel in bytes.
+  final int size;
+
+  /// Version of this snap in this channel.
+  final String version;
+
+  SnapChannel({this.confinement, this.revision, this.size, this.version});
+}
+
 /// Describes a snap publisher.
 class SnapPublisher {
   /// Unique ID for this publisher.
@@ -54,6 +71,9 @@ class Snap {
 
   /// Channel this snap is tracking.
   final String channel;
+
+  /// Channels available for this snap.
+  final List<SnapChannel> channels;
 
   /// Contact URL.
   final String contact;
@@ -103,6 +123,7 @@ class Snap {
   Snap(
       {this.apps,
       this.channel,
+      this.channels,
       this.contact,
       this.description,
       this.downloadSize,
@@ -268,6 +289,16 @@ class SnapdClient {
         apps.add(SnapApp(a['name'], desktopFile: a['desktop-file']));
       }
     }
+    var channels = <SnapChannel>[];
+    if (json['channels'] != null) {
+      for (var c in json['channels']) {
+        channels.add(SnapChannel(
+            confinement: c['confinement'],
+            revision: c['revision'],
+            size: c['size'],
+            version: c['version']));
+      }
+    }
     SnapPublisher publisher;
     var p = json['publisher'];
     if (p != null) {
@@ -287,6 +318,7 @@ class SnapdClient {
     return Snap(
         apps: apps,
         channel: json['channel'],
+        channels: channels,
         contact: json['contact'],
         description: json['description'],
         downloadSize: json['download-size'],
