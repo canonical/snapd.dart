@@ -2,10 +2,45 @@ import 'dart:convert';
 
 import 'http_unix_client.dart';
 
+class SnapdPublisher {
+  final String id;
+  final String username;
+  final String display_name;
+  final String validation;
+
+  SnapdPublisher({this.id, this.username, this.display_name, this.validation});
+}
+
 class SnapdSnap {
+  /// Unique ID for this snap.
+  final String id;
+
+  /// The snap name.
   final String name;
 
-  SnapdSnap(this.name);
+  /// Description of this snap.
+  final String description;
+
+  /// Version of this snap.
+  final String version;
+
+  /// Revision of this snap.
+  final String revision;
+
+  /// Publisher information.
+  final SnapdPublisher publisher;
+
+  /// Channel this snap is tracking.
+  final String channel;
+
+  SnapdSnap(
+      {this.id,
+      this.name,
+      this.description,
+      this.version,
+      this.revision,
+      this.publisher,
+      this.channel});
 
   @override
   toString() {
@@ -37,7 +72,7 @@ class SnapdClient {
     var result = await _getSync('/v2/snaps');
     var snaps = <SnapdSnap>[];
     for (var snap in result) {
-      snaps.add(SnapdSnap(snap['name']));
+      snaps.add(_makeSnap(snap));
     }
     return snaps;
   }
@@ -62,7 +97,7 @@ class SnapdClient {
     var result = await _getSync('/v2/find', queryParameters);
     var snaps = <SnapdSnap>[];
     for (var snap in result) {
-      snaps.add(SnapdSnap(snap['name']));
+      snaps.add(_makeSnap(snap));
     }
     return snaps;
   }
@@ -100,12 +135,33 @@ class SnapdClient {
   }
 
   /// Does a synchronous request to snapd.
-  Future<dynamic> _postSync(String path, dynamic request) async {
+  Future<dynamic> _postSync(String path, [dynamic request]) async {
     var response = await _client.post(Uri.http('localhost', path),
         headers: {'Content-Type': 'application/json'},
         body: json.encode(request));
     var snapResponse = json.decode(response.body);
     // FIXME(robert-ancell): Handle error results
     return snapResponse['result'];
+  }
+
+  /// Convert a JSON snap representation to a SnapdSnap object.
+  SnapdSnap _makeSnap(dynamic json) {
+    SnapdPublisher publisher;
+    var p = json['publisher'];
+    if (p != null) {
+      publisher = SnapdPublisher(
+          id: p['id'],
+          username: p['username'],
+          display_name: p['display-name'],
+          validation: p['validation']);
+    }
+    return SnapdSnap(
+        channel: json['channel'],
+        description: json['description'],
+        id: json['id'],
+        name: json['name'],
+        publisher: publisher,
+        revision: json['revision'],
+        version: json['version']);
   }
 }
