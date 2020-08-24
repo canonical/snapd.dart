@@ -18,7 +18,10 @@ class SnapdSnap {
   /// The snap name.
   final String name;
 
-  /// Description of this snap.
+  /// Single line summary of this snap.
+  final String summary;
+
+  /// Multi line description of this snap.
   final String description;
 
   /// Version of this snap.
@@ -36,6 +39,7 @@ class SnapdSnap {
   SnapdSnap(
       {this.id,
       this.name,
+      this.summary,
       this.description,
       this.version,
       this.revision,
@@ -162,6 +166,7 @@ class SnapdClient {
         name: json['name'],
         publisher: publisher,
         revision: json['revision'],
+        summary: json['summary'],
         version: json['version']);
   }
 }
