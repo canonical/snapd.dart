@@ -1,5 +1,5 @@
 name: snapd
-version: 0.0.0-dev.2
+version: 0.0.0-dev.3
 
 description:
   Provides a client to access snapd, which is the local daemon that manages [snaps](https://snapcraft.io/).
