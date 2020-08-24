@@ -2,17 +2,25 @@ import 'dart:convert';
 
 import 'http_unix_client.dart';
 
-class SnapdPublisher {
+/// Describes a snap publisher.
+class SnapPublisher {
+  /// Unique ID for this publisher.
   final String id;
+
+  /// Unique username for this publisher.
   final String username;
+
+  /// Name to use when displaying this publisher.
   final String display_name;
+
+  /// Validation level for this publisher.
   final String validation;
 
-  SnapdPublisher({this.id, this.username, this.display_name, this.validation});
+  SnapPublisher({this.id, this.username, this.display_name, this.validation});
 }
 
 /// Describes a piece of media associated with a snap.
-class SnapdMedia {
+class SnapMedia {
   /// Media type
   String type;
 
@@ -25,20 +33,21 @@ class SnapdMedia {
   /// Height of media in pixels.
   final int height;
 
-  SnapdMedia(this.type, this.url, {this.width, this.height});
+  SnapMedia(this.type, this.url, {this.width, this.height});
 }
 
-class SnapdSnap {
+/// Describes a snap package.
+class Snap {
   /// Unique ID for this snap.
   final String id;
 
-  /// The snap name.
+  /// Unique name for this snap.
   final String name;
 
-  /// Single line summary of this snap.
+  /// Single line summary.
   final String summary;
 
-  /// Multi line description of this snap.
+  /// Multi line description.
   final String description;
 
   /// Version of this snap.
@@ -48,15 +57,15 @@ class SnapdSnap {
   final String revision;
 
   /// Publisher information.
-  final SnapdPublisher publisher;
+  final SnapPublisher publisher;
 
   /// Channel this snap is tracking.
   final String channel;
 
   /// Media associated with this snap.
-  final List<SnapdMedia> media;
+  final List<SnapMedia> media;
 
-  SnapdSnap(
+  Snap(
       {this.id,
       this.name,
       this.summary,
@@ -69,15 +78,24 @@ class SnapdSnap {
 
   @override
   toString() {
-    return "SnapdSnap('${name}')";
+    return "Snap('${name}')";
   }
 }
 
+/// Response received when logging in.
 class SnapdLoginResponse {
   final int id;
+
+  /// Username logged in with.
   final String username;
+
+  /// Email address logged in with.
   final String email;
+
+  /// Macaroon provided by the server.
   final String macaroon;
+
+  /// Discharges provided bu the server.
   final List<String> discharges;
 
   SnapdLoginResponse(
@@ -89,13 +107,14 @@ class SnapdLoginResponse {
   }
 }
 
+/// Manages a connection to the snapd server.
 class SnapdClient {
   var _client = HttpUnixClient('/var/run/snapd.socket');
 
   /// Gets the currently installed snaps.
-  Future<List<SnapdSnap>> snaps() async {
+  Future<List<Snap>> snaps() async {
     var result = await _getSync('/v2/snaps');
-    var snaps = <SnapdSnap>[];
+    var snaps = <Snap>[];
     for (var snap in result) {
       snaps.add(_makeSnap(snap));
     }
@@ -107,8 +126,7 @@ class SnapdClient {
   /// If [query] searches for snaps that match the given string.
   /// If [name] is provided, match the snap with the given name.
   /// If [section] is provided, search within that store section.
-  Future<List<SnapdSnap>> find(
-      {String query, String name, String section}) async {
+  Future<List<Snap>> find({String query, String name, String section}) async {
     var queryParameters = <String, String>{};
     if (query != null) {
       queryParameters['q'] = query;
@@ -120,7 +138,7 @@ class SnapdClient {
       queryParameters['section'] = section;
     }
     var result = await _getSync('/v2/find', queryParameters);
-    var snaps = <SnapdSnap>[];
+    var snaps = <Snap>[];
     for (var snap in result) {
       snaps.add(_makeSnap(snap));
     }
@@ -169,25 +187,25 @@ class SnapdClient {
     return snapResponse['result'];
   }
 
-  /// Convert a JSON snap representation to a SnapdSnap object.
-  SnapdSnap _makeSnap(dynamic json) {
-    SnapdPublisher publisher;
+  /// Convert a JSON snap representation to a Snap object.
+  Snap _makeSnap(dynamic json) {
+    SnapPublisher publisher;
     var p = json['publisher'];
     if (p != null) {
-      publisher = SnapdPublisher(
+      publisher = SnapPublisher(
           id: p['id'],
           username: p['username'],
           display_name: p['display-name'],
           validation: p['validation']);
     }
-    var media = <SnapdMedia>[];
+    var media = <SnapMedia>[];
     if (json['media'] != null) {
       for (var m in json['media']) {
-        media.add(SnapdMedia(m['type'], m['url'],
+        media.add(SnapMedia(m['type'], m['url'],
             width: m['width'], height: m['height']));
       }
     }
-    return SnapdSnap(
+    return Snap(
         channel: json['channel'],
         description: json['description'],
         id: json['id'],
