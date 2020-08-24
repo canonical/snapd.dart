@@ -1,5 +1,5 @@
 name: snapd
-version: 0.0.0-dev.1
+version: 0.0.0-dev.2
 description: snapd interface library
 homepage: https://github.com/canonical/snapd.dart
 
