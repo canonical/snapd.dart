@@ -110,6 +110,14 @@ class SnapdLoginResponse {
 /// Manages a connection to the snapd server.
 class SnapdClient {
   var _client = HttpUnixClient('/var/run/snapd.socket');
+  String _macaroon;
+  List<String> _discharges;
+
+  /// Sets the authorization used in the connection to snapd.
+  void setAuthorization(String macaroon, List<String> discharges) {
+    _macaroon = macaroon;
+    _discharges = discharges;
+  }
 
   /// Gets the currently installed snaps.
   Future<List<Snap>> snaps() async {
@@ -170,8 +178,9 @@ class SnapdClient {
   /// Does a synchronous request to snapd.
   Future<dynamic> _getSync(String path,
       [Map<String, String> queryParameters]) async {
-    var response =
-        await _client.get(Uri.http('localhost', path, queryParameters));
+    var response = await _client.get(
+        Uri.http('localhost', path, queryParameters),
+        headers: _makeHeaders());
     var snapResponse = json.decode(response.body);
     // FIXME(robert-ancell): Handle error results
     return snapResponse['result'];
@@ -179,12 +188,26 @@ class SnapdClient {
 
   /// Does a synchronous request to snapd.
   Future<dynamic> _postSync(String path, [dynamic request]) async {
+    var headers = _makeHeaders();
+    headers['Content-Type'] = 'application/json';
     var response = await _client.post(Uri.http('localhost', path),
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(request));
+        headers: headers, body: json.encode(request));
     var snapResponse = json.decode(response.body);
     // FIXME(robert-ancell): Handle error results
     return snapResponse['result'];
+  }
+
+  /// Makes base HTTP headers to send.
+  Map<String, String> _makeHeaders() {
+    var headers = <String, String>{};
+    if (_macaroon != null) {
+      var authorization = 'Macaroon root="${_macaroon}"';
+      for (var discharge in _discharges) {
+        authorization += ',discharge="${discharge}"';
+      }
+      headers['Authorization'] = authorization;
+    }
+    return headers;
   }
 
   /// Convert a JSON snap representation to a Snap object.
