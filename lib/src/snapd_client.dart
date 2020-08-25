@@ -188,8 +188,11 @@ abstract class _SnapdResponse {
   /// Status message.
   final String status;
 
-  /// Request result. Throws an exception if not an sync result.
+  /// Request result. Throws an exception if not a sync result.
   dynamic get result;
+
+  /// Request change ID. Throws an exception if not an async result.
+  String get change;
 
   _SnapdResponse({this.statusCode, this.status});
 }
@@ -201,6 +204,9 @@ class _SnapdSyncResponse extends _SnapdResponse {
   @override
   dynamic get result => _result;
 
+  @override
+  String get change => throw 'Result is sync';
+
   _SnapdSyncResponse(dynamic result, {int statusCode, String status})
       : _result = result,
         super(statusCode: statusCode, status: status);
@@ -208,14 +214,17 @@ class _SnapdSyncResponse extends _SnapdResponse {
 
 /// Response retuned when an async request has been started.
 class _SnapdAsyncResponse extends _SnapdResponse {
-  /// Change ID for async request.
-  final String change;
+  final String _change;
 
   @override
   dynamic get result => throw 'Result is async';
 
-  _SnapdAsyncResponse(this.change, {int statusCode, String status})
-      : super(statusCode: statusCode, status: status);
+  @override
+  String get change => _change;
+
+  _SnapdAsyncResponse(change, {int statusCode, String status})
+      : _change = change,
+        super(statusCode: statusCode, status: status);
 }
 
 /// Response retuned when an error occurred.
@@ -230,7 +239,10 @@ class _SnapdErrorResponse extends _SnapdResponse {
   final value;
 
   @override
-  dynamic get result => throw 'Result is error ${kind}: {$message}';
+  dynamic get result => throw 'Result is error ${kind}: ${message}';
+
+  @override
+  String get change => throw 'Result is error ${kind}: ${message}';
 
   _SnapdErrorResponse(this.message,
       {int statusCode, String status, this.kind, this.value})
@@ -304,6 +316,32 @@ class SnapdClient {
     await _postSync('/v2/logout');
   }
 
+  /// Installs the snaps with the given [names].
+  /// Returns the change ID for this operation.
+  Future<String> install(List<String> names) async {
+    var request = {'action': 'install', 'snaps': names};
+    return await _postAsync('/v2/snaps', request);
+  }
+
+  /// Refreshes the snaps with the given [names].
+  /// If no names provided refreshes all snaps.
+  /// Returns the change ID for this operation.
+  Future<String> refresh([List<String> names]) async {
+    var request = {};
+    request['action'] = 'refresh';
+    if (names != null) {
+      request['snaps'] = names;
+    }
+    return await _postAsync('/v2/snaps', request);
+  }
+
+  /// Removes the snaps with the given [names].
+  /// Returns the change ID for this operation.
+  Future<String> remove(List<String> names) async {
+    var request = {'action': 'remove', 'snaps': names};
+    return await _postAsync('/v2/snaps', request);
+  }
+
   /// Terminates all active connections. If a client remains unclosed, the Dart process may not terminate.
   void close() {
     _client.close();
@@ -329,7 +367,17 @@ class SnapdClient {
     return snapdResponse.result;
   }
 
-  /// Decode
+  /// Does an asynchronous request to snapd.
+  Future<String> _postAsync(String path, [dynamic request]) async {
+    var headers = _makeHeaders();
+    headers['Content-Type'] = 'application/json';
+    var response = await _client.post(Uri.http('localhost', path),
+        headers: headers, body: json.encode(request));
+    var snapdResponse = _parseResponse(response);
+    return snapdResponse.change;
+  }
+
+  /// Decodes a response from snapd.
   _SnapdResponse _parseResponse(Response response) {
     var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
     _SnapdResponse snapdResponse;
@@ -343,11 +391,12 @@ class SnapdClient {
       snapdResponse = _SnapdAsyncResponse(jsonResponse['change'],
           statusCode: statusCode, status: status);
     } else if (type == 'error') {
-      snapdResponse = _SnapdErrorResponse(jsonResponse['message'],
+      var result = jsonResponse['result'];
+      snapdResponse = _SnapdErrorResponse(result['message'],
           statusCode: statusCode,
           status: status,
-          kind: jsonResponse['kind'],
-          value: jsonResponse['value']);
+          kind: result['kind'],
+          value: result['value']);
     } else {
       throw "Unknown snapd response '${type}'";
     }
