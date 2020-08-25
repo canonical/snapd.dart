@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:http/http.dart';
 
 import 'http_unix_client.dart';
 
@@ -179,6 +180,63 @@ class SnapdLoginResponse {
   }
 }
 
+/// General response from snapd.
+abstract class _SnapdResponse {
+  /// HTTP status code.
+  final int statusCode;
+
+  /// Status message.
+  final String status;
+
+  /// Request result. Throws an exception if not an sync result.
+  dynamic get result;
+
+  _SnapdResponse({this.statusCode, this.status});
+}
+
+/// Response retuned when a sync request is completed.
+class _SnapdSyncResponse extends _SnapdResponse {
+  final dynamic _result;
+
+  @override
+  dynamic get result => _result;
+
+  _SnapdSyncResponse(dynamic result, {int statusCode, String status})
+      : _result = result,
+        super(statusCode: statusCode, status: status);
+}
+
+/// Response retuned when an async request has been started.
+class _SnapdAsyncResponse extends _SnapdResponse {
+  /// Change ID for async request.
+  final String change;
+
+  @override
+  dynamic get result => throw 'Result is async';
+
+  _SnapdAsyncResponse(this.change, {int statusCode, String status})
+      : super(statusCode: statusCode, status: status);
+}
+
+/// Response retuned when an error occurred.
+class _SnapdErrorResponse extends _SnapdResponse {
+  /// Error message returned.
+  final String message;
+
+  /// Error kind returned.
+  final String kind;
+
+  /// Error value.
+  final value;
+
+  @override
+  dynamic get result => throw 'Result is error ${kind}: {$message}';
+
+  _SnapdErrorResponse(this.message,
+      {int statusCode, String status, this.kind, this.value})
+      : super(statusCode: statusCode, status: status);
+}
+
 /// Manages a connection to the snapd server.
 class SnapdClient {
   final _client = HttpUnixClient('/var/run/snapd.socket');
@@ -257,9 +315,8 @@ class SnapdClient {
     var response = await _client.get(
         Uri.http('localhost', path, queryParameters),
         headers: _makeHeaders());
-    var snapResponse = json.decode(utf8.decode(response.bodyBytes));
-    // FIXME(robert-ancell): Handle error results
-    return snapResponse['result'];
+    var snapdResponse = _parseResponse(response);
+    return snapdResponse.result;
   }
 
   /// Does a synchronous request to snapd.
@@ -268,9 +325,34 @@ class SnapdClient {
     headers['Content-Type'] = 'application/json';
     var response = await _client.post(Uri.http('localhost', path),
         headers: headers, body: json.encode(request));
-    var snapResponse = json.decode(utf8.decode(response.bodyBytes));
-    // FIXME(robert-ancell): Handle error results
-    return snapResponse['result'];
+    var snapdResponse = _parseResponse(response);
+    return snapdResponse.result;
+  }
+
+  /// Decode
+  _SnapdResponse _parseResponse(Response response) {
+    var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+    _SnapdResponse snapdResponse;
+    var type = jsonResponse['type'];
+    var statusCode = jsonResponse['status-code'];
+    var status = jsonResponse['status'];
+    if (type == 'sync') {
+      snapdResponse = _SnapdSyncResponse(jsonResponse['result'],
+          statusCode: statusCode, status: status);
+    } else if (type == 'async') {
+      snapdResponse = _SnapdAsyncResponse(jsonResponse['change'],
+          statusCode: statusCode, status: status);
+    } else if (type == 'error') {
+      snapdResponse = _SnapdErrorResponse(jsonResponse['message'],
+          statusCode: statusCode,
+          status: status,
+          kind: jsonResponse['kind'],
+          value: jsonResponse['value']);
+    } else {
+      throw "Unknown snapd response '${type}'";
+    }
+
+    return snapdResponse;
   }
 
   /// Makes base HTTP headers to send.
