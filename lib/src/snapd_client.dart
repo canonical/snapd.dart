@@ -257,7 +257,7 @@ class SnapdClient {
     var response = await _client.get(
         Uri.http('localhost', path, queryParameters),
         headers: _makeHeaders());
-    var snapResponse = json.decode(response.body);
+    var snapResponse = json.decode(utf8.decode(response.bodyBytes));
     // FIXME(robert-ancell): Handle error results
     return snapResponse['result'];
   }
@@ -268,7 +268,7 @@ class SnapdClient {
     headers['Content-Type'] = 'application/json';
     var response = await _client.post(Uri.http('localhost', path),
         headers: headers, body: json.encode(request));
-    var snapResponse = json.decode(response.body);
+    var snapResponse = json.decode(utf8.decode(response.bodyBytes));
     // FIXME(robert-ancell): Handle error results
     return snapResponse['result'];
   }
