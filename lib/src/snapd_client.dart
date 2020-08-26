@@ -231,6 +231,91 @@ class SnapdLoginResponse {
   }
 }
 
+/// Gives the state of an asynchronous operation.
+class SnapdChange {
+  /// The ID of this change.
+  final String id;
+
+  /// The kind of change, e.g. 'install-snap'.
+  final String kind;
+
+  /// Short description of the change. e.g. 'Install snap "moon-buggy"'
+  final String summary;
+
+  /// Status of the change, e.g. 'Doing'.
+  final String status;
+
+  /// True when this change is complete.
+  final bool ready;
+
+  /// The time this change started.
+  /// FIXME(robert-ancell): Implement
+  ///final String spawnTime;
+
+  /// The tasks of this change.
+  List<SnapdTask> tasks;
+
+  SnapdChange(
+      {this.id, this.kind, this.summary, this.status, this.ready, this.tasks});
+
+  @override
+  String toString() {
+    return "SnapdChange(id: '${id}', kind: '${kind}', summary: '${summary}', status: '${status}', ready: ${ready}, tasks: ${tasks})";
+  }
+}
+
+/// Information about a task in a [SnapdChange].
+class SnapdTask {
+  /// The ID of this task.
+  final String id;
+
+  /// The kind of task, e.g. 'download-snap'install-snap'.
+  final String kind;
+
+  /// Short description of the task. e.g. ''Download snap "moon-buggy" (12) from channel "stable"'
+  final String summary;
+
+  /// Status of the task, e.g. 'Doing'.
+  final String status;
+
+  /// Progress of this task.
+  final SnapdTaskProgress progress;
+
+  /// The time this task started.
+  /// FIXME(robert-ancell): Implement
+  ///final String spawnTime;
+
+  /// The time this task completed.
+  /// FIXME(robert-ancell): Implement
+  ///final String readyTime;
+
+  SnapdTask({this.id, this.kind, this.summary, this.status, this.progress});
+
+  @override
+  String toString() {
+    return "SnapdTask(id: '${id}', kind: '${kind}', summary: '${summary}', status: '${status}', progress: ${progress})";
+  }
+}
+
+// Progress of a [SnapdTask].
+class SnapdTaskProgress {
+  /// Optional label.
+  final String label;
+
+  /// Number of progress items complete.
+  final int done;
+
+  /// Total number of progress items in this task.
+  final int total;
+
+  SnapdTaskProgress({this.label, this.done, this.total});
+
+  @override
+  String toString() {
+    return "SnapdTaskProgress(label: '${label}', done: ${done}, total: ${total})";
+  }
+}
+
 /// General response from snapd.
 abstract class _SnapdResponse {
   /// HTTP status code.
@@ -403,7 +488,7 @@ class SnapdClient {
   }
 
   /// Installs the snaps with the given [names].
-  /// Returns the change ID for this operation.
+  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
   Future<String> install(List<String> names) async {
     var request = {'action': 'install', 'snaps': names};
     return await _postAsync('/v2/snaps', request);
@@ -411,7 +496,7 @@ class SnapdClient {
 
   /// Refreshes the snaps with the given [names].
   /// If no names provided refreshes all snaps.
-  /// Returns the change ID for this operation.
+  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
   Future<String> refresh([List<String> names]) async {
     var request = {};
     request['action'] = 'refresh';
@@ -422,10 +507,36 @@ class SnapdClient {
   }
 
   /// Removes the snaps with the given [names].
-  /// Returns the change ID for this operation.
+  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
   Future<String> remove(List<String> names) async {
     var request = {'action': 'remove', 'snaps': names};
     return await _postAsync('/v2/snaps', request);
+  }
+
+  /// Gets the status the change with the given [id].
+  Future<SnapdChange> getChange(String id) async {
+    var result = await _getSync('/v2/changes/${id}');
+    var tasks = <SnapdTask>[];
+    if (result['tasks'] != null) {
+      for (var task in result['tasks']) {
+        var p = task['progress'];
+        var progress = SnapdTaskProgress(
+            label: p['label'], done: p['done'], total: p['total']);
+        tasks.add(SnapdTask(
+            id: task['id'],
+            kind: task['kind'],
+            summary: task['summary'],
+            status: task['status'],
+            progress: progress));
+      }
+    }
+    return SnapdChange(
+        id: result['id'],
+        kind: result['kind'],
+        summary: result['summary'],
+        status: result['status'],
+        ready: result['ready'],
+        tasks: tasks);
   }
 
   /// Terminates all active connections. If a client remains unclosed, the Dart process may not terminate.

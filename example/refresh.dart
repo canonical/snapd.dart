@@ -9,7 +9,14 @@ void main(List<String> args) async {
   } else {
     id = await client.refresh();
   }
-  print('Change ID: ${id}');
+  while (true) {
+    var change = await client.getChange(id);
+    if (change.ready) {
+      break;
+    }
+
+    await Future.delayed(Duration(milliseconds: 100));
+  }
 
   client.close();
 }
