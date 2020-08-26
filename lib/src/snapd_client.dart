@@ -350,36 +350,39 @@ class SnapdClient {
   /// Does a synchronous request to snapd.
   Future<dynamic> _getSync(String path,
       [Map<String, String> queryParameters]) async {
-    var response = await _client.get(
-        Uri.http('localhost', path, queryParameters),
-        headers: _makeHeaders());
-    var snapdResponse = _parseResponse(response);
+    var request = Request('GET', Uri.http('localhost', path, queryParameters));
+    _setHeaders(request);
+    var response = await _client.send(request);
+    var snapdResponse = await _parseResponse(response);
     return snapdResponse.result;
   }
 
   /// Does a synchronous request to snapd.
-  Future<dynamic> _postSync(String path, [dynamic request]) async {
-    var headers = _makeHeaders();
-    headers['Content-Type'] = 'application/json';
-    var response = await _client.post(Uri.http('localhost', path),
-        headers: headers, body: json.encode(request));
-    var snapdResponse = _parseResponse(response);
+  Future<dynamic> _postSync(String path, [dynamic body]) async {
+    var request = Request('POST', Uri.http('localhost', path));
+    _setHeaders(request);
+    request.headers['Content-Type'] = 'application/json';
+    request.bodyBytes = utf8.encode(json.encode(body));
+    var response = await _client.send(request);
+    var snapdResponse = await _parseResponse(response);
     return snapdResponse.result;
   }
 
   /// Does an asynchronous request to snapd.
-  Future<String> _postAsync(String path, [dynamic request]) async {
-    var headers = _makeHeaders();
-    headers['Content-Type'] = 'application/json';
-    var response = await _client.post(Uri.http('localhost', path),
-        headers: headers, body: json.encode(request));
-    var snapdResponse = _parseResponse(response);
+  Future<String> _postAsync(String path, [dynamic body]) async {
+    var request = Request('POST', Uri.http('localhost', path));
+    _setHeaders(request);
+    request.headers['Content-Type'] = 'application/json';
+    request.bodyBytes = utf8.encode(json.encode(body));
+    var response = await _client.send(request);
+    var snapdResponse = await _parseResponse(response);
     return snapdResponse.change;
   }
 
   /// Decodes a response from snapd.
-  _SnapdResponse _parseResponse(Response response) {
-    var jsonResponse = json.decode(utf8.decode(response.bodyBytes));
+  Future<_SnapdResponse> _parseResponse(StreamedResponse response) async {
+    var body = await response.stream.bytesToString();
+    var jsonResponse = json.decode(body);
     _SnapdResponse snapdResponse;
     var type = jsonResponse['type'];
     var statusCode = jsonResponse['status-code'];
@@ -405,19 +408,17 @@ class SnapdClient {
   }
 
   /// Makes base HTTP headers to send.
-  Map<String, String> _makeHeaders() {
-    var headers = <String, String>{};
+  void _setHeaders(Request request) {
     if (_userAgent != null) {
-      headers['User-Agent'] = _userAgent;
+      request.headers['User-Agent'] = _userAgent;
     }
     if (_macaroon != null) {
       var authorization = 'Macaroon root="${_macaroon}"';
       for (var discharge in _discharges) {
         authorization += ',discharge="${discharge}"';
       }
-      headers['Authorization'] = authorization;
+      request.headers['Authorization'] = authorization;
     }
-    return headers;
   }
 
   /// Convert a JSON snap representation to a Snap object.
