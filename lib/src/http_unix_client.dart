@@ -100,6 +100,9 @@ class HttpUnixClient extends BaseClient {
 
     var done = false;
     while (!done) {
+      if (_requests.isEmpty) {
+        return;
+      }
       var request = _requests[0];
 
       if (_parserState == _HttpParserState.status) {
@@ -184,6 +187,7 @@ class HttpUnixClient extends BaseClient {
     // FIXME(robert-ancell): Close stream if no content length when get EOF
     if (_chunkRead == _chunkLength) {
       request.stream.close();
+      _requests.remove(request);
       _parserState = _HttpParserState.status;
     }
 
@@ -228,6 +232,7 @@ class HttpUnixClient extends BaseClient {
 
     if (_chunkLength == 0) {
       request.stream.close();
+      _requests.remove(request);
       _parserState = _HttpParserState.status;
     } else {
       _parserState = _HttpParserState.chunkHeader;
