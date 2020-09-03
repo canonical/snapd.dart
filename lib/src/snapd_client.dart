@@ -155,6 +155,55 @@ class Snap {
   }
 }
 
+/// Response received when getting system information
+class SnapdSystemInfoResponse {
+  /// The architecture snapd is running on.
+  final String architecture;
+
+  /// The build of snapd.
+  final String buildId;
+
+  /// The confinement level that is supported.
+  final String confinement;
+
+  /// The version of the Linux kernel this is running on.
+  final String kernelVersion;
+
+  // FIXME(robert-ancell): locations
+
+  final bool managed;
+
+  /// True if running on a classic system.
+  final bool onClassic;
+
+  // FIXME(robert-ancell): os-release
+  // FIXME(robert-ancell): refresh
+  // FIXME(robert-ancell): sandbox-features
+
+  /// The core series in use.
+  final String series;
+
+  final String systemMode;
+
+  /// The version of snapd.
+  final String version;
+
+  SnapdSystemInfoResponse(
+      {this.architecture,
+      this.buildId,
+      this.confinement,
+      this.kernelVersion,
+      this.managed = false,
+      this.onClassic = false,
+      this.series,
+      this.systemMode,
+      this.version});
+
+  @override
+  String toString() =>
+      'SnapdSystemInfoResponse(architecture: ${architecture}, buildId: ${buildId}, confinement: ${confinement}, kernelVersion: ${kernelVersion}, managed: ${managed}, onClassic: ${onClassic}, series: ${series}, systemMode: ${systemMode}, version: ${version})';
+}
+
 /// Response received when logging in.
 class SnapdLoginResponse {
   final int id;
@@ -260,6 +309,21 @@ class SnapdClient {
   void setAuthorization(String macaroon, List<String> discharges) {
     _macaroon = macaroon;
     _discharges = discharges;
+  }
+
+  /// Gets information about the system that snapd is running on.
+  Future<SnapdSystemInfoResponse> systemInfo() async {
+    var result = await _getSync('/v2/system-info');
+    return SnapdSystemInfoResponse(
+        architecture: result['architecture'],
+        buildId: result['build-id'],
+        confinement: result['confinement'],
+        kernelVersion: result['kernel-version'],
+        managed: result['managed'],
+        onClassic: result['on-classic'],
+        series: result['series'],
+        systemMode: result['system-mode'],
+        version: result['version']);
   }
 
   /// Gets the currently installed snaps.
