@@ -11,3 +11,7 @@ var client = SnapdClient();
 var snaps = await client.snaps();
 print (snaps);
 ```
+
+## Contributing to snapd.dart
+
+We welcome contributions! See the [contribution guide](CONTRIBUTING.md) for more details.
