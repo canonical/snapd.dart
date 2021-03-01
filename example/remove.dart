@@ -7,6 +7,7 @@ void main(List<String> args) async {
   }
 
   var client = SnapdClient();
+  await client.loadAuthorization();
   var id = await client.remove(args);
   print('Change ID: ${id}');
 
