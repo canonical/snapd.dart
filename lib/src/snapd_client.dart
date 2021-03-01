@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart';
+import 'package:path/path.dart' as p;
 
 import 'http_unix_client.dart';
 
@@ -302,8 +304,28 @@ class _SnapdErrorResponse extends _SnapdResponse {
 class SnapdClient {
   final _client = HttpUnixClient('/var/run/snapd.socket');
   String _macaroon;
-  List<String> _discharges;
+  List<String> _discharges = [];
   String _userAgent = 'snapd.dart';
+
+  /// Loads the saved authorization for this user.
+  Future<void> loadAuthorization() async {
+    var home = Platform.environment['HOME'];
+    var file = File(p.join(home, '.snap', 'auth.json'));
+    String contents;
+    try {
+      contents = await file.readAsString();
+    } catch (e) {
+      setAuthorization('', []);
+      return;
+    }
+
+    var authData = json.decode(contents);
+    var macaroon = authData['macaroon'];
+    var discharges = authData['discharges'] != null
+        ? authData['discharges'].cast<String>()
+        : <String>[];
+    setAuthorization(macaroon, discharges);
+  }
 
   /// Sets the authorization used in the connection to snapd.
   void setAuthorization(String macaroon, List<String> discharges) {

@@ -3,6 +3,7 @@ import 'package:snapd/snapd.dart';
 
 void main() async {
   var client = SnapdClient();
+  await client.loadAuthorization();
 
   // Get the installed snaps.
   var snaps = await client.snaps();
