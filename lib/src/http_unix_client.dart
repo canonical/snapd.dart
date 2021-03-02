@@ -26,7 +26,7 @@ class _HttpRequest {
 
   _HttpRequest(this.request);
 
-  int get contentLength {
+  int? get contentLength {
     var contentLength = headers['Content-Length'];
     if (contentLength == null) {
       return null;
@@ -40,7 +40,7 @@ class HttpUnixClient extends BaseClient {
   final String path;
 
   // Unix socket connected to.
-  Socket _socket;
+  Socket? _socket;
 
   // Requests in process.
   final _requests = <_HttpRequest>[];
@@ -49,8 +49,8 @@ class HttpUnixClient extends BaseClient {
   final _buffer = <int>[];
 
   var _parserState = _HttpParserState.status;
-  var _chunkLength = -1;
-  var _chunkRead = -1;
+  int? _chunkLength;
+  int _chunkRead = 0;
 
   /// Creates a new HTTP client that communicates on a Unix domain socket on [path].
   HttpUnixClient(this.path);
@@ -60,7 +60,7 @@ class HttpUnixClient extends BaseClient {
     if (_socket == null) {
       var address = InternetAddress(path, type: InternetAddressType.unix);
       _socket = await Socket.connect(address, 0);
-      _socket.listen(_processData);
+      _socket?.listen(_processData);
     }
 
     var message = '';
@@ -75,10 +75,10 @@ class HttpUnixClient extends BaseClient {
       message += '${name}: ${value}\r\n';
     });
     message += '\r\n';
-    _socket.write(message);
+    _socket?.write(message);
 
     if (request is Request) {
-      _socket.write(request.body);
+      _socket?.write(request.body);
     } else if (request is MultipartRequest) {
       // FIXME(robert-ancell): Needs to be implemented.
       assert(false);
@@ -95,7 +95,7 @@ class HttpUnixClient extends BaseClient {
   @override
   void close() {
     if (_socket != null) {
-      _socket.close();
+      _socket?.close();
       _socket = null;
     }
   }
@@ -181,7 +181,7 @@ class HttpUnixClient extends BaseClient {
     if (_chunkLength == null) {
       length = _buffer.length;
     } else {
-      length = min(_chunkLength - _chunkRead, _buffer.length);
+      length = min(_chunkLength! - _chunkRead, _buffer.length);
       _chunkRead += length;
     }
 
@@ -214,7 +214,7 @@ class HttpUnixClient extends BaseClient {
   }
 
   bool _processChunk(_HttpRequest request) {
-    var length = min(_chunkLength - _chunkRead, _buffer.length);
+    var length = min(_chunkLength! - _chunkRead, _buffer.length);
     var chunk = _buffer.sublist(0, length);
     request.stream.add(chunk);
     _buffer.removeRange(0, length);
@@ -246,7 +246,7 @@ class HttpUnixClient extends BaseClient {
     return false;
   }
 
-  String _readLine() {
+  String? _readLine() {
     for (var i = 0; i < _buffer.length - 1; i++) {
       if (_buffer[i] == 13 && _buffer[i + 1] == 10) {
         var line = utf8.decode(_buffer.sublist(0, i));

@@ -8,22 +8,43 @@ import 'http_unix_client.dart';
 /// Describes an app provided by a snap.
 class SnapApp {
   /// The snap this app is part of
-  final String snap;
+  final String? snap;
 
   /// Name of the app.
   final String name;
 
   /// Desktop file the app uses.
-  final String desktopFile;
+  final String? desktopFile;
+
+  /// Type of daemon this app is.
+  final String? daemon;
+
+  /// True if this service is enabled.
+  final bool enabled;
+
+  /// True if this service is active.
+  final bool active;
 
   /// A unique ID for this app.
-  final String commonId;
+  final String? commonId;
 
-  SnapApp(this.snap, this.name, {this.desktopFile, this.commonId});
+  // FIXME(robert-ancell) Implement
+  //List<SnapActivator> activators.
+
+  const SnapApp(this.snap, this.name,
+      {this.desktopFile,
+      this.daemon,
+      this.enabled = true,
+      this.active = true,
+      this.commonId});
 
   factory SnapApp._fromJson(value) {
     return SnapApp(value['snap'], value['name'],
-        desktopFile: value['desktop-file'], commonId: value['common-id']);
+        desktopFile: value['desktop-file'],
+        daemon: value['daemon'],
+        enabled: value['enabled'],
+        active: value['active'],
+        commonId: value['common-id']);
   }
 }
 
@@ -41,7 +62,19 @@ class SnapChannel {
   /// Version of this snap in this channel.
   final String version;
 
-  SnapChannel({this.confinement, this.revision, this.size, this.version});
+  const SnapChannel(
+      {this.confinement = '',
+      this.revision = '',
+      this.size = 0,
+      this.version = ''});
+
+  factory SnapChannel._fromJson(value) {
+    return SnapChannel(
+        confinement: value['confinement'] ?? '',
+        revision: value['revision'] ?? '',
+        size: value['size'] ?? 0,
+        version: value['version'] ?? '');
+  }
 }
 
 /// Describes a snap publisher.
@@ -56,26 +89,43 @@ class SnapPublisher {
   final String displayName;
 
   /// Validation level for this publisher.
-  final String validation;
+  final String? validation;
 
-  SnapPublisher({this.id, this.username, this.displayName, this.validation});
+  const SnapPublisher(
+      {this.id = '',
+      this.username = '',
+      this.displayName = '',
+      this.validation});
+
+  factory SnapPublisher._fromJson(value) {
+    return SnapPublisher(
+        id: value['id'] ?? '',
+        username: value['username'] ?? '',
+        displayName: value['display-name'] ?? '',
+        validation: value['validation']);
+  }
 }
 
 /// Describes a piece of media associated with a snap.
 class SnapMedia {
   /// Media type
-  String type;
+  final String type;
 
   /// URL of media.
-  String url;
+  final String url;
 
   /// Width of media in pixels.
-  final int width;
+  final int? width;
 
   /// Height of media in pixels.
-  final int height;
+  final int? height;
 
-  SnapMedia(this.type, this.url, {this.width, this.height});
+  const SnapMedia(this.type, this.url, {this.width, this.height});
+
+  factory SnapMedia._fromJson(value) {
+    return SnapMedia(value['type'] ?? '', value['url'] ?? '',
+        width: value['width'], height: value['height']);
+  }
 }
 
 /// Describes a snap package.
@@ -89,23 +139,26 @@ class Snap {
   /// Channels available for this snap.
   final Map<String, SnapChannel> channels;
 
+  /// Common IDs this snap contains.
+  final List<String> commonIds;
+
   /// Contact URL.
-  final String contact;
+  final String? contact;
 
   /// Multi line description.
   final String description;
 
   /// Download size in bytes.
-  final int downloadSize;
+  final int? downloadSize;
 
   /// Unique ID for this snap.
   final String id;
 
   /// Installed size in bytes.
-  final int installedSize;
+  final int? installedSize;
 
   /// Package license.
-  final String license;
+  final String? license;
 
   /// Media associated with this snap.
   final List<SnapMedia> media;
@@ -114,13 +167,13 @@ class Snap {
   final String name;
 
   /// Publisher information.
-  final SnapPublisher publisher;
+  final SnapPublisher? publisher;
 
   /// Revision of this snap.
   final String revision;
 
   /// URL linking to the snap store page on this snap.
-  final String storeUrl;
+  final String? storeUrl;
 
   /// Single line summary.
   final String summary;
@@ -138,33 +191,63 @@ class Snap {
   final String version;
 
   /// Website URL.
-  final String website;
+  final String? website;
 
-  Snap(
-      {this.apps,
-      this.channel,
-      this.channels,
-      this.contact,
-      this.description,
+  const Snap(
+      {this.apps = const [],
+      this.channel = '',
+      this.channels = const {},
+      this.commonIds = const [],
+      this.contact = '',
+      this.description = '',
       this.downloadSize,
-      this.id,
+      this.id = '',
       this.installedSize,
       this.license,
-      this.media,
-      this.name,
+      this.media = const [],
+      this.name = '',
       this.publisher,
-      this.revision,
+      this.revision = '',
       this.storeUrl,
-      this.summary,
-      this.title,
-      this.tracks,
-      this.type,
-      this.version,
+      this.summary = '',
+      this.title = '',
+      this.tracks = const [],
+      this.type = '',
+      this.version = '',
       this.website});
 
   @override
   String toString() {
     return "Snap('${name}')";
+  }
+
+  factory Snap._fromJson(value) {
+    return Snap(
+        apps: value['apps']?.map((v) => SnapApp._fromJson(v)) ?? [],
+        channel: value['channel'],
+        channels: value['channels']
+                ?.map((k, v) => MapEntry(k, SnapChannel._fromJson(v))) ??
+            {},
+        commonIds: value['common-ids']?.cast<String>() ?? [],
+        contact: value['contact'] ?? '',
+        description: value['description'] ?? '',
+        downloadSize: value['download-size'],
+        id: value['id'],
+        installedSize: value['installed-size'],
+        license: value['license'],
+        media: value['media']?.map((v) => SnapMedia._fromJson(v)) ?? [],
+        name: value['name'],
+        publisher: value['publisher'] != null
+            ? SnapPublisher._fromJson(value['publisher'])
+            : null,
+        revision: value['revision'] ?? '',
+        storeUrl: value['store-url'],
+        summary: value['summary'],
+        title: value['title'],
+        tracks: value['tracks']?.cast<String>() ?? [],
+        type: value['type'] ?? '',
+        version: value['version'] ?? '',
+        website: value['website']);
   }
 }
 
@@ -201,44 +284,75 @@ class SnapdSystemInfoResponse {
   /// The version of snapd.
   final String version;
 
-  SnapdSystemInfoResponse(
-      {this.architecture,
-      this.buildId,
-      this.confinement,
-      this.kernelVersion,
+  const SnapdSystemInfoResponse(
+      {this.architecture = '',
+      this.buildId = '',
+      this.confinement = '',
+      this.kernelVersion = '',
       this.managed = false,
       this.onClassic = false,
-      this.series,
-      this.systemMode,
-      this.version});
+      this.series = '',
+      this.systemMode = '',
+      this.version = ''});
 
   @override
   String toString() =>
       'SnapdSystemInfoResponse(architecture: ${architecture}, buildId: ${buildId}, confinement: ${confinement}, kernelVersion: ${kernelVersion}, managed: ${managed}, onClassic: ${onClassic}, series: ${series}, systemMode: ${systemMode}, version: ${version})';
+
+  factory SnapdSystemInfoResponse._fromJson(value) {
+    return SnapdSystemInfoResponse(
+        architecture: value['architecture'] ?? '',
+        buildId: value['build-id'] ?? '',
+        confinement: value['confinement'] ?? '',
+        kernelVersion: value['kernel-version'] ?? '',
+        managed: value['managed'] ?? false,
+        onClassic: value['on-classic'] ?? false,
+        series: value['series'] ?? '',
+        systemMode: value['system-mode'] ?? '',
+        version: value['version'] ?? '');
+  }
 }
 
 /// Response received when logging in.
 class SnapdLoginResponse {
-  final int id;
+  final int? id;
 
   /// Username logged in with.
-  final String username;
+  final String? username;
 
   /// Email address logged in with.
-  final String email;
+  final String? email;
 
   /// Macaroon provided by the server.
-  final String macaroon;
+  final String? macaroon;
 
   /// Discharges provided bu the server.
   final List<String> discharges;
 
-  SnapdLoginResponse(
-      this.id, this.username, this.email, this.macaroon, this.discharges);
+  /// Secure Shell keys this user has.
+  final List<String> sshKeys;
+
+  const SnapdLoginResponse(
+      {this.id,
+      this.username,
+      this.email,
+      this.macaroon,
+      this.discharges = const [],
+      this.sshKeys = const []});
 
   @override
   String toString() {
     return 'SnapdLoginResponse(id: ${id}, username: ${username}, email: ${email}, macaroon: ${macaroon}, discharges: ${discharges})';
+  }
+
+  factory SnapdLoginResponse._fromJson(value) {
+    return SnapdLoginResponse(
+        id: value['id'],
+        username: value['username'],
+        email: value['email'],
+        macaroon: value['macaroon'],
+        discharges: value['discharges'] ?? [],
+        sshKeys: value['ssh-keys'] ?? []);
   }
 }
 
@@ -259,19 +373,39 @@ class SnapdChange {
   /// True when this change is complete.
   final bool ready;
 
+  final String? err;
+
   /// The time this change started.
   /// FIXME(robert-ancell): Implement
   ///final String spawnTime;
 
   /// The tasks of this change.
-  List<SnapdTask> tasks;
+  final List<SnapdTask> tasks;
 
-  SnapdChange(
-      {this.id, this.kind, this.summary, this.status, this.ready, this.tasks});
+  const SnapdChange(
+      {this.id = '',
+      this.kind = '',
+      this.summary = '',
+      this.status = '',
+      this.ready = false,
+      this.err,
+      this.tasks = const []});
 
   @override
   String toString() {
-    return "SnapdChange(id: '${id}', kind: '${kind}', summary: '${summary}', status: '${status}', ready: ${ready}, tasks: ${tasks})";
+    return "SnapdChange(id: '${id}', kind: '${kind}', summary: '${summary}', status: '${status}', ready: ${ready}, err: ${err}, tasks: ${tasks})";
+  }
+
+  factory SnapdChange._fromJson(value) {
+    return SnapdChange(
+        id: value['id'] ?? '',
+        kind: value['kind'] ?? '',
+        summary: value['summary'] ?? '',
+        status: value['status'] ?? '',
+        ready: value['ready'] ?? false,
+        err: value['err'],
+        tasks:
+            value['tasks']?.map((v) => SnapdTask._fromJson(v)).toList() ?? []);
   }
 }
 
@@ -300,11 +434,27 @@ class SnapdTask {
   /// FIXME(robert-ancell): Implement
   ///final String readyTime;
 
-  SnapdTask({this.id, this.kind, this.summary, this.status, this.progress});
+  const SnapdTask(
+      {this.id = '',
+      this.kind = '',
+      this.summary = '',
+      this.status = '',
+      this.progress = const SnapdTaskProgress()});
 
   @override
   String toString() {
     return "SnapdTask(id: '${id}', kind: '${kind}', summary: '${summary}', status: '${status}', progress: ${progress})";
+  }
+
+  factory SnapdTask._fromJson(value) {
+    return SnapdTask(
+        id: value['id'] ?? '',
+        kind: value['kind'] ?? '',
+        summary: value['summary'] ?? '',
+        status: value['status'] ?? '',
+        progress: value['progress'] != null
+            ? SnapdTaskProgress._fromJson(value['progress'])
+            : SnapdTaskProgress());
   }
 }
 
@@ -319,11 +469,18 @@ class SnapdTaskProgress {
   /// Total number of progress items in this task.
   final int total;
 
-  SnapdTaskProgress({this.label, this.done, this.total});
+  const SnapdTaskProgress({this.label = '', this.done = 0, this.total = 0});
 
   @override
   String toString() {
     return "SnapdTaskProgress(label: '${label}', done: ${done}, total: ${total})";
+  }
+
+  factory SnapdTaskProgress._fromJson(value) {
+    return SnapdTaskProgress(
+        label: value['label'] ?? '',
+        done: value['done'] ?? 0,
+        total: value['total'] ?? 0);
   }
 }
 
@@ -341,7 +498,7 @@ abstract class _SnapdResponse {
   /// Request change ID. Throws an exception if not an async result.
   String get change;
 
-  _SnapdResponse({this.statusCode, this.status});
+  const _SnapdResponse({this.statusCode = 0, this.status = ''});
 }
 
 /// Response retuned when a sync request is completed.
@@ -354,7 +511,7 @@ class _SnapdSyncResponse extends _SnapdResponse {
   @override
   String get change => throw 'Result is sync';
 
-  _SnapdSyncResponse(dynamic result, {int statusCode, String status})
+  _SnapdSyncResponse(dynamic result, {int statusCode = 0, String status = ''})
       : _result = result,
         super(statusCode: statusCode, status: status);
 }
@@ -369,7 +526,7 @@ class _SnapdAsyncResponse extends _SnapdResponse {
   @override
   String get change => _change;
 
-  _SnapdAsyncResponse(change, {int statusCode, String status})
+  _SnapdAsyncResponse(change, {int statusCode = 0, String status = ''})
       : _change = change,
         super(statusCode: statusCode, status: status);
 }
@@ -383,7 +540,7 @@ class _SnapdErrorResponse extends _SnapdResponse {
   final String kind;
 
   /// Error value.
-  final value;
+  final dynamic? value;
 
   @override
   dynamic get result => throw 'Result is error ${kind}: ${message}';
@@ -391,17 +548,25 @@ class _SnapdErrorResponse extends _SnapdResponse {
   @override
   String get change => throw 'Result is error ${kind}: ${message}';
 
-  _SnapdErrorResponse(this.message,
-      {int statusCode, String status, this.kind, this.value})
+  const _SnapdErrorResponse(this.message,
+      {int statusCode = 0, String status = '', this.kind = '', this.value})
       : super(statusCode: statusCode, status: status);
+
+  factory _SnapdErrorResponse.fromJson(int statusCode, String status, value) {
+    return _SnapdErrorResponse(value['message'],
+        statusCode: statusCode,
+        status: status,
+        kind: value['kind'],
+        value: value['value']);
+  }
 }
 
 /// Manages a connection to the snapd server.
 class SnapdClient {
   final _client = HttpUnixClient('/var/run/snapd.socket');
-  String _macaroon;
+  String? _macaroon;
   List<String> _discharges = [];
-  String _userAgent = 'snapd.dart';
+  String? _userAgent = 'snapd.dart';
 
   /// True if snapd operations are allowed to interact with the user.
   /// This affects operations that use polkit authorisation.
@@ -410,6 +575,9 @@ class SnapdClient {
   /// Loads the saved authorization for this user.
   Future<void> loadAuthorization() async {
     var home = Platform.environment['HOME'];
+    if (home == null) {
+      throw 'Unable to determine home directory';
+    }
     var file = File(p.join(home, '.snap', 'auth.json'));
     String contents;
     try {
@@ -436,16 +604,7 @@ class SnapdClient {
   /// Gets information about the system that snapd is running on.
   Future<SnapdSystemInfoResponse> systemInfo() async {
     var result = await _getSync('/v2/system-info');
-    return SnapdSystemInfoResponse(
-        architecture: result['architecture'],
-        buildId: result['build-id'],
-        confinement: result['confinement'],
-        kernelVersion: result['kernel-version'],
-        managed: result['managed'],
-        onClassic: result['on-classic'],
-        series: result['series'],
-        systemMode: result['system-mode'],
-        version: result['version']);
+    return SnapdSystemInfoResponse._fromJson(result);
   }
 
   /// Gets the currently installed snaps.
@@ -453,7 +612,7 @@ class SnapdClient {
     var result = await _getSync('/v2/snaps');
     var snaps = <Snap>[];
     for (var snap in result) {
-      snaps.add(_makeSnap(snap));
+      snaps.add(Snap._fromJson(snap));
     }
     return snaps;
   }
@@ -469,14 +628,15 @@ class SnapdClient {
   }
 
   /// Sets the user agent sent in requests to snapd.
-  set userAgent(String value) => _userAgent = value;
+  set userAgent(String? value) => _userAgent = value;
 
   /// Searches for snaps.
   ///
-  /// If [query] searches for snaps that match the given string.
+  /// If [query] is provided, searches for snaps that match the given string.
   /// If [name] is provided, match the snap with the given name.
   /// If [section] is provided, search within that store section.
-  Future<List<Snap>> find({String query, String name, String section}) async {
+  Future<List<Snap>> find(
+      {String? query, String? name, String? section}) async {
     var queryParameters = <String, String>{};
     if (query != null) {
       queryParameters['q'] = query;
@@ -490,21 +650,20 @@ class SnapdClient {
     var result = await _getSync('/v2/find', queryParameters);
     var snaps = <Snap>[];
     for (var snap in result) {
-      snaps.add(_makeSnap(snap));
+      snaps.add(Snap._fromJson(snap));
     }
     return snaps;
   }
 
   /// Logs into the snap store.
   Future<SnapdLoginResponse> login(String email, String password,
-      {String otp}) async {
+      {String? otp}) async {
     var request = {'email': email, 'password': password};
     if (otp != null) {
       request['otp'] = otp;
     }
     var result = await _postSync('/v2/login', request);
-    return SnapdLoginResponse(result['id'], result['username'], result['email'],
-        result['macaroon'], result['discharges']);
+    return SnapdLoginResponse._fromJson(result);
   }
 
   /// Logs out of the snap store.
@@ -522,7 +681,7 @@ class SnapdClient {
   /// Refreshes the snaps with the given [names].
   /// If no names provided refreshes all snaps.
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> refresh([List<String> names]) async {
+  Future<String> refresh([List<String>? names]) async {
     var request = {};
     request['action'] = 'refresh';
     if (names != null) {
@@ -541,27 +700,7 @@ class SnapdClient {
   /// Gets the status the change with the given [id].
   Future<SnapdChange> getChange(String id) async {
     var result = await _getSync('/v2/changes/${id}');
-    var tasks = <SnapdTask>[];
-    if (result['tasks'] != null) {
-      for (var task in result['tasks']) {
-        var p = task['progress'];
-        var progress = SnapdTaskProgress(
-            label: p['label'], done: p['done'], total: p['total']);
-        tasks.add(SnapdTask(
-            id: task['id'],
-            kind: task['kind'],
-            summary: task['summary'],
-            status: task['status'],
-            progress: progress));
-      }
-    }
-    return SnapdChange(
-        id: result['id'],
-        kind: result['kind'],
-        summary: result['summary'],
-        status: result['status'],
-        ready: result['ready'],
-        tasks: tasks);
+    return SnapdChange._fromJson(result);
   }
 
   /// Terminates all active connections. If a client remains unclosed, the Dart process may not terminate.
@@ -571,7 +710,7 @@ class SnapdClient {
 
   /// Does a synchronous request to snapd.
   Future<dynamic> _getSync(String path,
-      [Map<String, String> queryParameters]) async {
+      [Map<String, String> queryParameters = const {}]) async {
     var request = Request('GET', Uri.http('localhost', path, queryParameters));
     _setHeaders(request);
     var response = await _client.send(request);
@@ -617,11 +756,7 @@ class SnapdClient {
           statusCode: statusCode, status: status);
     } else if (type == 'error') {
       var result = jsonResponse['result'];
-      snapdResponse = _SnapdErrorResponse(result['message'],
-          statusCode: statusCode,
-          status: status,
-          kind: result['kind'],
-          value: result['value']);
+      snapdResponse = _SnapdErrorResponse.fromJson(statusCode, status, result);
     } else {
       throw "Unknown snapd response '${type}'";
     }
@@ -632,7 +767,7 @@ class SnapdClient {
   /// Makes base HTTP headers to send.
   void _setHeaders(Request request) {
     if (_userAgent != null) {
-      request.headers['User-Agent'] = _userAgent;
+      request.headers['User-Agent'] = _userAgent!;
     }
     if (_macaroon != null) {
       var authorization = 'Macaroon root="${_macaroon}"';
@@ -644,72 +779,5 @@ class SnapdClient {
     if (allowInteraction) {
       request.headers['X-Allow-Interaction'] = 'true';
     }
-  }
-
-  /// Convert a JSON snap representation to a Snap object.
-  Snap _makeSnap(dynamic json) {
-    List<SnapApp> apps;
-    if (json['apps'] != null) {
-      apps = <SnapApp>[];
-      for (var app in json['apps']) {
-        apps.add(SnapApp._fromJson(app));
-      }
-    }
-    Map<String, SnapChannel> channels;
-    if (json['channels'] != null) {
-      channels = <String, SnapChannel>{};
-      json['channels'].forEach((name, c) {
-        channels[name] = SnapChannel(
-            confinement: c['confinement'],
-            revision: c['revision'],
-            size: c['size'],
-            version: c['version']);
-      });
-    }
-    SnapPublisher publisher;
-    var p = json['publisher'];
-    if (p != null) {
-      publisher = SnapPublisher(
-          id: p['id'],
-          username: p['username'],
-          displayName: p['display-name'],
-          validation: p['validation']);
-    }
-    List<SnapMedia> media;
-    if (json['media'] != null) {
-      media = <SnapMedia>[];
-      for (var m in json['media']) {
-        media.add(SnapMedia(m['type'], m['url'],
-            width: m['width'], height: m['height']));
-      }
-    }
-    List<String> tracks;
-    if (json['tracks'] != null) {
-      tracks = <String>[];
-      for (var t in json['tracks']) {
-        tracks.add(t);
-      }
-    }
-    return Snap(
-        apps: apps,
-        channel: json['channel'],
-        channels: channels,
-        contact: json['contact'],
-        description: json['description'],
-        downloadSize: json['download-size'],
-        id: json['id'],
-        installedSize: json['installed-size'],
-        license: json['license'],
-        media: media,
-        name: json['name'],
-        publisher: publisher,
-        revision: json['revision'],
-        storeUrl: json['store-url'],
-        summary: json['summary'],
-        title: json['title'],
-        tracks: tracks,
-        type: json['type'],
-        version: json['version'],
-        website: json['website']);
   }
 }

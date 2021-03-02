@@ -18,17 +18,9 @@ void main() async {
     if (snap.channel != '') {
       channel = snap.channel;
     }
-    var publisher = '-';
-    if (snap.publisher != null) {
-      publisher = snap.publisher.username;
-    }
-    rows.add([
-      snap.name,
-      snap.version ?? '-',
-      snap.revision ?? '-',
-      channel,
-      publisher
-    ]);
+    var publisher = snap.publisher?.username;
+    rows.add(
+        [snap.name, snap.version, snap.revision, channel, publisher ?? '-']);
   }
   var columnWidths = [0, 0, 0, 0, 0];
   for (var row in rows) {
