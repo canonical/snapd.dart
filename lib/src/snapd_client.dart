@@ -7,13 +7,24 @@ import 'http_unix_client.dart';
 
 /// Describes an app provided by a snap.
 class SnapApp {
+  /// The snap this app is part of
+  final String snap;
+
   /// Name of the app.
   final String name;
 
   /// Desktop file the app uses.
   final String desktopFile;
 
-  SnapApp(this.name, {this.desktopFile});
+  /// A unique ID for this app.
+  final String commonId;
+
+  SnapApp(this.snap, this.name, {this.desktopFile, this.commonId});
+
+  factory SnapApp._fromJson(value) {
+    return SnapApp(value['snap'], value['name'],
+        desktopFile: value['desktop-file'], commonId: value['common-id']);
+  }
 }
 
 /// Described a channel available for a snap.
@@ -447,6 +458,16 @@ class SnapdClient {
     return snaps;
   }
 
+  /// Gets the currently installed apps.
+  Future<List<SnapApp>> apps() async {
+    var result = await _getSync('/v2/apps');
+    var apps = <SnapApp>[];
+    for (var app in result) {
+      apps.add(SnapApp._fromJson(app));
+    }
+    return apps;
+  }
+
   /// Sets the user agent sent in requests to snapd.
   set userAgent(String value) => _userAgent = value;
 
@@ -630,8 +651,8 @@ class SnapdClient {
     List<SnapApp> apps;
     if (json['apps'] != null) {
       apps = <SnapApp>[];
-      for (var a in json['apps']) {
-        apps.add(SnapApp(a['name'], desktopFile: a['desktop-file']));
+      for (var app in json['apps']) {
+        apps.add(SnapApp._fromJson(app));
       }
     }
     Map<String, SnapChannel> channels;
