@@ -57,9 +57,11 @@ class HttpUnixClient extends BaseClient {
 
   @override
   Future<StreamedResponse> send(BaseRequest request) async {
-    var address = InternetAddress(path, type: InternetAddressType.unix);
-    _socket = await Socket.connect(address, 0);
-    _socket.listen(_processData);
+    if (_socket == null) {
+      var address = InternetAddress(path, type: InternetAddressType.unix);
+      _socket = await Socket.connect(address, 0);
+      _socket.listen(_processData);
+    }
 
     var message = '';
     var url = request.url;
@@ -92,7 +94,10 @@ class HttpUnixClient extends BaseClient {
 
   @override
   void close() {
-    _socket.close();
+    if (_socket != null) {
+      _socket.close();
+      _socket = null;
+    }
   }
 
   void _processData(Uint8List data) {
