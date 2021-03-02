@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:snapd/snapd.dart';
 
 void main(List<String> args) async {
-  String query;
+  String? query;
   if (args.isNotEmpty) {
     query = args[0];
   }
@@ -15,11 +15,8 @@ void main(List<String> args) async {
     ['Name', 'Version', 'Publisher', 'Summary']
   ];
   for (var snap in snaps) {
-    var publisher = '-';
-    if (snap.publisher != null) {
-      publisher = snap.publisher.username;
-    }
-    rows.add([snap.name, snap.version ?? '-', publisher, snap.summary]);
+    var publisher = snap.publisher?.username;
+    rows.add([snap.name, snap.version, publisher ?? '-', snap.summary]);
   }
   var columnWidths = [0, 0, 0, 0];
   for (var row in rows) {

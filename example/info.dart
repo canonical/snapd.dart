@@ -10,14 +10,11 @@ void main(List<String> args) async {
   var snaps = await client.find(name: args[0]);
   var snap = snaps[0];
 
-  var publisher = '-';
-  if (snap.publisher != null) {
-    publisher = snap.publisher.displayName;
-  }
+  var publisher = snap.publisher?.displayName;
 
   print('name:      ${snap.name}');
   print('summary:   ${snap.summary}');
-  print('publisher: ${publisher}');
+  print('publisher: ${publisher ?? '-'}');
   print('store-url: ${snap.storeUrl}');
   print('contact:   ${snap.contact}');
   print('license:   ${snap.license}');
@@ -26,7 +23,7 @@ void main(List<String> args) async {
     print('  ${line}');
   }
   print('snap-id: ${snap.id}');
-  if (snap.tracks != null) {
+  if (snap.tracks.isNotEmpty) {
     print('channels:');
     for (var track in snap.tracks) {
       for (var risk in ['stable', 'candidate', 'beta', 'edge']) {
