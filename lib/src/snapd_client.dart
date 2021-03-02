@@ -392,6 +392,10 @@ class SnapdClient {
   List<String> _discharges = [];
   String _userAgent = 'snapd.dart';
 
+  /// True if snapd operations are allowed to interact with the user.
+  /// This affects operations that use polkit authorisation.
+  bool allowInteraction = true;
+
   /// Loads the saved authorization for this user.
   Future<void> loadAuthorization() async {
     var home = Platform.environment['HOME'];
@@ -615,6 +619,9 @@ class SnapdClient {
         authorization += ',discharge="${discharge}"';
       }
       request.headers['Authorization'] = authorization;
+    }
+    if (allowInteraction) {
+      request.headers['X-Allow-Interaction'] = 'true';
     }
   }
 
