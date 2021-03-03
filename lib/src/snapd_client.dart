@@ -458,7 +458,7 @@ class SnapdTask {
   }
 }
 
-// Progress of a [SnapdTask].
+/// Progress of a [SnapdTask].
 class SnapdTaskProgress {
   /// Optional label.
   final String label;
