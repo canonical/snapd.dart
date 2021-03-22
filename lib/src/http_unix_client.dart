@@ -72,7 +72,7 @@ class HttpUnixClient extends BaseClient {
       message += 'Content-Length: ${request.contentLength}\r\n';
     }
     request.headers.forEach((name, value) {
-      message += '${name}: ${value}\r\n';
+      message += '$name: $value\r\n';
     });
     message += '\r\n';
     _socket?.write(message);
