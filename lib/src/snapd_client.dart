@@ -218,7 +218,7 @@ class Snap {
 
   @override
   String toString() {
-    return "Snap('${name}')";
+    return "Snap('$name')";
   }
 
   factory Snap._fromJson(value) {
@@ -297,7 +297,7 @@ class SnapdSystemInfoResponse {
 
   @override
   String toString() =>
-      'SnapdSystemInfoResponse(architecture: ${architecture}, buildId: ${buildId}, confinement: ${confinement}, kernelVersion: ${kernelVersion}, managed: ${managed}, onClassic: ${onClassic}, series: ${series}, systemMode: ${systemMode}, version: ${version})';
+      'SnapdSystemInfoResponse(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, series: $series, systemMode: $systemMode, version: $version)';
 
   factory SnapdSystemInfoResponse._fromJson(value) {
     return SnapdSystemInfoResponse(
@@ -342,7 +342,7 @@ class SnapdLoginResponse {
 
   @override
   String toString() {
-    return 'SnapdLoginResponse(id: ${id}, username: ${username}, email: ${email}, macaroon: ${macaroon}, discharges: ${discharges})';
+    return 'SnapdLoginResponse(id: $id, username: $username, email: $email, macaroon: $macaroon, discharges: $discharges)';
   }
 
   factory SnapdLoginResponse._fromJson(value) {
@@ -393,7 +393,7 @@ class SnapdChange {
 
   @override
   String toString() {
-    return "SnapdChange(id: '${id}', kind: '${kind}', summary: '${summary}', status: '${status}', ready: ${ready}, err: ${err}, tasks: ${tasks})";
+    return "SnapdChange(id: '$id', kind: '$kind', summary: '$summary', status: '$status', ready: $ready, err: $err, tasks: $tasks)";
   }
 
   factory SnapdChange._fromJson(value) {
@@ -443,7 +443,7 @@ class SnapdTask {
 
   @override
   String toString() {
-    return "SnapdTask(id: '${id}', kind: '${kind}', summary: '${summary}', status: '${status}', progress: ${progress})";
+    return "SnapdTask(id: '$id', kind: '$kind', summary: '$summary', status: '$status', progress: $progress)";
   }
 
   factory SnapdTask._fromJson(value) {
@@ -473,7 +473,7 @@ class SnapdTaskProgress {
 
   @override
   String toString() {
-    return "SnapdTaskProgress(label: '${label}', done: ${done}, total: ${total})";
+    return "SnapdTaskProgress(label: '$label', done: $done, total: $total)";
   }
 
   factory SnapdTaskProgress._fromJson(value) {
@@ -543,10 +543,10 @@ class _SnapdErrorResponse extends _SnapdResponse {
   final dynamic? value;
 
   @override
-  dynamic get result => throw 'Result is error ${kind}: ${message}';
+  dynamic get result => throw 'Result is error $kind: $message';
 
   @override
-  String get change => throw 'Result is error ${kind}: ${message}';
+  String get change => throw 'Result is error $kind: $message';
 
   const _SnapdErrorResponse(this.message,
       {int statusCode = 0, String status = '', this.kind = '', this.value})
@@ -699,7 +699,7 @@ class SnapdClient {
 
   /// Gets the status the change with the given [id].
   Future<SnapdChange> getChange(String id) async {
-    var result = await _getSync('/v2/changes/${id}');
+    var result = await _getSync('/v2/changes/$id');
     return SnapdChange._fromJson(result);
   }
 
@@ -758,7 +758,7 @@ class SnapdClient {
       var result = jsonResponse['result'];
       snapdResponse = _SnapdErrorResponse.fromJson(statusCode, status, result);
     } else {
-      throw "Unknown snapd response '${type}'";
+      throw "Unknown snapd response '$type'";
     }
 
     return snapdResponse;
@@ -770,9 +770,9 @@ class SnapdClient {
       request.headers['User-Agent'] = _userAgent!;
     }
     if (_macaroon != null) {
-      var authorization = 'Macaroon root="${_macaroon}"';
+      var authorization = 'Macaroon root="$_macaroon"';
       for (var discharge in _discharges) {
-        authorization += ',discharge="${discharge}"';
+        authorization += ',discharge="$discharge"';
       }
       request.headers['Authorization'] = authorization;
     }

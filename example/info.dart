@@ -20,20 +20,20 @@ void main(List<String> args) async {
   print('license:   ${snap.license}');
   print('description: |');
   for (var line in snap.description.split('\n')) {
-    print('  ${line}');
+    print('  $line');
   }
   print('snap-id: ${snap.id}');
   if (snap.tracks.isNotEmpty) {
     print('channels:');
     for (var track in snap.tracks) {
       for (var risk in ['stable', 'candidate', 'beta', 'edge']) {
-        var name = '${track}/${risk}';
+        var name = '$track/$risk';
         var channel = snap.channels[name];
         var description = '↑';
         if (channel != null) {
           description = '${channel.version} (${channel.revision})';
         }
-        print('  ${track}/${risk.padRight(9)}: ${description}');
+        print('  $track/${risk.padRight(9)}: $description');
       }
     }
   }
