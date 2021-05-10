@@ -563,14 +563,19 @@ class _SnapdErrorResponse extends _SnapdResponse {
 
 /// Manages a connection to the snapd server.
 class SnapdClient {
-  final _client = HttpUnixClient('/var/run/snapd.socket');
+  final HttpUnixClient _client;
   String? _macaroon;
   List<String> _discharges = [];
-  String? _userAgent = 'snapd.dart';
+  String? _userAgent;
 
   /// True if snapd operations are allowed to interact with the user.
   /// This affects operations that use polkit authorisation.
   bool allowInteraction = true;
+
+  SnapdClient(
+      {String userAgent = 'snapd.dart', socketPath = '/var/run/snapd.socket'})
+      : _userAgent = userAgent,
+        _client = HttpUnixClient(socketPath);
 
   /// Loads the saved authorization for this user.
   Future<void> loadAuthorization() async {
