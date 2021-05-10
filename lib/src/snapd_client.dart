@@ -38,12 +38,12 @@ class SnapApp {
       this.active = true,
       this.commonId});
 
-  factory SnapApp._fromJson(value) {
+  factory SnapApp._fromJson(Map<String, dynamic> value) {
     return SnapApp(value['snap'], value['name'],
         desktopFile: value['desktop-file'],
         daemon: value['daemon'],
-        enabled: value['enabled'],
-        active: value['active'],
+        enabled: value['enabled'] ?? true,
+        active: value['active'] ?? true,
         commonId: value['common-id']);
   }
 }
@@ -221,9 +221,11 @@ class Snap {
     return "Snap('$name')";
   }
 
-  factory Snap._fromJson(value) {
+  factory Snap._fromJson(Map<String, dynamic> value) {
     return Snap(
-        apps: value['apps']?.map((v) => SnapApp._fromJson(v)) ?? [],
+        apps: value['apps'] != null
+            ? (value['apps'] as List).map((v) => SnapApp._fromJson(v)).toList()
+            : [],
         channel: value['channel'],
         channels: value['channels']
                 ?.map((k, v) => MapEntry(k, SnapChannel._fromJson(v))) ??
@@ -235,7 +237,11 @@ class Snap {
         id: value['id'],
         installedSize: value['installed-size'],
         license: value['license'],
-        media: value['media']?.map((v) => SnapMedia._fromJson(v)) ?? [],
+        media: value['media'] != null
+            ? (value['media'] as List)
+                .map((v) => SnapMedia._fromJson(v))
+                .toList()
+            : [],
         name: value['name'],
         publisher: value['publisher'] != null
             ? SnapPublisher._fromJson(value['publisher'])
