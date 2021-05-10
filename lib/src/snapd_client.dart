@@ -546,7 +546,7 @@ class _SnapdErrorResponse extends _SnapdResponse {
   final String kind;
 
   /// Error value.
-  final dynamic? value;
+  final dynamic value;
 
   @override
   dynamic get result => throw 'Result is error $kind: $message';
