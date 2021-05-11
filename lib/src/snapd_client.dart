@@ -227,9 +227,10 @@ class Snap {
             ? (value['apps'] as List).map((v) => SnapApp._fromJson(v)).toList()
             : [],
         channel: value['channel'],
-        channels: value['channels']
-                ?.map((k, v) => MapEntry(k, SnapChannel._fromJson(v))) ??
-            {},
+        channels: value['channels'] != null
+            ? (value['channels'] as Map)
+                .map((k, v) => MapEntry(k, SnapChannel._fromJson(v)))
+            : {},
         commonIds: value['common-ids']?.cast<String>() ?? [],
         contact: value['contact'] ?? '',
         description: value['description'] ?? '',
