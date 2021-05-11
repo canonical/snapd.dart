@@ -5,8 +5,120 @@ import 'dart:io';
 import 'package:snapd/snapd.dart';
 import 'package:test/test.dart';
 
-class MockSnap {
+class MockApp {
+  final bool? active;
+  final String? commonId;
+  final String? daemon;
+  final String? desktopFile;
+  final bool? enabled;
+  final String name;
+  final String snap;
+
+  MockApp(
+      {this.active,
+      this.commonId,
+      this.daemon,
+      this.desktopFile,
+      this.enabled,
+      this.name = '',
+      this.snap = ''});
+
+  dynamic toJson() {
+    var object = <dynamic, dynamic>{'name': name, 'snap': snap};
+    if (active != null) {
+      object['active'] = active;
+    }
+    if (commonId != null) {
+      object['common-id'] = commonId;
+    }
+    if (daemon != null) {
+      object['daemon'] = daemon;
+    }
+    if (desktopFile != null) {
+      object['desktop-file'] = desktopFile;
+    }
+    if (enabled != null) {
+      object['enabled'] = enabled;
+    }
+    return object;
+  }
+}
+
+class MockMedia {
+  final int? height;
+  final String type;
+  final String url;
+  final int? width;
+
+  MockMedia({this.height, this.type = '', this.url = '', this.width});
+
+  dynamic toJson() {
+    var object = <dynamic, dynamic>{'type': type, 'url': url};
+    if (height != null) {
+      object['height'] = height;
+    }
+    if (width != null) {
+      object['width'] = width;
+    }
+    return object;
+  }
+}
+
+class MockPublisher {
+  final String displayName;
+  final String id;
+  final String username;
+  final String? validation;
+
+  MockPublisher(
+      {this.displayName = '',
+      this.id = '',
+      this.username = '',
+      this.validation});
+
+  dynamic toJson() {
+    var object = <dynamic, dynamic>{
+      'display-name': displayName,
+      'id': id,
+      'username': username
+    };
+    if (validation != null) {
+      object['validation'] = validation;
+    }
+    return object;
+  }
+}
+
+class MockChannel {
   final String channel;
+  final String confinement;
+  final String revision;
+  final int size;
+  final String version;
+
+  MockChannel(
+      {this.channel = '',
+      this.confinement = '',
+      this.revision = '',
+      this.size = 0,
+      this.version = ''});
+
+  dynamic toJson() {
+    var object = <dynamic, dynamic>{
+      'channel': channel,
+      'confinement': confinement,
+      'revision': revision,
+      'size': size,
+      'version': version
+    };
+    return object;
+  }
+}
+
+class MockSnap {
+  final List<MockApp>? apps;
+  final String channel;
+  final Map<String, MockChannel>? channels;
   final List<String>? commonIds;
   final String? contact;
   final String description;
@@ -14,7 +126,9 @@ class MockSnap {
   final String id;
   final int? installedSize;
   final String? license;
+  final List<MockMedia>? media;
   final String name;
+  final MockPublisher? publisher;
   final String revision;
   final String? storeUrl;
   final String summary;
@@ -25,7 +139,9 @@ class MockSnap {
   final String? website;
 
   MockSnap(
-      {this.channel = '',
+      {this.apps,
+      this.channel = '',
+      this.channels,
       this.commonIds,
       this.contact,
       this.description = '',
@@ -33,7 +149,9 @@ class MockSnap {
       this.id = '',
       this.installedSize,
       this.license,
+      this.media,
       this.name = '',
+      this.publisher,
       this.revision = '',
       this.storeUrl,
       this.summary = '',
@@ -55,6 +173,13 @@ class MockSnap {
       'type': type,
       'version': version
     };
+    if (apps != null) {
+      object['apps'] = apps!.map((app) => app.toJson()).toList();
+    }
+    if (channels != null) {
+      object['channels'] =
+          channels!.map((name, channel) => MapEntry(name, channel.toJson()));
+    }
     if (commonIds != null) {
       object['common-ids'] = commonIds;
     }
@@ -69,6 +194,12 @@ class MockSnap {
     }
     if (license != null) {
       object['license'] = license;
+    }
+    if (media != null) {
+      object['media'] = media!.map((m) => m.toJson()).toList();
+    }
+    if (publisher != null) {
+      object['publisher'] = publisher!.toJson();
     }
     if (storeUrl != null) {
       object['store-url'] = storeUrl;
@@ -289,7 +420,70 @@ void main() {
   test('snap properties', () async {
     var snapd = MockSnapdServer(snaps: [
       MockSnap(
+          description: 'Hello\nSalut\nHola',
+          id: 'QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV',
+          name: 'hello',
+          revision: '42',
+          summary: 'Hello is an app',
+          title: 'Hello',
+          type: 'app',
+          version: '1.2')
+    ]);
+    await snapd.start();
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+
+    var snaps = await client.snaps();
+    expect(snaps, hasLength(1));
+    var snap = snaps[0];
+    expect(snap.apps, isEmpty);
+    expect(snap.channel, equals(''));
+    expect(snap.channels, isEmpty);
+    expect(snap.commonIds, isEmpty);
+    expect(snap.contact, equals(''));
+    expect(snap.description, equals('Hello\nSalut\nHola'));
+    expect(snap.downloadSize, isNull);
+    expect(snap.id, equals('QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV'));
+    expect(snap.installedSize, isNull);
+    expect(snap.license, isNull);
+    expect(snap.media, isEmpty);
+    expect(snap.name, equals('hello'));
+    expect(snap.publisher, isNull);
+    expect(snap.revision, equals('42'));
+    expect(snap.storeUrl, isNull);
+    expect(snap.summary, equals('Hello is an app'));
+    expect(snap.title, equals('Hello'));
+    expect(snap.tracks, isEmpty);
+    expect(snap.type, equals('app'));
+    expect(snap.version, equals('1.2'));
+    expect(snap.website, isNull);
+
+    client.close();
+    await snapd.close();
+  });
+
+  test('snap optional properties', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(
+          apps: [
+            MockApp(name: 'hello1', snap: 'hello'),
+            MockApp(name: 'hello2', snap: 'hello')
+          ],
           channel: 'stable',
+          channels: {
+            'latest/stable': MockChannel(
+                channel: 'latest/stable',
+                version: '1.2',
+                revision: '42',
+                size: 123456,
+                confinement: 'strict'),
+            'insider/stable': MockChannel(
+                channel: 'insider/stable',
+                version: '1.3',
+                revision: '43',
+                size: 888888,
+                confinement: 'classic')
+          },
           commonIds: ['com.example.Hello', 'com.example.Hallo'],
           contact: 'hello@example.com',
           description: 'Hello\nSalut\nHola',
@@ -297,7 +491,20 @@ void main() {
           id: 'QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV',
           installedSize: 654321,
           license: 'GPL-3',
+          media: [
+            MockMedia(type: 'icon', url: 'http://example.com/hello-icon.png'),
+            MockMedia(
+                type: 'screenshot',
+                url: 'http://example.com/hello-screenshot.jpg',
+                width: 1024,
+                height: 768)
+          ],
           name: 'hello',
+          publisher: MockPublisher(
+              id: 'JvtzsxbsHivZLdvzrt0iqW529riGLfXJ',
+              username: 'publisher',
+              displayName: 'Publisher',
+              validation: 'verified'),
           revision: '42',
           storeUrl: 'https://snapcraft.io/hello',
           summary: 'Hello is an app',
@@ -314,7 +521,12 @@ void main() {
     var snaps = await client.snaps();
     expect(snaps, hasLength(1));
     var snap = snaps[0];
+    expect(snap.apps, hasLength(2));
+    expect(snap.apps[0].name, equals('hello1'));
+    expect(snap.apps[0].snap, equals('hello'));
+    expect(snap.apps[1].name, equals('hello2'));
     expect(snap.channel, equals('stable'));
+    expect(snap.channels, hasLength(2));
     expect(snap.commonIds, equals(['com.example.Hello', 'com.example.Hallo']));
     expect(snap.contact, equals('hello@example.com'));
     expect(snap.description, equals('Hello\nSalut\nHola'));
@@ -322,7 +534,22 @@ void main() {
     expect(snap.id, equals('QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV'));
     expect(snap.installedSize, equals(654321));
     expect(snap.license, equals('GPL-3'));
+    expect(snap.media, hasLength(2));
+    expect(snap.media[0].type, equals('icon'));
+    expect(snap.media[0].url, equals('http://example.com/hello-icon.png'));
+    expect(snap.media[0].width, isNull);
+    expect(snap.media[0].height, isNull);
+    expect(snap.media[1].type, equals('screenshot'));
+    expect(
+        snap.media[1].url, equals('http://example.com/hello-screenshot.jpg'));
+    expect(snap.media[1].width, equals(1024));
+    expect(snap.media[1].height, equals(768));
     expect(snap.name, equals('hello'));
+    expect(snap.publisher, isNotNull);
+    expect(snap.publisher!.id, equals('JvtzsxbsHivZLdvzrt0iqW529riGLfXJ'));
+    expect(snap.publisher!.username, equals('publisher'));
+    expect(snap.publisher!.displayName, equals('Publisher'));
+    expect(snap.publisher!.validation, equals('verified'));
     expect(snap.revision, equals('42'));
     expect(snap.storeUrl, equals('https://snapcraft.io/hello'));
     expect(snap.summary, equals('Hello is an app'));
