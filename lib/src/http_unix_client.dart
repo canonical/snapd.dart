@@ -27,7 +27,7 @@ class _HttpRequest {
   _HttpRequest(this.request);
 
   int? get contentLength {
-    var contentLength = headers['Content-Length'];
+    var contentLength = headers['content-length'];
     if (contentLength == null) {
       return null;
     }
@@ -157,7 +157,7 @@ class HttpUnixClient extends BaseClient {
           headers: request.headers,
           reasonPhrase: request.reasonPhrase);
       request.completer.complete(response);
-      var transferEncoding = request.headers['Transfer-Encoding'];
+      var transferEncoding = request.headers['transfer-encoding'];
       if (transferEncoding == 'chunked') {
         _parserState = _HttpParserState.chunkHeader;
       } else {
@@ -170,7 +170,7 @@ class HttpUnixClient extends BaseClient {
       var index = line.indexOf(':');
       var name = line.substring(0, index);
       var value = line.substring(index + 1).trim();
-      request.headers[name] = value;
+      request.headers[name.toLowerCase()] = value;
     }
 
     return false;
