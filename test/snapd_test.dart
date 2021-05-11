@@ -5,6 +5,85 @@ import 'dart:io';
 import 'package:snapd/snapd.dart';
 import 'package:test/test.dart';
 
+class MockSnap {
+  final String channel;
+  final List<String>? commonIds;
+  final String? contact;
+  final String description;
+  final int? downloadSize;
+  final String id;
+  final int? installedSize;
+  final String? license;
+  final String name;
+  final String revision;
+  final String? storeUrl;
+  final String summary;
+  final String title;
+  final List<String>? tracks;
+  final String type;
+  final String version;
+  final String? website;
+
+  MockSnap(
+      {this.channel = '',
+      this.commonIds,
+      this.contact,
+      this.description = '',
+      this.downloadSize,
+      this.id = '',
+      this.installedSize,
+      this.license,
+      this.name = '',
+      this.revision = '',
+      this.storeUrl,
+      this.summary = '',
+      this.title = '',
+      this.tracks,
+      this.type = '',
+      this.version = '',
+      this.website});
+
+  dynamic toJson() {
+    var object = <dynamic, dynamic>{
+      'channel': channel,
+      'description': description,
+      'id': id,
+      'name': name,
+      'revision': revision,
+      'summary': summary,
+      'title': title,
+      'type': type,
+      'version': version
+    };
+    if (commonIds != null) {
+      object['common-ids'] = commonIds;
+    }
+    if (contact != null) {
+      object['contact'] = contact;
+    }
+    if (downloadSize != null) {
+      object['download-size'] = downloadSize;
+    }
+    if (installedSize != null) {
+      object['installed-size'] = installedSize;
+    }
+    if (license != null) {
+      object['license'] = license;
+    }
+    if (storeUrl != null) {
+      object['store-url'] = storeUrl;
+    }
+    if (tracks != null) {
+      object['tracks'] = tracks;
+    }
+    if (website != null) {
+      object['website'] = website;
+    }
+
+    return object;
+  }
+}
+
 class MockSnapdServer {
   Directory? _tempDir;
   String? _socketPath;
@@ -21,8 +100,13 @@ class MockSnapdServer {
   final bool managed;
   final bool onClassic;
   final String series;
+  final List<MockSnap> snaps;
   final String systemMode;
   final String version;
+
+  // Last macaroon received.
+  String? lastMacaroon;
+  List<String>? lastDischarges;
 
   String get socketPath => _socketPath!;
 
@@ -34,6 +118,7 @@ class MockSnapdServer {
     this.managed = false,
     this.onClassic = false,
     this.series = '',
+    this.snaps = const [],
     this.systemMode = '',
     this.version = '',
   });
@@ -59,6 +144,20 @@ class MockSnapdServer {
   }
 
   void _processRequest(HttpRequest request) {
+    var authorization = request.headers.value(HttpHeaders.authorizationHeader);
+    lastMacaroon = null;
+    lastDischarges = null;
+    if (authorization != null && authorization.startsWith('Macaroon ')) {
+      lastDischarges = <String>[];
+      for (var value in authorization.substring(9).split(',')) {
+        if (value.startsWith('root="')) {
+          lastMacaroon = value.substring(6, value.length - 1);
+        } else if (value.startsWith('discharge="')) {
+          lastDischarges?.add(value.substring(11, value.length - 1));
+        }
+      }
+    }
+
     var response = request.response;
     switch (request.uri.path) {
       case '/v2/system-info':
@@ -73,6 +172,10 @@ class MockSnapdServer {
           'system-mode': systemMode,
           'version': version
         });
+        break;
+      case '/v2/snaps':
+        _writeSyncResponse(
+            response, snaps.map((snap) => snap.toJson()).toList());
         break;
       default:
         response.statusCode = HttpStatus.notFound;
@@ -143,6 +246,91 @@ void main() {
     expect(info.series, equals('16'));
     expect(info.systemMode, equals('run'));
     expect(info.version, equals('2.49'));
+
+    client.close();
+    await snapd.close();
+  });
+
+  test('authorization', () async {
+    var snapd = MockSnapdServer();
+    await snapd.start();
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    client.setAuthorization('macaroon', ['discharge1', 'discharge2']);
+
+    await client.systemInfo();
+    expect(snapd.lastMacaroon, equals('macaroon'));
+    expect(snapd.lastDischarges, equals(['discharge1', 'discharge2']));
+
+    client.close();
+    await snapd.close();
+  });
+
+  test('snaps', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'snap1'),
+      MockSnap(name: 'snap2'),
+      MockSnap(name: 'snap3')
+    ]);
+    await snapd.start();
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+
+    var snaps = await client.snaps();
+    expect(snaps, hasLength(3));
+    expect(snaps[0].name, equals('snap1'));
+    expect(snaps[1].name, equals('snap2'));
+    expect(snaps[2].name, equals('snap3'));
+
+    client.close();
+    await snapd.close();
+  });
+
+  test('snap properties', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(
+          channel: 'stable',
+          commonIds: ['com.example.Hello', 'com.example.Hallo'],
+          contact: 'hello@example.com',
+          description: 'Hello\nSalut\nHola',
+          downloadSize: 123456,
+          id: 'QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV',
+          installedSize: 654321,
+          license: 'GPL-3',
+          name: 'hello',
+          revision: '42',
+          storeUrl: 'https://snapcraft.io/hello',
+          summary: 'Hello is an app',
+          title: 'Hello',
+          tracks: ['latest', 'insider'],
+          type: 'app',
+          version: '1.2',
+          website: 'http://example.com/hello')
+    ]);
+    await snapd.start();
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+
+    var snaps = await client.snaps();
+    expect(snaps, hasLength(1));
+    var snap = snaps[0];
+    expect(snap.channel, equals('stable'));
+    expect(snap.commonIds, equals(['com.example.Hello', 'com.example.Hallo']));
+    expect(snap.contact, equals('hello@example.com'));
+    expect(snap.description, equals('Hello\nSalut\nHola'));
+    expect(snap.downloadSize, equals(123456));
+    expect(snap.id, equals('QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV'));
+    expect(snap.installedSize, equals(654321));
+    expect(snap.license, equals('GPL-3'));
+    expect(snap.name, equals('hello'));
+    expect(snap.revision, equals('42'));
+    expect(snap.storeUrl, equals('https://snapcraft.io/hello'));
+    expect(snap.summary, equals('Hello is an app'));
+    expect(snap.title, equals('Hello'));
+    expect(snap.tracks, equals(['latest', 'insider']));
+    expect(snap.type, equals('app'));
+    expect(snap.version, equals('1.2'));
+    expect(snap.website, equals('http://example.com/hello'));
 
     client.close();
     await snapd.close();
