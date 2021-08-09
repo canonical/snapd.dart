@@ -10,6 +10,7 @@ import 'package:snapd/snapd.dart';
 var client = SnapdClient();
 var snaps = await client.snaps();
 print (snaps);
+client.close();
 ```
 
 ## Contributing to snapd.dart
