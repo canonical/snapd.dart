@@ -130,6 +130,7 @@ class MockSnap {
   final String name;
   final MockPublisher? publisher;
   final String revision;
+  final String? section;
   final String? storeUrl;
   final String summary;
   final String title;
@@ -153,6 +154,7 @@ class MockSnap {
       this.name = '',
       this.publisher,
       this.revision = '',
+      this.section,
       this.storeUrl,
       this.summary = '',
       this.title = '',
@@ -252,6 +254,7 @@ class MockSnapdServer {
   final bool onClassic;
   final String series;
   final List<MockSnap> snaps;
+  final List<MockSnap> storeSnaps;
   final String systemMode;
   final String version;
 
@@ -271,6 +274,7 @@ class MockSnapdServer {
     this.onClassic = false,
     this.series = '',
     this.snaps = const [],
+    this.storeSnaps = const [],
     this.systemMode = '',
     this.version = '',
   });
@@ -311,8 +315,8 @@ class MockSnapdServer {
     }
 
     switch (request.uri.path) {
-      case '/v2/system-info':
-        _processSystemInfo(request);
+      case '/v2/find':
+        _processFind(request);
         break;
       case '/v2/login':
         await _processLogin(request);
@@ -323,6 +327,9 @@ class MockSnapdServer {
       case '/v2/snaps':
         _processSnaps(request);
         break;
+      case '/v2/system-info':
+        _processSystemInfo(request);
+        break;
       default:
         request.response.statusCode = HttpStatus.notFound;
         _writeErrorResponse(request.response, 'not found');
@@ -331,18 +338,26 @@ class MockSnapdServer {
     await request.response.close();
   }
 
-  void _processSystemInfo(HttpRequest request) {
-    _writeSyncResponse(request.response, {
-      'architecture': architecture,
-      'build-id': buildId,
-      'confinement': confinement,
-      'kernel-version': kernelVersion,
-      'managed': managed,
-      'on-classic': onClassic,
-      'series': series,
-      'system-mode': systemMode,
-      'version': version
-    });
+  void _processFind(HttpRequest request) async {
+    var parameters = request.uri.queryParameters;
+    var query = parameters['q'];
+    var name = parameters['name'];
+    var section = parameters['section'];
+
+    var snaps = [];
+    for (var snap in storeSnaps) {
+      if (name != null && snap.name != name) {
+        continue;
+      }
+      if (query != null && !snap.name.contains(query)) {
+        continue;
+      }
+      if (section != null && snap.section != section) {
+        continue;
+      }
+      snaps.add(snap.toJson());
+    }
+    _writeSyncResponse(request.response, snaps);
   }
 
   Future<void> _processLogin(HttpRequest request) async {
@@ -398,6 +413,20 @@ class MockSnapdServer {
   void _processSnaps(HttpRequest request) {
     _writeSyncResponse(
         request.response, snaps.map((snap) => snap.toJson()).toList());
+  }
+
+  void _processSystemInfo(HttpRequest request) {
+    _writeSyncResponse(request.response, {
+      'architecture': architecture,
+      'build-id': buildId,
+      'confinement': confinement,
+      'kernel-version': kernelVersion,
+      'managed': managed,
+      'on-classic': onClassic,
+      'series': series,
+      'system-mode': systemMode,
+      'version': version
+    });
   }
 
   void _writeSyncResponse(HttpResponse response, dynamic result) {
@@ -752,5 +781,93 @@ void main() {
     expect(snap.type, equals('app'));
     expect(snap.version, equals('1.2'));
     expect(snap.website, equals('http://example.com/hello'));
+  });
+
+  test('find', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'swordfish'),
+      MockSnap(name: 'bear'),
+      MockSnap(name: 'fishy')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var snaps = await client.find();
+    expect(snaps, hasLength(3));
+    expect(snaps[0].name, equals('swordfish'));
+    expect(snaps[1].name, equals('bear'));
+    expect(snaps[2].name, equals('fishy'));
+  });
+
+  test('find - query', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'swordfish'),
+      MockSnap(name: 'bear'),
+      MockSnap(name: 'fishy')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var snaps = await client.find(query: 'fish');
+    expect(snaps, hasLength(2));
+    expect(snaps[0].name, equals('swordfish'));
+    expect(snaps[1].name, equals('fishy'));
+  });
+
+  test('find - name', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'swordfish'),
+      MockSnap(name: 'bear'),
+      MockSnap(name: 'fishy')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var snaps = await client.find(name: 'fishy');
+    expect(snaps, hasLength(1));
+    expect(snaps[0].name, equals('fishy'));
+  });
+
+  test('find - secton', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'swordfish', section: 'sharp'),
+      MockSnap(name: 'bear', section: 'soft'),
+      MockSnap(name: 'fishy', section: 'soft')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var snaps = await client.find(section: 'soft');
+    expect(snaps, hasLength(2));
+    expect(snaps[0].name, equals('bear'));
+    expect(snaps[1].name, equals('fishy'));
   });
 }
