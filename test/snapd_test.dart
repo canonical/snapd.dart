@@ -222,6 +222,7 @@ class MockAccount {
   final String? username;
   final String? email;
   final String password;
+  final String? otp;
   final String? macaroon;
   final List<String> discharges;
   final List<String> sshKeys;
@@ -231,6 +232,7 @@ class MockAccount {
       this.username,
       this.email,
       required this.password,
+      this.otp,
       this.macaroon,
       this.discharges = const [],
       this.sshKeys = const []});
@@ -414,13 +416,30 @@ class MockSnapdServer {
 
   Future<void> _processLogin(HttpRequest request) async {
     var req = await _readJson(request);
-    var account = _findAccountByEmail(req['email']);
-    if (account == null || account.password != req['password']) {
+    var email = req['email'];
+    var password = req['password'];
+    var otp = req['otp'];
+
+    var account = _findAccountByEmail(email);
+    if (account == null || password != account.password) {
       request.response.statusCode = HttpStatus.unauthorized;
       _writeErrorResponse(request.response,
           'cannot authenticate to snap store: Provided email/password is not correct.',
           kind: 'login-required');
       return;
+    }
+    if (account.otp != null) {
+      if (otp == null) {
+        request.response.statusCode = HttpStatus.unauthorized;
+        _writeErrorResponse(
+            request.response, 'two factor authentication required',
+            kind: 'two-factor-required');
+      } else if (otp != account.otp) {
+        request.response.statusCode = HttpStatus.unauthorized;
+        _writeErrorResponse(
+            request.response, 'two factor authentication failed',
+            kind: 'two-factor-failed');
+      }
     }
     var r = {
       'id': account.id,
@@ -716,6 +735,30 @@ void main() {
     expect(response.macaroon, equals('macaroon'));
     expect(response.discharges, equals(['discharge1', 'discharge2']));
     expect(response.sshKeys, equals(['key1', 'key2']));
+  });
+
+  test('login - otp', () async {
+    var snapd = MockSnapdServer(accounts: [
+      MockAccount(
+          id: 42, email: 'admin@example.com', password: 'password', otp: '1234')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(() => client.login('unknown@example.com', 'password'),
+        throwsA(isA<String>()));
+    expect(() => client.login('unknown@example.com', 'password', otp: '0000'),
+        throwsA(isA<String>()));
+    var response =
+        await client.login('admin@example.com', 'password', otp: '1234');
+    expect(response.id, equals(42));
   });
 
   test('login - unknown email', () async {
