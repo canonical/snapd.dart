@@ -358,8 +358,8 @@ class SnapdLoginResponse {
         username: value['username'],
         email: value['email'],
         macaroon: value['macaroon'],
-        discharges: value['discharges'] ?? [],
-        sshKeys: value['ssh-keys'] ?? []);
+        discharges: value['discharges'].cast<String>() ?? [],
+        sshKeys: value['ssh-keys'].cast<String>() ?? []);
   }
 }
 
