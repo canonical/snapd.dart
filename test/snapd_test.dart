@@ -236,6 +236,35 @@ class MockAccount {
       this.sshKeys = const []});
 }
 
+class MockTask {
+  final String id;
+
+  MockTask({required this.id});
+}
+
+class MockChange {
+  final String id;
+  final String kind;
+  final String summary;
+  final String status;
+  final List<MockTask> tasks;
+  final bool ready;
+  final String spawnTime;
+  final String? readyTime;
+  final String? error;
+
+  MockChange(
+      {required this.id,
+      this.kind = '',
+      this.summary = '',
+      this.status = '',
+      this.tasks = const [],
+      this.ready = false,
+      this.spawnTime = '',
+      this.readyTime,
+      this.error});
+}
+
 class MockSnapdServer {
   Directory? _tempDir;
   String? _socketPath;
@@ -248,13 +277,14 @@ class MockSnapdServer {
   final List<MockAccount> accounts;
   final String architecture;
   final String buildId;
+  final changes = <MockChange>[];
   final String confinement;
   final String kernelVersion;
   final bool managed;
   final bool onClassic;
   final String series;
-  final List<MockSnap> snaps;
-  final List<MockSnap> storeSnaps;
+  final snaps = <MockSnap>[];
+  final storeSnaps = <MockSnap>[];
   final String systemMode;
   final String version;
 
@@ -273,11 +303,14 @@ class MockSnapdServer {
     this.managed = false,
     this.onClassic = false,
     this.series = '',
-    this.snaps = const [],
-    this.storeSnaps = const [],
+    List<MockSnap> snaps = const [],
+    List<MockSnap> storeSnaps = const [],
     this.systemMode = '',
     this.version = '',
-  });
+  }) {
+    this.snaps.addAll(snaps);
+    this.storeSnaps.addAll(storeSnaps);
+  }
 
   Future<void> start() async {
     _tempDir = await Directory.systemTemp.createTemp();
@@ -314,28 +347,47 @@ class MockSnapdServer {
       }
     }
 
-    switch (request.uri.path) {
-      case '/v2/find':
-        _processFind(request);
-        break;
-      case '/v2/login':
-        await _processLogin(request);
-        break;
-      case '/v2/logout':
-        await _processLogout(request);
-        break;
-      case '/v2/snaps':
-        _processSnaps(request);
-        break;
-      case '/v2/system-info':
-        _processSystemInfo(request);
-        break;
-      default:
-        request.response.statusCode = HttpStatus.notFound;
-        _writeErrorResponse(request.response, 'not found');
-        break;
+    var method = request.method;
+    var path = request.uri.path;
+    if (method == 'GET' && path.startsWith('/v2/changes/')) {
+      _processGetChange(request, path.substring('/v2/changes/'.length));
+    } else if (method == 'GET' && path == '/v2/find') {
+      _processFind(request);
+    } else if (method == 'POST' && path == '/v2/login') {
+      await _processLogin(request);
+    } else if (method == 'POST' && path == '/v2/logout') {
+      await _processLogout(request);
+    } else if (method == 'GET' && path == '/v2/snaps') {
+      _processGetSnaps(request);
+    } else if (method == 'POST' && path == '/v2/snaps') {
+      await _processPostSnaps(request);
+    } else if (method == 'GET' && path == '/v2/system-info') {
+      _processSystemInfo(request);
+    } else {
+      request.response.statusCode = HttpStatus.notFound;
+      _writeErrorResponse(request.response, 'not found');
     }
     await request.response.close();
+  }
+
+  void _processGetChange(HttpRequest request, String id) {
+    var change = _findChange(id);
+    if (change == null) {
+      request.response.statusCode = HttpStatus.notFound;
+      _writeErrorResponse(request.response, 'not found');
+      return;
+    }
+
+    _writeSyncResponse(request.response, {
+      'id': change.id,
+      'kind': change.kind,
+      'summary': change.summary,
+      'status': change.status,
+      'tasks': [],
+      'ready': change.ready,
+      'spawn-time': change.spawnTime,
+      'ready-time': change.readyTime
+    });
   }
 
   void _processFind(HttpRequest request) async {
@@ -410,9 +462,60 @@ class MockSnapdServer {
     return null;
   }
 
-  void _processSnaps(HttpRequest request) {
+  void _processGetSnaps(HttpRequest request) {
     _writeSyncResponse(
         request.response, snaps.map((snap) => snap.toJson()).toList());
+  }
+
+  Future<void> _processPostSnaps(HttpRequest request) async {
+    var req = await _readJson(request);
+    var action = req['action'];
+    var snapNames = req['snaps'];
+
+    String? error;
+    switch (action) {
+      case 'install':
+        var snapsToInstall = <MockSnap>[];
+        for (var name in snapNames) {
+          if (_findSnapByName(name) != null) {
+            error = 'Snap $name already installed';
+          }
+          var snap = _findStoreSnapByName(name);
+          if (snap == null) {
+            error = 'Snap $name not in store';
+          } else {
+            snapsToInstall.add(snap);
+          }
+        }
+        if (error == null) {
+          for (var snap in snapsToInstall) {
+            snaps.add(snap);
+          }
+        }
+        break;
+      case 'remove':
+        var snapsToRemove = <MockSnap>[];
+        for (var name in snapNames) {
+          var snap = _findSnapByName(name);
+          if (snap == null) {
+            error = 'Snap $name not installed';
+          } else {
+            snapsToRemove.add(snap);
+          }
+        }
+        if (error == null) {
+          for (var snap in snapsToRemove) {
+            snaps.remove(snap);
+          }
+        }
+        break;
+      default:
+        _writeErrorResponse(request.response, 'unknown action');
+        break;
+    }
+
+    var change = _addChange(ready: true, error: error);
+    _writeAsyncResponse(request.response, change.id);
   }
 
   void _processSystemInfo(HttpRequest request) {
@@ -429,12 +532,71 @@ class MockSnapdServer {
     });
   }
 
+  MockSnap? _findSnapByName(String name) {
+    for (var snap in snaps) {
+      if (snap.name == name) {
+        return snap;
+      }
+    }
+    return null;
+  }
+
+  MockSnap? _findStoreSnapByName(String name) {
+    for (var snap in storeSnaps) {
+      if (snap.name == name) {
+        return snap;
+      }
+    }
+    return null;
+  }
+
+  MockChange _addChange(
+      {String kind = '',
+      String summary = '',
+      String status = '',
+      List<MockTask> tasks = const [],
+      bool ready = false,
+      String spawnTime = '',
+      String? readyTime,
+      String? error}) {
+    var change = MockChange(
+        id: changes.length.toString(),
+        kind: kind,
+        summary: summary,
+        status: status,
+        tasks: tasks,
+        ready: ready,
+        spawnTime: spawnTime,
+        readyTime: readyTime,
+        error: error);
+    changes.add(change);
+    return change;
+  }
+
+  MockChange? _findChange(String id) {
+    for (var change in changes) {
+      if (change.id == id) {
+        return change;
+      }
+    }
+    return null;
+  }
+
   void _writeSyncResponse(HttpResponse response, dynamic result) {
     _writeJson(response, {
       'type': 'sync',
       'status-code': response.statusCode,
       'status': response.reasonPhrase,
       'result': result
+    });
+  }
+
+  void _writeAsyncResponse(HttpResponse response, String change) {
+    _writeJson(response, {
+      'type': 'async',
+      'status-code': response.statusCode,
+      'status': response.reasonPhrase,
+      'change': change
     });
   }
 
@@ -849,7 +1011,7 @@ void main() {
     expect(snaps[0].name, equals('fishy'));
   });
 
-  test('find - secton', () async {
+  test('find - section', () async {
     var snapd = MockSnapdServer(storeSnaps: [
       MockSnap(name: 'swordfish', section: 'sharp'),
       MockSnap(name: 'bear', section: 'soft'),
@@ -869,5 +1031,77 @@ void main() {
     expect(snaps, hasLength(2));
     expect(snaps[0].name, equals('bear'));
     expect(snaps[1].name, equals('fishy'));
+  });
+
+  test('install', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'test1'),
+      MockSnap(name: 'test2'),
+      MockSnap(name: 'test3')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps, hasLength(0));
+    var changeId = await client.install(['test2']);
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps.map((snap) => snap.name).toList(), equals(['test2']));
+  });
+
+  test('install - multiple', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'test1'),
+      MockSnap(name: 'test2'),
+      MockSnap(name: 'test3')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps, hasLength(0));
+    var changeId = await client.install(['test1', 'test2']);
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps.map((snap) => snap.name).toList(),
+        equals(['test1', 'test2']));
+  });
+
+  test('remove', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'test1'),
+      MockSnap(name: 'test2'),
+      MockSnap(name: 'test3')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps.map((snap) => snap.name).toList(),
+        equals(['test1', 'test2', 'test3']));
+    var changeId = await client.remove(['test2']);
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps.map((snap) => snap.name).toList(),
+        equals(['test1', 'test3']));
   });
 }
