@@ -215,6 +215,25 @@ class MockSnap {
   }
 }
 
+class MockAccount {
+  final int id;
+  final String? username;
+  final String? email;
+  final String password;
+  final String? macaroon;
+  final List<String> discharges;
+  final List<String> sshKeys;
+
+  MockAccount(
+      {required this.id,
+      this.username,
+      this.email,
+      required this.password,
+      this.macaroon,
+      this.discharges = const [],
+      this.sshKeys = const []});
+}
+
 class MockSnapdServer {
   Directory? _tempDir;
   String? _socketPath;
@@ -224,6 +243,7 @@ class MockSnapdServer {
   StreamSubscription<HttpRequest>? _requestSubscription;
   final _tcpSockets = <Socket, Socket>{};
 
+  final List<MockAccount> accounts;
   final String architecture;
   final String buildId;
   final String confinement;
@@ -242,6 +262,7 @@ class MockSnapdServer {
   String get socketPath => _socketPath!;
 
   MockSnapdServer({
+    this.accounts = const [],
     this.architecture = '',
     this.buildId = '',
     this.confinement = '',
@@ -274,7 +295,7 @@ class MockSnapdServer {
     });
   }
 
-  void _processRequest(HttpRequest request) {
+  Future<void> _processRequest(HttpRequest request) async {
     var authorization = request.headers.value(HttpHeaders.authorizationHeader);
     lastMacaroon = null;
     lastDischarges = null;
@@ -289,31 +310,94 @@ class MockSnapdServer {
       }
     }
 
-    var response = request.response;
     switch (request.uri.path) {
       case '/v2/system-info':
-        _writeSyncResponse(response, {
-          'architecture': architecture,
-          'build-id': buildId,
-          'confinement': confinement,
-          'kernel-version': kernelVersion,
-          'managed': managed,
-          'on-classic': onClassic,
-          'series': series,
-          'system-mode': systemMode,
-          'version': version
-        });
+        _processSystemInfo(request);
+        break;
+      case '/v2/login':
+        await _processLogin(request);
+        break;
+      case '/v2/logout':
+        await _processLogout(request);
         break;
       case '/v2/snaps':
-        _writeSyncResponse(
-            response, snaps.map((snap) => snap.toJson()).toList());
+        _processSnaps(request);
         break;
       default:
-        response.statusCode = HttpStatus.notFound;
-        _writeErrorResponse(response, 'not found');
+        request.response.statusCode = HttpStatus.notFound;
+        _writeErrorResponse(request.response, 'not found');
         break;
     }
-    response.close();
+    await request.response.close();
+  }
+
+  void _processSystemInfo(HttpRequest request) {
+    _writeSyncResponse(request.response, {
+      'architecture': architecture,
+      'build-id': buildId,
+      'confinement': confinement,
+      'kernel-version': kernelVersion,
+      'managed': managed,
+      'on-classic': onClassic,
+      'series': series,
+      'system-mode': systemMode,
+      'version': version
+    });
+  }
+
+  Future<void> _processLogin(HttpRequest request) async {
+    var req = await _readJson(request);
+    var account = _findAccountByEmail(req['email']);
+    if (account == null || account.password != req['password']) {
+      request.response.statusCode = HttpStatus.unauthorized;
+      _writeErrorResponse(request.response,
+          'cannot authenticate to snap store: Provided email/password is not correct.',
+          kind: 'login-required');
+      return;
+    }
+    var r = {
+      'id': account.id,
+      'username': account.username,
+      'email': account.email,
+      'macaroon': account.macaroon,
+      'discharges': account.discharges,
+      'ssh-keys': account.sshKeys
+    };
+    _writeSyncResponse(request.response, r);
+  }
+
+  Future<void> _processLogout(HttpRequest request) async {
+    var req = await _readJson(request);
+    var account = _findAccountById(req['id']);
+    if (account == null) {
+      request.response.statusCode = HttpStatus.badRequest;
+      _writeErrorResponse(request.response, 'not logged in');
+      return;
+    }
+    _writeSyncResponse(request.response, {});
+  }
+
+  MockAccount? _findAccountById(int id) {
+    for (var account in accounts) {
+      if (account.id == id) {
+        return account;
+      }
+    }
+    return null;
+  }
+
+  MockAccount? _findAccountByEmail(String email) {
+    for (var account in accounts) {
+      if (account.email == email) {
+        return account;
+      }
+    }
+    return null;
+  }
+
+  void _processSnaps(HttpRequest request) {
+    _writeSyncResponse(
+        request.response, snaps.map((snap) => snap.toJson()).toList());
   }
 
   void _writeSyncResponse(HttpResponse response, dynamic result) {
@@ -325,13 +409,23 @@ class MockSnapdServer {
     });
   }
 
-  void _writeErrorResponse(HttpResponse response, String message) {
+  void _writeErrorResponse(HttpResponse response, String message,
+      {String? kind}) {
+    var result = {'message': message};
+    if (kind != null) {
+      result['kind'] = kind;
+    }
     _writeJson(response, {
       'type': 'error',
       'status-code': response.statusCode,
       'status': response.reasonPhrase,
-      'result': {'message': message}
+      'result': result
     });
+  }
+
+  Future<Map<String, dynamic>> _readJson(HttpRequest request) async {
+    var text = utf8.decode(await request.expand((e) => e).toList());
+    return json.decode(text);
   }
 
   void _writeJson(HttpResponse response, dynamic value) {
@@ -392,6 +486,76 @@ void main() {
     await client.systemInfo();
     expect(snapd.lastMacaroon, equals('macaroon'));
     expect(snapd.lastDischarges, equals(['discharge1', 'discharge2']));
+
+    client.close();
+    await snapd.close();
+  });
+
+  test('login', () async {
+    var snapd = MockSnapdServer(accounts: [
+      MockAccount(
+          id: 42,
+          username: 'admin',
+          email: 'admin@example.com',
+          password: 'password',
+          macaroon: 'macaroon',
+          discharges: ['discharge1', 'discharge2'],
+          sshKeys: ['key1', 'key2'])
+    ]);
+    await snapd.start();
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+
+    var response = await client.login('admin@example.com', 'password');
+    expect(response.id, equals(42));
+    expect(response.username, equals('admin'));
+    expect(response.email, equals('admin@example.com'));
+    expect(response.macaroon, equals('macaroon'));
+    expect(response.discharges, equals(['discharge1', 'discharge2']));
+    expect(response.sshKeys, equals(['key1', 'key2']));
+
+    client.close();
+    await snapd.close();
+  });
+
+  test('login - unknown email', () async {
+    var snapd = MockSnapdServer();
+    await snapd.start();
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+
+    expect(
+        () => client.login('unknown@example.com', 'password'), throwsException);
+
+    client.close();
+    await snapd.close();
+  });
+
+  test('login - incorrect password', () async {
+    var snapd = MockSnapdServer(accounts: [
+      MockAccount(id: 42, email: 'admin@example.com', password: 'secret')
+    ]);
+    await snapd.start();
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+
+    expect(
+        () => client.login('admin@example.com', 'password'), throwsException);
+
+    client.close();
+    await snapd.close();
+  });
+
+  test('logout', () async {
+    var snapd = MockSnapdServer(accounts: [
+      MockAccount(id: 42, email: 'admin@example.com', password: 'password')
+    ]);
+    await snapd.start();
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+
+    var response = await client.login('admin@example.com', 'password');
+    await client.logout(response.id);
 
     client.close();
     await snapd.close();
