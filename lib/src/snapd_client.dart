@@ -322,7 +322,7 @@ class SnapdSystemInfoResponse {
 
 /// Response received when logging in.
 class SnapdLoginResponse {
-  final int? id;
+  final int id;
 
   /// Username logged in with.
   final String? username;
@@ -340,7 +340,7 @@ class SnapdLoginResponse {
   final List<String> sshKeys;
 
   const SnapdLoginResponse(
-      {this.id,
+      {required this.id,
       this.username,
       this.email,
       this.macaroon,
