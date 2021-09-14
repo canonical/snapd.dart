@@ -242,8 +242,25 @@ class MockAccount {
 
 class MockTask {
   final String id;
+  final String kind;
+  final MockTaskProgress? progress;
+  final String summary;
+  final String status;
 
-  MockTask({required this.id});
+  MockTask(
+      {required this.id,
+      this.kind = '',
+      this.progress,
+      this.summary = '',
+      this.status = ''});
+}
+
+class MockTaskProgress {
+  final String label;
+  final int done;
+  final int total;
+
+  MockTaskProgress({this.label = '', this.done = 0, this.total = 0});
 }
 
 class MockChange {
@@ -386,12 +403,31 @@ class MockSnapdServer {
       return;
     }
 
+    var tasks = <Map<String, dynamic>>[];
+    for (var task in change.tasks) {
+      var t = <String, dynamic>{
+        'id': task.id,
+        'kind': task.kind,
+        'summary': task.summary,
+        'status': task.status
+      };
+      var progress = task.progress;
+      if (progress != null) {
+        t['progress'] = {
+          'label': progress.label,
+          'done': progress.done,
+          'total': progress.total
+        };
+      }
+      tasks.add(t);
+    }
+
     _writeSyncResponse(request.response, {
       'id': change.id,
       'kind': change.kind,
       'summary': change.summary,
       'status': change.status,
-      'tasks': [],
+      'tasks': tasks,
       'ready': change.ready,
       'spawn-time': change.spawnTime,
       'ready-time': change.readyTime
@@ -552,7 +588,12 @@ class MockSnapdServer {
         break;
     }
 
-    var change = _addChange(ready: true, error: error);
+    var change = _addChange(
+        ready: true,
+        tasks: [
+          MockTask(id: '0', progress: MockTaskProgress(done: 10, total: 10))
+        ],
+        error: error);
     _writeAsyncResponse(request.response, change.id);
   }
 
