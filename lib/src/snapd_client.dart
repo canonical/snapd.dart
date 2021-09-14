@@ -678,9 +678,9 @@ class SnapdClient {
     return SnapdLoginResponse._fromJson(result);
   }
 
-  /// Logs out of the snap store.
-  Future logout() async {
-    await _postSync('/v2/logout');
+  /// Logs out acccount with [id] from the snap store.
+  Future logout(int id) async {
+    await _postSync('/v2/logout', {'id': id});
   }
 
   /// Installs the snaps with the given [names].
