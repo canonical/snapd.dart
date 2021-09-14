@@ -139,6 +139,8 @@ class MockSnap {
   final String version;
   final String? website;
 
+  var refreshed = false;
+
   MockSnap(
       {this.apps,
       this.channel = '',
@@ -285,8 +287,8 @@ class MockSnapdServer {
   final bool managed;
   final bool onClassic;
   final String series;
-  final snaps = <MockSnap>[];
-  final storeSnaps = <MockSnap>[];
+  final snaps = <String, MockSnap>{};
+  final storeSnaps = <String, MockSnap>{};
   final String systemMode;
   final String version;
 
@@ -310,8 +312,12 @@ class MockSnapdServer {
     this.systemMode = '',
     this.version = '',
   }) {
-    this.snaps.addAll(snaps);
-    this.storeSnaps.addAll(storeSnaps);
+    for (var snap in snaps) {
+      this.snaps[snap.name] = snap;
+    }
+    for (var snap in storeSnaps) {
+      this.storeSnaps[snap.name] = snap;
+    }
   }
 
   Future<void> start() async {
@@ -399,7 +405,7 @@ class MockSnapdServer {
     var section = parameters['section'];
 
     var snaps = [];
-    for (var snap in storeSnaps) {
+    for (var snap in storeSnaps.values) {
       if (name != null && snap.name != name) {
         continue;
       }
@@ -483,7 +489,7 @@ class MockSnapdServer {
 
   void _processGetSnaps(HttpRequest request) {
     _writeSyncResponse(
-        request.response, snaps.map((snap) => snap.toJson()).toList());
+        request.response, snaps.values.map((snap) => snap.toJson()).toList());
   }
 
   Future<void> _processPostSnaps(HttpRequest request) async {
@@ -496,10 +502,10 @@ class MockSnapdServer {
       case 'install':
         var snapsToInstall = <MockSnap>[];
         for (var name in snapNames) {
-          if (_findSnapByName(name) != null) {
+          if (snaps.containsKey(name)) {
             error = 'Snap $name already installed';
           }
-          var snap = _findStoreSnapByName(name);
+          var snap = storeSnaps[name];
           if (snap == null) {
             error = 'Snap $name not in store';
           } else {
@@ -508,23 +514,30 @@ class MockSnapdServer {
         }
         if (error == null) {
           for (var snap in snapsToInstall) {
-            snaps.add(snap);
+            snaps[snap.name] = snap;
           }
         }
         break;
       case 'remove':
-        var snapsToRemove = <MockSnap>[];
         for (var name in snapNames) {
-          var snap = _findSnapByName(name);
+          var snap = snaps[name];
           if (snap == null) {
             error = 'Snap $name not installed';
-          } else {
-            snapsToRemove.add(snap);
           }
         }
         if (error == null) {
-          for (var snap in snapsToRemove) {
-            snaps.remove(snap);
+          for (var name in snapNames) {
+            snaps.remove(name);
+          }
+        }
+        break;
+      case 'refresh':
+        for (var name in snapNames) {
+          var snap = snaps[name];
+          if (snap == null) {
+            error = 'Snap $name not installed';
+          } else {
+            snap.refreshed = true;
           }
         }
         break;
@@ -549,24 +562,6 @@ class MockSnapdServer {
       'system-mode': systemMode,
       'version': version
     });
-  }
-
-  MockSnap? _findSnapByName(String name) {
-    for (var snap in snaps) {
-      if (snap.name == name) {
-        return snap;
-      }
-    }
-    return null;
-  }
-
-  MockSnap? _findStoreSnapByName(String name) {
-    for (var snap in storeSnaps) {
-      if (snap.name == name) {
-        return snap;
-      }
-    }
-    return null;
   }
 
   MockChange _addChange(
@@ -1096,7 +1091,7 @@ void main() {
     var changeId = await client.install(['test2']);
     var change = await client.getChange(changeId);
     expect(change.ready, isTrue);
-    expect(snapd.snaps.map((snap) => snap.name).toList(), equals(['test2']));
+    expect(snapd.snaps.keys.toList(), equals(['test2']));
   });
 
   test('install - multiple', () async {
@@ -1119,8 +1114,7 @@ void main() {
     var changeId = await client.install(['test1', 'test2']);
     var change = await client.getChange(changeId);
     expect(change.ready, isTrue);
-    expect(snapd.snaps.map((snap) => snap.name).toList(),
-        equals(['test1', 'test2']));
+    expect(snapd.snaps.keys.toList(), equals(['test1', 'test2']));
   });
 
   test('remove', () async {
@@ -1139,12 +1133,87 @@ void main() {
       client.close();
     });
 
-    expect(snapd.snaps.map((snap) => snap.name).toList(),
-        equals(['test1', 'test2', 'test3']));
+    expect(snapd.snaps.keys.toList(), equals(['test1', 'test2', 'test3']));
     var changeId = await client.remove(['test2']);
     var change = await client.getChange(changeId);
     expect(change.ready, isTrue);
-    expect(snapd.snaps.map((snap) => snap.name).toList(),
-        equals(['test1', 'test3']));
+    expect(snapd.snaps.keys.toList(), equals(['test1', 'test3']));
+  });
+
+  test('remove - multiple', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'test1'),
+      MockSnap(name: 'test2'),
+      MockSnap(name: 'test3')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps.keys.toList(), equals(['test1', 'test2', 'test3']));
+    var changeId = await client.remove(['test1', 'test2']);
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps.keys.toList(), equals(['test3']));
+  });
+
+  test('refresh', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'test1'),
+      MockSnap(name: 'test2'),
+      MockSnap(name: 'test3')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps['test1']!.refreshed, isFalse);
+    expect(snapd.snaps['test2']!.refreshed, isFalse);
+    expect(snapd.snaps['test3']!.refreshed, isFalse);
+    var changeId = await client.refresh(['test2']);
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps['test1']!.refreshed, isFalse);
+    expect(snapd.snaps['test2']!.refreshed, isTrue);
+    expect(snapd.snaps['test3']!.refreshed, isFalse);
+  });
+
+  test('refresh - multiple', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'test1'),
+      MockSnap(name: 'test2'),
+      MockSnap(name: 'test3')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps['test1']!.refreshed, isFalse);
+    expect(snapd.snaps['test2']!.refreshed, isFalse);
+    expect(snapd.snaps['test3']!.refreshed, isFalse);
+    var changeId = await client.refresh(['test1', 'test2']);
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps['test1']!.refreshed, isTrue);
+    expect(snapd.snaps['test2']!.refreshed, isTrue);
+    expect(snapd.snaps['test3']!.refreshed, isFalse);
   });
 }
