@@ -411,8 +411,10 @@ class SnapdChange {
         status: value['status'] ?? '',
         ready: value['ready'] ?? false,
         err: value['err'],
-        tasks:
-            value['tasks']?.map((v) => SnapdTask._fromJson(v)).toList() ?? []);
+        tasks: value['tasks']
+                ?.map<SnapdTask>((v) => SnapdTask._fromJson(v))
+                .toList() ??
+            []);
   }
 }
 
