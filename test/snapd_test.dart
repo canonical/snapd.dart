@@ -458,8 +458,14 @@ void main() {
         systemMode: 'run',
         version: '2.49');
     await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
 
     var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
 
     var info = await client.systemInfo();
     expect(info.architecture, equals('amd64'));
@@ -471,24 +477,24 @@ void main() {
     expect(info.series, equals('16'));
     expect(info.systemMode, equals('run'));
     expect(info.version, equals('2.49'));
-
-    client.close();
-    await snapd.close();
   });
 
   test('authorization', () async {
     var snapd = MockSnapdServer();
     await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
 
     var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
     client.setAuthorization('macaroon', ['discharge1', 'discharge2']);
 
     await client.systemInfo();
     expect(snapd.lastMacaroon, equals('macaroon'));
     expect(snapd.lastDischarges, equals(['discharge1', 'discharge2']));
-
-    client.close();
-    await snapd.close();
   });
 
   test('login', () async {
@@ -503,8 +509,14 @@ void main() {
           sshKeys: ['key1', 'key2'])
     ]);
     await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
 
     var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
 
     var response = await client.login('admin@example.com', 'password');
     expect(response.id, equals(42));
@@ -513,22 +525,22 @@ void main() {
     expect(response.macaroon, equals('macaroon'));
     expect(response.discharges, equals(['discharge1', 'discharge2']));
     expect(response.sshKeys, equals(['key1', 'key2']));
-
-    client.close();
-    await snapd.close();
   });
 
   test('login - unknown email', () async {
     var snapd = MockSnapdServer();
     await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
 
     var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
 
-    expect(
-        () => client.login('unknown@example.com', 'password'), throwsException);
-
-    client.close();
-    await snapd.close();
+    expect(() => client.login('unknown@example.com', 'password'),
+        throwsA(isA<String>()));
   });
 
   test('login - incorrect password', () async {
@@ -536,14 +548,17 @@ void main() {
       MockAccount(id: 42, email: 'admin@example.com', password: 'secret')
     ]);
     await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
 
     var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
 
-    expect(
-        () => client.login('admin@example.com', 'password'), throwsException);
-
-    client.close();
-    await snapd.close();
+    expect(() => client.login('admin@example.com', 'password'),
+        throwsA(isA<String>()));
   });
 
   test('logout', () async {
@@ -551,14 +566,17 @@ void main() {
       MockAccount(id: 42, email: 'admin@example.com', password: 'password')
     ]);
     await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
 
     var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
 
     var response = await client.login('admin@example.com', 'password');
     await client.logout(response.id);
-
-    client.close();
-    await snapd.close();
   });
 
   test('snaps', () async {
@@ -568,17 +586,20 @@ void main() {
       MockSnap(name: 'snap3')
     ]);
     await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
 
     var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
 
     var snaps = await client.snaps();
     expect(snaps, hasLength(3));
     expect(snaps[0].name, equals('snap1'));
     expect(snaps[1].name, equals('snap2'));
     expect(snaps[2].name, equals('snap3'));
-
-    client.close();
-    await snapd.close();
   });
 
   test('snap properties', () async {
@@ -594,8 +615,14 @@ void main() {
           version: '1.2')
     ]);
     await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
 
     var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
 
     var snaps = await client.snaps();
     expect(snaps, hasLength(1));
@@ -621,9 +648,6 @@ void main() {
     expect(snap.type, equals('app'));
     expect(snap.version, equals('1.2'));
     expect(snap.website, isNull);
-
-    client.close();
-    await snapd.close();
   });
 
   test('snap optional properties', () async {
@@ -679,8 +703,14 @@ void main() {
           website: 'http://example.com/hello')
     ]);
     await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
 
     var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
 
     var snaps = await client.snaps();
     expect(snaps, hasLength(1));
@@ -722,8 +752,5 @@ void main() {
     expect(snap.type, equals('app'));
     expect(snap.version, equals('1.2'));
     expect(snap.website, equals('http://example.com/hello'));
-
-    client.close();
-    await snapd.close();
   });
 }
