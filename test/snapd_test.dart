@@ -753,9 +753,10 @@ void main() {
       client.close();
     });
 
-    expect(() => client.login('unknown@example.com', 'password'),
+    await expectLater(() => client.login('unknown@example.com', 'password'),
         throwsA(isA<String>()));
-    expect(() => client.login('unknown@example.com', 'password', otp: '0000'),
+    await expectLater(
+        () => client.login('unknown@example.com', 'password', otp: '0000'),
         throwsA(isA<String>()));
     var response =
         await client.login('admin@example.com', 'password', otp: '1234');
