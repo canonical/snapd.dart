@@ -188,6 +188,24 @@ class MockSnap {
       this.version = '',
       this.website});
 
+  MockPlug? findPlugByName(String name) {
+    for (var plug in plugs) {
+      if (plug.name == name) {
+        return plug;
+      }
+    }
+    return null;
+  }
+
+  MockSlot? findSlotByName(String name) {
+    for (var slot in slots) {
+      if (slot.name == name) {
+        return slot;
+      }
+    }
+    return null;
+  }
+
   dynamic toJson() {
     var object = <dynamic, dynamic>{
       'channel': channel,
@@ -403,6 +421,8 @@ class MockSnapdServer {
       _processGetChange(request, path.substring('/v2/changes/'.length));
     } else if (method == 'GET' && path == '/v2/find') {
       _processFind(request);
+    } else if (method == 'POST' && path == '/v2/interfaces') {
+      await _processInterfaces(request);
     } else if (method == 'POST' && path == '/v2/login') {
       await _processLogin(request);
     } else if (method == 'POST' && path == '/v2/logout') {
@@ -525,6 +545,49 @@ class MockSnapdServer {
       snaps.add(snap.toJson());
     }
     _writeSyncResponse(request.response, snaps);
+  }
+
+  Future<void> _processInterfaces(HttpRequest request) async {
+    var req = await _readJson(request);
+
+    var action = req['action'];
+    var plugs = req['plugs'] ?? [];
+    var slots = req['slots'] ?? [];
+
+    String? error;
+    if (action == 'connect') {
+      assert(plugs.length == 1);
+      assert(slots.length == 1);
+      var plugSnap = snaps[plugs[0]['snap']]!;
+      var slotSnap = snaps[slots[0]['snap']]!;
+      var plug = plugSnap.findPlugByName(plugs[0]['plug'])!;
+      var slot = slotSnap.findSlotByName(slots[0]['slot'])!;
+      assert(plug.interface == slot.interface);
+      plug.slotSnap = slotSnap;
+      plug.slot = slot;
+    } else if (action == 'disconnect') {
+      assert(plugs.length == 1);
+      assert(slots.length == 1);
+      var plugSnap = snaps[plugs[0]['snap']]!;
+      var slotSnap = snaps[slots[0]['snap']]!;
+      var plug = plugSnap.findPlugByName(plugs[0]['plug'])!;
+      var slot = slotSnap.findSlotByName(slots[0]['slot'])!;
+      assert(plug.slotSnap == slotSnap);
+      assert(plug.slot == slot);
+      plug.slotSnap = null;
+      plug.slot = null;
+    } else {
+      _writeErrorResponse(request.response, 'unknown action');
+      return;
+    }
+
+    var change = _addChange(
+        ready: true,
+        tasks: [
+          MockTask(id: '0', progress: MockTaskProgress(done: 10, total: 10))
+        ],
+        error: error);
+    _writeAsyncResponse(request.response, change.id);
   }
 
   Future<void> _processLogin(HttpRequest request) async {
@@ -1148,6 +1211,71 @@ void main() {
           SnapSlot(snap: 'test2', slot: 'slot2', interface: 'interface1'),
           SnapSlot(snap: 'test3', slot: 'slot3', interface: 'interface1')
         ]));
+  });
+
+  test('connect', () async {
+    var plug1 = MockPlug('plug1', 'interface1');
+    var slot3 = MockSlot('slot3', 'interface1');
+    var snap1 = MockSnap(name: 'test1', plugs: [plug1]);
+    var snap2 =
+        MockSnap(name: 'test2', slots: [MockSlot('slot2', 'interface1')]);
+    var snap3 = MockSnap(
+        name: 'test3',
+        plugs: [MockPlug('plug3', 'interface1')],
+        slots: [slot3]);
+
+    var snapd = MockSnapdServer(snaps: [snap1, snap2, snap3]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(plug1.slotSnap, isNull);
+    expect(plug1.slot, isNull);
+    var changeId = await client.connect('test1', 'plug1', 'test3', 'slot3');
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(plug1.slotSnap, equals(snap3));
+    expect(plug1.slot, equals(slot3));
+  });
+
+  test('disconnect', () async {
+    var plug1 = MockPlug('plug1', 'interface1');
+    var slot3 = MockSlot('slot3', 'interface1');
+    var snap1 = MockSnap(name: 'test1', plugs: [plug1]);
+    var snap2 =
+        MockSnap(name: 'test2', slots: [MockSlot('slot2', 'interface1')]);
+    var snap3 = MockSnap(
+        name: 'test3',
+        plugs: [MockPlug('plug3', 'interface1')],
+        slots: [slot3]);
+
+    plug1.slotSnap = snap3;
+    plug1.slot = slot3;
+
+    var snapd = MockSnapdServer(snaps: [snap1, snap2, snap3]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(plug1.slotSnap, equals(snap3));
+    expect(plug1.slot, equals(slot3));
+    var changeId = await client.disconnect('test1', 'plug1', 'test3', 'slot3');
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(plug1.slotSnap, isNull);
+    expect(plug1.slot, isNull);
   });
 
   test('find', () async {
