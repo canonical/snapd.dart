@@ -5,6 +5,20 @@ import 'package:path/path.dart' as p;
 
 import 'http_unix_client.dart';
 
+bool _mapsEqual<K, V>(Map<K, V> a, Map<K, V> b) {
+  if (a.length != b.length) {
+    return false;
+  }
+
+  for (var key in a.keys) {
+    if (a[key] != b[key]) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 /// Describes an app provided by a snap.
 class SnapApp {
   /// The snap this app is part of
@@ -258,7 +272,7 @@ class Snap {
   }
 }
 
-/// Response received when getting system information
+/// Response received when getting system information.
 class SnapdSystemInfoResponse {
   /// The architecture snapd is running on.
   final String architecture;
@@ -360,6 +374,177 @@ class SnapdLoginResponse {
         macaroon: value['macaroon'],
         discharges: value['discharges'].cast<String>() ?? [],
         sshKeys: value['ssh-keys'].cast<String>() ?? []);
+  }
+}
+
+/// Information on a snap plug.
+class SnapPlug {
+  /// The snap this plug is provided by.
+  final String snap;
+
+  /// The plug name.
+  final String plug;
+
+  // Attributes for the plug.
+  final Map<String, dynamic> attributes;
+
+  /// The interface this plug uses.
+  final String? interface;
+
+  const SnapPlug(
+      {required this.snap,
+      required this.plug,
+      this.attributes = const {},
+      this.interface});
+
+  @override
+  String toString() =>
+      'SnapPlug(snap: $snap, plug: $plug, attributes: $attributes, interface: $interface)';
+
+  factory SnapPlug._fromJson(value) {
+    return SnapPlug(
+        snap: value['snap'] ?? '',
+        plug: value['plug'] ?? '',
+        attributes: value['attrs']?.cast<String, dynamic>() ?? {},
+        interface: value['interface']);
+  }
+
+  @override
+  bool operator ==(other) =>
+      other is SnapPlug &&
+      other.snap == snap &&
+      other.plug == plug &&
+      _mapsEqual(other.attributes, attributes) &&
+      other.interface == interface;
+}
+
+/// Information on a snap slot.
+class SnapSlot {
+  /// The snap this slot is provided by.
+  final String snap;
+
+  /// The slot name.
+  final String slot;
+
+  // Attributes for the slot.
+  final Map<String, dynamic> attributes;
+
+  /// The interface this slot uses.
+  final String? interface;
+
+  const SnapSlot(
+      {required this.snap,
+      required this.slot,
+      this.attributes = const {},
+      this.interface});
+
+  @override
+  String toString() =>
+      'SnapSlot(snap: $snap, slot: $slot, attributes: $attributes, interface: $interface)';
+
+  factory SnapSlot._fromJson(value) {
+    return SnapSlot(
+        snap: value['snap'] ?? '',
+        slot: value['slot'] ?? '',
+        attributes: value['attrs']?.cast<String, dynamic>() ?? {},
+        interface: value['interface']);
+  }
+
+  @override
+  bool operator ==(other) =>
+      other is SnapSlot &&
+      other.snap == snap &&
+      other.slot == slot &&
+      _mapsEqual(other.attributes, attributes) &&
+      other.interface == interface;
+}
+
+/// Information on a connection between a snap plugs and slots.
+class SnapConnection {
+  // The slot used in this connection.
+  final SnapSlot slot;
+
+  // Attributes for the slot.
+  final Map<String, dynamic> slotAttributes;
+
+  // The plug used in this connection.
+  final SnapPlug plug;
+
+  // Attributes for the plug.
+  final Map<String, dynamic> plugAttributes;
+
+  // The interface the connection uses.
+  final String interface;
+
+  // True if this is manually connected.
+  final bool manual;
+
+  const SnapConnection(
+      {required this.slot,
+      this.slotAttributes = const {},
+      required this.plug,
+      this.plugAttributes = const {},
+      required this.interface,
+      this.manual = false});
+
+  @override
+  String toString() =>
+      'SnapConnection(slot: $slot, slotAttributes: $slotAttributes, plug: $plug, plugAttributes: $plugAttributes, interface: $interface, manual: $manual)';
+
+  factory SnapConnection._fromJson(value) {
+    return SnapConnection(
+        slot: SnapSlot._fromJson(value['slot']),
+        slotAttributes: value['slot-attrs']?.cast<String, dynamic>() ?? {},
+        plug: SnapPlug._fromJson(value['plug']),
+        plugAttributes: value['plug-attrs']?.cast<String, dynamic>() ?? {},
+        interface: value['interface'] ?? '',
+        manual: value['manual'] ?? false);
+  }
+
+  @override
+  bool operator ==(other) =>
+      other is SnapConnection &&
+      other.slot == slot &&
+      _mapsEqual(other.slotAttributes, slotAttributes) &&
+      other.plug == plug &&
+      _mapsEqual(other.plugAttributes, plugAttributes) &&
+      other.interface == interface &&
+      other.manual == manual;
+}
+
+/// Response received when getting connections.
+class SnapdConnectionsResponse {
+  final List<SnapConnection> established;
+  final List<SnapPlug> plugs;
+  final List<SnapSlot> slots;
+  final List<SnapConnection> undesired;
+
+  const SnapdConnectionsResponse(
+      {this.established = const [],
+      this.plugs = const [],
+      this.slots = const [],
+      this.undesired = const []});
+
+  factory SnapdConnectionsResponse._fromJson(value) {
+    return SnapdConnectionsResponse(
+        established: value['established']
+                ?.map<SnapConnection>(
+                    (connection) => SnapConnection._fromJson(connection))
+                ?.toList() ??
+            <SnapConnection>[],
+        plugs: value['plugs']
+                ?.map<SnapPlug>((plug) => SnapPlug._fromJson(plug))
+                ?.toList() ??
+            <SnapPlug>[],
+        slots: value['slots']
+                ?.map<SnapSlot>((slot) => SnapSlot._fromJson(slot))
+                ?.toList() ??
+            <SnapSlot>[],
+        undesired: value['undesired']
+                ?.map<SnapConnection>(
+                    (connection) => SnapConnection._fromJson(connection))
+                ?.toList() ??
+            <SnapConnection>[]);
   }
 }
 
@@ -639,6 +824,12 @@ class SnapdClient {
       apps.add(SnapApp._fromJson(app));
     }
     return apps;
+  }
+
+  /// Gets the connections being plugs and slots.
+  Future<SnapdConnectionsResponse> connections() async {
+    var result = await _getSync('/v2/connections');
+    return SnapdConnectionsResponse._fromJson(result);
   }
 
   /// Sets the user agent sent in requests to snapd.
