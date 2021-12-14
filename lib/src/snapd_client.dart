@@ -832,6 +832,36 @@ class SnapdClient {
     return SnapdConnectionsResponse._fromJson(result);
   }
 
+  /// Connects a plug to a slot.
+  Future<String> connect(
+      String snap, String plug, String slotSnap, String slot) async {
+    var request = {
+      'action': 'connect',
+      'plugs': [
+        {'snap': snap, 'plug': plug}
+      ],
+      'slots': [
+        {'snap': slotSnap, 'slot': slot}
+      ]
+    };
+    return await _postAsync('/v2/interfaces', request);
+  }
+
+  /// Disonnects a plug from a slot.
+  Future<String> disconnect(
+      String plugSnap, String plug, String slotSnap, String slot) async {
+    var request = {
+      'action': 'disconnect',
+      'plugs': [
+        {'snap': plugSnap, 'plug': plug}
+      ],
+      'slots': [
+        {'snap': slotSnap, 'slot': slot}
+      ]
+    };
+    return await _postAsync('/v2/interfaces', request);
+  }
+
   /// Sets the user agent sent in requests to snapd.
   set userAgent(String? value) => _userAgent = value;
 
