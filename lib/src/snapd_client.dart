@@ -416,6 +416,10 @@ class SnapPlug {
       other.plug == plug &&
       _mapsEqual(other.attributes, attributes) &&
       other.interface == interface;
+
+  @override
+  int get hashCode =>
+      snap.hashCode | plug.hashCode | attributes.hashCode | interface.hashCode;
 }
 
 /// Information on a snap slot.
@@ -457,6 +461,10 @@ class SnapSlot {
       other.slot == slot &&
       _mapsEqual(other.attributes, attributes) &&
       other.interface == interface;
+
+  @override
+  int get hashCode =>
+      snap.hashCode | slot.hashCode | attributes.hashCode | interface.hashCode;
 }
 
 /// Information on a connection between a snap plugs and slots.
@@ -510,6 +518,15 @@ class SnapConnection {
       _mapsEqual(other.plugAttributes, plugAttributes) &&
       other.interface == interface &&
       other.manual == manual;
+
+  @override
+  int get hashCode =>
+      slot.hashCode |
+      slotAttributes.hashCode |
+      plug.hashCode |
+      plugAttributes.hashCode |
+      interface.hashCode |
+      manual.hashCode;
 }
 
 /// Response received when getting connections.

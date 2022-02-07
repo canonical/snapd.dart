@@ -7,7 +7,7 @@ void main() async {
   // Get the installed apps.
   var apps = await client.apps();
   for (var app in apps) {
-    print('${app.name}');
+    print(app.name);
   }
 
   client.close();
