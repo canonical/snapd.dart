@@ -1,9 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart';
 import 'package:path/path.dart' as p;
-
-import 'http_unix_client.dart';
 
 bool _mapsEqual<K, V>(Map<K, V> a, Map<K, V> b) {
   if (a.length != b.length) {
@@ -775,7 +772,7 @@ class _SnapdErrorResponse extends _SnapdResponse {
 
 /// Manages a connection to the snapd server.
 class SnapdClient {
-  final HttpUnixClient _client;
+  final HttpClient _client;
   String? _macaroon;
   List<String> _discharges = [];
   String? _userAgent;
@@ -787,7 +784,12 @@ class SnapdClient {
   SnapdClient(
       {String userAgent = 'snapd.dart', socketPath = '/var/run/snapd.socket'})
       : _userAgent = userAgent,
-        _client = HttpUnixClient(socketPath);
+        _client = HttpClient() {
+    _client.connectionFactory = (Uri uri, String? proxyHost, int? proxyPort) {
+      var address = InternetAddress(socketPath, type: InternetAddressType.unix);
+      return Socket.startConnect(address, 0);
+    };
+  }
 
   /// Loads the saved authorization for this user.
   Future<void> loadAuthorization() async {
@@ -964,38 +966,39 @@ class SnapdClient {
   /// Does a synchronous request to snapd.
   Future<dynamic> _getSync(String path,
       [Map<String, String> queryParameters = const {}]) async {
-    var request = Request('GET', Uri.http('localhost', path, queryParameters));
+    var request =
+        await _client.getUrl(Uri.http('localhost', path, queryParameters));
     _setHeaders(request);
-    var response = await _client.send(request);
-    var snapdResponse = await _parseResponse(response);
+    await request.close();
+    var snapdResponse = await _parseResponse(await request.done);
     return snapdResponse.result;
   }
 
   /// Does a synchronous request to snapd.
   Future<dynamic> _postSync(String path, [dynamic body]) async {
-    var request = Request('POST', Uri.http('localhost', path));
+    var request = await _client.post('localhost', 0, path);
     _setHeaders(request);
-    request.headers['Content-Type'] = 'application/json';
-    request.bodyBytes = utf8.encode(json.encode(body));
-    var response = await _client.send(request);
-    var snapdResponse = await _parseResponse(response);
+    request.headers.contentType = ContentType('application', 'json');
+    request.write(json.encode(body));
+    await request.close();
+    var snapdResponse = await _parseResponse(await request.done);
     return snapdResponse.result;
   }
 
   /// Does an asynchronous request to snapd.
   Future<String> _postAsync(String path, [dynamic body]) async {
-    var request = Request('POST', Uri.http('localhost', path));
+    var request = await _client.post('localhost', 0, path);
     _setHeaders(request);
-    request.headers['Content-Type'] = 'application/json';
-    request.bodyBytes = utf8.encode(json.encode(body));
-    var response = await _client.send(request);
-    var snapdResponse = await _parseResponse(response);
+    request.headers.contentType = ContentType('application', 'json');
+    request.write(json.encode(body));
+    await request.close();
+    var snapdResponse = await _parseResponse(await request.done);
     return snapdResponse.change;
   }
 
   /// Decodes a response from snapd.
-  Future<_SnapdResponse> _parseResponse(StreamedResponse response) async {
-    var body = await response.stream.bytesToString();
+  Future<_SnapdResponse> _parseResponse(HttpClientResponse response) async {
+    var body = await response.transform(utf8.decoder).join();
     var jsonResponse = json.decode(body);
     _SnapdResponse snapdResponse;
     var type = jsonResponse['type'];
@@ -1018,19 +1021,19 @@ class SnapdClient {
   }
 
   /// Makes base HTTP headers to send.
-  void _setHeaders(Request request) {
+  void _setHeaders(HttpClientRequest request) {
     if (_userAgent != null) {
-      request.headers['User-Agent'] = _userAgent!;
+      request.headers.set(HttpHeaders.userAgentHeader, _userAgent!);
     }
     if (_macaroon != null) {
       var authorization = 'Macaroon root="$_macaroon"';
       for (var discharge in _discharges) {
         authorization += ',discharge="$discharge"';
       }
-      request.headers['Authorization'] = authorization;
+      request.headers.set(HttpHeaders.authorizationHeader, authorization);
     }
     if (allowInteraction) {
-      request.headers['X-Allow-Interaction'] = 'true';
+      request.headers.set('X-Allow-Interaction', 'true');
     }
   }
 }
