@@ -418,8 +418,7 @@ class SnapPlug {
       other.interface == interface;
 
   @override
-  int get hashCode =>
-      snap.hashCode | plug.hashCode | attributes.hashCode | interface.hashCode;
+  int get hashCode => Object.hash(snap, plug, attributes, interface);
 }
 
 /// Information on a snap slot.
@@ -463,8 +462,7 @@ class SnapSlot {
       other.interface == interface;
 
   @override
-  int get hashCode =>
-      snap.hashCode | slot.hashCode | attributes.hashCode | interface.hashCode;
+  int get hashCode => Object.hash(snap, slot, attributes, interface);
 }
 
 /// Information on a connection between a snap plugs and slots.
@@ -520,13 +518,8 @@ class SnapConnection {
       other.manual == manual;
 
   @override
-  int get hashCode =>
-      slot.hashCode |
-      slotAttributes.hashCode |
-      plug.hashCode |
-      plugAttributes.hashCode |
-      interface.hashCode |
-      manual.hashCode;
+  int get hashCode => Object.hash(
+      slot, slotAttributes, plug, plugAttributes, interface, manual);
 }
 
 /// Response received when getting connections.
