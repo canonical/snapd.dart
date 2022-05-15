@@ -336,6 +336,7 @@ class SnapdSystemInfoResponse {
 
 /// Response received when logging in.
 class SnapdLoginResponse {
+  /// Id for this account, which can be used in [SnapdClient.logout].
   final int id;
 
   /// Username logged in with.
@@ -524,9 +525,16 @@ class SnapConnection {
 
 /// Response received when getting connections.
 class SnapdConnectionsResponse {
+  /// Connections that have been established.
   final List<SnapConnection> established;
+
+  /// Plugs on this system.
   final List<SnapPlug> plugs;
+
+  /// Slotss on this system.
   final List<SnapSlot> slots;
+
+  /// Auto-connected connections that have been manually disconnected.
   final List<SnapConnection> undesired;
 
   const SnapdConnectionsResponse(
@@ -836,7 +844,7 @@ class SnapdClient {
     return apps;
   }
 
-  /// Gets the connections being plugs and slots.
+  /// Gets the connections, plugs and slots used on this system.
   Future<SnapdConnectionsResponse> connections() async {
     var result = await _getSync('/v2/connections');
     return SnapdConnectionsResponse._fromJson(result);
