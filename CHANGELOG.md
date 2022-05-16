@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0
+
+* Require Dart 1.17.
+* Replace HttpUnixClient with new HttpClient.connectionFactory.
+* Use Object.hash for hashCode calculations.
+* Remove unix socket workaround in tests.
+* Add missing documentation.
+
 ## 0.1.2
 
 * Only list as supporting Linux.
