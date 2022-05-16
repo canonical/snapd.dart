@@ -331,10 +331,7 @@ class MockSnapdServer {
   Directory? _tempDir;
   String? _socketPath;
   HttpServer? _server;
-  ServerSocket? _unixSocket;
-  StreamSubscription<Socket>? _unixSubscription;
   StreamSubscription<HttpRequest>? _requestSubscription;
-  final _tcpSockets = <Socket, Socket>{};
 
   final List<MockAccount> accounts;
   final String architecture;
@@ -382,20 +379,9 @@ class MockSnapdServer {
     _tempDir = await Directory.systemTemp.createTemp();
     _socketPath = '${_tempDir!.path}/snapd.socket';
 
-    // Due to a bug in HttpServer, bridge from a Unix socket to a TCP/IP socket
-    // https://github.com/dart-lang/sdk/issues/45977
-    _server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
-    _requestSubscription = _server?.listen(_processRequest);
-    _unixSocket = await ServerSocket.bind(
+    _server = await HttpServer.bind(
         InternetAddress(_socketPath!, type: InternetAddressType.unix), 0);
-    _unixSubscription = _unixSocket?.listen((socket) async {
-      var tcpSocket = await Socket.connect(_server!.address, _server!.port);
-      _tcpSockets[socket] = tcpSocket;
-      socket.listen((data) => tcpSocket.add(data),
-          onDone: () => tcpSocket.close());
-      tcpSocket.listen((data) => socket.add(data),
-          onDone: () => socket.close());
-    });
+    _requestSubscription = _server?.listen(_processRequest);
   }
 
   Future<void> _processRequest(HttpRequest request) async {
@@ -823,10 +809,6 @@ class MockSnapdServer {
 
   Future<void> close() async {
     await _requestSubscription?.cancel();
-    await _unixSubscription?.cancel();
-    for (var socket in _tcpSockets.values) {
-      await socket.close();
-    }
     await _tempDir?.delete(recursive: true);
   }
 }
