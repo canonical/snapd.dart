@@ -5,7 +5,7 @@ void main(List<String> args) async {
   await client.loadAuthorization();
   String id;
   if (args.isNotEmpty) {
-    id = await client.refresh(args);
+    id = await client.refresh(names: args);
   } else {
     id = await client.refresh();
   }

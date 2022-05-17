@@ -928,27 +928,57 @@ class SnapdClient {
 
   /// Installs the snaps with the given [names].
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> install(List<String> names) async {
+  Future<String> install(List<String> names,
+      {String? channel,
+      String? revision,
+      bool classic = false,
+      bool dangerous = false,
+      bool devmode = false,
+      bool jailmode = false}) async {
     var request = {'action': 'install', 'snaps': names};
+    if (channel != null) {
+      request['channel'] = channel;
+    }
+    if (revision != null) {
+      request['revision'] = revision;
+    }
+    if (classic) {
+      request['classic'] = true;
+    }
+    if (dangerous) {
+      request['dangerous'] = true;
+    }
+    if (devmode) {
+      request['devmode'] = true;
+    }
+    if (jailmode) {
+      request['jailmode'] = true;
+    }
     return await _postAsync('/v2/snaps', request);
   }
 
   /// Refreshes the snaps with the given [names].
   /// If no names provided refreshes all snaps.
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> refresh([List<String>? names]) async {
+  Future<String> refresh({List<String>? names, String? channel}) async {
     var request = {};
     request['action'] = 'refresh';
     if (names != null) {
       request['snaps'] = names;
+    }
+    if (channel != null) {
+      request['channel'] = channel;
     }
     return await _postAsync('/v2/snaps', request);
   }
 
   /// Removes the snaps with the given [names].
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> remove(List<String> names) async {
+  Future<String> remove(List<String> names, {bool purge = false}) async {
     var request = {'action': 'remove', 'snaps': names};
+    if (purge) {
+      request['purge'] = true;
+    }
     return await _postAsync('/v2/snaps', request);
   }
 
