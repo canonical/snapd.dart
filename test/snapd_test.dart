@@ -863,7 +863,7 @@ void main() {
     var info = await client.systemInfo();
     expect(info.architecture, equals('amd64'));
     expect(info.buildId, equals('2a0c915752b1c3c5dd7980220cd246876fb0a510'));
-    expect(info.confinement, equals('strict'));
+    expect(info.confinement, equals(SnapConfinement.strict));
     expect(info.kernelVersion, equals('5.11.0'));
     expect(info.managed, isTrue);
     expect(info.onClassic, isTrue);
