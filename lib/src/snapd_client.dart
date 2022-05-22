@@ -16,6 +16,18 @@ bool _mapsEqual<K, V>(Map<K, V> a, Map<K, V> b) {
   return true;
 }
 
+/// Confinement used by a snap.
+enum SnapConfinement { unknown, strict, devmode, classic }
+
+SnapConfinement _parseConfinement(String? value) {
+  return {
+        'strict': SnapConfinement.strict,
+        'classic': SnapConfinement.classic,
+        'devmode': SnapConfinement.devmode
+      }[value] ??
+      SnapConfinement.unknown;
+}
+
 /// Describes an app provided by a snap.
 class SnapApp {
   /// The snap this app is part of
@@ -62,7 +74,7 @@ class SnapApp {
 /// Described a channel available for a snap.
 class SnapChannel {
   /// Confinement of this snap in this channel.
-  final String confinement;
+  final SnapConfinement confinement;
 
   /// Revision of this snap in this channel.
   final String revision;
@@ -74,14 +86,14 @@ class SnapChannel {
   final String version;
 
   const SnapChannel(
-      {this.confinement = '',
+      {this.confinement = SnapConfinement.unknown,
       this.revision = '',
       this.size = 0,
       this.version = ''});
 
   factory SnapChannel._fromJson(value) {
     return SnapChannel(
-        confinement: value['confinement'] ?? '',
+        confinement: _parseConfinement(value['confinement']),
         revision: value['revision'] ?? '',
         size: value['size'] ?? 0,
         version: value['version'] ?? '');
@@ -278,7 +290,7 @@ class SnapdSystemInfoResponse {
   final String buildId;
 
   /// The confinement level that is supported.
-  final String confinement;
+  final SnapConfinement confinement;
 
   /// The version of the Linux kernel this is running on.
   final String kernelVersion;
@@ -305,7 +317,7 @@ class SnapdSystemInfoResponse {
   const SnapdSystemInfoResponse(
       {this.architecture = '',
       this.buildId = '',
-      this.confinement = '',
+      this.confinement = SnapConfinement.unknown,
       this.kernelVersion = '',
       this.managed = false,
       this.onClassic = false,
@@ -321,7 +333,7 @@ class SnapdSystemInfoResponse {
     return SnapdSystemInfoResponse(
         architecture: value['architecture'] ?? '',
         buildId: value['build-id'] ?? '',
-        confinement: value['confinement'] ?? '',
+        confinement: _parseConfinement(value['confinement']),
         kernelVersion: value['kernel-version'] ?? '',
         managed: value['managed'] ?? false,
         onClassic: value['on-classic'] ?? false,
