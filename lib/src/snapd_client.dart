@@ -165,6 +165,9 @@ class Snap {
   /// Common IDs this snap contains.
   final List<String> commonIds;
 
+  /// The confinement this snap is using.
+  final SnapConfinement confinement;
+
   /// Contact URL.
   final String? contact;
 
@@ -221,6 +224,7 @@ class Snap {
       this.channel = '',
       this.channels = const {},
       this.commonIds = const [],
+      this.confinement = SnapConfinement.unknown,
       this.contact = '',
       this.description = '',
       this.downloadSize,
@@ -255,6 +259,7 @@ class Snap {
                 .map((k, v) => MapEntry(k, SnapChannel._fromJson(v)))
             : {},
         commonIds: value['common-ids']?.cast<String>() ?? [],
+        confinement: _parseConfinement(value['confinement']),
         contact: value['contact'] ?? '',
         description: value['description'] ?? '',
         downloadSize: value['download-size'],

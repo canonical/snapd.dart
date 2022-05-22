@@ -140,6 +140,7 @@ class MockSnap {
   final Map<String, MockChannel>? channels;
   final List<String>? commonIds;
   final String? contact;
+  final String? confinement;
   final String description;
   final int? downloadSize;
   final String id;
@@ -175,6 +176,7 @@ class MockSnap {
       this.channels,
       this.commonIds,
       this.contact,
+      this.confinement,
       this.description = '',
       this.downloadSize,
       this.id = '',
@@ -234,6 +236,9 @@ class MockSnap {
     }
     if (commonIds != null) {
       object['common-ids'] = commonIds;
+    }
+    if (confinement != null) {
+      object['confinement'] = confinement;
     }
     if (contact != null) {
       object['contact'] = contact;
@@ -1092,6 +1097,7 @@ void main() {
           },
           commonIds: ['com.example.Hello', 'com.example.Hallo'],
           contact: 'hello@example.com',
+          confinement: 'classic',
           description: 'Hello\nSalut\nHola',
           downloadSize: 123456,
           id: 'QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV',
@@ -1141,6 +1147,7 @@ void main() {
     expect(snap.channels, hasLength(2));
     expect(snap.commonIds, equals(['com.example.Hello', 'com.example.Hallo']));
     expect(snap.contact, equals('hello@example.com'));
+    expect(snap.confinement, equals(SnapConfinement.classic));
     expect(snap.description, equals('Hello\nSalut\nHola'));
     expect(snap.downloadSize, equals(123456));
     expect(snap.id, equals('QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV'));
