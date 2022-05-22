@@ -1,14 +1,15 @@
 import 'package:snapd/snapd.dart';
 
 void main(List<String> args) async {
+  if (args.length != 1) {
+    print('Usage: refresh <snap>');
+    return;
+  }
+  var name = args[0];
+
   var client = SnapdClient();
   await client.loadAuthorization();
-  String id;
-  if (args.isNotEmpty) {
-    id = await client.refresh(names: args);
-  } else {
-    id = await client.refresh();
-  }
+  var id = await client.refresh(name);
   while (true) {
     var change = await client.getChange(id);
     if (change.ready) {

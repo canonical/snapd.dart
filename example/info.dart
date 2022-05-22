@@ -1,13 +1,14 @@
 import 'package:snapd/snapd.dart';
 
 void main(List<String> args) async {
-  if (args.isEmpty) {
+  if (args.length != 1) {
     print('Usage: info <snap>');
     return;
   }
+  var name = args[0];
 
   var client = SnapdClient();
-  var snaps = await client.find(name: args[0]);
+  var snaps = await client.find(name: name);
   var snap = snaps[0];
 
   var publisher = snap.publisher?.displayName;

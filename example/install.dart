@@ -1,14 +1,15 @@
 import 'package:snapd/snapd.dart';
 
 void main(List<String> args) async {
-  if (args.isEmpty) {
+  if (args.length != 1) {
     print('Usage: install <snap>');
     return;
   }
+  var name = args[0];
 
   var client = SnapdClient();
   await client.loadAuthorization();
-  var id = await client.install(args);
+  var id = await client.install(name);
   while (true) {
     var change = await client.getChange(id);
     if (change.ready) {
