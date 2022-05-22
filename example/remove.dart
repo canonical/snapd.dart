@@ -1,14 +1,15 @@
 import 'package:snapd/snapd.dart';
 
 void main(List<String> args) async {
-  if (args.isEmpty) {
+  if (args.length != 1) {
     print('Usage: remove <snap>');
     return;
   }
+  var name = args[0];
 
   var client = SnapdClient();
   await client.loadAuthorization();
-  var id = await client.remove(args);
+  var id = await client.remove(name);
   while (true) {
     var change = await client.getChange(id);
     if (change.ready) {

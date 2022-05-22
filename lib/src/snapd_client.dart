@@ -943,16 +943,16 @@ class SnapdClient {
     await _postSync('/v2/logout', {'id': id});
   }
 
-  /// Installs the snaps with the given [names].
+  /// Installs the snap with the given [name].
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> install(List<String> names,
+  Future<String> install(String name,
       {String? channel,
       String? revision,
       bool classic = false,
       bool dangerous = false,
       bool devmode = false,
       bool jailmode = false}) async {
-    var request = {'action': 'install', 'snaps': names};
+    var request = <String, dynamic>{'action': 'install'};
     if (channel != null) {
       request['channel'] = channel;
     }
@@ -971,32 +971,31 @@ class SnapdClient {
     if (jailmode) {
       request['jailmode'] = true;
     }
-    return await _postAsync('/v2/snaps', request);
+    var path = '/v2/snaps/' + Uri.encodeComponent(name);
+    return await _postAsync(path, request);
   }
 
-  /// Refreshes the snaps with the given [names].
-  /// If no names provided refreshes all snaps.
+  /// Refreshes the snap with the given [name].
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> refresh({List<String>? names, String? channel}) async {
+  Future<String> refresh(String name, {String? channel}) async {
     var request = {};
     request['action'] = 'refresh';
-    if (names != null) {
-      request['snaps'] = names;
-    }
     if (channel != null) {
       request['channel'] = channel;
     }
-    return await _postAsync('/v2/snaps', request);
+    var path = '/v2/snaps/' + Uri.encodeComponent(name);
+    return await _postAsync(path, request);
   }
 
-  /// Removes the snaps with the given [names].
+  /// Removes the snap with the given [name].
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> remove(List<String> names, {bool purge = false}) async {
-    var request = {'action': 'remove', 'snaps': names};
+  Future<String> remove(String name, {bool purge = false}) async {
+    var request = <String, dynamic>{'action': 'remove'};
     if (purge) {
       request['purge'] = true;
     }
-    return await _postAsync('/v2/snaps', request);
+    var path = '/v2/snaps/' + Uri.encodeComponent(name);
+    return await _postAsync(path, request);
   }
 
   /// Gets the status the change with the given [id].
