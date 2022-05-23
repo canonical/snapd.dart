@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.3.0
+
+* Change SnapdClient.install/remove/refresh to use single snaps.
+* Add args to SnapdClient.install/remove/refresh.
+* Treat confinement as an enum.
+* Add confinement property to snaps.
+
 ## 0.2.0
 
 * Require Dart 1.17.
