@@ -19,6 +19,10 @@ bool _mapsEqual<K, V>(Map<K, V> a, Map<K, V> b) {
 /// Confinement used by a snap.
 enum SnapConfinement { unknown, strict, devmode, classic }
 
+DateTime? _parseDateTime(String? value) {
+  return value != null ? DateTime.parse(value) : null;
+}
+
 SnapConfinement _parseConfinement(String? value) {
   return {
         'strict': SnapConfinement.strict,
@@ -180,6 +184,9 @@ class Snap {
   /// Unique ID for this snap.
   final String id;
 
+  /// The date this snap was installed.
+  final DateTime? installDate;
+
   /// Installed size in bytes.
   final int? installedSize;
 
@@ -229,6 +236,7 @@ class Snap {
       this.description = '',
       this.downloadSize,
       this.id = '',
+      this.installDate,
       this.installedSize,
       this.license,
       this.media = const [],
@@ -264,6 +272,7 @@ class Snap {
         description: value['description'] ?? '',
         downloadSize: value['download-size'],
         id: value['id'],
+        installDate: _parseDateTime(value['install-date']),
         installedSize: value['installed-size'],
         license: value['license'],
         media: value['media'] != null
