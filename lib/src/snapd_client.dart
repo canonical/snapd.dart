@@ -3,11 +3,24 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:path/path.dart' as p;
 
+/// The current state of a snap.
+enum SnapStatus { unknown, available, priced, installed, active }
+
 /// Confinement used by a snap.
 enum SnapConfinement { unknown, strict, devmode, classic }
 
 DateTime? _parseDateTime(String? value) {
   return value != null ? DateTime.parse(value) : null;
+}
+
+SnapStatus _parseStatus(String? value) {
+  return {
+        'available': SnapStatus.available,
+        'priced': SnapStatus.priced,
+        'installed': SnapStatus.installed,
+        'active': SnapStatus.active
+      }[value] ??
+      SnapStatus.unknown;
 }
 
 SnapConfinement _parseConfinement(String? value) {
@@ -195,6 +208,9 @@ class Snap {
   /// Revision of this snap.
   final String revision;
 
+  /// The current status of this snap.
+  final SnapStatus status;
+
   /// URL linking to the snap store page on this snap.
   final String? storeUrl;
 
@@ -237,6 +253,7 @@ class Snap {
       this.name = '',
       this.publisher,
       this.revision = '',
+      this.status = SnapStatus.unknown,
       this.storeUrl,
       this.summary = '',
       this.title = '',
@@ -283,6 +300,7 @@ class Snap {
         revision: value['revision'] ?? '',
         storeUrl: value['store-url'],
         summary: value['summary'],
+        status: _parseStatus(value['status']),
         title: value['title'],
         trackingChannel: value['tracking-channel'],
         tracks: value['tracks']?.cast<String>() ?? [],
