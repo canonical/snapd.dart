@@ -153,6 +153,7 @@ class MockSnap {
   final String revision;
   final String? section;
   final List<MockSlot> slots;
+  final String? status;
   final String? storeUrl;
   final String summary;
   final String title;
@@ -192,6 +193,7 @@ class MockSnap {
       this.revision = '',
       this.section,
       this.slots = const [],
+      this.status,
       this.storeUrl,
       this.summary = '',
       this.title = '',
@@ -267,6 +269,9 @@ class MockSnap {
     }
     if (publisher != null) {
       object['publisher'] = publisher!.toJson();
+    }
+    if (status != null) {
+      object['status'] = status;
     }
     if (storeUrl != null) {
       object['store-url'] = storeUrl;
@@ -1187,6 +1192,7 @@ void main() {
               displayName: 'Publisher',
               validation: 'verified'),
           revision: '42',
+          status: 'available',
           storeUrl: 'https://snapcraft.io/hello',
           summary: 'Hello is an app',
           title: 'Hello',
@@ -1213,6 +1219,7 @@ void main() {
     expect(snap.apps[0].name, equals('hello1'));
     expect(snap.apps[0].snap, equals('hello'));
     expect(snap.apps[1].name, equals('hello2'));
+    expect(snap.base, equals('core20'));
     expect(snap.channel, equals('stable'));
     expect(snap.channels, hasLength(2));
     expect(snap.commonIds, equals(['com.example.Hello', 'com.example.Hallo']));
@@ -1242,9 +1249,11 @@ void main() {
     expect(snap.publisher!.displayName, equals('Publisher'));
     expect(snap.publisher!.validation, equals('verified'));
     expect(snap.revision, equals('42'));
+    expect(snap.status, equals(SnapStatus.available));
     expect(snap.storeUrl, equals('https://snapcraft.io/hello'));
     expect(snap.summary, equals('Hello is an app'));
     expect(snap.title, equals('Hello'));
+    expect(snap.trackingChannel, equals('latest/stable'));
     expect(snap.tracks, equals(['latest', 'insider']));
     expect(snap.type, equals('app'));
     expect(snap.version, equals('1.2'));
