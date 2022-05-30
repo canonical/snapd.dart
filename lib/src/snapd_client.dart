@@ -32,6 +32,17 @@ SnapConfinement _parseConfinement(String? value) {
       SnapConfinement.unknown;
 }
 
+/// An exception thrown by a request to snapd.
+class SnapdException implements Exception {
+  /// Error kind.
+  final String kind;
+
+  /// Message with error.
+  final String message;
+
+  SnapdException(this.kind, this.message);
+}
+
 /// Describes an app provided by a snap.
 class SnapApp {
   /// The snap this app is part of
@@ -829,10 +840,10 @@ class _SnapdErrorResponse extends _SnapdResponse {
   final dynamic value;
 
   @override
-  dynamic get result => throw 'Result is error $kind: $message';
+  dynamic get result => throw SnapdException(kind, message);
 
   @override
-  String get change => throw 'Result is error $kind: $message';
+  String get change => throw SnapdException(kind, message);
 
   const _SnapdErrorResponse(this.message,
       {int statusCode = 0, String status = '', this.kind = '', this.value})
