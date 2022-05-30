@@ -724,10 +724,14 @@ class MockSnapdServer {
         break;
       case 'refresh':
         var snap = snaps[name];
+        var channel = req['channel'];
         if (snap == null) {
           error = 'Snap $name not installed';
         } else {
           snap.refreshed = true;
+          if (channel != null) {
+            snap.installedChannel = channel;
+          }
         }
         break;
       default:
@@ -1616,5 +1620,24 @@ void main() {
     expect(snapd.snaps['test1']!.refreshed, isFalse);
     expect(snapd.snaps['test2']!.refreshed, isTrue);
     expect(snapd.snaps['test3']!.refreshed, isFalse);
+  });
+
+  test('refresh - channel', () async {
+    var snapd = MockSnapdServer(snaps: [MockSnap(name: 'test1')]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var changeId = await client.refresh('test1', channel: 'latest/edge');
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps['test1']!.refreshed, isTrue);
+    expect(snapd.snaps['test1']!.installedChannel, equals('latest/edge'));
   });
 }
