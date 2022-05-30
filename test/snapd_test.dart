@@ -339,7 +339,7 @@ class MockChange {
       this.status = '',
       this.tasks = const [],
       this.ready = false,
-      this.spawnTime = '',
+      this.spawnTime = '2022-04-28T13:56Z',
       this.readyTime,
       this.error});
 }
@@ -755,7 +755,7 @@ class MockSnapdServer {
       String status = '',
       List<MockTask> tasks = const [],
       bool ready = false,
-      String spawnTime = '',
+      String spawnTime = '2022-04-28T13:56Z',
       String? readyTime,
       String? error}) {
     var change = MockChange(
