@@ -457,6 +457,8 @@ class MockSnapdServer {
       await _processLogout(request);
     } else if (method == 'GET' && path == '/v2/snaps') {
       _processGetSnaps(request);
+    } else if (method == 'GET' && path.startsWith('/v2/snaps/')) {
+      await _processGetSnap(request, path.substring('/v2/snaps/'.length));
     } else if (method == 'POST' && path.startsWith('/v2/snaps/')) {
       await _processPostSnap(request, path.substring('/v2/snaps/'.length));
     } else if (method == 'GET' && path == '/v2/system-info') {
@@ -698,6 +700,16 @@ class MockSnapdServer {
   void _processGetSnaps(HttpRequest request) {
     _writeSyncResponse(
         request.response, snaps.values.map((snap) => snap.toJson()).toList());
+  }
+
+  Future<void> _processGetSnap(HttpRequest request, String name) async {
+    var snap = snaps[name];
+    if (snap == null) {
+      request.response.statusCode = HttpStatus.notFound;
+      _writeErrorResponse(request.response, 'not found');
+      return;
+    }
+    _writeSyncResponse(request.response, snap.toJson());
   }
 
   Future<void> _processPostSnap(HttpRequest request, String name) async {
@@ -1075,6 +1087,26 @@ void main() {
     expect(snaps[0].name, equals('snap1'));
     expect(snaps[1].name, equals('snap2'));
     expect(snaps[2].name, equals('snap3'));
+  });
+
+  test('snap', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'snap1'),
+      MockSnap(name: 'snap2'),
+      MockSnap(name: 'snap3')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var snap = await client.getSnap('snap2');
+    expect(snap.name, equals('snap2'));
   });
 
   test('apps', () async {
