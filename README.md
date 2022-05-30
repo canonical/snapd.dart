@@ -9,7 +9,7 @@ Provides a client to access snapd, which allows you to manage, search and instal
 import 'package:snapd/snapd.dart';
 
 var client = SnapdClient();
-var snaps = await client.snaps();
+var snaps = await client.getSnaps();
 print (snaps);
 client.close();
 ```

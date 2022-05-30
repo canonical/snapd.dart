@@ -1082,7 +1082,7 @@ void main() {
       client.close();
     });
 
-    var snaps = await client.snaps();
+    var snaps = await client.getSnaps();
     expect(snaps, hasLength(3));
     expect(snaps[0].name, equals('snap1'));
     expect(snaps[1].name, equals('snap2'));
@@ -1125,7 +1125,7 @@ void main() {
       client.close();
     });
 
-    var apps = await client.apps();
+    var apps = await client.getApps();
     expect(apps, hasLength(3));
     expect(apps[0].name, equals('app1'));
     expect(apps[1].name, equals('app2a'));
@@ -1154,7 +1154,7 @@ void main() {
       client.close();
     });
 
-    var snaps = await client.snaps();
+    var snaps = await client.getSnaps();
     expect(snaps, hasLength(1));
     var snap = snaps[0];
     expect(snap.apps, isEmpty);
@@ -1244,7 +1244,7 @@ void main() {
       client.close();
     });
 
-    var snaps = await client.snaps();
+    var snaps = await client.getSnaps();
     expect(snaps, hasLength(1));
     var snap = snaps[0];
     expect(snap.apps, hasLength(2));
@@ -1317,7 +1317,7 @@ void main() {
       client.close();
     });
 
-    var response = await client.connections();
+    var response = await client.getConnections();
     expect(
         response.established,
         unorderedEquals([

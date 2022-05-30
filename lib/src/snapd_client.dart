@@ -904,7 +904,7 @@ class SnapdClient {
   }
 
   /// Gets informtion on all installed snaps.
-  Future<List<Snap>> snaps() async {
+  Future<List<Snap>> getSnaps() async {
     var result = await _getSync('/v2/snaps');
     var snaps = <Snap>[];
     for (var snap in result) {
@@ -920,8 +920,8 @@ class SnapdClient {
     return Snap._fromJson(result);
   }
 
-  /// Gets the currently installed apps.
-  Future<List<SnapApp>> apps() async {
+  /// Gets information on all installed apps.
+  Future<List<SnapApp>> getApps() async {
     var result = await _getSync('/v2/apps');
     var apps = <SnapApp>[];
     for (var app in result) {
@@ -931,7 +931,7 @@ class SnapdClient {
   }
 
   /// Gets the connections, plugs and slots used on this system.
-  Future<SnapdConnectionsResponse> connections() async {
+  Future<SnapdConnectionsResponse> getConnections() async {
     var result = await _getSync('/v2/connections');
     return SnapdConnectionsResponse._fromJson(result);
   }
