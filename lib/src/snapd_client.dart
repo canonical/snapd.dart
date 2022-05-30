@@ -150,7 +150,7 @@ class Snap {
   /// The base snap this snap uses.
   final String? base;
 
-  /// Channel this snap is tracking.
+  /// The channel this snap is from, e.g. "stable".
   final String channel;
 
   /// Channels available for this snap.
