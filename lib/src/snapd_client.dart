@@ -317,7 +317,16 @@ class SnapdSystemInfoResponse {
   final bool onClassic;
 
   // FIXME(robert-ancell): os-release
-  // FIXME(robert-ancell): refresh
+
+  /// The last time the system refreshed.
+  final DateTime? refreshLast;
+
+  /// The next time the system refreshed.
+  final DateTime refreshNext;
+
+  // FIXME(robert-ancell): Refresh timer.
+  //String refreshTimer;
+
   // FIXME(robert-ancell): sandbox-features
 
   /// The core series in use.
@@ -335,15 +344,18 @@ class SnapdSystemInfoResponse {
       this.kernelVersion = '',
       this.managed = false,
       this.onClassic = false,
+      this.refreshLast,
+      required this.refreshNext,
       this.series = '',
       this.systemMode = '',
       this.version = ''});
 
   @override
   String toString() =>
-      'SnapdSystemInfoResponse(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, series: $series, systemMode: $systemMode, version: $version)';
+      'SnapdSystemInfoResponse(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, refreshLast: $refreshLast, refreshNext: $refreshNext, series: $series, systemMode: $systemMode, version: $version)';
 
   factory SnapdSystemInfoResponse._fromJson(value) {
+    var refresh = value['refresh'];
     return SnapdSystemInfoResponse(
         architecture: value['architecture'] ?? '',
         buildId: value['build-id'] ?? '',
@@ -351,6 +363,10 @@ class SnapdSystemInfoResponse {
         kernelVersion: value['kernel-version'] ?? '',
         managed: value['managed'] ?? false,
         onClassic: value['on-classic'] ?? false,
+        refreshLast: refresh != null ? _parseDateTime(refresh['last']) : null,
+        refreshNext:
+            (refresh != null ? _parseDateTime(refresh['next']) : null) ??
+                DateTime.utc(1970),
         series: value['series'] ?? '',
         systemMode: value['system-mode'] ?? '',
         version: value['version'] ?? '');
