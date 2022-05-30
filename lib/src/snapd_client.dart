@@ -1003,8 +1003,8 @@ class SnapdClient {
     if (jailmode) {
       request['jailmode'] = true;
     }
-    var path = '/v2/snaps/' + Uri.encodeComponent(name);
-    return await _postAsync(path, request);
+    var encodedName = Uri.encodeComponent(name);
+    return await _postAsync('/v2/snaps/$encodedName', request);
   }
 
   /// Refreshes the snap with the given [name].
@@ -1015,8 +1015,8 @@ class SnapdClient {
     if (channel != null) {
       request['channel'] = channel;
     }
-    var path = '/v2/snaps/' + Uri.encodeComponent(name);
-    return await _postAsync(path, request);
+    var encodedName = Uri.encodeComponent(name);
+    return await _postAsync('/v2/snaps/$encodedName', request);
   }
 
   /// Removes the snap with the given [name].
@@ -1026,8 +1026,8 @@ class SnapdClient {
     if (purge) {
       request['purge'] = true;
     }
-    var path = '/v2/snaps/' + Uri.encodeComponent(name);
-    return await _postAsync(path, request);
+    var encodedName = Uri.encodeComponent(name);
+    return await _postAsync('/v2/snaps/$encodedName', request);
   }
 
   /// Gets the status the change with the given [id].
