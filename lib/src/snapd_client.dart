@@ -229,7 +229,7 @@ class Snap {
   final String summary;
 
   /// Title of this snap.
-  final String title;
+  final String? title;
 
   /// The channel that updates will be installed from, e.g. "stable".
   final String? trackingChannel;
