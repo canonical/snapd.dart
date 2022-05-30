@@ -609,8 +609,10 @@ class SnapdChange {
   final String? err;
 
   /// The time this change started.
-  /// FIXME(robert-ancell): Implement
-  ///final String spawnTime;
+  final DateTime spawnTime;
+
+  /// The time this change completed.
+  final DateTime? readyTime;
 
   /// The tasks of this change.
   final List<SnapdTask> tasks;
@@ -621,12 +623,14 @@ class SnapdChange {
       this.summary = '',
       this.status = '',
       this.ready = false,
+      required this.spawnTime,
+      this.readyTime,
       this.err,
       this.tasks = const []});
 
   @override
   String toString() {
-    return "SnapdChange(id: '$id', kind: '$kind', summary: '$summary', status: '$status', ready: $ready, err: $err, tasks: $tasks)";
+    return "SnapdChange(id: '$id', kind: '$kind', summary: '$summary', status: '$status', ready: $ready, err: $err, spawnTime: '$spawnTime', readyTime: '$readyTime', tasks: $tasks)";
   }
 
   factory SnapdChange._fromJson(value) {
@@ -637,6 +641,8 @@ class SnapdChange {
         status: value['status'] ?? '',
         ready: value['ready'] ?? false,
         err: value['err'],
+        spawnTime: _parseDateTime(value['spawn-time']) ?? DateTime.utc(1970),
+        readyTime: _parseDateTime(value['ready-time']),
         tasks: value['tasks']
                 ?.map<SnapdTask>((v) => SnapdTask._fromJson(v))
                 .toList() ??
@@ -662,23 +668,23 @@ class SnapdTask {
   final SnapdTaskProgress progress;
 
   /// The time this task started.
-  /// FIXME(robert-ancell): Implement
-  ///final String spawnTime;
+  final DateTime spawnTime;
 
   /// The time this task completed.
-  /// FIXME(robert-ancell): Implement
-  ///final String readyTime;
+  final DateTime? readyTime;
 
   const SnapdTask(
       {this.id = '',
       this.kind = '',
       this.summary = '',
       this.status = '',
-      this.progress = const SnapdTaskProgress()});
+      this.progress = const SnapdTaskProgress(),
+      required this.spawnTime,
+      this.readyTime});
 
   @override
   String toString() {
-    return "SnapdTask(id: '$id', kind: '$kind', summary: '$summary', status: '$status', progress: $progress)";
+    return "SnapdTask(id: '$id', kind: '$kind', summary: '$summary', status: '$status', progress: $progress, spawnTime: '$spawnTime', readyTime: '$readyTime')";
   }
 
   factory SnapdTask._fromJson(value) {
@@ -689,7 +695,9 @@ class SnapdTask {
         status: value['status'] ?? '',
         progress: value['progress'] != null
             ? SnapdTaskProgress._fromJson(value['progress'])
-            : SnapdTaskProgress());
+            : SnapdTaskProgress(),
+        spawnTime: _parseDateTime(value['spawn-time']) ?? DateTime.utc(1970),
+        readyTime: _parseDateTime(value['ready-time']));
   }
 }
 
