@@ -903,7 +903,7 @@ class SnapdClient {
     return SnapdSystemInfoResponse._fromJson(result);
   }
 
-  /// Gets the currently installed snaps.
+  /// Gets informtion on all installed snaps.
   Future<List<Snap>> snaps() async {
     var result = await _getSync('/v2/snaps');
     var snaps = <Snap>[];
@@ -911,6 +911,13 @@ class SnapdClient {
       snaps.add(Snap._fromJson(snap));
     }
     return snaps;
+  }
+
+  /// Gets information on an installed snap with the given [name].
+  Future<Snap> getSnap(String name) async {
+    var encodedName = Uri.encodeComponent(name);
+    var result = await _getSync('/v2/snaps/$encodedName');
+    return Snap._fromJson(result);
   }
 
   /// Gets the currently installed apps.
@@ -962,7 +969,7 @@ class SnapdClient {
   /// Sets the user agent sent in requests to snapd.
   set userAgent(String? value) => _userAgent = value;
 
-  /// Searches for snaps.
+  /// Searches for snaps in the store.
   ///
   /// If [query] is provided, searches for snaps that match the given string.
   /// If [name] is provided, match the snap with the given name.
