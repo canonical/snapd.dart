@@ -6,7 +6,7 @@ void main() async {
   await client.loadAuthorization();
 
   // Get the installed connections.
-  var response = await client.connections();
+  var response = await client.getConnections();
   var rows = [];
   for (var connection in response.established) {
     var interface = connection.interface;

@@ -6,7 +6,7 @@ void main() async {
   await client.loadAuthorization();
 
   // Get the installed snaps.
-  var snaps = await client.snaps();
+  var snaps = await client.getSnaps();
 
   // Show basic information about installed snaps
   snaps.sort((a, b) => a.name.compareTo(b.name));

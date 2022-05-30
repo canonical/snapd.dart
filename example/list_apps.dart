@@ -5,7 +5,7 @@ void main() async {
   await client.loadAuthorization();
 
   // Get the installed apps.
-  var apps = await client.apps();
+  var apps = await client.getApps();
   for (var app in apps) {
     print(app.name);
   }
