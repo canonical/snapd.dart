@@ -8,28 +8,65 @@ void main(List<String> args) async {
   var name = args[0];
 
   var client = SnapdClient();
-  var snaps = await client.find(name: name);
-  var snap = snaps[0];
 
-  var publisher = snap.publisher?.displayName;
+  Snap? localSnap;
+  try {
+    localSnap = await client.getSnap(name);
+  } on SnapdException {
+    localSnap = null;
+  }
 
-  print('name:      ${snap.name}');
-  print('summary:   ${snap.summary}');
+  Snap? storeSnap;
+  try {
+    var snaps = await client.find(name: name);
+    storeSnap = snaps[0];
+  } on SnapdException {
+    storeSnap = null;
+  }
+
+  if (localSnap == null && storeSnap == null) {
+    print('error: no snap found for "$name"');
+    client.close();
+    return;
+  }
+
+  var publisher = storeSnap?.publisher?.displayName;
+  var summary = storeSnap != null ? storeSnap.summary : localSnap!.summary;
+  var license =
+      storeSnap != null ? storeSnap.license : localSnap!.license ?? 'unset';
+  var description =
+      storeSnap != null ? storeSnap.description : localSnap!.description;
+
+  print('name:      $name');
+  print('summary:   $summary');
   print('publisher: ${publisher ?? '-'}');
-  print('store-url: ${snap.storeUrl}');
-  print('contact:   ${snap.contact}');
-  print('license:   ${snap.license}');
+  if (storeSnap != null) {
+    print('store-url: ${storeSnap.storeUrl}');
+    print('contact:   ${storeSnap.contact}');
+  }
+  print('license:   $license');
   print('description: |');
-  for (var line in snap.description.split('\n')) {
+  if (description.endsWith('\n')) {
+    description = description.substring(0, description.length - 1);
+  }
+  for (var line in description.split('\n')) {
     print('  $line');
   }
-  print('snap-id: ${snap.id}');
-  if (snap.tracks.isNotEmpty) {
+  if (storeSnap != null) {
+    print('snap-id:      ${storeSnap.id}');
+  }
+  if (localSnap != null && localSnap.trackingChannel != null) {
+    print('tracking:     ${localSnap.trackingChannel}');
+  }
+  if (localSnap != null && localSnap.installDate != null) {
+    print('refresh-date: ${localSnap.installDate}');
+  }
+  if (storeSnap != null && storeSnap.tracks.isNotEmpty) {
     print('channels:');
-    for (var track in snap.tracks) {
+    for (var track in storeSnap.tracks) {
       for (var risk in ['stable', 'candidate', 'beta', 'edge']) {
         var name = '$track/$risk';
-        var channel = snap.channels[name];
+        var channel = storeSnap.channels[name];
         var description = '↑';
         if (channel != null) {
           description = '${channel.version} (${channel.revision})';
@@ -37,6 +74,9 @@ void main(List<String> args) async {
         print('  $track/${risk.padRight(9)}: $description');
       }
     }
+  }
+  if (localSnap != null) {
+    print('installed:    ${localSnap.version} (${localSnap.revision})');
   }
 
   client.close();
