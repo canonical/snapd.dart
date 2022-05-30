@@ -1005,10 +1005,10 @@ void main() {
     });
 
     await expectLater(() => client.login('unknown@example.com', 'password'),
-        throwsA(isA<String>()));
+        throwsA(isA<SnapdException>()));
     await expectLater(
         () => client.login('unknown@example.com', 'password', otp: '0000'),
-        throwsA(isA<String>()));
+        throwsA(isA<SnapdException>()));
     var response =
         await client.login('admin@example.com', 'password', otp: '1234');
     expect(response.id, equals(42));
@@ -1027,7 +1027,7 @@ void main() {
     });
 
     expect(() => client.login('unknown@example.com', 'password'),
-        throwsA(isA<String>()));
+        throwsA(isA<SnapdException>()));
   });
 
   test('login - incorrect password', () async {
@@ -1045,7 +1045,7 @@ void main() {
     });
 
     expect(() => client.login('admin@example.com', 'password'),
-        throwsA(isA<String>()));
+        throwsA(isA<SnapdException>()));
   });
 
   test('logout', () async {
