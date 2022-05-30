@@ -12,7 +12,6 @@ class MockApp {
   final String? desktopFile;
   final bool? enabled;
   final String name;
-  final String snap;
 
   MockApp(
       {this.active,
@@ -20,11 +19,10 @@ class MockApp {
       this.daemon,
       this.desktopFile,
       this.enabled,
-      this.name = '',
-      this.snap = ''});
+      this.name = ''});
 
-  dynamic toJson() {
-    var object = <dynamic, dynamic>{'name': name, 'snap': snap};
+  dynamic toJson(String snapName) {
+    var object = <dynamic, dynamic>{'name': name, 'snap': snapName};
     if (active != null) {
       object['active'] = active;
     }
@@ -135,7 +133,7 @@ class MockSlot {
 }
 
 class MockSnap {
-  final List<MockApp>? apps;
+  final List<MockApp> apps;
   final String channel;
   final Map<String, MockChannel>? channels;
   final List<String>? commonIds;
@@ -172,7 +170,7 @@ class MockSnap {
   var refreshed = false;
 
   MockSnap(
-      {this.apps,
+      {this.apps = const [],
       this.channel = '',
       this.channels,
       this.commonIds,
@@ -229,8 +227,8 @@ class MockSnap {
       'type': type,
       'version': version
     };
-    if (apps != null) {
-      object['apps'] = apps!.map((app) => app.toJson()).toList();
+    if (apps.isNotEmpty) {
+      object['apps'] = apps.map((app) => app.toJson(name)).toList();
     }
     if (channels != null) {
       object['channels'] =
@@ -428,7 +426,9 @@ class MockSnapdServer {
 
     var method = request.method;
     var path = request.uri.path;
-    if (method == 'GET' && path == '/v2/connections') {
+    if (method == 'GET' && path == '/v2/apps') {
+      _processGetApps(request);
+    } else if (method == 'GET' && path == '/v2/connections') {
       _processGetConnections(request);
     } else if (method == 'GET' && path.startsWith('/v2/changes/')) {
       _processGetChange(request, path.substring('/v2/changes/'.length));
@@ -451,6 +451,16 @@ class MockSnapdServer {
       _writeErrorResponse(request.response, 'not found');
     }
     await request.response.close();
+  }
+
+  void _processGetApps(HttpRequest request) {
+    var apps = [];
+    for (var snap in snaps.values) {
+      for (var app in snap.apps) {
+        apps.add(app.toJson(snap.name));
+      }
+    }
+    _writeSyncResponse(request.response, apps);
   }
 
   void _processGetConnections(HttpRequest request) {
@@ -1052,6 +1062,29 @@ void main() {
     expect(snaps[2].name, equals('snap3'));
   });
 
+  test('apps', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'snap1', apps: [MockApp(name: 'app1')]),
+      MockSnap(
+          name: 'snap2', apps: [MockApp(name: 'app2a'), MockApp(name: 'app2b')])
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var apps = await client.apps();
+    expect(apps, hasLength(3));
+    expect(apps[0].name, equals('app1'));
+    expect(apps[1].name, equals('app2a'));
+    expect(apps[2].name, equals('app2b'));
+  });
+
   test('snap properties', () async {
     var snapd = MockSnapdServer(snaps: [
       MockSnap(
@@ -1103,10 +1136,7 @@ void main() {
   test('snap optional properties', () async {
     var snapd = MockSnapdServer(snaps: [
       MockSnap(
-          apps: [
-            MockApp(name: 'hello1', snap: 'hello'),
-            MockApp(name: 'hello2', snap: 'hello')
-          ],
+          apps: [MockApp(name: 'hello1'), MockApp(name: 'hello2')],
           channel: 'stable',
           channels: {
             'latest/stable': MockChannel(
