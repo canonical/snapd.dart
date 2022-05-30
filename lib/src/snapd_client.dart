@@ -1,20 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:collection/collection.dart';
 import 'package:path/path.dart' as p;
-
-bool _mapsEqual<K, V>(Map<K, V> a, Map<K, V> b) {
-  if (a.length != b.length) {
-    return false;
-  }
-
-  for (var key in a.keys) {
-    if (a[key] != b[key]) {
-      return false;
-    }
-  }
-
-  return true;
-}
 
 /// Confinement used by a snap.
 enum SnapConfinement { unknown, strict, devmode, classic }
@@ -450,12 +437,16 @@ class SnapPlug {
   }
 
   @override
-  bool operator ==(other) =>
-      other is SnapPlug &&
-      other.snap == snap &&
-      other.plug == plug &&
-      _mapsEqual(other.attributes, attributes) &&
-      other.interface == interface;
+  bool operator ==(other) {
+    if (identical(this, other)) return true;
+    final mapEquals = const DeepCollectionEquality().equals;
+
+    return other is SnapPlug &&
+        other.snap == snap &&
+        other.plug == plug &&
+        mapEquals(other.attributes, attributes) &&
+        other.interface == interface;
+  }
 
   @override
   int get hashCode => Object.hash(snap, plug, attributes, interface);
@@ -494,12 +485,16 @@ class SnapSlot {
   }
 
   @override
-  bool operator ==(other) =>
-      other is SnapSlot &&
-      other.snap == snap &&
-      other.slot == slot &&
-      _mapsEqual(other.attributes, attributes) &&
-      other.interface == interface;
+  bool operator ==(other) {
+    if (identical(this, other)) return true;
+    final mapEquals = const DeepCollectionEquality().equals;
+
+    return other is SnapSlot &&
+        other.snap == snap &&
+        other.slot == slot &&
+        mapEquals(other.attributes, attributes) &&
+        other.interface == interface;
+  }
 
   @override
   int get hashCode => Object.hash(snap, slot, attributes, interface);
@@ -548,14 +543,18 @@ class SnapConnection {
   }
 
   @override
-  bool operator ==(other) =>
-      other is SnapConnection &&
-      other.slot == slot &&
-      _mapsEqual(other.slotAttributes, slotAttributes) &&
-      other.plug == plug &&
-      _mapsEqual(other.plugAttributes, plugAttributes) &&
-      other.interface == interface &&
-      other.manual == manual;
+  bool operator ==(other) {
+    if (identical(this, other)) return true;
+    final mapEquals = const DeepCollectionEquality().equals;
+
+    return other is SnapConnection &&
+        other.slot == slot &&
+        mapEquals(other.slotAttributes, slotAttributes) &&
+        other.plug == plug &&
+        mapEquals(other.plugAttributes, plugAttributes) &&
+        other.interface == interface &&
+        other.manual == manual;
+  }
 
   @override
   int get hashCode => Object.hash(
