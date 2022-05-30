@@ -144,6 +144,7 @@ class MockSnap {
   final String description;
   final int? downloadSize;
   final String id;
+  final String? installDate;
   final int? installedSize;
   final String? license;
   final List<MockMedia>? media;
@@ -180,6 +181,7 @@ class MockSnap {
       this.description = '',
       this.downloadSize,
       this.id = '',
+      this.installDate,
       this.installedSize,
       this.license,
       this.media,
@@ -245,6 +247,9 @@ class MockSnap {
     }
     if (downloadSize != null) {
       object['download-size'] = downloadSize;
+    }
+    if (installDate != null) {
+      object['install-date'] = installDate;
     }
     if (installedSize != null) {
       object['installed-size'] = installedSize;
@@ -1084,6 +1089,7 @@ void main() {
           description: 'Hello\nSalut\nHola',
           downloadSize: 123456,
           id: 'QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV',
+          installDate: '2022-05-13T09:51:03.920998228Z',
           installedSize: 654321,
           license: 'GPL-3',
           media: [
@@ -1134,6 +1140,8 @@ void main() {
     expect(snap.description, equals('Hello\nSalut\nHola'));
     expect(snap.downloadSize, equals(123456));
     expect(snap.id, equals('QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV'));
+    expect(snap.installDate,
+        equals(DateTime.utc(2022, 5, 13, 9, 51, 3, 920, 998)));
     expect(snap.installedSize, equals(654321));
     expect(snap.license, equals('GPL-3'));
     expect(snap.media, hasLength(2));
