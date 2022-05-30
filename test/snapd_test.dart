@@ -367,6 +367,9 @@ class MockSnapdServer {
   final String systemMode;
   final String version;
 
+  // Last user agent received.
+  String? lastUserAgent;
+
   // Last macaroon received.
   String? lastMacaroon;
   List<String>? lastDischarges;
@@ -407,6 +410,8 @@ class MockSnapdServer {
   }
 
   Future<void> _processRequest(HttpRequest request) async {
+    lastUserAgent = request.headers.value(HttpHeaders.userAgentHeader);
+
     var authorization = request.headers.value(HttpHeaders.authorizationHeader);
     lastMacaroon = null;
     lastDischarges = null;
@@ -876,6 +881,23 @@ void main() {
     expect(info.series, equals('16'));
     expect(info.systemMode, equals('run'));
     expect(info.version, equals('2.49'));
+  });
+
+  test('user agent', () async {
+    var snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    client.userAgent = 'test-agent 1.0';
+    await client.systemInfo();
+    expect(snapd.lastUserAgent, equals('test-agent 1.0'));
   });
 
   test('authorization', () async {
