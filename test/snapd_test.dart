@@ -134,6 +134,7 @@ class MockSlot {
 
 class MockSnap {
   final List<MockApp> apps;
+  final String? base;
   final String channel;
   final Map<String, MockChannel>? channels;
   final List<String>? commonIds;
@@ -155,6 +156,7 @@ class MockSnap {
   final String? storeUrl;
   final String summary;
   final String title;
+  final String? trackingChannel;
   final List<String>? tracks;
   final String type;
   final String version;
@@ -171,6 +173,7 @@ class MockSnap {
 
   MockSnap(
       {this.apps = const [],
+      this.base,
       this.channel = '',
       this.channels,
       this.commonIds,
@@ -192,6 +195,7 @@ class MockSnap {
       this.storeUrl,
       this.summary = '',
       this.title = '',
+      this.trackingChannel,
       this.tracks,
       this.type = '',
       this.version = '',
@@ -230,6 +234,9 @@ class MockSnap {
     if (apps.isNotEmpty) {
       object['apps'] = apps.map((app) => app.toJson(name)).toList();
     }
+    if (base != null) {
+      object['base'] = base;
+    }
     if (channels != null) {
       object['channels'] =
           channels!.map((name, channel) => MapEntry(name, channel.toJson()));
@@ -263,6 +270,9 @@ class MockSnap {
     }
     if (storeUrl != null) {
       object['store-url'] = storeUrl;
+    }
+    if (trackingChannel != null) {
+      object['tracking-channel'] = trackingChannel;
     }
     if (tracks != null) {
       object['tracks'] = tracks;
@@ -1137,6 +1147,7 @@ void main() {
     var snapd = MockSnapdServer(snaps: [
       MockSnap(
           apps: [MockApp(name: 'hello1'), MockApp(name: 'hello2')],
+          base: 'core20',
           channel: 'stable',
           channels: {
             'latest/stable': MockChannel(
@@ -1179,6 +1190,7 @@ void main() {
           storeUrl: 'https://snapcraft.io/hello',
           summary: 'Hello is an app',
           title: 'Hello',
+          trackingChannel: 'latest/stable',
           tracks: ['latest', 'insider'],
           type: 'app',
           version: '1.2',

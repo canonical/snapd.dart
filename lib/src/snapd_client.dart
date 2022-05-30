@@ -147,6 +147,9 @@ class Snap {
   /// Apps this snap provides.
   final List<SnapApp> apps;
 
+  /// The base snap this snap uses.
+  final String? base;
+
   /// Channel this snap is tracking.
   final String channel;
 
@@ -201,6 +204,9 @@ class Snap {
   /// Title of this snap.
   final String title;
 
+  /// The channel that updates will be installed from, e.g. "stable".
+  final String? trackingChannel;
+
   /// Tracks this snap uses.
   final List<String> tracks;
 
@@ -215,6 +221,7 @@ class Snap {
 
   const Snap(
       {this.apps = const [],
+      this.base,
       this.channel = '',
       this.channels = const {},
       this.commonIds = const [],
@@ -233,6 +240,7 @@ class Snap {
       this.storeUrl,
       this.summary = '',
       this.title = '',
+      this.trackingChannel,
       this.tracks = const [],
       this.type = '',
       this.version = '',
@@ -248,6 +256,7 @@ class Snap {
         apps: value['apps'] != null
             ? (value['apps'] as List).map((v) => SnapApp._fromJson(v)).toList()
             : [],
+        base: value['base'],
         channel: value['channel'],
         channels: value['channels'] != null
             ? (value['channels'] as Map)
@@ -275,6 +284,7 @@ class Snap {
         storeUrl: value['store-url'],
         summary: value['summary'],
         title: value['title'],
+        trackingChannel: value['tracking-channel'],
         tracks: value['tracks']?.cast<String>() ?? [],
         type: value['type'] ?? '',
         version: value['version'] ?? '',
