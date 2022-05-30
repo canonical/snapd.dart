@@ -358,6 +358,8 @@ class MockSnapdServer {
   final String kernelVersion;
   final bool managed;
   final bool onClassic;
+  final String? refreshLast;
+  final String? refreshNext;
   final removedSnaps = <String, MockSnap>{};
   final String series;
   final snaps = <String, MockSnap>{};
@@ -379,6 +381,8 @@ class MockSnapdServer {
     this.kernelVersion = '',
     this.managed = false,
     this.onClassic = false,
+    this.refreshLast,
+    this.refreshNext,
     this.series = '',
     List<MockSnap> snaps = const [],
     List<MockSnap> storeSnaps = const [],
@@ -736,6 +740,10 @@ class MockSnapdServer {
   }
 
   void _processSystemInfo(HttpRequest request) {
+    var refresh = {'last': refreshLast};
+    if (refreshNext != null) {
+      refresh['next'] = refreshNext;
+    }
     _writeSyncResponse(request.response, {
       'architecture': architecture,
       'build-id': buildId,
@@ -743,6 +751,7 @@ class MockSnapdServer {
       'kernel-version': kernelVersion,
       'managed': managed,
       'on-classic': onClassic,
+      'refresh': refresh,
       'series': series,
       'system-mode': systemMode,
       'version': version
@@ -840,6 +849,8 @@ void main() {
         kernelVersion: '5.11.0',
         managed: true,
         onClassic: true,
+        refreshLast: '2022-05-28T20:10:00Z',
+        refreshNext: '2022-05-29T01:18:00Z',
         series: '16',
         systemMode: 'run',
         version: '2.49');
@@ -860,6 +871,8 @@ void main() {
     expect(info.kernelVersion, equals('5.11.0'));
     expect(info.managed, isTrue);
     expect(info.onClassic, isTrue);
+    expect(info.refreshLast, equals(DateTime.utc(2022, 5, 28, 20, 10)));
+    expect(info.refreshNext, equals(DateTime.utc(2022, 5, 29, 1, 18)));
     expect(info.series, equals('16'));
     expect(info.systemMode, equals('run'));
     expect(info.version, equals('2.49'));
