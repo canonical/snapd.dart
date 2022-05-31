@@ -69,21 +69,29 @@ class SnapApp {
   // FIXME(robert-ancell) Implement
   //List<SnapActivator> activators.
 
-  const SnapApp(this.snap, this.name,
-      {this.desktopFile,
+  const SnapApp(
+      {required this.snap,
+      required this.name,
+      this.desktopFile,
       this.daemon,
       this.enabled = true,
       this.active = true,
       this.commonId});
 
   factory SnapApp._fromJson(Map<String, dynamic> value) {
-    return SnapApp(value['snap'], value['name'],
+    return SnapApp(
+        snap: value['snap'],
+        name: value['name'],
         desktopFile: value['desktop-file'],
         daemon: value['daemon'],
         enabled: value['enabled'] ?? true,
         active: value['active'] ?? true,
         commonId: value['common-id']);
   }
+
+  @override
+  String toString() =>
+      'SnapApp(snap: $snap, name: $name, desktopFile: $desktopFile, daemon: $daemon, enabled: $enabled, active: $active, commonId: $commonId)';
 }
 
 /// Described a channel available for a snap.
@@ -113,6 +121,10 @@ class SnapChannel {
         size: value['size'] ?? 0,
         version: value['version'] ?? '');
   }
+
+  @override
+  String toString() =>
+      'SnapChannel(confinement: $confinement, revision: $revision, size: $size, version: $version)';
 }
 
 /// Describes a snap publisher.
@@ -142,6 +154,10 @@ class SnapPublisher {
         displayName: value['display-name'] ?? '',
         validation: value['validation']);
   }
+
+  @override
+  String toString() =>
+      'SnapPublisher(id: $id, username: $username, displayName: $displayName, validation: $validation)';
 }
 
 /// Describes a piece of media associated with a snap.
@@ -158,12 +174,20 @@ class SnapMedia {
   /// Height of media in pixels.
   final int? height;
 
-  const SnapMedia(this.type, this.url, {this.width, this.height});
+  const SnapMedia(
+      {required this.type, required this.url, this.width, this.height});
 
   factory SnapMedia._fromJson(value) {
-    return SnapMedia(value['type'] ?? '', value['url'] ?? '',
-        width: value['width'], height: value['height']);
+    return SnapMedia(
+        type: value['type'] ?? '',
+        url: value['url'] ?? '',
+        width: value['width'],
+        height: value['height']);
   }
+
+  @override
+  String toString() =>
+      'SnapMedia(type: $type, url: $url, width: $width, height: $height)';
 }
 
 /// Describes a snap package.
@@ -261,7 +285,7 @@ class Snap {
       this.installedSize,
       this.license,
       this.media = const [],
-      this.name = '',
+      required this.name,
       this.publisher,
       this.revision = '',
       this.status = SnapStatus.unknown,
@@ -273,11 +297,6 @@ class Snap {
       this.type = '',
       this.version = '',
       this.website});
-
-  @override
-  String toString() {
-    return "Snap('$name')";
-  }
 
   factory Snap._fromJson(Map<String, dynamic> value) {
     return Snap(
@@ -319,6 +338,10 @@ class Snap {
         version: value['version'] ?? '',
         website: value['website']);
   }
+
+  @override
+  String toString() =>
+      "Snap(apps: $apps, base: $base, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', downloadSize: $downloadSize, id: $id, installDate: $installDate, installedSize: $installedSize, license: $license, media: $media, name: $name, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
 }
 
 /// Response received when getting system information.
@@ -376,10 +399,6 @@ class SnapdSystemInfoResponse {
       this.systemMode = '',
       this.version = ''});
 
-  @override
-  String toString() =>
-      'SnapdSystemInfoResponse(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, refreshLast: $refreshLast, refreshNext: $refreshNext, series: $series, systemMode: $systemMode, version: $version)';
-
   factory SnapdSystemInfoResponse._fromJson(value) {
     var refresh = value['refresh'];
     return SnapdSystemInfoResponse(
@@ -397,6 +416,10 @@ class SnapdSystemInfoResponse {
         systemMode: value['system-mode'] ?? '',
         version: value['version'] ?? '');
   }
+
+  @override
+  String toString() =>
+      'SnapdSystemInfoResponse(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, refreshLast: $refreshLast, refreshNext: $refreshNext, series: $series, systemMode: $systemMode, version: $version)';
 }
 
 /// Response received when logging in.
@@ -427,11 +450,6 @@ class SnapdLoginResponse {
       this.discharges = const [],
       this.sshKeys = const []});
 
-  @override
-  String toString() {
-    return 'SnapdLoginResponse(id: $id, username: $username, email: $email, macaroon: $macaroon, discharges: $discharges)';
-  }
-
   factory SnapdLoginResponse._fromJson(value) {
     return SnapdLoginResponse(
         id: value['id'],
@@ -441,6 +459,10 @@ class SnapdLoginResponse {
         discharges: value['discharges'].cast<String>() ?? [],
         sshKeys: value['ssh-keys'].cast<String>() ?? []);
   }
+
+  @override
+  String toString() =>
+      'SnapdLoginResponse(id: $id, username: $username, email: $email, macaroon: $macaroon, discharges: $discharges)';
 }
 
 /// Information on a snap plug.
@@ -463,10 +485,6 @@ class SnapPlug {
       this.attributes = const {},
       this.interface});
 
-  @override
-  String toString() =>
-      'SnapPlug(snap: $snap, plug: $plug, attributes: $attributes, interface: $interface)';
-
   factory SnapPlug._fromJson(value) {
     return SnapPlug(
         snap: value['snap'] ?? '',
@@ -474,6 +492,10 @@ class SnapPlug {
         attributes: value['attrs']?.cast<String, dynamic>() ?? {},
         interface: value['interface']);
   }
+
+  @override
+  String toString() =>
+      'SnapPlug(snap: $snap, plug: $plug, attributes: $attributes, interface: $interface)';
 
   @override
   bool operator ==(other) {
@@ -511,10 +533,6 @@ class SnapSlot {
       this.attributes = const {},
       this.interface});
 
-  @override
-  String toString() =>
-      'SnapSlot(snap: $snap, slot: $slot, attributes: $attributes, interface: $interface)';
-
   factory SnapSlot._fromJson(value) {
     return SnapSlot(
         snap: value['snap'] ?? '',
@@ -522,6 +540,10 @@ class SnapSlot {
         attributes: value['attrs']?.cast<String, dynamic>() ?? {},
         interface: value['interface']);
   }
+
+  @override
+  String toString() =>
+      'SnapSlot(snap: $snap, slot: $slot, attributes: $attributes, interface: $interface)';
 
   @override
   bool operator ==(other) {
@@ -567,10 +589,6 @@ class SnapConnection {
       required this.interface,
       this.manual = false});
 
-  @override
-  String toString() =>
-      'SnapConnection(slot: $slot, slotAttributes: $slotAttributes, plug: $plug, plugAttributes: $plugAttributes, interface: $interface, manual: $manual)';
-
   factory SnapConnection._fromJson(value) {
     return SnapConnection(
         slot: SnapSlot._fromJson(value['slot']),
@@ -580,6 +598,10 @@ class SnapConnection {
         interface: value['interface'] ?? '',
         manual: value['manual'] ?? false);
   }
+
+  @override
+  String toString() =>
+      'SnapdConnection(slot: $slot, slotAttributes: $slotAttributes, plug: $plug, plugAttributes: $plugAttributes, interface: $interface, manual: $manual)';
 
   @override
   bool operator ==(other) {
@@ -641,6 +663,10 @@ class SnapdConnectionsResponse {
                 ?.toList() ??
             <SnapConnection>[]);
   }
+
+  @override
+  String toString() =>
+      'SnapdConnectionsResponse(established: $established, plugs: $plugs, slots: $slots, undesired: $undesired)';
 }
 
 /// Gives the state of an asynchronous operation.
@@ -682,11 +708,6 @@ class SnapdChange {
       this.err,
       this.tasks = const []});
 
-  @override
-  String toString() {
-    return "SnapdChange(id: '$id', kind: '$kind', summary: '$summary', status: '$status', ready: $ready, err: $err, spawnTime: '$spawnTime', readyTime: '$readyTime', tasks: $tasks)";
-  }
-
   factory SnapdChange._fromJson(value) {
     return SnapdChange(
         id: value['id'] ?? '',
@@ -702,6 +723,10 @@ class SnapdChange {
                 .toList() ??
             []);
   }
+
+  @override
+  String toString() =>
+      "SnapdChange(id: $id, kind: $kind, summary: '$summary', status: $status, ready: $ready, err: $err, spawnTime: $spawnTime, readyTime: $readyTime, tasks: $tasks)";
 }
 
 /// Information about a task in a [SnapdChange].
@@ -736,11 +761,6 @@ class SnapdTask {
       required this.spawnTime,
       this.readyTime});
 
-  @override
-  String toString() {
-    return "SnapdTask(id: '$id', kind: '$kind', summary: '$summary', status: '$status', progress: $progress, spawnTime: '$spawnTime', readyTime: '$readyTime')";
-  }
-
   factory SnapdTask._fromJson(value) {
     return SnapdTask(
         id: value['id'] ?? '',
@@ -753,6 +773,10 @@ class SnapdTask {
         spawnTime: _parseDateTime(value['spawn-time']) ?? DateTime.utc(1970),
         readyTime: _parseDateTime(value['ready-time']));
   }
+
+  @override
+  String toString() =>
+      "SnapdTask(id: $id, kind: $kind, summary: '$summary', status: $status, progress: $progress, spawnTime: $spawnTime, readyTime: $readyTime)";
 }
 
 /// Progress of a [SnapdTask].
@@ -768,17 +792,16 @@ class SnapdTaskProgress {
 
   const SnapdTaskProgress({this.label = '', this.done = 0, this.total = 0});
 
-  @override
-  String toString() {
-    return "SnapdTaskProgress(label: '$label', done: $done, total: $total)";
-  }
-
   factory SnapdTaskProgress._fromJson(value) {
     return SnapdTaskProgress(
         label: value['label'] ?? '',
         done: value['done'] ?? 0,
         total: value['total'] ?? 0);
   }
+
+  @override
+  String toString() =>
+      "SnapdTaskProgress(label: '$label', done: $done, total: $total)";
 }
 
 /// General response from snapd.
