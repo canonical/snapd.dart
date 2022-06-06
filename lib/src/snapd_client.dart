@@ -245,6 +245,9 @@ class Snap {
   /// Media associated with this snap.
   final List<SnapMedia> media;
 
+  /// The path this snap is mounted from, which is a .snap file for installed snaps and a directory for snaps in try mode.
+  final String? mountedFrom;
+
   /// Unique name for this snap. Use [title] for displaying.
   final String name;
 
@@ -301,6 +304,7 @@ class Snap {
       this.jailmode = false,
       this.license,
       this.media = const [],
+      this.mountedFrom,
       required this.name,
       this.private = false,
       this.publisher,
@@ -337,6 +341,7 @@ class Snap {
         installedSize: value['installed-size'],
         jailmode: value['jailmode'] ?? false,
         license: value['license'],
+        mountedFrom: value['mounted-from'],
         media: value['media'] != null
             ? (value['media'] as List)
                 .map((v) => SnapMedia._fromJson(v))
@@ -361,7 +366,7 @@ class Snap {
 
   @override
   String toString() =>
-      "Snap(apps: $apps, base: $base, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
+      "Snap(apps: $apps, base: $base, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
 }
 
 /// Response received when getting system information.
