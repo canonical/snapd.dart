@@ -90,6 +90,7 @@ class MockPublisher {
 class MockChannel {
   final String channel;
   final String confinement;
+  final String releasedAt;
   final String revision;
   final int size;
   final String version;
@@ -97,6 +98,7 @@ class MockChannel {
   MockChannel(
       {this.channel = '',
       this.confinement = '',
+      this.releasedAt = '',
       this.revision = '',
       this.size = 0,
       this.version = ''});
@@ -105,6 +107,7 @@ class MockChannel {
     var object = <dynamic, dynamic>{
       'channel': channel,
       'confinement': confinement,
+      'released-at': releasedAt,
       'revision': revision,
       'size': size,
       'version': version
@@ -1204,13 +1207,15 @@ void main() {
                 version: '1.2',
                 revision: '42',
                 size: 123456,
-                confinement: 'strict'),
+                confinement: 'strict',
+                releasedAt: '2022-05-02T21:24:15.330374Z'),
             'insider/stable': MockChannel(
                 channel: 'insider/stable',
                 version: '1.3',
                 revision: '43',
                 size: 888888,
-                confinement: 'classic')
+                confinement: 'classic',
+                releasedAt: '2022-04-26T12:54:32.578086Z')
           },
           commonIds: ['com.example.Hello', 'com.example.Hallo'],
           contact: 'hello@example.com',
@@ -1305,7 +1310,7 @@ void main() {
     expect(
         snap.toString(),
         equals(
-            "Snap(apps: [SnapApp(snap: hello, name: hello1, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null), SnapApp(snap: hello, name: hello2, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null)], base: core20, channel: stable, channels: {latest/stable: SnapChannel(confinement: SnapConfinement.strict, revision: 42, size: 123456, version: 1.2), insider/stable: SnapChannel(confinement: SnapConfinement.classic, revision: 43, size: 888888, version: 1.3)}, commonIds: [com.example.Hello, com.example.Hallo], confinement: SnapConfinement.classic, contact: hello@example.com, description: 'Hello\\nSalut\\nHola', downloadSize: 123456, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: 2022-05-13 09:51:03.920998Z, installedSize: 654321, license: GPL-3, media: [SnapMedia(type: icon, url: http://example.com/hello-icon.png, width: null, height: null), SnapMedia(type: screenshot, url: http://example.com/hello-screenshot.jpg, width: 1024, height: 768)], name: hello, publisher: SnapPublisher(id: JvtzsxbsHivZLdvzrt0iqW529riGLfXJ, username: publisher, displayName: Publisher, validation: verified), revision: 42, status: SnapStatus.available, storeUrl: https://snapcraft.io/hello, summary: 'Hello is an app', title: 'Hello', trackingChannel: latest/stable, tracks: [latest, insider], type: app, version: 1.2, website: http://example.com/hello)"));
+            "Snap(apps: [SnapApp(snap: hello, name: hello1, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null), SnapApp(snap: hello, name: hello2, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null)], base: core20, channel: stable, channels: {latest/stable: SnapChannel(confinement: SnapConfinement.strict, releasedAt: 2022-05-02 21:24:15.330374Z, revision: 42, size: 123456, version: 1.2), insider/stable: SnapChannel(confinement: SnapConfinement.classic, releasedAt: 2022-04-26 12:54:32.578086Z, revision: 43, size: 888888, version: 1.3)}, commonIds: [com.example.Hello, com.example.Hallo], confinement: SnapConfinement.classic, contact: hello@example.com, description: 'Hello\\nSalut\\nHola', downloadSize: 123456, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: 2022-05-13 09:51:03.920998Z, installedSize: 654321, license: GPL-3, media: [SnapMedia(type: icon, url: http://example.com/hello-icon.png, width: null, height: null), SnapMedia(type: screenshot, url: http://example.com/hello-screenshot.jpg, width: 1024, height: 768)], name: hello, publisher: SnapPublisher(id: JvtzsxbsHivZLdvzrt0iqW529riGLfXJ, username: publisher, displayName: Publisher, validation: verified), revision: 42, status: SnapStatus.available, storeUrl: https://snapcraft.io/hello, summary: 'Hello is an app', title: 'Hello', trackingChannel: latest/stable, tracks: [latest, insider], type: app, version: 1.2, website: http://example.com/hello)"));
   });
 
   test('connections', () async {
