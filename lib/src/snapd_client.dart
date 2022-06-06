@@ -94,10 +94,13 @@ class SnapApp {
       'SnapApp(snap: $snap, name: $name, desktopFile: $desktopFile, daemon: $daemon, enabled: $enabled, active: $active, commonId: $commonId)';
 }
 
-/// Described a channel available for a snap.
+/// Describes a channel available for a snap.
 class SnapChannel {
   /// Confinement of this snap in this channel.
   final SnapConfinement confinement;
+
+  /// The date this revision was released into the channel.
+  final DateTime releasedAt;
 
   /// Revision of this snap in this channel.
   final String revision;
@@ -110,6 +113,7 @@ class SnapChannel {
 
   const SnapChannel(
       {this.confinement = SnapConfinement.unknown,
+      required this.releasedAt,
       this.revision = '',
       this.size = 0,
       this.version = ''});
@@ -117,6 +121,7 @@ class SnapChannel {
   factory SnapChannel._fromJson(value) {
     return SnapChannel(
         confinement: _parseConfinement(value['confinement']),
+        releasedAt: _parseDateTime(value['released-at']) ?? DateTime.utc(1970),
         revision: value['revision'] ?? '',
         size: value['size'] ?? 0,
         version: value['version'] ?? '');
@@ -124,7 +129,7 @@ class SnapChannel {
 
   @override
   String toString() =>
-      'SnapChannel(confinement: $confinement, revision: $revision, size: $size, version: $version)';
+      'SnapChannel(confinement: $confinement, releasedAt: $releasedAt, revision: $revision, size: $size, version: $version)';
 }
 
 /// Describes a snap publisher.
