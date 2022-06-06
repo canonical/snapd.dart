@@ -1,5 +1,16 @@
 # Changelog
 
+## 0.4.0
+
+* Add SnapdClient.getSnap().
+* Rename SnapClient.snaps()/.apps() to .getSnaps()/.getApps().
+* Add SnapdException.
+* Add Snap.installDate/.base/.status/.trackingChannel.
+* Make Snap.title optional.
+* Add SnapdChange/SnapdTask.spawnTime/.readyTime.
+* Add SnapdSystemInfoResponse.refreshLast.refreshNext.
+* Add SnapChannel.releasedAt.
+
 ## 0.3.0
 
 * Change SnapdClient.install/remove/refresh to use single snaps.
