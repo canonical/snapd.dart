@@ -221,6 +221,9 @@ class Snap {
   /// Multi line description.
   final String description;
 
+  /// True if this snap is running in developer mode.
+  final bool devmode;
+
   /// Download size in bytes.
   final int? downloadSize;
 
@@ -233,6 +236,9 @@ class Snap {
   /// Installed size in bytes.
   final int? installedSize;
 
+  /// True if this snap is running in enforced confinement (jail) mode.
+  final bool jailmode;
+
   /// Package license.
   final String? license;
 
@@ -241,6 +247,9 @@ class Snap {
 
   /// Unique name for this snap. Use [title] for displaying.
   final String name;
+
+  /// True if this snap is only available to the developer.
+  final bool private;
 
   /// Publisher information.
   final SnapPublisher? publisher;
@@ -284,13 +293,16 @@ class Snap {
       this.confinement = SnapConfinement.unknown,
       this.contact = '',
       this.description = '',
+      this.devmode = false,
       this.downloadSize,
       this.id = '',
       this.installDate,
       this.installedSize,
+      this.jailmode = false,
       this.license,
       this.media = const [],
       required this.name,
+      this.private = false,
       this.publisher,
       this.revision = '',
       this.status = SnapStatus.unknown,
@@ -318,10 +330,12 @@ class Snap {
         confinement: _parseConfinement(value['confinement']),
         contact: value['contact'] ?? '',
         description: value['description'] ?? '',
+        devmode: value['devmode'] ?? false,
         downloadSize: value['download-size'],
         id: value['id'],
         installDate: _parseDateTime(value['install-date']),
         installedSize: value['installed-size'],
+        jailmode: value['jailmode'] ?? false,
         license: value['license'],
         media: value['media'] != null
             ? (value['media'] as List)
@@ -329,6 +343,7 @@ class Snap {
                 .toList()
             : [],
         name: value['name'],
+        private: value['private'] ?? false,
         publisher: value['publisher'] != null
             ? SnapPublisher._fromJson(value['publisher'])
             : null,
@@ -346,7 +361,7 @@ class Snap {
 
   @override
   String toString() =>
-      "Snap(apps: $apps, base: $base, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', downloadSize: $downloadSize, id: $id, installDate: $installDate, installedSize: $installedSize, license: $license, media: $media, name: $name, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
+      "Snap(apps: $apps, base: $base, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
 }
 
 /// Response received when getting system information.
