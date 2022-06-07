@@ -726,6 +726,9 @@ class SnapdChange {
   /// The tasks of this change.
   final List<SnapdTask> tasks;
 
+  /// The snaps that are associated with this change.
+  final List<String> snapNames;
+
   const SnapdChange(
       {this.id = '',
       this.kind = '',
@@ -735,9 +738,12 @@ class SnapdChange {
       required this.spawnTime,
       this.readyTime,
       this.err,
-      this.tasks = const []});
+      this.tasks = const [],
+      this.snapNames = const []});
 
   factory SnapdChange._fromJson(value) {
+    var data = value['data'] ?? {};
+    var snapNames = data['snap-names']?.cast<String>() ?? [];
     return SnapdChange(
         id: value['id'] ?? '',
         kind: value['kind'] ?? '',
@@ -750,12 +756,13 @@ class SnapdChange {
         tasks: value['tasks']
                 ?.map<SnapdTask>((v) => SnapdTask._fromJson(v))
                 .toList() ??
-            []);
+            [],
+        snapNames: snapNames);
   }
 
   @override
   String toString() =>
-      "SnapdChange(id: $id, kind: $kind, summary: '$summary', status: $status, ready: $ready, err: $err, spawnTime: $spawnTime, readyTime: $readyTime, tasks: $tasks)";
+      "SnapdChange(id: $id, kind: $kind, summary: '$summary', status: $status, ready: $ready, err: $err, spawnTime: $spawnTime, readyTime: $readyTime, tasks: $tasks, snapNames: $snapNames)";
 }
 
 /// Information about a task in a [SnapdChange].
