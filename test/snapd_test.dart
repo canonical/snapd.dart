@@ -391,7 +391,7 @@ class MockChange {
       this.error});
 
   dynamic toJson() {
-    return {
+    var object = {
       'id': id,
       'kind': kind,
       'summary': summary,
@@ -402,6 +402,10 @@ class MockChange {
       'ready-time': readyTime,
       'data': {'snap-names': snapNames}
     };
+    if (error != null) {
+      object['err'] = error;
+    }
+    return object;
   }
 }
 
@@ -649,6 +653,7 @@ class MockSnapdServer {
     var slots = req['slots'] ?? [];
 
     String? error;
+    var snapNames = <String>[];
     if (action == 'connect') {
       assert(plugs.length == 1);
       assert(slots.length == 1);
@@ -659,6 +664,7 @@ class MockSnapdServer {
       assert(plug.interface == slot.interface);
       plug.slotSnap = slotSnap;
       plug.slot = slot;
+      snapNames = [plugSnap.name, slotSnap.name];
     } else if (action == 'disconnect') {
       assert(plugs.length == 1);
       assert(slots.length == 1);
@@ -670,6 +676,7 @@ class MockSnapdServer {
       assert(plug.slot == slot);
       plug.slotSnap = null;
       plug.slot = null;
+      snapNames = [plugSnap.name, slotSnap.name];
     } else {
       _writeErrorResponse(request.response, 'unknown action');
       return;
@@ -680,7 +687,8 @@ class MockSnapdServer {
         tasks: [
           MockTask(id: '0', progress: MockTaskProgress(done: 10, total: 10))
         ],
-        error: error);
+        error: error,
+        snapNames: snapNames);
     _writeAsyncResponse(request.response, change.id);
   }
 
@@ -835,7 +843,8 @@ class MockSnapdServer {
         tasks: [
           MockTask(id: '0', progress: MockTaskProgress(done: 10, total: 10))
         ],
-        error: error);
+        error: error,
+        snapNames: [name]);
     _writeAsyncResponse(request.response, change.id);
   }
 
@@ -866,7 +875,8 @@ class MockSnapdServer {
       bool ready = false,
       String spawnTime = '2022-04-28T13:56Z',
       String? readyTime,
-      String? error}) {
+      String? error,
+      List<String> snapNames = const []}) {
     var change = MockChange(
         id: changes.length.toString(),
         kind: kind,
@@ -876,7 +886,8 @@ class MockSnapdServer {
         ready: ready,
         spawnTime: spawnTime,
         readyTime: readyTime,
-        error: error);
+        error: error,
+        snapNames: snapNames);
     changes.add(change);
     return change;
   }
@@ -1456,7 +1467,7 @@ void main() {
     expect(
         change.toString(),
         equals(
-            "SnapdChange(id: 0, kind: , summary: '', status: , ready: true, err: null, spawnTime: 2022-04-28 13:56:00.000Z, readyTime: null, tasks: [SnapdTask(id: 0, kind: , summary: '', status: , progress: SnapdTaskProgress(label: '', done: 10, total: 10), spawnTime: 1970-01-01 00:00:00.000Z, readyTime: null)])"));
+            "SnapdChange(id: 0, kind: , summary: '', status: , ready: true, err: null, spawnTime: 2022-04-28 13:56:00.000Z, readyTime: null, tasks: [SnapdTask(id: 0, kind: , summary: '', status: , progress: SnapdTaskProgress(label: '', done: 10, total: 10), spawnTime: 1970-01-01 00:00:00.000Z, readyTime: null)], snapNames: [test1, test3])"));
   });
 
   test('disconnect', () async {
@@ -1814,7 +1825,16 @@ void main() {
 
   test('changes', () async {
     var snapd = MockSnapdServer(changes: [
-      MockChange(id: '1', ready: false, snapNames: ['snap1', 'snap2']),
+      MockChange(
+          id: '1',
+          kind: 'change-kind',
+          summary: 'Summary',
+          status: 'Doing',
+          spawnTime: '2022-06-07T09:21:22.311860727Z',
+          readyTime: '2022-06-07T09:21:22.550329668Z',
+          error: 'Error',
+          ready: false,
+          snapNames: ['snap1', 'snap2']),
       MockChange(id: '2', ready: false, snapNames: ['snap2', 'snap3']),
       MockChange(id: '3', ready: true, snapNames: ['snap3', 'snap4'])
     ]);
@@ -1832,6 +1852,16 @@ void main() {
     var changes = await client.getChanges();
     expect(changes, hasLength(2));
     expect(changes[0].id, equals('1'));
+    expect(changes[0].kind, equals('change-kind'));
+    expect(changes[0].summary, equals('Summary'));
+    expect(changes[0].status, equals('Doing'));
+    expect(changes[0].spawnTime,
+        equals(DateTime.utc(2022, 6, 7, 9, 21, 22, 311, 860)));
+    expect(changes[0].readyTime,
+        equals(DateTime.utc(2022, 6, 7, 9, 21, 22, 550, 329)));
+    expect(changes[0].err, equals('Error'));
+    expect(changes[0].ready, isFalse);
+    expect(changes[0].snapNames, equals(['snap1', 'snap2']));
     expect(changes[1].id, equals('2'));
 
     var allChanges = await client.getChanges(filter: SnapdChangeFilter.all);
