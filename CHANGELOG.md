@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.1
+
+* Add Snap.devmode/.private/.jailmode/.mountedFrom.
+* Add SnapdClient.getChanges.
+* Add SnapChange.snapNames.
+* Document SnapdChange.err.
+
 ## 0.4.0
 
 * Add SnapdClient.getSnap().
