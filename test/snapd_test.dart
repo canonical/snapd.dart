@@ -373,6 +373,7 @@ class MockChange {
   final String status;
   final List<MockTask> tasks;
   final bool ready;
+  final List<String> snapNames;
   final String spawnTime;
   final String? readyTime;
   final String? error;
@@ -384,6 +385,7 @@ class MockChange {
       this.status = '',
       this.tasks = const [],
       this.ready = false,
+      this.snapNames = const [],
       this.spawnTime = '2022-04-28T13:56Z',
       this.readyTime,
       this.error});
@@ -397,7 +399,8 @@ class MockChange {
       'tasks': tasks.map((t) => t.toJson()).toList(),
       'ready': ready,
       'spawn-time': spawnTime,
-      'ready-time': readyTime
+      'ready-time': readyTime,
+      'data': {'snap-names': snapNames}
     };
   }
 }
@@ -438,6 +441,7 @@ class MockSnapdServer {
     this.accounts = const [],
     this.architecture = '',
     this.buildId = '',
+    List<MockChange> changes = const [],
     this.confinement = '',
     this.kernelVersion = '',
     this.managed = false,
@@ -450,6 +454,9 @@ class MockSnapdServer {
     this.systemMode = '',
     this.version = '',
   }) {
+    for (var change in changes) {
+      this.changes.add(change);
+    }
     for (var snap in snaps) {
       this.snaps[snap.name] = snap;
     }
@@ -490,6 +497,8 @@ class MockSnapdServer {
       _processGetApps(request);
     } else if (method == 'GET' && path == '/v2/connections') {
       _processGetConnections(request);
+    } else if (method == 'GET' && path == '/v2/changes') {
+      _processGetChanges(request);
     } else if (method == 'GET' && path.startsWith('/v2/changes/')) {
       _processGetChange(request, path.substring('/v2/changes/'.length));
     } else if (method == 'GET' && path == '/v2/find') {
@@ -569,6 +578,34 @@ class MockSnapdServer {
     }
     var r = {'established': established, 'plugs': plugs, 'slots': slots};
     _writeSyncResponse(request.response, r);
+  }
+
+  void _processGetChanges(HttpRequest request) {
+    var parameters = request.uri.queryParameters;
+    var filter = parameters['select'] ?? 'in-progress';
+    var name = parameters['for'];
+    var filteredChanges = changes.where((change) {
+      if (name != null) {
+        if (!change.snapNames.contains(name)) {
+          return false;
+        }
+      }
+
+      if (filter == 'all') {
+        return true;
+      }
+      if (filter == 'in-progress' && !change.ready) {
+        return true;
+      }
+      if (filter == 'ready' && change.ready) {
+        return true;
+      }
+
+      return false;
+    });
+
+    _writeSyncResponse(
+        request.response, filteredChanges.map((c) => c.toJson()).toList());
   }
 
   void _processGetChange(HttpRequest request, String id) {
@@ -1773,5 +1810,49 @@ void main() {
     expect(change.ready, isTrue);
     expect(snapd.snaps['test1']!.refreshed, isTrue);
     expect(snapd.snaps['test1']!.installedChannel, equals('latest/edge'));
+  });
+
+  test('changes', () async {
+    var snapd = MockSnapdServer(changes: [
+      MockChange(id: '1', ready: false, snapNames: ['snap1', 'snap2']),
+      MockChange(id: '2', ready: false, snapNames: ['snap2', 'snap3']),
+      MockChange(id: '3', ready: true, snapNames: ['snap3', 'snap4'])
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    // Default behaviour is to get in progress changes.
+    var changes = await client.getChanges();
+    expect(changes, hasLength(2));
+    expect(changes[0].id, equals('1'));
+    expect(changes[1].id, equals('2'));
+
+    var allChanges = await client.getChanges(filter: SnapdChangeFilter.all);
+    expect(allChanges, hasLength(3));
+    expect(allChanges[0].id, equals('1'));
+    expect(allChanges[1].id, equals('2'));
+    expect(allChanges[2].id, equals('3'));
+
+    var inProgressChanges =
+        await client.getChanges(filter: SnapdChangeFilter.inProgress);
+    expect(inProgressChanges, hasLength(2));
+    expect(inProgressChanges[0].id, equals('1'));
+    expect(inProgressChanges[1].id, equals('2'));
+
+    var readyChanges = await client.getChanges(filter: SnapdChangeFilter.ready);
+    expect(readyChanges, hasLength(1));
+    expect(readyChanges[0].id, equals('3'));
+
+    var nameChanges = await client.getChanges(name: 'snap2');
+    expect(nameChanges, hasLength(2));
+    expect(nameChanges[0].id, equals('1'));
+    expect(nameChanges[1].id, equals('2'));
   });
 }
