@@ -711,6 +711,7 @@ class SnapdChange {
   /// True when this change is complete.
   final bool ready;
 
+  /// Error that occurred doing this change.
   final String? err;
 
   /// The time this change started.
