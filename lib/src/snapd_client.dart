@@ -9,6 +9,9 @@ enum SnapStatus { unknown, available, priced, installed, active }
 /// Confinement used by a snap.
 enum SnapConfinement { unknown, strict, devmode, classic }
 
+/// Filter to select which changes to get from snapd.
+enum SnapdChangeFilter { all, inProgress, ready }
+
 DateTime? _parseDateTime(String? value) {
   return value != null ? DateTime.parse(value) : null;
 }
@@ -1129,6 +1132,33 @@ class SnapdClient {
   Future<SnapdChange> getChange(String id) async {
     var result = await _getSync('/v2/changes/$id');
     return SnapdChange._fromJson(result);
+  }
+
+  /// Get changes that have occurred / are occurring on the snap daemon.
+  /// Use [filter] to choose which changes to receive.
+  /// Use [name] to return only changes to the snap with that name.
+  Future<List<SnapdChange>> getChanges(
+      {SnapdChangeFilter? filter, String? name}) async {
+    var queryParameters = <String, String>{};
+    if (filter != null) {
+      var value = {
+        SnapdChangeFilter.all: 'all',
+        SnapdChangeFilter.inProgress: 'in-progress',
+        SnapdChangeFilter.ready: 'ready'
+      }[filter];
+      if (value != null) {
+        queryParameters['select'] = value;
+      }
+    }
+    if (name != null) {
+      queryParameters['for'] = name;
+    }
+    var result = await _getSync('/v2/changes', queryParameters);
+    var changes = <SnapdChange>[];
+    for (var change in result) {
+      changes.add(SnapdChange._fromJson(change));
+    }
+    return changes;
   }
 
   /// Terminates all active connections. If a client remains unclosed, the Dart process may not terminate.
