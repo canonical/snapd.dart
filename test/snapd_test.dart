@@ -339,6 +339,23 @@ class MockTask {
       this.progress,
       this.summary = '',
       this.status = ''});
+
+  dynamic toJson() {
+    var object = <String, dynamic>{
+      'id': id,
+      'kind': kind,
+      'summary': summary,
+      'status': status
+    };
+    if (progress != null) {
+      object['progress'] = {
+        'label': progress!.label,
+        'done': progress!.done,
+        'total': progress!.total
+      };
+    }
+    return object;
+  }
 }
 
 class MockTaskProgress {
@@ -370,6 +387,19 @@ class MockChange {
       this.spawnTime = '2022-04-28T13:56Z',
       this.readyTime,
       this.error});
+
+  dynamic toJson() {
+    return {
+      'id': id,
+      'kind': kind,
+      'summary': summary,
+      'status': status,
+      'tasks': tasks.map((t) => t.toJson()).toList(),
+      'ready': ready,
+      'spawn-time': spawnTime,
+      'ready-time': readyTime
+    };
+  }
 }
 
 class MockSnapdServer {
@@ -549,35 +579,7 @@ class MockSnapdServer {
       return;
     }
 
-    var tasks = <Map<String, dynamic>>[];
-    for (var task in change.tasks) {
-      var t = <String, dynamic>{
-        'id': task.id,
-        'kind': task.kind,
-        'summary': task.summary,
-        'status': task.status
-      };
-      var progress = task.progress;
-      if (progress != null) {
-        t['progress'] = {
-          'label': progress.label,
-          'done': progress.done,
-          'total': progress.total
-        };
-      }
-      tasks.add(t);
-    }
-
-    _writeSyncResponse(request.response, {
-      'id': change.id,
-      'kind': change.kind,
-      'summary': change.summary,
-      'status': change.status,
-      'tasks': tasks,
-      'ready': change.ready,
-      'spawn-time': change.spawnTime,
-      'ready-time': change.readyTime
-    });
+    _writeSyncResponse(request.response, change.toJson());
   }
 
   void _processFind(HttpRequest request) async {
