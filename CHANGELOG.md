@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.4.2
+
+* Fix exception parsing changes without the snap-names field.
+* Add SnapdClient.enable/.disable()
+* Make error kind optional.
+* Add SnapdException.toString().
+
 ## 0.4.1
 
 * Add Snap.devmode/.private/.jailmode/.mountedFrom.
