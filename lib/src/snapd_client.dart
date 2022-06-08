@@ -746,7 +746,7 @@ class SnapdChange {
 
   factory SnapdChange._fromJson(value) {
     var data = value['data'] ?? {};
-    var snapNames = data['snap-names']?.cast<String>() ?? [];
+    var snapNames = data['snap-names']?.cast<String>() ?? <String>[];
     return SnapdChange(
         id: value['id'] ?? '',
         kind: value['kind'] ?? '',
