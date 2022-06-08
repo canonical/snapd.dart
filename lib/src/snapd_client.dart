@@ -38,12 +38,12 @@ SnapConfinement _parseConfinement(String? value) {
 /// An exception thrown by a request to snapd.
 class SnapdException implements Exception {
   /// Error kind.
-  final String kind;
+  final String? kind;
 
   /// Message with error.
   final String message;
 
-  SnapdException(this.kind, this.message);
+  SnapdException({this.kind, required this.message});
 }
 
 /// Describes an app provided by a snap.
@@ -893,23 +893,23 @@ class _SnapdErrorResponse extends _SnapdResponse {
   final String message;
 
   /// Error kind returned.
-  final String kind;
+  final String? kind;
 
   /// Error value.
   final dynamic value;
 
   @override
-  dynamic get result => throw SnapdException(kind, message);
+  dynamic get result => throw SnapdException(kind: kind, message: message);
 
   @override
-  String get change => throw SnapdException(kind, message);
+  String get change => throw SnapdException(kind: kind, message: message);
 
   const _SnapdErrorResponse(this.message,
       {int statusCode = 0, String status = '', this.kind = '', this.value})
       : super(statusCode: statusCode, status: status);
 
   factory _SnapdErrorResponse.fromJson(int statusCode, String status, value) {
-    return _SnapdErrorResponse(value['message'],
+    return _SnapdErrorResponse(value['message'] ?? '',
         statusCode: statusCode,
         status: status,
         kind: value['kind'],
