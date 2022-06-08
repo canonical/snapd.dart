@@ -44,6 +44,9 @@ class SnapdException implements Exception {
   final String message;
 
   SnapdException({this.kind, required this.message});
+
+  @override
+  String toString() => 'SnapdException(kind: $kind, message: $message)';
 }
 
 /// Describes an app provided by a snap.
