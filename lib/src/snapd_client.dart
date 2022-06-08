@@ -1138,6 +1138,18 @@ class SnapdClient {
     return await _postAsync('/v2/snaps/$encodedName', request);
   }
 
+  Future<String> enable(String name) async {
+    var request = <String, dynamic>{'action': 'enable'};
+    var encodedName = Uri.encodeComponent(name);
+    return await _postAsync('/v2/snaps/$encodedName', request);
+  }
+
+  Future<String> disable(String name) async {
+    var request = <String, dynamic>{'action': 'disable'};
+    var encodedName = Uri.encodeComponent(name);
+    return await _postAsync('/v2/snaps/$encodedName', request);
+  }
+
   /// Gets the status the change with the given [id].
   Future<SnapdChange> getChange(String id) async {
     var result = await _getSync('/v2/changes/$id');

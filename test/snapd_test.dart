@@ -176,6 +176,7 @@ class MockSnap {
   var jailmode = false;
   var purged = false;
   var refreshed = false;
+  bool enabled;
 
   MockSnap(
       {this.apps = const [],
@@ -188,6 +189,7 @@ class MockSnap {
       this.description = '',
       this.devmode = false,
       this.downloadSize,
+      this.enabled = true,
       this.id = '',
       this.installDate,
       this.installedSize,
@@ -831,6 +833,22 @@ class MockSnapdServer {
           if (channel != null) {
             snap.installedChannel = channel;
           }
+        }
+        break;
+      case 'enable':
+        var snap = snaps[name];
+        if (snap == null) {
+          error = 'Snap $name not installed';
+        } else {
+          snap.enabled = true;
+        }
+        break;
+      case 'disable':
+        var snap = snaps[name];
+        if (snap == null) {
+          error = 'Snap $name not installed';
+        } else {
+          snap.enabled = false;
         }
         break;
       default:
@@ -1821,6 +1839,46 @@ void main() {
     expect(change.ready, isTrue);
     expect(snapd.snaps['test1']!.refreshed, isTrue);
     expect(snapd.snaps['test1']!.installedChannel, equals('latest/edge'));
+  });
+
+  test('enable', () async {
+    var snapd =
+        MockSnapdServer(snaps: [MockSnap(name: 'test1', enabled: false)]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps['test1']!.enabled, isFalse);
+    var changeId = await client.enable('test1');
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps['test1']!.enabled, isTrue);
+  });
+
+  test('disable', () async {
+    var snapd =
+        MockSnapdServer(snaps: [MockSnap(name: 'test1', enabled: true)]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps['test1']!.enabled, isTrue);
+    var changeId = await client.disable('test1');
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps['test1']!.enabled, isFalse);
   });
 
   test('changes', () async {
