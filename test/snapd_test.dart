@@ -1450,7 +1450,7 @@ void main() {
     expect(
         response.toString(),
         equals(
-            'SnapdConnectionsResponse(established: [SnapdConnection(slot: SnapSlot(snap: test3, slot: slot3, attributes: {}, interface: null), slotAttributes: {}, plug: SnapPlug(snap: test1, plug: plug1, attributes: {}, interface: null), plugAttributes: {}, interface: interface1, manual: false)], plugs: [SnapPlug(snap: test1, plug: plug1, attributes: {}, interface: interface1), SnapPlug(snap: test3, plug: plug3, attributes: {}, interface: interface1)], slots: [SnapSlot(snap: test2, slot: slot2, attributes: {}, interface: interface1), SnapSlot(snap: test3, slot: slot3, attributes: {}, interface: interface1)], undesired: [])'));
+            'SnapdConnectionsResponse(established: [SnapConnection(slot: SnapSlot(snap: test3, slot: slot3, attributes: {}, interface: null), slotAttributes: {}, plug: SnapPlug(snap: test1, plug: plug1, attributes: {}, interface: null), plugAttributes: {}, interface: interface1, manual: false)], plugs: [SnapPlug(snap: test1, plug: plug1, attributes: {}, interface: interface1), SnapPlug(snap: test3, plug: plug3, attributes: {}, interface: interface1)], slots: [SnapSlot(snap: test2, slot: slot2, attributes: {}, interface: interface1), SnapSlot(snap: test3, slot: slot3, attributes: {}, interface: interface1)], undesired: [])'));
   });
 
   test('connect', () async {

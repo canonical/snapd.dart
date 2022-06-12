@@ -46,7 +46,7 @@ class SnapdException implements Exception {
   SnapdException({this.kind, required this.message});
 
   @override
-  String toString() => 'SnapdException(kind: $kind, message: $message)';
+  String toString() => '$runtimeType(kind: $kind, message: $message)';
 }
 
 /// Describes an app provided by a snap.
@@ -97,7 +97,7 @@ class SnapApp {
 
   @override
   String toString() =>
-      'SnapApp(snap: $snap, name: $name, desktopFile: $desktopFile, daemon: $daemon, enabled: $enabled, active: $active, commonId: $commonId)';
+      '$runtimeType(snap: $snap, name: $name, desktopFile: $desktopFile, daemon: $daemon, enabled: $enabled, active: $active, commonId: $commonId)';
 }
 
 /// Describes a channel available for a snap.
@@ -135,7 +135,7 @@ class SnapChannel {
 
   @override
   String toString() =>
-      'SnapChannel(confinement: $confinement, releasedAt: $releasedAt, revision: $revision, size: $size, version: $version)';
+      '$runtimeType(confinement: $confinement, releasedAt: $releasedAt, revision: $revision, size: $size, version: $version)';
 }
 
 /// Describes a snap publisher.
@@ -168,7 +168,7 @@ class SnapPublisher {
 
   @override
   String toString() =>
-      'SnapPublisher(id: $id, username: $username, displayName: $displayName, validation: $validation)';
+      '$runtimeType(id: $id, username: $username, displayName: $displayName, validation: $validation)';
 }
 
 /// Describes a piece of media associated with a snap.
@@ -198,7 +198,7 @@ class SnapMedia {
 
   @override
   String toString() =>
-      'SnapMedia(type: $type, url: $url, width: $width, height: $height)';
+      '$runtimeType(type: $type, url: $url, width: $width, height: $height)';
 }
 
 /// Describes a snap package.
@@ -372,7 +372,7 @@ class Snap {
 
   @override
   String toString() =>
-      "Snap(apps: $apps, base: $base, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
+      "$runtimeType(apps: $apps, base: $base, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
 }
 
 /// Response received when getting system information.
@@ -450,7 +450,7 @@ class SnapdSystemInfoResponse {
 
   @override
   String toString() =>
-      'SnapdSystemInfoResponse(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, refreshLast: $refreshLast, refreshNext: $refreshNext, series: $series, systemMode: $systemMode, version: $version)';
+      '$runtimeType(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, refreshLast: $refreshLast, refreshNext: $refreshNext, series: $series, systemMode: $systemMode, version: $version)';
 }
 
 /// Response received when logging in.
@@ -493,7 +493,7 @@ class SnapdLoginResponse {
 
   @override
   String toString() =>
-      'SnapdLoginResponse(id: $id, username: $username, email: $email, macaroon: $macaroon, discharges: $discharges)';
+      '$runtimeType(id: $id, username: $username, email: $email, macaroon: $macaroon, discharges: $discharges)';
 }
 
 /// Information on a snap plug.
@@ -526,7 +526,7 @@ class SnapPlug {
 
   @override
   String toString() =>
-      'SnapPlug(snap: $snap, plug: $plug, attributes: $attributes, interface: $interface)';
+      '$runtimeType(snap: $snap, plug: $plug, attributes: $attributes, interface: $interface)';
 
   @override
   bool operator ==(other) {
@@ -574,7 +574,7 @@ class SnapSlot {
 
   @override
   String toString() =>
-      'SnapSlot(snap: $snap, slot: $slot, attributes: $attributes, interface: $interface)';
+      '$runtimeType(snap: $snap, slot: $slot, attributes: $attributes, interface: $interface)';
 
   @override
   bool operator ==(other) {
@@ -632,7 +632,7 @@ class SnapConnection {
 
   @override
   String toString() =>
-      'SnapdConnection(slot: $slot, slotAttributes: $slotAttributes, plug: $plug, plugAttributes: $plugAttributes, interface: $interface, manual: $manual)';
+      '$runtimeType(slot: $slot, slotAttributes: $slotAttributes, plug: $plug, plugAttributes: $plugAttributes, interface: $interface, manual: $manual)';
 
   @override
   bool operator ==(other) {
@@ -697,7 +697,7 @@ class SnapdConnectionsResponse {
 
   @override
   String toString() =>
-      'SnapdConnectionsResponse(established: $established, plugs: $plugs, slots: $slots, undesired: $undesired)';
+      '$runtimeType(established: $established, plugs: $plugs, slots: $slots, undesired: $undesired)';
 }
 
 /// Gives the state of an asynchronous operation.
@@ -765,7 +765,7 @@ class SnapdChange {
 
   @override
   String toString() =>
-      "SnapdChange(id: $id, kind: $kind, summary: '$summary', status: $status, ready: $ready, err: $err, spawnTime: $spawnTime, readyTime: $readyTime, tasks: $tasks, snapNames: $snapNames)";
+      "$runtimeType(id: $id, kind: $kind, summary: '$summary', status: $status, ready: $ready, err: $err, spawnTime: $spawnTime, readyTime: $readyTime, tasks: $tasks, snapNames: $snapNames)";
 }
 
 /// Information about a task in a [SnapdChange].
@@ -815,7 +815,7 @@ class SnapdTask {
 
   @override
   String toString() =>
-      "SnapdTask(id: $id, kind: $kind, summary: '$summary', status: $status, progress: $progress, spawnTime: $spawnTime, readyTime: $readyTime)";
+      "$runtimeType(id: $id, kind: $kind, summary: '$summary', status: $status, progress: $progress, spawnTime: $spawnTime, readyTime: $readyTime)";
 }
 
 /// Progress of a [SnapdTask].
@@ -840,7 +840,7 @@ class SnapdTaskProgress {
 
   @override
   String toString() =>
-      "SnapdTaskProgress(label: '$label', done: $done, total: $total)";
+      "$runtimeType(label: '$label', done: $done, total: $total)";
 }
 
 /// General response from snapd.
