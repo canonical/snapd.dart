@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.3
+
+* Added classic flag to SnapdClient.refresh().
+* Fixed incorrect name in SnapConnection.toString().
+
 ## 0.4.2
 
 * Fix exception parsing changes without the snap-names field.
