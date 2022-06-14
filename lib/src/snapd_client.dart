@@ -1117,11 +1117,15 @@ class SnapdClient {
 
   /// Refreshes the snap with the given [name].
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> refresh(String name, {String? channel}) async {
+  Future<String> refresh(String name,
+      {String? channel, bool classic = false}) async {
     var request = {};
     request['action'] = 'refresh';
     if (channel != null) {
       request['channel'] = channel;
+    }
+    if (classic) {
+      request['classic'] = true;
     }
     var encodedName = Uri.encodeComponent(name);
     return await _postAsync('/v2/snaps/$encodedName', request);
