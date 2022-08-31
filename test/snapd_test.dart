@@ -541,45 +541,99 @@ class MockSnapdServer {
   }
 
   void _processGetConnections(HttpRequest request) {
+    var parameters = request.uri.queryParameters;
+    var snapName = parameters['snap'];
+    var filter = parameters['select'];
     var established = [];
     var plugs = [];
     var slots = [];
     for (var snap in snaps.values) {
       for (var p in snap.plugs) {
-        var o = <String, dynamic>{
+        var plugObject = <String, dynamic>{
           'snap': snap.name,
           'plug': p.name,
           'interface': p.interface
         };
         if (p.attributes.isNotEmpty) {
-          o['attrs'] = p.attributes;
+          plugObject['attrs'] = p.attributes;
         }
-        plugs.add(o);
 
+        var hasConnections = false;
         if (p.slot != null) {
+          hasConnections = true;
+
           var s = p.slot!;
-          var so = <String, dynamic>{'snap': p.slotSnap!.name, 'slot': s.name};
+          var connectedSlotObject = <String, dynamic>{
+            'snap': p.slotSnap!.name,
+            'slot': s.name
+          };
           if (s.attributes.isNotEmpty) {
-            so['attributes'] = s.attributes;
+            connectedSlotObject['attributes'] = s.attributes;
           }
           var po = <String, dynamic>{'snap': snap.name, 'plug': p.name};
           if (p.attributes.isNotEmpty) {
             po['attributes'] = p.attributes;
           }
-          var o = {'slot': so, 'plug': po, 'interface': p.interface};
-          established.add(o);
+          var establishedObject = {
+            'slot': connectedSlotObject,
+            'plug': po,
+            'interface': p.interface
+          };
+          plugObject['connections'] = [
+            {'snap': p.slotSnap!.name, 'slot': s.name}
+          ];
+
+          if (snapName == null ||
+              snap.name == snapName ||
+              p.slotSnap!.name == snapName) {
+            established.add(establishedObject);
+          }
+        }
+
+        var matchName = snapName == null ||
+            snap.name == snapName ||
+            p.slotSnap?.name == snapName;
+        var matchConnection = filter == 'all' || hasConnections;
+        if (matchName && matchConnection) {
+          plugs.add(plugObject);
         }
       }
+
+      var hasConnections = false;
       for (var s in snap.slots) {
-        var o = <String, dynamic>{
+        var slotObject = <String, dynamic>{
           'snap': snap.name,
           'slot': s.name,
           'interface': s.interface
         };
         if (s.attributes.isNotEmpty) {
-          o['attrs'] = s.attributes;
+          slotObject['attrs'] = s.attributes;
         }
-        slots.add(o);
+
+        var connectedPlugNameMatches = false;
+        var connections = <Map<String, dynamic>>[];
+        for (var snap in snaps.values) {
+          for (var p in snap.plugs) {
+            if (p.slot == s) {
+              connections.add({'snap': snap.name, 'plug': p.name});
+              if (snap.name == snapName) {
+                connectedPlugNameMatches = true;
+              }
+            }
+          }
+        }
+        if (connections.isNotEmpty) {
+          slotObject['connections'] = connections;
+          hasConnections = true;
+        }
+
+        var matchName = snapName == null ||
+            snap.name == snapName ||
+            connectedPlugNameMatches;
+        var matchConnection = filter == 'all' || hasConnections;
+        if (matchName && matchConnection) {
+          slots.add(slotObject);
+        }
       }
     }
     var r = {'established': established, 'plugs': plugs, 'slots': slots};
@@ -1404,14 +1458,14 @@ void main() {
 
   test('connections', () async {
     var plug1 = MockPlug('plug1', 'interface1');
+    var slot1 = MockSlot('slot1', 'interface1');
+    var plug2 = MockPlug('plug2', 'interface1');
+    var slot2 = MockSlot('slot2', 'interface1');
+    var plug3 = MockPlug('plug3', 'interface1');
     var slot3 = MockSlot('slot3', 'interface1');
-    var snap1 = MockSnap(name: 'test1', plugs: [plug1]);
-    var snap2 =
-        MockSnap(name: 'test2', slots: [MockSlot('slot2', 'interface1')]);
-    var snap3 = MockSnap(
-        name: 'test3',
-        plugs: [MockPlug('plug3', 'interface1')],
-        slots: [slot3]);
+    var snap1 = MockSnap(name: 'test1', plugs: [plug1], slots: [slot1]);
+    var snap2 = MockSnap(name: 'test2', plugs: [plug2], slots: [slot2]);
+    var snap3 = MockSnap(name: 'test3', plugs: [plug3], slots: [slot3]);
 
     plug1.slotSnap = snap3;
     plug1.slot = slot3;
@@ -1438,9 +1492,117 @@ void main() {
         ]));
     expect(
         response.plugs,
+        unorderedEquals(
+            [SnapPlug(snap: 'test1', plug: 'plug1', interface: 'interface1')]));
+    expect(
+        response.slots,
+        unorderedEquals(
+            [SnapSlot(snap: 'test3', slot: 'slot3', interface: 'interface1')]));
+    expect(
+        response.toString(),
+        equals(
+            'SnapdConnectionsResponse(established: [SnapConnection(slot: SnapSlot(snap: test3, slot: slot3, attributes: {}, interface: null), slotAttributes: {}, plug: SnapPlug(snap: test1, plug: plug1, attributes: {}, interface: null), plugAttributes: {}, interface: interface1, manual: false)], plugs: [SnapPlug(snap: test1, plug: plug1, attributes: {}, interface: interface1)], slots: [SnapSlot(snap: test3, slot: slot3, attributes: {}, interface: interface1)], undesired: [])'));
+  });
+
+  test('connections - all', () async {
+    var plug1 = MockPlug('plug1', 'interface1');
+    var slot1 = MockSlot('slot1', 'interface1');
+    var plug2 = MockPlug('plug2', 'interface1');
+    var slot2 = MockSlot('slot2', 'interface1');
+    var plug3 = MockPlug('plug3', 'interface1');
+    var slot3 = MockSlot('slot3', 'interface1');
+    var snap1 = MockSnap(name: 'test1', plugs: [plug1], slots: [slot1]);
+    var snap2 = MockSnap(name: 'test2', plugs: [plug2], slots: [slot2]);
+    var snap3 = MockSnap(name: 'test3', plugs: [plug3], slots: [slot3]);
+
+    plug1.slotSnap = snap3;
+    plug1.slot = slot3;
+
+    var snapd = MockSnapdServer(snaps: [snap1, snap2, snap3]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var response =
+        await client.getConnections(filter: SnapdConnectionFilter.all);
+    expect(
+        response.established,
+        unorderedEquals([
+          SnapConnection(
+              slot: SnapSlot(snap: 'test3', slot: 'slot3'),
+              plug: SnapPlug(snap: 'test1', plug: 'plug1'),
+              interface: 'interface1')
+        ]));
+    expect(
+        response.plugs,
         unorderedEquals([
           SnapPlug(snap: 'test1', plug: 'plug1', interface: 'interface1'),
+          SnapPlug(snap: 'test2', plug: 'plug2', interface: 'interface1'),
           SnapPlug(snap: 'test3', plug: 'plug3', interface: 'interface1')
+        ]));
+    expect(
+        response.slots,
+        unorderedEquals([
+          SnapSlot(snap: 'test1', slot: 'slot1', interface: 'interface1'),
+          SnapSlot(snap: 'test2', slot: 'slot2', interface: 'interface1'),
+          SnapSlot(snap: 'test3', slot: 'slot3', interface: 'interface1')
+        ]));
+  });
+
+  test('connections - snap name', () async {
+    var plug1 = MockPlug('plug1', 'interface1');
+    var slot1 = MockSlot('slot1', 'interface1');
+    var plug2 = MockPlug('plug2', 'interface1');
+    var slot2 = MockSlot('slot2', 'interface1');
+    var plug3 = MockPlug('plug3', 'interface1');
+    var slot3 = MockSlot('slot3', 'interface1');
+    var snap1 = MockSnap(name: 'test1', slots: [slot1], plugs: [plug1]);
+    var snap2 = MockSnap(name: 'test2', slots: [slot2], plugs: [plug2]);
+    var snap3 = MockSnap(name: 'test3', slots: [slot3], plugs: [plug3]);
+
+    // Connect in a loop
+    plug1.slotSnap = snap2;
+    plug1.slot = slot2;
+    plug2.slotSnap = snap3;
+    plug2.slot = slot3;
+    plug3.slotSnap = snap1;
+    plug3.slot = slot1;
+
+    var snapd = MockSnapdServer(snaps: [snap1, snap2, snap3]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var response = await client.getConnections(snap: 'test2');
+    expect(
+        response.established,
+        unorderedEquals([
+          SnapConnection(
+              slot: SnapSlot(snap: 'test2', slot: 'slot2'),
+              plug: SnapPlug(snap: 'test1', plug: 'plug1'),
+              interface: 'interface1'),
+          SnapConnection(
+              slot: SnapSlot(snap: 'test3', slot: 'slot3'),
+              plug: SnapPlug(snap: 'test2', plug: 'plug2'),
+              interface: 'interface1')
+        ]));
+    expect(
+        response.plugs,
+        unorderedEquals([
+          SnapPlug(snap: 'test1', plug: 'plug1', interface: 'interface1'),
+          SnapPlug(snap: 'test2', plug: 'plug2', interface: 'interface1'),
         ]));
     expect(
         response.slots,
@@ -1448,10 +1610,6 @@ void main() {
           SnapSlot(snap: 'test2', slot: 'slot2', interface: 'interface1'),
           SnapSlot(snap: 'test3', slot: 'slot3', interface: 'interface1')
         ]));
-    expect(
-        response.toString(),
-        equals(
-            'SnapdConnectionsResponse(established: [SnapConnection(slot: SnapSlot(snap: test3, slot: slot3, attributes: {}, interface: null), slotAttributes: {}, plug: SnapPlug(snap: test1, plug: plug1, attributes: {}, interface: null), plugAttributes: {}, interface: interface1, manual: false)], plugs: [SnapPlug(snap: test1, plug: plug1, attributes: {}, interface: interface1), SnapPlug(snap: test3, plug: plug3, attributes: {}, interface: interface1)], slots: [SnapSlot(snap: test2, slot: slot2, attributes: {}, interface: interface1), SnapSlot(snap: test3, slot: slot3, attributes: {}, interface: interface1)], undesired: [])'));
   });
 
   test('connect', () async {
