@@ -12,6 +12,9 @@ enum SnapConfinement { unknown, strict, devmode, classic }
 /// Filter to select which changes to get from snapd.
 enum SnapdChangeFilter { all, inProgress, ready }
 
+/// Filter to select which connections to get from snapd.
+enum SnapdConnectionFilter { all }
+
 DateTime? _parseDateTime(String? value) {
   return value != null ? DateTime.parse(value) : null;
 }
@@ -1004,8 +1007,22 @@ class SnapdClient {
   }
 
   /// Gets the connections, plugs and slots used on this system.
-  Future<SnapdConnectionsResponse> getConnections() async {
-    var result = await _getSync('/v2/connections');
+  Future<SnapdConnectionsResponse> getConnections(
+      {String? snap, String? interface, SnapdConnectionFilter? filter}) async {
+    var queryParameters = <String, String>{};
+    if (snap != null) {
+      queryParameters['snap'] = snap;
+    }
+    if (interface != null) {
+      queryParameters['interface'] = interface;
+    }
+    if (filter != null) {
+      var value = {SnapdConnectionFilter.all: 'all'}[filter];
+      if (value != null) {
+        queryParameters['select'] = value;
+      }
+    }
+    var result = await _getSync('/v2/connections', queryParameters);
     return SnapdConnectionsResponse._fromJson(result);
   }
 
