@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.4
+
+* Add filters for SnapdClient.getConnections().
+
 ## 0.4.3
 
 * Added classic flag to SnapdClient.refresh().
