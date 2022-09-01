@@ -1492,16 +1492,26 @@ void main() {
         ]));
     expect(
         response.plugs,
-        unorderedEquals(
-            [SnapPlug(snap: 'test1', plug: 'plug1', interface: 'interface1')]));
+        unorderedEquals([
+          SnapPlug(
+              snap: 'test1',
+              plug: 'plug1',
+              interface: 'interface1',
+              connections: [SnapSlot(snap: 'test3', slot: 'slot3')])
+        ]));
     expect(
         response.slots,
-        unorderedEquals(
-            [SnapSlot(snap: 'test3', slot: 'slot3', interface: 'interface1')]));
+        unorderedEquals([
+          SnapSlot(
+              snap: 'test3',
+              slot: 'slot3',
+              interface: 'interface1',
+              connections: [SnapPlug(snap: 'test1', plug: 'plug1')])
+        ]));
     expect(
         response.toString(),
         equals(
-            'SnapdConnectionsResponse(established: [SnapConnection(slot: SnapSlot(snap: test3, slot: slot3, attributes: {}, interface: null), slotAttributes: {}, plug: SnapPlug(snap: test1, plug: plug1, attributes: {}, interface: null), plugAttributes: {}, interface: interface1, manual: false)], plugs: [SnapPlug(snap: test1, plug: plug1, attributes: {}, interface: interface1)], slots: [SnapSlot(snap: test3, slot: slot3, attributes: {}, interface: interface1)], undesired: [])'));
+            'SnapdConnectionsResponse(established: [SnapConnection(slot: SnapSlot(snap: test3, slot: slot3), slotAttributes: {}, plug: SnapPlug(snap: test1, plug: plug1), plugAttributes: {}, interface: interface1, manual: false)], plugs: [SnapPlug(snap: test1, plug: plug1, interface: interface1, connections: [SnapSlot(snap: test3, slot: slot3)])], slots: [SnapSlot(snap: test3, slot: slot3, interface: interface1, connections: [SnapPlug(snap: test1, plug: plug1)])], undesired: [])'));
   });
 
   test('connections - all', () async {
@@ -1542,7 +1552,11 @@ void main() {
     expect(
         response.plugs,
         unorderedEquals([
-          SnapPlug(snap: 'test1', plug: 'plug1', interface: 'interface1'),
+          SnapPlug(
+              snap: 'test1',
+              plug: 'plug1',
+              interface: 'interface1',
+              connections: [SnapSlot(snap: 'test3', slot: 'slot3')]),
           SnapPlug(snap: 'test2', plug: 'plug2', interface: 'interface1'),
           SnapPlug(snap: 'test3', plug: 'plug3', interface: 'interface1')
         ]));
@@ -1551,7 +1565,11 @@ void main() {
         unorderedEquals([
           SnapSlot(snap: 'test1', slot: 'slot1', interface: 'interface1'),
           SnapSlot(snap: 'test2', slot: 'slot2', interface: 'interface1'),
-          SnapSlot(snap: 'test3', slot: 'slot3', interface: 'interface1')
+          SnapSlot(
+              snap: 'test3',
+              slot: 'slot3',
+              interface: 'interface1',
+              connections: [SnapPlug(snap: 'test1', plug: 'plug1')])
         ]));
   });
 
@@ -1601,14 +1619,30 @@ void main() {
     expect(
         response.plugs,
         unorderedEquals([
-          SnapPlug(snap: 'test1', plug: 'plug1', interface: 'interface1'),
-          SnapPlug(snap: 'test2', plug: 'plug2', interface: 'interface1'),
+          SnapPlug(
+              snap: 'test1',
+              plug: 'plug1',
+              interface: 'interface1',
+              connections: [SnapSlot(snap: 'test2', slot: 'slot2')]),
+          SnapPlug(
+              snap: 'test2',
+              plug: 'plug2',
+              interface: 'interface1',
+              connections: [SnapSlot(snap: 'test3', slot: 'slot3')]),
         ]));
     expect(
         response.slots,
         unorderedEquals([
-          SnapSlot(snap: 'test2', slot: 'slot2', interface: 'interface1'),
-          SnapSlot(snap: 'test3', slot: 'slot3', interface: 'interface1')
+          SnapSlot(
+              snap: 'test2',
+              slot: 'slot2',
+              interface: 'interface1',
+              connections: [SnapPlug(snap: 'test1', plug: 'plug1')]),
+          SnapSlot(
+              snap: 'test3',
+              slot: 'slot3',
+              interface: 'interface1',
+              connections: [SnapPlug(snap: 'test2', plug: 'plug2')])
         ]));
   });
 
