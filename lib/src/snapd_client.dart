@@ -513,38 +513,64 @@ class SnapPlug {
   /// The interface this plug uses.
   final String? interface;
 
+  // Slots connected to this plug.
+  final List<SnapSlot> connections;
+
   const SnapPlug(
       {required this.snap,
       required this.plug,
       this.attributes = const {},
-      this.interface});
+      this.interface,
+      this.connections = const []});
 
   factory SnapPlug._fromJson(value) {
     return SnapPlug(
         snap: value['snap'] ?? '',
         plug: value['plug'] ?? '',
         attributes: value['attrs']?.cast<String, dynamic>() ?? {},
-        interface: value['interface']);
+        interface: value['interface'],
+        connections: value['connections']
+                ?.map<SnapSlot>((v) => SnapSlot._fromJson(v))
+                ?.toList() ??
+            []);
   }
 
   @override
-  String toString() =>
-      '$runtimeType(snap: $snap, plug: $plug, attributes: $attributes, interface: $interface)';
+  String toString() {
+    var values = {'snap': snap, 'plug': plug};
+    if (attributes.isNotEmpty) {
+      values['attributes'] = '$attributes';
+    }
+    if (interface != null) {
+      values['interface'] = '$interface';
+    }
+    if (connections.isNotEmpty) {
+      values['connections'] = '$connections';
+    }
+    var args = values.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+    return '$runtimeType($args)';
+  }
 
   @override
   bool operator ==(other) {
     if (identical(this, other)) return true;
-    final mapEquals = const DeepCollectionEquality().equals;
+    final deepEquals = const DeepCollectionEquality().equals;
 
     return other is SnapPlug &&
         other.snap == snap &&
         other.plug == plug &&
-        mapEquals(other.attributes, attributes) &&
-        other.interface == interface;
+        deepEquals(other.attributes, attributes) &&
+        other.interface == interface &&
+        deepEquals(other.connections, connections);
   }
 
   @override
-  int get hashCode => Object.hash(snap, plug, attributes, interface);
+  int get hashCode => Object.hash(
+      snap,
+      plug,
+      attributes.entries.map((e) => Object.hash(e.key, e.value)),
+      interface,
+      Object.hashAll(connections));
 }
 
 /// Information on a snap slot.
@@ -561,38 +587,64 @@ class SnapSlot {
   /// The interface this slot uses.
   final String? interface;
 
+  // Plugs connected to this slot.
+  final List<SnapPlug> connections;
+
   const SnapSlot(
       {required this.snap,
       required this.slot,
       this.attributes = const {},
-      this.interface});
+      this.interface,
+      this.connections = const []});
 
   factory SnapSlot._fromJson(value) {
     return SnapSlot(
         snap: value['snap'] ?? '',
         slot: value['slot'] ?? '',
         attributes: value['attrs']?.cast<String, dynamic>() ?? {},
-        interface: value['interface']);
+        interface: value['interface'],
+        connections: value['connections']
+                ?.map<SnapPlug>((v) => SnapPlug._fromJson(v))
+                ?.toList() ??
+            []);
   }
 
   @override
-  String toString() =>
-      '$runtimeType(snap: $snap, slot: $slot, attributes: $attributes, interface: $interface)';
+  String toString() {
+    var values = {'snap': snap, 'slot': slot};
+    if (attributes.isNotEmpty) {
+      values['attributes'] = '$attributes';
+    }
+    if (interface != null) {
+      values['interface'] = '$interface';
+    }
+    if (connections.isNotEmpty) {
+      values['connections'] = '$connections';
+    }
+    var args = values.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+    return '$runtimeType($args)';
+  }
 
   @override
   bool operator ==(other) {
     if (identical(this, other)) return true;
-    final mapEquals = const DeepCollectionEquality().equals;
+    final deepEquals = const DeepCollectionEquality().equals;
 
     return other is SnapSlot &&
         other.snap == snap &&
         other.slot == slot &&
-        mapEquals(other.attributes, attributes) &&
-        other.interface == interface;
+        deepEquals(other.attributes, attributes) &&
+        other.interface == interface &&
+        deepEquals(other.connections, connections);
   }
 
   @override
-  int get hashCode => Object.hash(snap, slot, attributes, interface);
+  int get hashCode => Object.hash(
+      snap,
+      slot,
+      attributes.entries.map((e) => Object.hash(e.key, e.value)),
+      interface,
+      Object.hashAll(connections));
 }
 
 /// Information on a connection between a snap plugs and slots.
