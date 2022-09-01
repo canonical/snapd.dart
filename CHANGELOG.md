@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.5
+
+* Decode plug/slot connections.
+
 ## 0.4.4
 
 * Add filters for SnapdClient.getConnections().
