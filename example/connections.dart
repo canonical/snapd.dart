@@ -1,22 +1,83 @@
 import 'dart:math';
 import 'package:snapd/snapd.dart';
 
-void main() async {
+void usage() {
+  print('Usage: connections [snap] [--all]');
+}
+
+void main(List<String> args) async {
   var client = SnapdClient();
   await client.loadAuthorization();
 
-  // Get the installed connections.
-  var response = await client.getConnections();
-  var rows = [];
-  for (var connection in response.established) {
-    var interface = connection.interface;
-    if (interface == 'content') {
-      interface = 'content[${connection.slotAttributes['content']}]';
+  String? snap;
+  SnapdConnectionFilter? filter;
+  for (var arg in args) {
+    if (arg.startsWith('--')) {
+      if (arg == '--all') {
+        filter = SnapdConnectionFilter.all;
+      } else {
+        usage();
+        return;
+      }
+    } else {
+      if (snap != null) {
+        usage();
+        return;
+      }
+      snap = arg;
+      filter = SnapdConnectionFilter.all;
     }
-    var plug = '${connection.plug.snap}:${connection.plug.plug}';
-    var slot =
-        '${connection.slot.snap != 'core' ? connection.slot.snap : ''}:${connection.slot.slot}';
-    rows.add([interface, plug, slot]);
+  }
+
+  var response = await client.getConnections(snap: snap, filter: filter);
+  var rows = [];
+  String getInterfaceDescription(
+      String interface, Map<String, dynamic> attributes) {
+    if (interface == 'content') {
+      return 'content[${attributes['content']}]';
+    } else {
+      return interface;
+    }
+  }
+
+  String getPlugDescription(SnapPlug plug) {
+    return '${plug.snap != 'snapd' ? plug.snap : ''}:${plug.plug}';
+  }
+
+  String getSlotDescription(SnapSlot slot) {
+    return '${slot.snap != 'snapd' ? slot.snap : ''}:${slot.slot}';
+  }
+
+  for (var plug in response.plugs) {
+    var interfaceDescription =
+        getInterfaceDescription(plug.interface ?? '', plug.attributes);
+    var plugDescription = getPlugDescription(plug);
+    if (plug.connections.isNotEmpty) {
+      for (var slot in plug.connections) {
+        var slotDescription = getSlotDescription(slot);
+        rows.add([interfaceDescription, plugDescription, slotDescription]);
+      }
+    } else {
+      rows.add([interfaceDescription, plugDescription, '-']);
+    }
+  }
+  for (var slot in response.slots) {
+    var interfaceDescription =
+        getInterfaceDescription(slot.interface ?? '', slot.attributes);
+    var slotDescription = getSlotDescription(slot);
+    if (slot.connections.isNotEmpty) {
+      for (var plug in slot.connections) {
+        // Skip connections to self - already added above.
+        if (plug.snap == snap) {
+          continue;
+        }
+
+        var plugDescription = getPlugDescription(plug);
+        rows.add([interfaceDescription, plugDescription, slotDescription]);
+      }
+    } else {
+      rows.add([interfaceDescription, '-', slotDescription]);
+    }
   }
   rows.sort((a, b) {
     for (var i = 0; i < a.length; i++) {
