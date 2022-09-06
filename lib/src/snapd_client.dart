@@ -716,7 +716,7 @@ class SnapdConnectionsResponse {
   /// Plugs on this system.
   final List<SnapPlug> plugs;
 
-  /// Slotss on this system.
+  /// Slots on this system.
   final List<SnapSlot> slots;
 
   /// Auto-connected connections that have been manually disconnected.
