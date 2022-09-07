@@ -12,6 +12,9 @@ enum SnapConfinement { unknown, strict, devmode, classic }
 /// Filter to select which changes to get from snapd.
 enum SnapdChangeFilter { all, inProgress, ready }
 
+/// Filter to select which apps to get from snapd.
+enum SnapdAppFilter { service }
+
 /// Filter to select which connections to get from snapd.
 enum SnapdConnectionFilter { all }
 
@@ -1049,8 +1052,15 @@ class SnapdClient {
   }
 
   /// Gets information on all installed apps.
-  Future<List<SnapApp>> getApps() async {
-    var result = await _getSync('/v2/apps');
+  Future<List<SnapApp>> getApps({SnapdAppFilter? filter}) async {
+    var queryParameters = <String, String>{};
+    if (filter != null) {
+      var value = {SnapdAppFilter.service: 'service'}[filter];
+      if (value != null) {
+        queryParameters['select'] = value;
+      }
+    }
+    var result = await _getSync('/v2/apps', queryParameters);
     var apps = <SnapApp>[];
     for (var app in result) {
       apps.add(SnapApp._fromJson(app));
