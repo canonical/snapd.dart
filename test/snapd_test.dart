@@ -532,9 +532,13 @@ class MockSnapdServer {
 
   void _processGetApps(HttpRequest request) {
     var parameters = request.uri.queryParameters;
+    var names = parameters['names']?.split(',');
     var filter = parameters['select'];
     var apps = [];
     for (var snap in snaps.values) {
+      if (names != null && !names.contains(snap.name)) {
+        continue;
+      }
       for (var app in snap.apps) {
         if (filter == 'service' && app.daemon == null) {
           continue;
@@ -1304,6 +1308,28 @@ void main() {
     var apps = await client.getApps(filter: SnapdAppFilter.service);
     expect(apps, hasLength(1));
     expect(apps[0].name, equals('app2a'));
+  });
+
+  test('apps - names', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'snap1', apps: [MockApp(name: 'app1')]),
+      MockSnap(name: 'snap2', apps: [MockApp(name: 'app2')]),
+      MockSnap(name: 'snap3', apps: [MockApp(name: 'app3')])
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var apps = await client.getApps(names: ['snap1', 'snap3']);
+    expect(apps, hasLength(2));
+    expect(apps[0].name, equals('app1'));
+    expect(apps[1].name, equals('app3'));
   });
 
   test('snap properties', () async {

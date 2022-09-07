@@ -1052,8 +1052,12 @@ class SnapdClient {
   }
 
   /// Gets information on all installed apps.
-  Future<List<SnapApp>> getApps({SnapdAppFilter? filter}) async {
+  Future<List<SnapApp>> getApps(
+      {List<String>? names, SnapdAppFilter? filter}) async {
     var queryParameters = <String, String>{};
+    if (names != null) {
+      queryParameters['names'] = names.join(',');
+    }
     if (filter != null) {
       var value = {SnapdAppFilter.service: 'service'}[filter];
       if (value != null) {
