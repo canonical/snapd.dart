@@ -571,7 +571,8 @@ class SnapPlug {
   int get hashCode => Object.hash(
       snap,
       plug,
-      attributes.entries.map((e) => Object.hash(e.key, e.value)),
+      Object.hashAllUnordered(
+          attributes.entries.map((e) => Object.hash(e.key, e.value))),
       interface,
       Object.hashAll(connections));
 }
@@ -645,7 +646,8 @@ class SnapSlot {
   int get hashCode => Object.hash(
       snap,
       slot,
-      attributes.entries.map((e) => Object.hash(e.key, e.value)),
+      Object.hashAllUnordered(
+          attributes.entries.map((e) => Object.hash(e.key, e.value))),
       interface,
       Object.hashAll(connections));
 }
