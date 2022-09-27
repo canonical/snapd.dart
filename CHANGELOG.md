@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.6
+
+* Support filtering apps by service and snap name
+* Fix hash calculation for SnapPlug/SnapSlot.
+* Improve connections example to match snap command line tool.
+
 ## 0.4.5
 
 * Decode plug/slot connections.
