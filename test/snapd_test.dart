@@ -155,6 +155,7 @@ class MockSnap {
   final List<MockPlug> plugs;
   final bool private;
   final MockPublisher? publisher;
+  final bool refreshable;
   final String revision;
   final String? section;
   final List<MockSlot> slots;
@@ -201,6 +202,7 @@ class MockSnap {
       this.plugs = const [],
       this.private = false,
       this.publisher,
+      this.refreshable = false,
       this.revision = '',
       this.section,
       this.slots = const [],
@@ -693,6 +695,7 @@ class MockSnapdServer {
     var query = parameters['q'];
     var name = parameters['name'];
     var section = parameters['section'];
+    var select = parameters['select'];
 
     var snaps = [];
     for (var snap in storeSnaps.values) {
@@ -703,6 +706,12 @@ class MockSnapdServer {
         continue;
       }
       if (section != null && snap.section != section) {
+        continue;
+      }
+      if (select == 'refresh' && !snap.refreshable) {
+        continue;
+      }
+      if ((select == 'private') != snap.private) {
         continue;
       }
       snaps.add(snap.toJson());
@@ -1855,6 +1864,48 @@ void main() {
     expect(snaps, hasLength(2));
     expect(snaps[0].name, equals('bear'));
     expect(snaps[1].name, equals('fishy'));
+  });
+
+  test('find - select: refresh', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'swordfish'),
+      MockSnap(name: 'bear', refreshable: true),
+      MockSnap(name: 'fishy')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var snaps = await client.find(select: 'refresh');
+    expect(snaps, hasLength(1));
+    expect(snaps[0].name, equals('bear'));
+  });
+
+  test('find - select: private', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'swordfish'),
+      MockSnap(name: 'bear'),
+      MockSnap(name: 'fishy', private: true)
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var snaps = await client.find(select: 'private');
+    expect(snaps, hasLength(1));
+    expect(snaps[0].name, equals('fishy'));
   });
 
   test('install', () async {
