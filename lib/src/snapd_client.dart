@@ -1132,8 +1132,11 @@ class SnapdClient {
   /// If [query] is provided, searches for snaps that match the given string.
   /// If [name] is provided, match the snap with the given name.
   /// If [section] is provided, search within that store section.
+  /// If [select] is provided and set to:
+  ///   - 'refresh': search refreshable snaps. Can't be used with [query] nor [name].
+  ///   - 'private': search private snaps. Can't be used with [query].
   Future<List<Snap>> find(
-      {String? query, String? name, String? section}) async {
+      {String? query, String? name, String? section, String? select}) async {
     var queryParameters = <String, String>{};
     if (query != null) {
       queryParameters['q'] = query;
@@ -1143,6 +1146,9 @@ class SnapdClient {
     }
     if (section != null) {
       queryParameters['section'] = section;
+    }
+    if (select != null) {
+      queryParameters['select'] = select;
     }
     var result = await _getSync('/v2/find', queryParameters);
     var snaps = <Snap>[];
