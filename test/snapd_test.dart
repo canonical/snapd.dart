@@ -1549,33 +1549,6 @@ void main() {
             "Snap(apps: [SnapApp(snap: hello, name: hello1, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null), SnapApp(snap: hello, name: hello2, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null)], base: core20, channel: stable, channels: {latest/stable: SnapChannel(confinement: SnapConfinement.strict, releasedAt: 2022-05-02 21:24:15.330374Z, revision: 42, size: 123456, version: 1.2), insider/stable: SnapChannel(confinement: SnapConfinement.classic, releasedAt: 2022-04-26 12:54:32.578086Z, revision: 43, size: 888888, version: 1.3)}, commonIds: [com.example.Hello, com.example.Hallo], confinement: SnapConfinement.classic, contact: hello@example.com, description: 'Hello\\nSalut\\nHola', devmode: true, downloadSize: 123456, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: 2022-05-13 09:51:03.920998Z, installedSize: 654321, jailmode: true, license: GPL-3, media: [SnapMedia(type: icon, url: http://example.com/hello-icon.png, width: null, height: null), SnapMedia(type: screenshot, url: http://example.com/hello-screenshot.jpg, width: 1024, height: 768)], mountedFrom: /var/lib/snapd/snaps/hello_1.2.snap, name: hello, private: true, publisher: SnapPublisher(id: JvtzsxbsHivZLdvzrt0iqW529riGLfXJ, username: publisher, displayName: Publisher, validation: verified), revision: 42, status: SnapStatus.available, storeUrl: https://snapcraft.io/hello, summary: 'Hello is an app', title: 'Hello', trackingChannel: latest/stable, tracks: [latest, insider], type: app, version: 1.2, website: http://example.com/hello)"));
   });
 
-  test('bulk refresh', () async {
-    var snapd = MockSnapdServer(snaps: [
-      MockSnap(name: 'test1'),
-      MockSnap(name: 'test2'),
-      MockSnap(name: 'test3')
-    ]);
-    await snapd.start();
-    addTearDown(() async {
-      await snapd.close();
-    });
-
-    var client = SnapdClient(socketPath: snapd.socketPath);
-    addTearDown(() async {
-      client.close();
-    });
-
-    expect(snapd.snaps['test1']!.refreshed, isFalse);
-    expect(snapd.snaps['test2']!.refreshed, isFalse);
-    expect(snapd.snaps['test3']!.refreshed, isFalse);
-    var changeId = await client.bulkRefresh(['test2', 'test3']);
-    var change = await client.getChange(changeId);
-    expect(change.ready, isTrue);
-    expect(snapd.snaps['test1']!.refreshed, isFalse);
-    expect(snapd.snaps['test2']!.refreshed, isTrue);
-    expect(snapd.snaps['test3']!.refreshed, isTrue);
-  });
-
   test('connections', () async {
     var plug1 = MockPlug('plug1', 'interface1');
     var slot1 = MockSlot('slot1', 'interface1');
@@ -2171,6 +2144,33 @@ void main() {
     expect(change.ready, isTrue);
     expect(snapd.snaps['test1']!.refreshed, isTrue);
     expect(snapd.snaps['test1']!.classic, isTrue);
+  });
+
+  test('refresh many', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'test1'),
+      MockSnap(name: 'test2'),
+      MockSnap(name: 'test3')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps['test1']!.refreshed, isFalse);
+    expect(snapd.snaps['test2']!.refreshed, isFalse);
+    expect(snapd.snaps['test3']!.refreshed, isFalse);
+    var changeId = await client.refreshMany(['test2', 'test3']);
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps['test1']!.refreshed, isFalse);
+    expect(snapd.snaps['test2']!.refreshed, isTrue);
+    expect(snapd.snaps['test3']!.refreshed, isTrue);
   });
 
   test('enable', () async {

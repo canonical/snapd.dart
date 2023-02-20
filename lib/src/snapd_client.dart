@@ -1096,7 +1096,7 @@ class SnapdClient {
 
   /// Refreshes the snaps given by [names].
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> bulkRefresh(List<String> names) async {
+  Future<String> refreshMany(List<String> names) async {
     var request = {};
     request['action'] = 'refresh';
     request['snaps'] = names;
