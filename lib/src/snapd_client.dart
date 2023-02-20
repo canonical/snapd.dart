@@ -1094,6 +1094,15 @@ class SnapdClient {
     return SnapdConnectionsResponse._fromJson(result);
   }
 
+  /// Refreshes the snaps given by [names].
+  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
+  Future<String> refreshMany(List<String> names) async {
+    var request = {};
+    request['action'] = 'refresh';
+    request['snaps'] = names;
+    return await _postAsync('/v2/snaps', request);
+  }
+
   /// Connects a plug to a slot.
   Future<String> connect(
       String snap, String plug, String slotSnap, String slot) async {

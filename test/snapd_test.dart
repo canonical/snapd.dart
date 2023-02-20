@@ -517,6 +517,8 @@ class MockSnapdServer {
       await _processLogout(request);
     } else if (method == 'GET' && path == '/v2/snaps') {
       _processGetSnaps(request);
+    } else if (method == 'POST' && path == '/v2/snaps') {
+      await _processPostSnaps(request);
     } else if (method == 'GET' && path.startsWith('/v2/snaps/')) {
       await _processGetSnap(request, path.substring('/v2/snaps/'.length));
     } else if (method == 'POST' && path.startsWith('/v2/snaps/')) {
@@ -837,6 +839,43 @@ class MockSnapdServer {
       return;
     }
     _writeSyncResponse(request.response, snap.toJson());
+  }
+
+  Future<void> _processPostSnaps(HttpRequest request) async {
+    var req = await _readJson(request);
+    var action = req['action'];
+    List<String> snapNames;
+
+    String? error;
+    switch (action) {
+      case 'refresh':
+        snapNames = List.from(req['snaps'] ?? []);
+        var missingSnaps = <String>[];
+        for (var name in snapNames) {
+          var snap = snaps[name];
+          if (snap == null) {
+            missingSnaps.add(name);
+          } else {
+            snap.refreshed = true;
+          }
+        }
+        if (missingSnaps.isNotEmpty) {
+          error = 'Snaps not installed: ${missingSnaps.join(', ')}';
+        }
+        break;
+      default:
+        _writeErrorResponse(request.response, 'unknown action');
+        snapNames = [];
+        break;
+    }
+    var change = _addChange(
+        ready: true,
+        tasks: [
+          MockTask(id: '0', progress: MockTaskProgress(done: 10, total: 10))
+        ],
+        error: error,
+        snapNames: snapNames);
+    _writeAsyncResponse(request.response, change.id);
   }
 
   Future<void> _processPostSnap(HttpRequest request, String name) async {
@@ -2105,6 +2144,33 @@ void main() {
     expect(change.ready, isTrue);
     expect(snapd.snaps['test1']!.refreshed, isTrue);
     expect(snapd.snaps['test1']!.classic, isTrue);
+  });
+
+  test('refresh many', () async {
+    var snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'test1'),
+      MockSnap(name: 'test2'),
+      MockSnap(name: 'test3')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps['test1']!.refreshed, isFalse);
+    expect(snapd.snaps['test2']!.refreshed, isFalse);
+    expect(snapd.snaps['test3']!.refreshed, isFalse);
+    var changeId = await client.refreshMany(['test2', 'test3']);
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps['test1']!.refreshed, isFalse);
+    expect(snapd.snaps['test2']!.refreshed, isTrue);
+    expect(snapd.snaps['test3']!.refreshed, isTrue);
   });
 
   test('enable', () async {
