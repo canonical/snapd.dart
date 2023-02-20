@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.7
+
+* Add a select parameter to SnapdClient.find().
+* Add SnapdClient.refreshMany().
+* Add examples for SnapdClient.connect/disconnect.
+
 ## 0.4.6
 
 * Support filtering apps by service and snap name
