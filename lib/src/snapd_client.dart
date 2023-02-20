@@ -18,6 +18,9 @@ enum SnapdAppFilter { service }
 /// Filter to select which connections to get from snapd.
 enum SnapdConnectionFilter { all }
 
+/// Filter to select which apps to return from a collection search.
+enum SnapFindFilter { refresh, private }
+
 DateTime? _parseDateTime(String? value) {
   return value != null ? DateTime.parse(value) : null;
 }
@@ -1141,8 +1144,14 @@ class SnapdClient {
   /// If [query] is provided, searches for snaps that match the given string.
   /// If [name] is provided, match the snap with the given name.
   /// If [section] is provided, search within that store section.
+  /// If [filter] is provided, alter the collection searched:
+  ///   - 'refresh': search refreshable snaps. Can't be used with [query] nor [name].
+  ///   - 'private': search private snaps. Can't be used with [query].
   Future<List<Snap>> find(
-      {String? query, String? name, String? section}) async {
+      {String? query,
+      String? name,
+      String? section,
+      SnapFindFilter? filter}) async {
     var queryParameters = <String, String>{};
     if (query != null) {
       queryParameters['q'] = query;
@@ -1152,6 +1161,15 @@ class SnapdClient {
     }
     if (section != null) {
       queryParameters['section'] = section;
+    }
+    if (filter != null) {
+      var value = {
+        SnapFindFilter.private: 'private',
+        SnapFindFilter.refresh: 'refresh'
+      }[filter];
+      if (value != null) {
+        queryParameters['select'] = value;
+      }
     }
     var result = await _getSync('/v2/find', queryParameters);
     var snaps = <Snap>[];
