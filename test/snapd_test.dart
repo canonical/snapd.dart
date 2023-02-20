@@ -1882,7 +1882,7 @@ void main() {
       client.close();
     });
 
-    var snaps = await client.find(select: 'refresh');
+    var snaps = await client.find(filter: SnapFindFilter.refresh);
     expect(snaps, hasLength(1));
     expect(snaps[0].name, equals('bear'));
   });
@@ -1903,7 +1903,7 @@ void main() {
       client.close();
     });
 
-    var snaps = await client.find(select: 'private');
+    var snaps = await client.find(filter: SnapFindFilter.private);
     expect(snaps, hasLength(1));
     expect(snaps[0].name, equals('fishy'));
   });
