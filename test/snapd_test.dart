@@ -1616,6 +1616,55 @@ void main() {
             'SnapdConnectionsResponse(established: [SnapConnection(slot: SnapSlot(snap: test3, slot: slot3), slotAttributes: {}, plug: SnapPlug(snap: test1, plug: plug1), plugAttributes: {}, interface: interface1, manual: false)], plugs: [SnapPlug(snap: test1, plug: plug1, interface: interface1, connections: [SnapSlot(snap: test3, slot: slot3)])], slots: [SnapSlot(snap: test3, slot: slot3, interface: interface1, connections: [SnapPlug(snap: test1, plug: plug1)])], undesired: [])'));
   });
 
+  test('connection attributes', () async {
+    var plug1 = MockPlug('plug1', 'interface1',
+        attributes: {'plug-attribute1': 'plug-attribute-value1'});
+    var slot1 = MockSlot('slot1', 'interface1',
+        attributes: {'slot-attribute1': 'slot-attribute-value1'});
+    var snap1 = MockSnap(name: 'test1', plugs: [plug1]);
+    var snap2 = MockSnap(name: 'test2', slots: [slot1]);
+
+    var snapd = MockSnapdServer(snaps: [snap1, snap2]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var response =
+        await client.getConnections(filter: SnapdConnectionFilter.all);
+    expect(
+        response.plugs,
+        unorderedEquals([
+          SnapPlug(
+              snap: 'test1',
+              plug: 'plug1',
+              interface: 'interface1',
+              attributes: {'plug-attribute1': 'plug-attribute-value1'})
+        ]));
+    expect(
+        response.slots,
+        unorderedEquals([
+          SnapSlot(
+              snap: 'test2',
+              slot: 'slot1',
+              interface: 'interface1',
+              attributes: {'slot-attribute1': 'slot-attribute-value1'})
+        ]));
+    expect(
+        response.plugs.toString(),
+        equals(
+            '[SnapPlug(snap: test1, plug: plug1, attributes: {plug-attribute1: plug-attribute-value1}, interface: interface1)]'));
+    expect(
+        response.slots.toString(),
+        equals(
+            '[SnapSlot(snap: test2, slot: slot1, attributes: {slot-attribute1: slot-attribute-value1}, interface: interface1)]'));
+  });
+
   test('connections - all', () async {
     var plug1 = MockPlug('plug1', 'interface1');
     var slot1 = MockSlot('slot1', 'interface1');
