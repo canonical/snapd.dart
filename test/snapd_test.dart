@@ -1161,6 +1161,33 @@ void main() {
     expect(snapd.lastDischarges, equals(['discharge1', 'discharge2']));
   });
 
+  test('load authorization', () async {
+    var snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var dir = await Directory.systemTemp.createTemp('snapd-dart');
+    addTearDown(() async {
+      await dir.delete(recursive: true);
+    });
+    var path = '${dir.path}/auth.json';
+    var file = File(path);
+    await file.writeAsString(
+        '{"macaroon":"macaroon","discharges":["discharge1","discharge2"]}');
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+    await client.loadAuthorization(path: path);
+
+    await client.systemInfo();
+    expect(snapd.lastMacaroon, equals('macaroon'));
+    expect(snapd.lastDischarges, equals(['discharge1', 'discharge2']));
+  });
+
   test('login', () async {
     var snapd = MockSnapdServer(accounts: [
       MockAccount(
