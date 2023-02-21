@@ -556,6 +556,7 @@ class MockSnapdServer {
   void _processGetConnections(HttpRequest request) {
     var parameters = request.uri.queryParameters;
     var snapName = parameters['snap'];
+    var interface = parameters['interface'];
     var filter = parameters['select'];
     var established = [];
     var plugs = [];
@@ -606,8 +607,9 @@ class MockSnapdServer {
         var matchName = snapName == null ||
             snap.name == snapName ||
             p.slotSnap?.name == snapName;
+        var matchInterface = interface == null || p.interface == interface;
         var matchConnection = filter == 'all' || hasConnections;
-        if (matchName && matchConnection) {
+        if (matchName && matchInterface && matchConnection) {
           plugs.add(plugObject);
         }
       }
@@ -643,8 +645,9 @@ class MockSnapdServer {
         var matchName = snapName == null ||
             snap.name == snapName ||
             connectedPlugNameMatches;
+        var matchInterface = interface == null || s.interface == interface;
         var matchConnection = filter == 'all' || hasConnections;
-        if (matchName && matchConnection) {
+        if (matchName && matchInterface && matchConnection) {
           slots.add(slotObject);
         }
       }
@@ -1793,6 +1796,51 @@ void main() {
               snap: 'test3',
               slot: 'slot3',
               interface: 'interface1',
+              connections: [SnapPlug(snap: 'test2', plug: 'plug2')])
+        ]));
+  });
+
+  test('connections - interface name', () async {
+    var plug1 = MockPlug('plug1', 'interface1');
+    var slot1 = MockSlot('slot1', 'interface2');
+    var plug2 = MockPlug('plug2', 'interface2');
+    var slot2 = MockSlot('slot2', 'interface1');
+    var snap1 = MockSnap(name: 'test1', slots: [slot1], plugs: [plug1]);
+    var snap2 = MockSnap(name: 'test2', slots: [slot2], plugs: [plug2]);
+
+    plug1.slotSnap = snap2;
+    plug1.slot = slot2;
+    plug2.slotSnap = snap1;
+    plug2.slot = slot1;
+
+    var snapd = MockSnapdServer(snaps: [snap1, snap2]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var response = await client.getConnections(interface: 'interface2');
+    expect(
+        response.plugs,
+        unorderedEquals([
+          SnapPlug(
+              snap: 'test2',
+              plug: 'plug2',
+              interface: 'interface2',
+              connections: [SnapSlot(snap: 'test1', slot: 'slot1')])
+        ]));
+    expect(
+        response.slots,
+        unorderedEquals([
+          SnapSlot(
+              snap: 'test1',
+              slot: 'slot1',
+              interface: 'interface2',
               connections: [SnapPlug(snap: 'test2', plug: 'plug2')])
         ]));
   });
