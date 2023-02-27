@@ -1302,6 +1302,13 @@ class SnapdClient {
     return changes;
   }
 
+  /// Aborts the change with the given [id].
+  Future<SnapdChange> abortChange(String id) async {
+    var queryParameters = {'action': 'abort'};
+    var result = await _postSync('/v2/changes/$id', queryParameters);
+    return SnapdChange._fromJson(result);
+  }
+
   /// Terminates all active connections. If a client remains unclosed, the Dart process may not terminate.
   void close() {
     _client.close();
