@@ -509,6 +509,8 @@ class MockSnapdServer {
       _processGetChanges(request);
     } else if (method == 'GET' && path.startsWith('/v2/changes/')) {
       _processGetChange(request, path.substring('/v2/changes/'.length));
+    } else if (method == 'POST' && path.startsWith('/v2/changes/')) {
+      await _processPostChange(request, path.substring('/v2/changes/'.length));
     } else if (method == 'GET' && path == '/v2/find') {
       _processFind(request);
     } else if (method == 'POST' && path == '/v2/interfaces') {
@@ -693,6 +695,27 @@ class MockSnapdServer {
     }
 
     _writeSyncResponse(request.response, change.toJson());
+  }
+
+  Future<void> _processPostChange(HttpRequest request, String id) async {
+    var change = _findChange(id);
+    var req = await _readJson(request);
+    var action = req['action'];
+
+    if (change == null) {
+      request.response.statusCode = HttpStatus.notFound;
+      _writeErrorResponse(request.response, 'not found');
+      return;
+    }
+    switch (action) {
+      case 'abort':
+        changes.removeWhere((c) => c.id == id);
+        var abortedChange = MockChange(id: id, ready: true, error: 'aborted');
+        _writeSyncResponse(request.response, abortedChange.toJson());
+        return;
+      default:
+        _writeErrorResponse(request.response, 'unknown action');
+    }
   }
 
   void _processFind(HttpRequest request) async {
@@ -2449,5 +2472,12 @@ void main() {
     expect(nameChanges, hasLength(2));
     expect(nameChanges[0].id, equals('1'));
     expect(nameChanges[1].id, equals('2'));
+
+    var abortedChange = await client.abortChange(nameChanges[0].id);
+    expect(abortedChange.id, equals('1'));
+    expect(abortedChange.ready, isTrue);
+    nameChanges = await client.getChanges(name: 'snap2');
+    expect(nameChanges, hasLength(1));
+    expect(nameChanges[0].id, equals('2'));
   });
 }
