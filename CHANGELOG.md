@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.8
+
+* Add SnapdClient.abortChange().
+* Add tests to improve coverage.
+
 ## 0.4.7
 
 * Add a select parameter to SnapdClient.find().
