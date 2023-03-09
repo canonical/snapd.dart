@@ -242,6 +242,9 @@ class Snap {
   /// Download size in bytes.
   final int? downloadSize;
 
+  /// The date this snap will re-enable autmatic refreshing or null if no hold is present.
+  final DateTime? hold;
+
   /// Unique ID for this snap.
   final String id;
 
@@ -313,6 +316,7 @@ class Snap {
       this.description = '',
       this.devmode = false,
       this.downloadSize,
+      this.hold,
       this.id = '',
       this.installDate,
       this.installedSize,
@@ -351,6 +355,7 @@ class Snap {
         description: value['description'] ?? '',
         devmode: value['devmode'] ?? false,
         downloadSize: value['download-size'],
+        hold: _parseDateTime(value['hold']),
         id: value['id'],
         installDate: _parseDateTime(value['install-date']),
         installedSize: value['installed-size'],
@@ -381,7 +386,7 @@ class Snap {
 
   @override
   String toString() =>
-      "$runtimeType(apps: $apps, base: $base, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
+      "$runtimeType(apps: $apps, base: $base, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, hold: $hold, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
 }
 
 /// Response received when getting system information.
