@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.9
+
+* Add SnapdClient.getCategories().
+* Add Snap.categories, Snap.hold.
+* Add category parameter to SnapdClient.find().
+
 ## 0.4.8
 
 * Add SnapdClient.abortChange().
