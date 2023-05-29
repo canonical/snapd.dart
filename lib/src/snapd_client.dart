@@ -109,6 +109,25 @@ class SnapApp {
       '$runtimeType(snap: $snap, name: $name, desktopFile: $desktopFile, daemon: $daemon, enabled: $enabled, active: $active, commonId: $commonId)';
 }
 
+/// Describes an category this snap is part of.
+class SnapCategory {
+  /// Name if the category this snap is in.
+  final String name;
+
+  /// True if this snap is featured in this category.
+  final bool featured;
+
+  const SnapCategory({required this.name, this.featured = false});
+
+  factory SnapCategory._fromJson(value) {
+    return SnapCategory(
+        name: value['name'] ?? '', featured: value['featured'] ?? false);
+  }
+
+  @override
+  String toString() => '$runtimeType(name: $name, featured: $featured)';
+}
+
 /// Describes a channel available for a snap.
 class SnapChannel {
   /// Confinement of this snap in this channel.
@@ -218,6 +237,9 @@ class Snap {
   /// The base snap this snap uses.
   final String? base;
 
+  /// Categories this snap belongs to.
+  final List<SnapCategory> categories;
+
   /// The channel this snap is from, e.g. "stable".
   final String channel;
 
@@ -308,6 +330,7 @@ class Snap {
   const Snap(
       {this.apps = const [],
       this.base,
+      this.categories = const [],
       this.channel = '',
       this.channels = const {},
       this.commonIds = const [],
@@ -344,6 +367,11 @@ class Snap {
             ? (value['apps'] as List).map((v) => SnapApp._fromJson(v)).toList()
             : [],
         base: value['base'],
+        categories: value['categories'] != null
+            ? (value['categories'] as List)
+                .map((v) => SnapCategory._fromJson(v))
+                .toList()
+            : [],
         channel: value['channel'],
         channels: value['channels'] != null
             ? (value['channels'] as Map)
@@ -386,7 +414,7 @@ class Snap {
 
   @override
   String toString() =>
-      "$runtimeType(apps: $apps, base: $base, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, hold: $hold, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
+      "$runtimeType(apps: $apps, base: $base, categories: $categories, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, hold: $hold, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
 }
 
 /// Response received when getting system information.
