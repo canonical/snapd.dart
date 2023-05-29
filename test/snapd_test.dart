@@ -443,6 +443,7 @@ class MockSnapdServer {
   final List<MockAccount> accounts;
   final String architecture;
   final String buildId;
+  final List<String> categories;
   final changes = <MockChange>[];
   final String confinement;
   final String kernelVersion;
@@ -470,6 +471,7 @@ class MockSnapdServer {
     this.accounts = const [],
     this.architecture = '',
     this.buildId = '',
+    this.categories = const [],
     List<MockChange> changes = const [],
     this.confinement = '',
     this.kernelVersion = '',
@@ -524,6 +526,8 @@ class MockSnapdServer {
     var path = request.uri.path;
     if (method == 'GET' && path == '/v2/apps') {
       _processGetApps(request);
+    } else if (method == 'GET' && path == '/v2/categories') {
+      _processGetCategories(request);
     } else if (method == 'GET' && path == '/v2/connections') {
       _processGetConnections(request);
     } else if (method == 'GET' && path == '/v2/changes') {
@@ -574,6 +578,14 @@ class MockSnapdServer {
       }
     }
     _writeSyncResponse(request.response, apps);
+  }
+
+  void _processGetCategories(HttpRequest request) {
+    var categoryDetails = [];
+    for (var name in categories) {
+      categoryDetails.add(<dynamic, dynamic>{'name': name});
+    }
+    _writeSyncResponse(request.response, categoryDetails);
   }
 
   void _processGetConnections(HttpRequest request) {
@@ -1641,6 +1653,28 @@ void main() {
         snap.toString(),
         equals(
             "Snap(apps: [SnapApp(snap: hello, name: hello1, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null), SnapApp(snap: hello, name: hello2, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null)], base: core20, categories: [SnapCategory(name: category1, featured: false), SnapCategory(name: category2, featured: true)], channel: stable, channels: {latest/stable: SnapChannel(confinement: SnapConfinement.strict, releasedAt: 2022-05-02 21:24:15.330374Z, revision: 42, size: 123456, version: 1.2), insider/stable: SnapChannel(confinement: SnapConfinement.classic, releasedAt: 2022-04-26 12:54:32.578086Z, revision: 43, size: 888888, version: 1.3)}, commonIds: [com.example.Hello, com.example.Hallo], confinement: SnapConfinement.classic, contact: hello@example.com, description: 'Hello\\nSalut\\nHola', devmode: true, downloadSize: 123456, hold: 2315-06-19 13:00:37.186885Z, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: 2022-05-13 09:51:03.920998Z, installedSize: 654321, jailmode: true, license: GPL-3, media: [SnapMedia(type: icon, url: http://example.com/hello-icon.png, width: null, height: null), SnapMedia(type: screenshot, url: http://example.com/hello-screenshot.jpg, width: 1024, height: 768)], mountedFrom: /var/lib/snapd/snaps/hello_1.2.snap, name: hello, private: true, publisher: SnapPublisher(id: JvtzsxbsHivZLdvzrt0iqW529riGLfXJ, username: publisher, displayName: Publisher, validation: verified), revision: 42, status: SnapStatus.available, storeUrl: https://snapcraft.io/hello, summary: 'Hello is an app', title: 'Hello', trackingChannel: latest/stable, tracks: [latest, insider], type: app, version: 1.2, website: http://example.com/hello)"));
+  });
+
+  test('categories', () async {
+    var snapd = MockSnapdServer(categories: ['category1', 'category2']);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var categories = await client.getCategories();
+    expect(categories, hasLength(2));
+    expect(categories[0].name, equals('category1'));
+    expect(categories[1].name, equals('category2'));
+    expect(
+        categories.toString(),
+        equals(
+            '[SnapdCategoryDetails(name: category1), SnapdCategoryDetails(name: category2)]'));
   });
 
   test('connections', () async {

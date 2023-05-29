@@ -111,7 +111,7 @@ class SnapApp {
 
 /// Describes an category this snap is part of.
 class SnapCategory {
-  /// Name if the category this snap is in.
+  /// Name of the category this snap is in.
   final String name;
 
   /// True if this snap is featured in this category.
@@ -126,6 +126,21 @@ class SnapCategory {
 
   @override
   String toString() => '$runtimeType(name: $name, featured: $featured)';
+}
+
+/// Describes a snap category.
+class SnapdCategoryDetails {
+  /// Name of the category.
+  final String name;
+
+  const SnapdCategoryDetails({required this.name});
+
+  factory SnapdCategoryDetails._fromJson(value) {
+    return SnapdCategoryDetails(name: value['name'] ?? '');
+  }
+
+  @override
+  String toString() => '$runtimeType(name: $name)';
 }
 
 /// Describes a channel available for a snap.
@@ -1111,6 +1126,16 @@ class SnapdClient {
       apps.add(SnapApp._fromJson(app));
     }
     return apps;
+  }
+
+  /// Gets all the store categories available.
+  Future<List<SnapdCategoryDetails>> getCategories() async {
+    var result = await _getSync('/v2/categories');
+    var categories = <SnapdCategoryDetails>[];
+    for (var category in result) {
+      categories.add(SnapdCategoryDetails._fromJson(category));
+    }
+    return categories;
   }
 
   /// Gets the connections, plugs and slots used on this system.
