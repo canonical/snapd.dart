@@ -42,6 +42,16 @@ class MockApp {
   }
 }
 
+class MockCategory {
+  final String name;
+  final bool featured;
+
+  MockCategory({required this.name, this.featured = false});
+
+  dynamic toJson(String snapName) =>
+      <dynamic, dynamic>{'name': name, 'featured': featured};
+}
+
 class MockMedia {
   final int? height;
   final String type;
@@ -138,6 +148,7 @@ class MockSlot {
 class MockSnap {
   final List<MockApp> apps;
   final String? base;
+  final List<MockCategory> categories;
   final String channel;
   final Map<String, MockChannel>? channels;
   final List<String>? commonIds;
@@ -183,6 +194,7 @@ class MockSnap {
   MockSnap(
       {this.apps = const [],
       this.base,
+      this.categories = const [],
       this.channel = '',
       this.channels,
       this.commonIds,
@@ -256,6 +268,10 @@ class MockSnap {
     }
     if (base != null) {
       object['base'] = base;
+    }
+    if (categories.isNotEmpty) {
+      object['categories'] =
+          categories.map((category) => category.toJson(name)).toList();
     }
     if (channels != null) {
       object['channels'] =
@@ -1487,7 +1503,7 @@ void main() {
     expect(
         snap.toString(),
         equals(
-            "Snap(apps: [], base: null, channel: , channels: {}, commonIds: [], confinement: SnapConfinement.unknown, contact: , description: 'Hello\\nSalut\\nHola', devmode: false, downloadSize: null, hold: null, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: null, installedSize: null, jailmode: false, license: null, media: [], mountedFrom: null, name: hello, private: false, publisher: null, revision: 42, status: SnapStatus.unknown, storeUrl: null, summary: 'Hello is an app', title: 'Hello', trackingChannel: null, tracks: [], type: app, version: 1.2, website: null)"));
+            "Snap(apps: [], base: null, categories: [], channel: , channels: {}, commonIds: [], confinement: SnapConfinement.unknown, contact: , description: 'Hello\\nSalut\\nHola', devmode: false, downloadSize: null, hold: null, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: null, installedSize: null, jailmode: false, license: null, media: [], mountedFrom: null, name: hello, private: false, publisher: null, revision: 42, status: SnapStatus.unknown, storeUrl: null, summary: 'Hello is an app', title: 'Hello', trackingChannel: null, tracks: [], type: app, version: 1.2, website: null)"));
   });
 
   test('snap optional properties', () async {
@@ -1495,6 +1511,10 @@ void main() {
       MockSnap(
           apps: [MockApp(name: 'hello1'), MockApp(name: 'hello2')],
           base: 'core20',
+          categories: [
+            MockCategory(name: 'category1', featured: false),
+            MockCategory(name: 'category2', featured: true)
+          ],
           channel: 'stable',
           channels: {
             'latest/stable': MockChannel(
@@ -1569,6 +1589,11 @@ void main() {
     expect(snap.apps[0].snap, equals('hello'));
     expect(snap.apps[1].name, equals('hello2'));
     expect(snap.base, equals('core20'));
+    expect(snap.categories, hasLength(2));
+    expect(snap.categories[0].name, equals('category1'));
+    expect(snap.categories[0].featured, isFalse);
+    expect(snap.categories[1].name, equals('category2'));
+    expect(snap.categories[1].featured, isTrue);
     expect(snap.channel, equals('stable'));
     expect(snap.channels, hasLength(2));
     expect(snap.commonIds, equals(['com.example.Hello', 'com.example.Hallo']));
@@ -1615,7 +1640,7 @@ void main() {
     expect(
         snap.toString(),
         equals(
-            "Snap(apps: [SnapApp(snap: hello, name: hello1, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null), SnapApp(snap: hello, name: hello2, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null)], base: core20, channel: stable, channels: {latest/stable: SnapChannel(confinement: SnapConfinement.strict, releasedAt: 2022-05-02 21:24:15.330374Z, revision: 42, size: 123456, version: 1.2), insider/stable: SnapChannel(confinement: SnapConfinement.classic, releasedAt: 2022-04-26 12:54:32.578086Z, revision: 43, size: 888888, version: 1.3)}, commonIds: [com.example.Hello, com.example.Hallo], confinement: SnapConfinement.classic, contact: hello@example.com, description: 'Hello\\nSalut\\nHola', devmode: true, downloadSize: 123456, hold: 2315-06-19 13:00:37.186885Z, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: 2022-05-13 09:51:03.920998Z, installedSize: 654321, jailmode: true, license: GPL-3, media: [SnapMedia(type: icon, url: http://example.com/hello-icon.png, width: null, height: null), SnapMedia(type: screenshot, url: http://example.com/hello-screenshot.jpg, width: 1024, height: 768)], mountedFrom: /var/lib/snapd/snaps/hello_1.2.snap, name: hello, private: true, publisher: SnapPublisher(id: JvtzsxbsHivZLdvzrt0iqW529riGLfXJ, username: publisher, displayName: Publisher, validation: verified), revision: 42, status: SnapStatus.available, storeUrl: https://snapcraft.io/hello, summary: 'Hello is an app', title: 'Hello', trackingChannel: latest/stable, tracks: [latest, insider], type: app, version: 1.2, website: http://example.com/hello)"));
+            "Snap(apps: [SnapApp(snap: hello, name: hello1, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null), SnapApp(snap: hello, name: hello2, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null)], base: core20, categories: [SnapCategory(name: category1, featured: false), SnapCategory(name: category2, featured: true)], channel: stable, channels: {latest/stable: SnapChannel(confinement: SnapConfinement.strict, releasedAt: 2022-05-02 21:24:15.330374Z, revision: 42, size: 123456, version: 1.2), insider/stable: SnapChannel(confinement: SnapConfinement.classic, releasedAt: 2022-04-26 12:54:32.578086Z, revision: 43, size: 888888, version: 1.3)}, commonIds: [com.example.Hello, com.example.Hallo], confinement: SnapConfinement.classic, contact: hello@example.com, description: 'Hello\\nSalut\\nHola', devmode: true, downloadSize: 123456, hold: 2315-06-19 13:00:37.186885Z, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: 2022-05-13 09:51:03.920998Z, installedSize: 654321, jailmode: true, license: GPL-3, media: [SnapMedia(type: icon, url: http://example.com/hello-icon.png, width: null, height: null), SnapMedia(type: screenshot, url: http://example.com/hello-screenshot.jpg, width: 1024, height: 768)], mountedFrom: /var/lib/snapd/snaps/hello_1.2.snap, name: hello, private: true, publisher: SnapPublisher(id: JvtzsxbsHivZLdvzrt0iqW529riGLfXJ, username: publisher, displayName: Publisher, validation: verified), revision: 42, status: SnapStatus.available, storeUrl: https://snapcraft.io/hello, summary: 'Hello is an app', title: 'Hello', trackingChannel: latest/stable, tracks: [latest, insider], type: app, version: 1.2, website: http://example.com/hello)"));
   });
 
   test('connections', () async {
