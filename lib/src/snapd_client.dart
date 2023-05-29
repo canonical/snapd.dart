@@ -1204,14 +1204,15 @@ class SnapdClient {
   ///
   /// If [query] is provided, searches for snaps that match the given string.
   /// If [name] is provided, match the snap with the given name.
-  /// If [section] is provided, search within that store section.
+  /// If [category] is provided, search within that store category.
   /// If [filter] is provided, alter the collection searched:
   ///   - 'refresh': search refreshable snaps. Can't be used with [query] nor [name].
   ///   - 'private': search private snaps. Can't be used with [query].
   Future<List<Snap>> find(
       {String? query,
       String? name,
-      String? section,
+      String? category,
+      @Deprecated('Replaced with category') String? section,
       SnapFindFilter? filter}) async {
     var queryParameters = <String, String>{};
     if (query != null) {
@@ -1219,6 +1220,9 @@ class SnapdClient {
     }
     if (name != null) {
       queryParameters['name'] = name;
+    }
+    if (category != null) {
+      queryParameters['category'] = category;
     }
     if (section != null) {
       queryParameters['section'] = section;
