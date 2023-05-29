@@ -169,7 +169,6 @@ class MockSnap {
   final MockPublisher? publisher;
   final bool refreshable;
   final String revision;
-  final String? section;
   final List<MockSlot> slots;
   final String? status;
   final String? storeUrl;
@@ -218,7 +217,6 @@ class MockSnap {
       this.publisher,
       this.refreshable = false,
       this.revision = '',
-      this.section,
       this.slots = const [],
       this.status,
       this.storeUrl,
@@ -755,8 +753,16 @@ class MockSnapdServer {
     var parameters = request.uri.queryParameters;
     var query = parameters['q'];
     var name = parameters['name'];
+    var category = parameters['category'];
     var section = parameters['section'];
     var select = parameters['select'];
+
+    if (section != null && category != null) {
+      _writeErrorResponse(
+          request.response, 'cannot use section and category together');
+      return;
+    }
+    category ??= section;
 
     var snaps = [];
     for (var snap in storeSnaps.values) {
@@ -766,7 +772,7 @@ class MockSnapdServer {
       if (query != null && !snap.name.contains(query)) {
         continue;
       }
-      if (section != null && snap.section != section) {
+      if (category != null && !snap.categories.any((c) => c.name == category)) {
         continue;
       }
       if (select == 'refresh' && !snap.refreshable) {
@@ -2096,11 +2102,11 @@ void main() {
     expect(snaps[0].name, equals('fishy'));
   });
 
-  test('find - section', () async {
+  test('find - category', () async {
     var snapd = MockSnapdServer(storeSnaps: [
-      MockSnap(name: 'swordfish', section: 'sharp'),
-      MockSnap(name: 'bear', section: 'soft'),
-      MockSnap(name: 'fishy', section: 'soft')
+      MockSnap(name: 'swordfish', categories: [MockCategory(name: 'sharp')]),
+      MockSnap(name: 'bear', categories: [MockCategory(name: 'soft')]),
+      MockSnap(name: 'fishy', categories: [MockCategory(name: 'soft')])
     ]);
     await snapd.start();
     addTearDown(() async {
@@ -2112,6 +2118,29 @@ void main() {
       client.close();
     });
 
+    var snaps = await client.find(category: 'soft');
+    expect(snaps, hasLength(2));
+    expect(snaps[0].name, equals('bear'));
+    expect(snaps[1].name, equals('fishy'));
+  });
+
+  test('find - section', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'swordfish', categories: [MockCategory(name: 'sharp')]),
+      MockSnap(name: 'bear', categories: [MockCategory(name: 'soft')]),
+      MockSnap(name: 'fishy', categories: [MockCategory(name: 'soft')])
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    // ignore: deprecated_member_use_from_same_package
     var snaps = await client.find(section: 'soft');
     expect(snaps, hasLength(2));
     expect(snaps[0].name, equals('bear'));
