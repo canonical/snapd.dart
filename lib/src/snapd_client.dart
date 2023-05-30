@@ -1319,12 +1319,14 @@ class SnapdClient {
     return await _postAsync('/v2/snaps/$encodedName', request);
   }
 
+  // Enable the snap with the given [name].
   Future<String> enable(String name) async {
     var request = <String, dynamic>{'action': 'enable'};
     var encodedName = Uri.encodeComponent(name);
     return await _postAsync('/v2/snaps/$encodedName', request);
   }
 
+  // Disable the snap with the given [name].
   Future<String> disable(String name) async {
     var request = <String, dynamic>{'action': 'disable'};
     var encodedName = Uri.encodeComponent(name);
