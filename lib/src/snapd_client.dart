@@ -1168,6 +1168,7 @@ class SnapdClient {
   }
 
   /// Connects a plug to a slot.
+  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
   Future<String> connect(
       String snap, String plug, String slotSnap, String slot) async {
     var request = {
@@ -1183,6 +1184,7 @@ class SnapdClient {
   }
 
   /// Disonnects a plug from a slot.
+  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
   Future<String> disconnect(
       String plugSnap, String plug, String slotSnap, String slot) async {
     var request = {
@@ -1320,6 +1322,7 @@ class SnapdClient {
   }
 
   // Enable the snap with the given [name].
+  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
   Future<String> enable(String name) async {
     var request = <String, dynamic>{'action': 'enable'};
     var encodedName = Uri.encodeComponent(name);
@@ -1327,6 +1330,7 @@ class SnapdClient {
   }
 
   // Disable the snap with the given [name].
+  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
   Future<String> disable(String name) async {
     var request = <String, dynamic>{'action': 'disable'};
     var encodedName = Uri.encodeComponent(name);
@@ -1401,6 +1405,7 @@ class SnapdClient {
   }
 
   /// Does an asynchronous request to snapd.
+  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
   Future<String> _postAsync(String path, [dynamic body]) async {
     var request = await _client.post('localhost', 0, path);
     _setHeaders(request);
