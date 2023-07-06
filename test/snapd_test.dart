@@ -2517,7 +2517,19 @@ void main() {
           readyTime: '2022-06-07T09:21:22.550329668Z',
           error: 'Error',
           ready: false,
-          snapNames: ['snap1', 'snap2']),
+          snapNames: [
+            'snap1',
+            'snap2'
+          ],
+          tasks: [
+            MockTask(
+                id: '11',
+                kind: 'task-kind',
+                progress:
+                    MockTaskProgress(label: 'Progress', done: 22, total: 33),
+                summary: 'Task',
+                status: 'Doing')
+          ]),
       MockChange(id: '2', ready: false, snapNames: ['snap2', 'snap3']),
       MockChange(id: '3', ready: true, snapNames: ['snap3', 'snap4'])
     ]);
@@ -2534,17 +2546,32 @@ void main() {
     // Default behaviour is to get in progress changes.
     var changes = await client.getChanges();
     expect(changes, hasLength(2));
-    expect(changes[0].id, equals('1'));
-    expect(changes[0].kind, equals('change-kind'));
-    expect(changes[0].summary, equals('Summary'));
-    expect(changes[0].status, equals('Doing'));
-    expect(changes[0].spawnTime,
-        equals(DateTime.utc(2022, 6, 7, 9, 21, 22, 311, 860)));
-    expect(changes[0].readyTime,
-        equals(DateTime.utc(2022, 6, 7, 9, 21, 22, 550, 329)));
-    expect(changes[0].err, equals('Error'));
-    expect(changes[0].ready, isFalse);
-    expect(changes[0].snapNames, equals(['snap1', 'snap2']));
+    expect(
+        changes[0],
+        equals(SnapdChange(
+            id: '1',
+            kind: 'change-kind',
+            summary: 'Summary',
+            status: 'Doing',
+            spawnTime: DateTime.utc(2022, 6, 7, 9, 21, 22, 311, 860),
+            readyTime: DateTime.utc(2022, 6, 7, 9, 21, 22, 550, 329),
+            err: 'Error',
+            ready: false,
+            snapNames: [
+              'snap1',
+              'snap2'
+            ],
+            tasks: [
+              SnapdTask(
+                id: '11',
+                kind: 'task-kind',
+                summary: 'Task',
+                status: 'Doing',
+                progress:
+                    SnapdTaskProgress(label: 'Progress', done: 22, total: 33),
+                spawnTime: DateTime.utc(1970, 1, 1),
+              )
+            ])));
     expect(changes[1].id, equals('2'));
 
     var allChanges = await client.getChanges(filter: SnapdChangeFilter.all);
