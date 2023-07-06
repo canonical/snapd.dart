@@ -877,6 +877,32 @@ class SnapdChange {
   @override
   String toString() =>
       "$runtimeType(id: $id, kind: $kind, summary: '$summary', status: $status, ready: $ready, err: $err, spawnTime: $spawnTime, readyTime: $readyTime, tasks: $tasks, snapNames: $snapNames)";
+
+  @override
+  bool operator ==(other) {
+    if (identical(this, other)) return true;
+    final deepEquals = const DeepCollectionEquality().equals;
+
+    return other is SnapdChange &&
+        other.id == id &&
+        other.kind == kind &&
+        other.summary == summary &&
+        other.status == status &&
+        other.ready == ready &&
+        other.err == err &&
+        other.spawnTime == spawnTime &&
+        other.readyTime == readyTime &&
+        deepEquals(other.tasks, tasks) &&
+        deepEquals(other.snapNames, snapNames);
+  }
+
+  @override
+  int get hashCode {
+    final deepHash = const DeepCollectionEquality().hash;
+
+    return Object.hash(id, kind, summary, status, ready, err, spawnTime,
+        readyTime, deepHash(tasks), deepHash(snapNames));
+  }
 }
 
 /// Information about a task in a [SnapdChange].
@@ -927,6 +953,24 @@ class SnapdTask {
   @override
   String toString() =>
       "$runtimeType(id: $id, kind: $kind, summary: '$summary', status: $status, progress: $progress, spawnTime: $spawnTime, readyTime: $readyTime)";
+
+  @override
+  bool operator ==(other) {
+    if (identical(this, other)) return true;
+
+    return other is SnapdTask &&
+        other.id == id &&
+        other.kind == kind &&
+        other.summary == summary &&
+        other.status == status &&
+        other.progress == progress &&
+        other.spawnTime == spawnTime &&
+        other.readyTime == readyTime;
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, kind, summary, status, progress, spawnTime, readyTime);
 }
 
 /// Progress of a [SnapdTask].
@@ -952,6 +996,19 @@ class SnapdTaskProgress {
   @override
   String toString() =>
       "$runtimeType(label: '$label', done: $done, total: $total)";
+
+  @override
+  bool operator ==(other) {
+    if (identical(this, other)) return true;
+
+    return other is SnapdTaskProgress &&
+        other.label == label &&
+        other.done == done &&
+        other.total == total;
+  }
+
+  @override
+  int get hashCode => Object.hash(label, done, total);
 }
 
 /// General response from snapd.
