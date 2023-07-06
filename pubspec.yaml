@@ -1,5 +1,5 @@
 name: snapd
-version: 0.4.9
+version: 0.4.10
 
 description:
   Provides a client to access snapd, which allows you to manage, search and install snaps on a Linux system.

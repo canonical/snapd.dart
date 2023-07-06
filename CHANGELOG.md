@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.10
+
+* Add deep equality to:
+  - Snap, SnapApp, SnapCategory, SnapChannel, SnapMedia, SnapPublisher
+  - SnapdChange, SnapdTask, SnapdTaskProgress
+
 ## 0.4.9
 
 * Add SnapdClient.getCategories().
