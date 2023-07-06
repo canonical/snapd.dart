@@ -1497,27 +1497,41 @@ void main() {
     var snaps = await client.getSnaps();
     expect(snaps, hasLength(1));
     var snap = snaps[0];
-    expect(snap.apps, isEmpty);
-    expect(snap.channel, equals(''));
-    expect(snap.channels, isEmpty);
-    expect(snap.commonIds, isEmpty);
-    expect(snap.contact, equals(''));
-    expect(snap.description, equals('Hello\nSalut\nHola'));
-    expect(snap.downloadSize, isNull);
-    expect(snap.id, equals('QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV'));
-    expect(snap.installedSize, isNull);
-    expect(snap.license, isNull);
-    expect(snap.media, isEmpty);
-    expect(snap.name, equals('hello'));
-    expect(snap.publisher, isNull);
-    expect(snap.revision, equals('42'));
-    expect(snap.storeUrl, isNull);
-    expect(snap.summary, equals('Hello is an app'));
-    expect(snap.title, equals('Hello'));
-    expect(snap.tracks, isEmpty);
-    expect(snap.type, equals('app'));
-    expect(snap.version, equals('1.2'));
-    expect(snap.website, isNull);
+    expect(
+        snap,
+        equals(Snap(
+            apps: [],
+            base: null,
+            categories: [],
+            channel: '',
+            channels: {},
+            commonIds: [],
+            confinement: SnapConfinement.unknown,
+            contact: '',
+            description: 'Hello\nSalut\nHola',
+            devmode: false,
+            downloadSize: null,
+            hold: null,
+            id: 'QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV',
+            installDate: null,
+            installedSize: null,
+            jailmode: false,
+            license: null,
+            media: [],
+            mountedFrom: null,
+            name: 'hello',
+            private: false,
+            publisher: null,
+            revision: '42',
+            status: SnapStatus.unknown,
+            storeUrl: null,
+            summary: 'Hello is an app',
+            title: 'Hello',
+            trackingChannel: null,
+            tracks: [],
+            type: 'app',
+            version: '1.2',
+            website: null)));
     expect(
         snap.toString(),
         equals(
@@ -1602,59 +1616,71 @@ void main() {
     var snaps = await client.getSnaps();
     expect(snaps, hasLength(1));
     var snap = snaps[0];
-    expect(snap.apps, hasLength(2));
-    expect(snap.apps[0].name, equals('hello1'));
-    expect(snap.apps[0].snap, equals('hello'));
-    expect(snap.apps[1].name, equals('hello2'));
-    expect(snap.base, equals('core20'));
-    expect(snap.categories, hasLength(2));
-    expect(snap.categories[0].name, equals('category1'));
-    expect(snap.categories[0].featured, isFalse);
-    expect(snap.categories[1].name, equals('category2'));
-    expect(snap.categories[1].featured, isTrue);
-    expect(snap.channel, equals('stable'));
-    expect(snap.channels, hasLength(2));
-    expect(snap.commonIds, equals(['com.example.Hello', 'com.example.Hallo']));
-    expect(snap.contact, equals('hello@example.com'));
-    expect(snap.confinement, equals(SnapConfinement.classic));
-    expect(snap.description, equals('Hello\nSalut\nHola'));
-    expect(snap.devmode, isTrue);
-    expect(snap.downloadSize, equals(123456));
-    expect(snap.hold, equals(DateTime.utc(2315, 6, 19, 13, 0, 37, 186, 885)));
-    expect(snap.id, equals('QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV'));
-    expect(snap.installDate,
-        equals(DateTime.utc(2022, 5, 13, 9, 51, 3, 920, 998)));
-    expect(snap.installedSize, equals(654321));
-    expect(snap.jailmode, isTrue);
-    expect(snap.license, equals('GPL-3'));
-    expect(snap.media, hasLength(2));
-    expect(snap.media[0].type, equals('icon'));
-    expect(snap.media[0].url, equals('http://example.com/hello-icon.png'));
-    expect(snap.media[0].width, isNull);
-    expect(snap.media[0].height, isNull);
-    expect(snap.media[1].type, equals('screenshot'));
     expect(
-        snap.media[1].url, equals('http://example.com/hello-screenshot.jpg'));
-    expect(snap.media[1].width, equals(1024));
-    expect(snap.media[1].height, equals(768));
-    expect(snap.mountedFrom, equals('/var/lib/snapd/snaps/hello_1.2.snap'));
-    expect(snap.name, equals('hello'));
-    expect(snap.private, isTrue);
-    expect(snap.publisher, isNotNull);
-    expect(snap.publisher!.id, equals('JvtzsxbsHivZLdvzrt0iqW529riGLfXJ'));
-    expect(snap.publisher!.username, equals('publisher'));
-    expect(snap.publisher!.displayName, equals('Publisher'));
-    expect(snap.publisher!.validation, equals('verified'));
-    expect(snap.revision, equals('42'));
-    expect(snap.status, equals(SnapStatus.available));
-    expect(snap.storeUrl, equals('https://snapcraft.io/hello'));
-    expect(snap.summary, equals('Hello is an app'));
-    expect(snap.title, equals('Hello'));
-    expect(snap.trackingChannel, equals('latest/stable'));
-    expect(snap.tracks, equals(['latest', 'insider']));
-    expect(snap.type, equals('app'));
-    expect(snap.version, equals('1.2'));
-    expect(snap.website, equals('http://example.com/hello'));
+        snap,
+        equals(Snap(
+            apps: [
+              SnapApp(snap: 'hello', name: 'hello1'),
+              SnapApp(snap: 'hello', name: 'hello2')
+            ],
+            base: 'core20',
+            categories: [
+              SnapCategory(name: 'category1', featured: false),
+              SnapCategory(name: 'category2', featured: true)
+            ],
+            channel: 'stable',
+            channels: {
+              'latest/stable': SnapChannel(
+                  confinement: SnapConfinement.strict,
+                  releasedAt: DateTime.utc(2022, 5, 2, 21, 24, 15, 330, 374),
+                  revision: '42',
+                  size: 123456,
+                  version: '1.2'),
+              'insider/stable': SnapChannel(
+                  confinement: SnapConfinement.classic,
+                  releasedAt: DateTime.utc(2022, 4, 26, 12, 54, 32, 578, 86),
+                  revision: '43',
+                  size: 888888,
+                  version: '1.3')
+            },
+            commonIds: ['com.example.Hello', 'com.example.Hallo'],
+            contact: 'hello@example.com',
+            confinement: SnapConfinement.classic,
+            description: 'Hello\nSalut\nHola',
+            devmode: true,
+            downloadSize: 123456,
+            hold: DateTime.utc(2315, 6, 19, 13, 0, 37, 186, 885),
+            id: 'QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV',
+            installDate: DateTime.utc(2022, 5, 13, 9, 51, 3, 920, 998),
+            installedSize: 654321,
+            jailmode: true,
+            license: 'GPL-3',
+            media: [
+              SnapMedia(type: 'icon', url: 'http://example.com/hello-icon.png'),
+              SnapMedia(
+                  type: 'screenshot',
+                  url: 'http://example.com/hello-screenshot.jpg',
+                  width: 1024,
+                  height: 768)
+            ],
+            mountedFrom: '/var/lib/snapd/snaps/hello_1.2.snap',
+            name: 'hello',
+            private: true,
+            publisher: SnapPublisher(
+                id: 'JvtzsxbsHivZLdvzrt0iqW529riGLfXJ',
+                username: 'publisher',
+                displayName: 'Publisher',
+                validation: 'verified'),
+            revision: '42',
+            status: SnapStatus.available,
+            storeUrl: 'https://snapcraft.io/hello',
+            summary: 'Hello is an app',
+            title: 'Hello',
+            trackingChannel: 'latest/stable',
+            tracks: ['latest', 'insider'],
+            type: 'app',
+            version: '1.2',
+            website: 'http://example.com/hello')));
     expect(
         snap.toString(),
         equals(

@@ -107,6 +107,24 @@ class SnapApp {
   @override
   String toString() =>
       '$runtimeType(snap: $snap, name: $name, desktopFile: $desktopFile, daemon: $daemon, enabled: $enabled, active: $active, commonId: $commonId)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is SnapApp &&
+        other.snap == snap &&
+        other.name == name &&
+        other.desktopFile == desktopFile &&
+        other.daemon == daemon &&
+        other.enabled == enabled &&
+        other.active == active &&
+        other.commonId == commonId;
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(snap, name, desktopFile, daemon, enabled, active, commonId);
 }
 
 /// Describes an category this snap is part of.
@@ -126,6 +144,18 @@ class SnapCategory {
 
   @override
   String toString() => '$runtimeType(name: $name, featured: $featured)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is SnapCategory &&
+        other.name == name &&
+        other.featured == featured;
+  }
+
+  @override
+  int get hashCode => Object.hash(name, featured);
 }
 
 /// Describes a snap category.
@@ -141,6 +171,16 @@ class SnapdCategoryDetails {
 
   @override
   String toString() => '$runtimeType(name: $name)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is SnapdCategoryDetails && other.name == name;
+  }
+
+  @override
+  int get hashCode => name.hashCode;
 }
 
 /// Describes a channel available for a snap.
@@ -179,6 +219,22 @@ class SnapChannel {
   @override
   String toString() =>
       '$runtimeType(confinement: $confinement, releasedAt: $releasedAt, revision: $revision, size: $size, version: $version)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is SnapChannel &&
+        other.confinement == confinement &&
+        other.releasedAt == releasedAt &&
+        other.revision == revision &&
+        other.size == size &&
+        other.version == version;
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(confinement, releasedAt, revision, size, version);
 }
 
 /// Describes a snap publisher.
@@ -212,6 +268,20 @@ class SnapPublisher {
   @override
   String toString() =>
       '$runtimeType(id: $id, username: $username, displayName: $displayName, validation: $validation)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is SnapPublisher &&
+        other.id == id &&
+        other.username == username &&
+        other.displayName == displayName &&
+        other.validation == validation;
+  }
+
+  @override
+  int get hashCode => Object.hash(id, username, displayName, validation);
 }
 
 /// Describes a piece of media associated with a snap.
@@ -242,6 +312,20 @@ class SnapMedia {
   @override
   String toString() =>
       '$runtimeType(type: $type, url: $url, width: $width, height: $height)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is SnapMedia &&
+        other.type == type &&
+        other.url == url &&
+        other.width == width &&
+        other.height == height;
+  }
+
+  @override
+  int get hashCode => Object.hash(type, url, width, height);
 }
 
 /// Describes a snap package.
@@ -430,6 +514,85 @@ class Snap {
   @override
   String toString() =>
       "$runtimeType(apps: $apps, base: $base, categories: $categories, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, hold: $hold, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    final deepEquals = const DeepCollectionEquality().equals;
+
+    return other is Snap &&
+        deepEquals(other.apps, apps) &&
+        other.base == base &&
+        deepEquals(other.categories, categories) &&
+        other.channel == channel &&
+        deepEquals(other.channels, channels) &&
+        deepEquals(other.commonIds, commonIds) &&
+        other.confinement == confinement &&
+        other.contact == contact &&
+        other.description == description &&
+        other.devmode == devmode &&
+        other.downloadSize == downloadSize &&
+        other.hold == hold &&
+        other.id == id &&
+        other.installDate == installDate &&
+        other.installedSize == installedSize &&
+        other.jailmode == jailmode &&
+        other.license == license &&
+        deepEquals(other.media, media) &&
+        other.mountedFrom == mountedFrom &&
+        other.name == name &&
+        other.private == private &&
+        other.publisher == publisher &&
+        other.revision == revision &&
+        other.status == status &&
+        other.storeUrl == storeUrl &&
+        other.summary == summary &&
+        other.title == title &&
+        other.trackingChannel == trackingChannel &&
+        deepEquals(other.tracks, tracks) &&
+        other.type == type &&
+        other.version == version &&
+        other.website == website;
+  }
+
+  @override
+  int get hashCode {
+    final deepHash = const DeepCollectionEquality().hash;
+    return Object.hashAll([
+      deepHash(apps),
+      base,
+      deepHash(categories),
+      channel,
+      deepHash(channels),
+      deepHash(commonIds),
+      confinement,
+      contact,
+      description,
+      devmode,
+      downloadSize,
+      hold,
+      id,
+      installDate,
+      installedSize,
+      jailmode,
+      license,
+      deepHash(media),
+      mountedFrom,
+      name,
+      private,
+      publisher,
+      revision,
+      status,
+      storeUrl,
+      summary,
+      title,
+      trackingChannel,
+      deepHash(tracks),
+      type,
+      version,
+      website
+    ]);
+  }
 }
 
 /// Response received when getting system information.
