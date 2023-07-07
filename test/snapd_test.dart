@@ -1177,8 +1177,8 @@ void main() {
     expect(info.kernelVersion, equals('5.11.0'));
     expect(info.managed, isTrue);
     expect(info.onClassic, isTrue);
-    expect(info.refreshLast, equals(DateTime.utc(2022, 5, 28, 20, 10)));
-    expect(info.refreshNext, equals(DateTime.utc(2022, 5, 29, 1, 18)));
+    expect(info.refresh.last, equals(DateTime.utc(2022, 5, 28, 20, 10)));
+    expect(info.refresh.next, equals(DateTime.utc(2022, 5, 29, 1, 18)));
     expect(info.series, equals('16'));
     expect(info.systemMode, equals('run'));
     expect(info.version, equals('2.49'));
@@ -1532,6 +1532,8 @@ void main() {
         website: null);
     expect(snap, equals(expectedSnap));
     expect(snap.hashCode, equals(expectedSnap.hashCode));
+    expect(snap.toJson(), equals(expectedSnap.toJson()));
+    expect(Snap.fromJson(snap.toJson()), equals(snap));
     expect(
         snap.toString(),
         equals(
@@ -1681,6 +1683,8 @@ void main() {
         website: 'http://example.com/hello');
     expect(snap, equals(expectedSnap));
     expect(snap.hashCode, equals(expectedSnap.hashCode));
+    expect(snap.toJson(), equals(expectedSnap.toJson()));
+    expect(Snap.fromJson(snap.toJson()), equals(snap));
     expect(
         snap.toString(),
         equals(

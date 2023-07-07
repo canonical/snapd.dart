@@ -1,7 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:collection/collection.dart';
+import 'package:json_annotation/json_annotation.dart';
+import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
+
+part 'snapd_client.g.dart';
 
 /// The current state of a snap.
 enum SnapStatus { unknown, available, priced, installed, active }
@@ -21,27 +25,15 @@ enum SnapdConnectionFilter { all }
 /// Filter to select which apps to return from a collection search.
 enum SnapFindFilter { refresh, private }
 
-DateTime? _parseDateTime(String? value) {
-  return value != null ? DateTime.parse(value) : null;
-}
+class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
+  const _SnapdDateTimeConverter();
 
-SnapStatus _parseStatus(String? value) {
-  return {
-        'available': SnapStatus.available,
-        'priced': SnapStatus.priced,
-        'installed': SnapStatus.installed,
-        'active': SnapStatus.active
-      }[value] ??
-      SnapStatus.unknown;
-}
+  @override
+  DateTime fromJson(String? json) =>
+      json != null ? DateTime.parse(json) : DateTime.utc(1970);
 
-SnapConfinement _parseConfinement(String? value) {
-  return {
-        'strict': SnapConfinement.strict,
-        'classic': SnapConfinement.classic,
-        'devmode': SnapConfinement.devmode
-      }[value] ??
-      SnapConfinement.unknown;
+  @override
+  String? toJson(DateTime value) => value.toIso8601String();
 }
 
 /// An exception thrown by a request to snapd.
@@ -59,6 +51,8 @@ class SnapdException implements Exception {
 }
 
 /// Describes an app provided by a snap.
+@immutable
+@JsonSerializable()
 class SnapApp {
   /// The snap this app is part of
   final String? snap;
@@ -93,16 +87,10 @@ class SnapApp {
       this.active = true,
       this.commonId});
 
-  factory SnapApp._fromJson(Map<String, dynamic> value) {
-    return SnapApp(
-        snap: value['snap'],
-        name: value['name'],
-        desktopFile: value['desktop-file'],
-        daemon: value['daemon'],
-        enabled: value['enabled'] ?? true,
-        active: value['active'] ?? true,
-        commonId: value['common-id']);
-  }
+  factory SnapApp.fromJson(Map<String, dynamic> json) =>
+      _$SnapAppFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapAppToJson(this);
 
   @override
   String toString() =>
@@ -128,6 +116,8 @@ class SnapApp {
 }
 
 /// Describes an category this snap is part of.
+@immutable
+@JsonSerializable()
 class SnapCategory {
   /// Name of the category this snap is in.
   final String name;
@@ -137,10 +127,10 @@ class SnapCategory {
 
   const SnapCategory({required this.name, this.featured = false});
 
-  factory SnapCategory._fromJson(value) {
-    return SnapCategory(
-        name: value['name'] ?? '', featured: value['featured'] ?? false);
-  }
+  factory SnapCategory.fromJson(Map<String, dynamic> json) =>
+      _$SnapCategoryFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapCategoryToJson(this);
 
   @override
   String toString() => '$runtimeType(name: $name, featured: $featured)';
@@ -159,15 +149,18 @@ class SnapCategory {
 }
 
 /// Describes a snap category.
+@immutable
+@JsonSerializable()
 class SnapdCategoryDetails {
   /// Name of the category.
   final String name;
 
   const SnapdCategoryDetails({required this.name});
 
-  factory SnapdCategoryDetails._fromJson(value) {
-    return SnapdCategoryDetails(name: value['name'] ?? '');
-  }
+  factory SnapdCategoryDetails.fromJson(Map<String, dynamic> json) =>
+      _$SnapdCategoryDetailsFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapdCategoryDetailsToJson(this);
 
   @override
   String toString() => '$runtimeType(name: $name)';
@@ -184,8 +177,11 @@ class SnapdCategoryDetails {
 }
 
 /// Describes a channel available for a snap.
+@immutable
+@JsonSerializable()
 class SnapChannel {
   /// Confinement of this snap in this channel.
+  @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   final SnapConfinement confinement;
 
   /// The date this revision was released into the channel.
@@ -207,14 +203,10 @@ class SnapChannel {
       this.size = 0,
       this.version = ''});
 
-  factory SnapChannel._fromJson(value) {
-    return SnapChannel(
-        confinement: _parseConfinement(value['confinement']),
-        releasedAt: _parseDateTime(value['released-at']) ?? DateTime.utc(1970),
-        revision: value['revision'] ?? '',
-        size: value['size'] ?? 0,
-        version: value['version'] ?? '');
-  }
+  factory SnapChannel.fromJson(Map<String, dynamic> json) =>
+      _$SnapChannelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapChannelToJson(this);
 
   @override
   String toString() =>
@@ -238,6 +230,8 @@ class SnapChannel {
 }
 
 /// Describes a snap publisher.
+@immutable
+@JsonSerializable()
 class SnapPublisher {
   /// Unique ID for this publisher.
   final String id;
@@ -257,13 +251,10 @@ class SnapPublisher {
       this.displayName = '',
       this.validation});
 
-  factory SnapPublisher._fromJson(value) {
-    return SnapPublisher(
-        id: value['id'] ?? '',
-        username: value['username'] ?? '',
-        displayName: value['display-name'] ?? '',
-        validation: value['validation']);
-  }
+  factory SnapPublisher.fromJson(Map<String, dynamic> json) =>
+      _$SnapPublisherFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapPublisherToJson(this);
 
   @override
   String toString() =>
@@ -285,6 +276,8 @@ class SnapPublisher {
 }
 
 /// Describes a piece of media associated with a snap.
+@immutable
+@JsonSerializable()
 class SnapMedia {
   /// Media type
   final String type;
@@ -301,13 +294,10 @@ class SnapMedia {
   const SnapMedia(
       {required this.type, required this.url, this.width, this.height});
 
-  factory SnapMedia._fromJson(value) {
-    return SnapMedia(
-        type: value['type'] ?? '',
-        url: value['url'] ?? '',
-        width: value['width'],
-        height: value['height']);
-  }
+  factory SnapMedia.fromJson(Map<String, dynamic> json) =>
+      _$SnapMediaFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapMediaToJson(this);
 
   @override
   String toString() =>
@@ -329,6 +319,8 @@ class SnapMedia {
 }
 
 /// Describes a snap package.
+@immutable
+@JsonSerializable()
 class Snap {
   /// Apps this snap provides.
   final List<SnapApp> apps;
@@ -460,56 +452,9 @@ class Snap {
       this.version = '',
       this.website});
 
-  factory Snap._fromJson(Map<String, dynamic> value) {
-    return Snap(
-        apps: value['apps'] != null
-            ? (value['apps'] as List).map((v) => SnapApp._fromJson(v)).toList()
-            : [],
-        base: value['base'],
-        categories: value['categories'] != null
-            ? (value['categories'] as List)
-                .map((v) => SnapCategory._fromJson(v))
-                .toList()
-            : [],
-        channel: value['channel'],
-        channels: value['channels'] != null
-            ? (value['channels'] as Map)
-                .map((k, v) => MapEntry(k, SnapChannel._fromJson(v)))
-            : {},
-        commonIds: value['common-ids']?.cast<String>() ?? [],
-        confinement: _parseConfinement(value['confinement']),
-        contact: value['contact'] ?? '',
-        description: value['description'] ?? '',
-        devmode: value['devmode'] ?? false,
-        downloadSize: value['download-size'],
-        hold: _parseDateTime(value['hold']),
-        id: value['id'],
-        installDate: _parseDateTime(value['install-date']),
-        installedSize: value['installed-size'],
-        jailmode: value['jailmode'] ?? false,
-        license: value['license'],
-        mountedFrom: value['mounted-from'],
-        media: value['media'] != null
-            ? (value['media'] as List)
-                .map((v) => SnapMedia._fromJson(v))
-                .toList()
-            : [],
-        name: value['name'],
-        private: value['private'] ?? false,
-        publisher: value['publisher'] != null
-            ? SnapPublisher._fromJson(value['publisher'])
-            : null,
-        revision: value['revision'] ?? '',
-        storeUrl: value['store-url'],
-        summary: value['summary'],
-        status: _parseStatus(value['status']),
-        title: value['title'],
-        trackingChannel: value['tracking-channel'],
-        tracks: value['tracks']?.cast<String>() ?? [],
-        type: value['type'] ?? '',
-        version: value['version'] ?? '',
-        website: value['website']);
-  }
+  factory Snap.fromJson(Map<String, dynamic> json) => _$SnapFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapToJson(this);
 
   @override
   String toString() =>
@@ -596,6 +541,8 @@ class Snap {
 }
 
 /// Response received when getting system information.
+@immutable
+@JsonSerializable()
 class SnapdSystemInfoResponse {
   /// The architecture snapd is running on.
   final String architecture;
@@ -604,6 +551,7 @@ class SnapdSystemInfoResponse {
   final String buildId;
 
   /// The confinement level that is supported.
+  @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   final SnapConfinement confinement;
 
   /// The version of the Linux kernel this is running on.
@@ -618,14 +566,14 @@ class SnapdSystemInfoResponse {
 
   // FIXME(robert-ancell): os-release
 
-  /// The last time the system refreshed.
-  final DateTime? refreshLast;
+  /// Contains information about refreshes.
+  final SnapdSystemRefreshInfo refresh;
 
-  /// The next time the system refreshed.
-  final DateTime refreshNext;
+  @Deprecated('Use refresh.last instead')
+  DateTime? get refreshLast => refresh.last;
 
-  // FIXME(robert-ancell): Refresh timer.
-  //String refreshTimer;
+  @Deprecated('Use refresh.next instead')
+  DateTime get refreshNext => refresh.next;
 
   // FIXME(robert-ancell): sandbox-features
 
@@ -644,36 +592,49 @@ class SnapdSystemInfoResponse {
       this.kernelVersion = '',
       this.managed = false,
       this.onClassic = false,
-      this.refreshLast,
-      required this.refreshNext,
+      required this.refresh,
       this.series = '',
       this.systemMode = '',
       this.version = ''});
 
-  factory SnapdSystemInfoResponse._fromJson(value) {
-    var refresh = value['refresh'];
-    return SnapdSystemInfoResponse(
-        architecture: value['architecture'] ?? '',
-        buildId: value['build-id'] ?? '',
-        confinement: _parseConfinement(value['confinement']),
-        kernelVersion: value['kernel-version'] ?? '',
-        managed: value['managed'] ?? false,
-        onClassic: value['on-classic'] ?? false,
-        refreshLast: refresh != null ? _parseDateTime(refresh['last']) : null,
-        refreshNext:
-            (refresh != null ? _parseDateTime(refresh['next']) : null) ??
-                DateTime.utc(1970),
-        series: value['series'] ?? '',
-        systemMode: value['system-mode'] ?? '',
-        version: value['version'] ?? '');
-  }
+  factory SnapdSystemInfoResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemInfoResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapdSystemInfoResponseToJson(this);
 
   @override
   String toString() =>
-      '$runtimeType(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, refreshLast: $refreshLast, refreshNext: $refreshNext, series: $series, systemMode: $systemMode, version: $version)';
+      '$runtimeType(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, refreshLast: ${refresh.last}, refreshNext: ${refresh.next}, series: $series, systemMode: $systemMode, version: $version)';
+}
+
+/// Contains information about refreshes.
+@immutable
+@JsonSerializable()
+class SnapdSystemRefreshInfo {
+  /// The last time the system refreshed.
+  final DateTime? last;
+
+  /// The next time the system refreshed.
+  @_SnapdDateTimeConverter()
+  final DateTime next;
+
+  // FIXME(robert-ancell): Refresh timer.
+  //final String timer;
+
+  const SnapdSystemRefreshInfo({this.last, required this.next});
+
+  factory SnapdSystemRefreshInfo.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemRefreshInfoFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapdSystemRefreshInfoToJson(this);
+
+  @override
+  String toString() => '$runtimeType(last: $last, next: $next)';
 }
 
 /// Response received when logging in.
+@immutable
+@JsonSerializable()
 class SnapdLoginResponse {
   /// Id for this account, which can be used in [SnapdClient.logout].
   final int id;
@@ -701,15 +662,10 @@ class SnapdLoginResponse {
       this.discharges = const [],
       this.sshKeys = const []});
 
-  factory SnapdLoginResponse._fromJson(value) {
-    return SnapdLoginResponse(
-        id: value['id'],
-        username: value['username'],
-        email: value['email'],
-        macaroon: value['macaroon'],
-        discharges: value['discharges'].cast<String>() ?? [],
-        sshKeys: value['ssh-keys'].cast<String>() ?? []);
-  }
+  factory SnapdLoginResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdLoginResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapdLoginResponseToJson(this);
 
   @override
   String toString() =>
@@ -717,6 +673,8 @@ class SnapdLoginResponse {
 }
 
 /// Information on a snap plug.
+@immutable
+@JsonSerializable()
 class SnapPlug {
   /// The snap this plug is provided by.
   final String snap;
@@ -725,6 +683,7 @@ class SnapPlug {
   final String plug;
 
   // Attributes for the plug.
+  @JsonKey(name: 'attrs')
   final Map<String, dynamic> attributes;
 
   /// The interface this plug uses.
@@ -740,17 +699,10 @@ class SnapPlug {
       this.interface,
       this.connections = const []});
 
-  factory SnapPlug._fromJson(value) {
-    return SnapPlug(
-        snap: value['snap'] ?? '',
-        plug: value['plug'] ?? '',
-        attributes: value['attrs']?.cast<String, dynamic>() ?? {},
-        interface: value['interface'],
-        connections: value['connections']
-                ?.map<SnapSlot>((v) => SnapSlot._fromJson(v))
-                ?.toList() ??
-            []);
-  }
+  factory SnapPlug.fromJson(Map<String, dynamic> json) =>
+      _$SnapPlugFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapPlugToJson(this);
 
   @override
   String toString() {
@@ -792,6 +744,8 @@ class SnapPlug {
 }
 
 /// Information on a snap slot.
+@immutable
+@JsonSerializable()
 class SnapSlot {
   /// The snap this slot is provided by.
   final String snap;
@@ -800,6 +754,7 @@ class SnapSlot {
   final String slot;
 
   // Attributes for the slot.
+  @JsonKey(name: 'attrs')
   final Map<String, dynamic> attributes;
 
   /// The interface this slot uses.
@@ -815,17 +770,10 @@ class SnapSlot {
       this.interface,
       this.connections = const []});
 
-  factory SnapSlot._fromJson(value) {
-    return SnapSlot(
-        snap: value['snap'] ?? '',
-        slot: value['slot'] ?? '',
-        attributes: value['attrs']?.cast<String, dynamic>() ?? {},
-        interface: value['interface'],
-        connections: value['connections']
-                ?.map<SnapPlug>((v) => SnapPlug._fromJson(v))
-                ?.toList() ??
-            []);
-  }
+  factory SnapSlot.fromJson(Map<String, dynamic> json) =>
+      _$SnapSlotFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapSlotToJson(this);
 
   @override
   String toString() {
@@ -867,17 +815,21 @@ class SnapSlot {
 }
 
 /// Information on a connection between a snap plugs and slots.
+@immutable
+@JsonSerializable()
 class SnapConnection {
   // The slot used in this connection.
   final SnapSlot slot;
 
   // Attributes for the slot.
+  @JsonKey(name: 'slot-attrs')
   final Map<String, dynamic> slotAttributes;
 
   // The plug used in this connection.
   final SnapPlug plug;
 
   // Attributes for the plug.
+  @JsonKey(name: 'plug-attrs')
   final Map<String, dynamic> plugAttributes;
 
   // The interface the connection uses.
@@ -894,15 +846,10 @@ class SnapConnection {
       required this.interface,
       this.manual = false});
 
-  factory SnapConnection._fromJson(value) {
-    return SnapConnection(
-        slot: SnapSlot._fromJson(value['slot']),
-        slotAttributes: value['slot-attrs']?.cast<String, dynamic>() ?? {},
-        plug: SnapPlug._fromJson(value['plug']),
-        plugAttributes: value['plug-attrs']?.cast<String, dynamic>() ?? {},
-        interface: value['interface'] ?? '',
-        manual: value['manual'] ?? false);
-  }
+  factory SnapConnection.fromJson(Map<String, dynamic> json) =>
+      _$SnapConnectionFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapConnectionToJson(this);
 
   @override
   String toString() =>
@@ -928,6 +875,8 @@ class SnapConnection {
 }
 
 /// Response received when getting connections.
+@immutable
+@JsonSerializable()
 class SnapdConnectionsResponse {
   /// Connections that have been established.
   final List<SnapConnection> established;
@@ -947,27 +896,10 @@ class SnapdConnectionsResponse {
       this.slots = const [],
       this.undesired = const []});
 
-  factory SnapdConnectionsResponse._fromJson(value) {
-    return SnapdConnectionsResponse(
-        established: value['established']
-                ?.map<SnapConnection>(
-                    (connection) => SnapConnection._fromJson(connection))
-                ?.toList() ??
-            <SnapConnection>[],
-        plugs: value['plugs']
-                ?.map<SnapPlug>((plug) => SnapPlug._fromJson(plug))
-                ?.toList() ??
-            <SnapPlug>[],
-        slots: value['slots']
-                ?.map<SnapSlot>((slot) => SnapSlot._fromJson(slot))
-                ?.toList() ??
-            <SnapSlot>[],
-        undesired: value['undesired']
-                ?.map<SnapConnection>(
-                    (connection) => SnapConnection._fromJson(connection))
-                ?.toList() ??
-            <SnapConnection>[]);
-  }
+  factory SnapdConnectionsResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdConnectionsResponseFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapdConnectionsResponseToJson(this);
 
   @override
   String toString() =>
@@ -975,6 +907,8 @@ class SnapdConnectionsResponse {
 }
 
 /// Gives the state of an asynchronous operation.
+@immutable
+@JsonSerializable()
 class SnapdChange {
   /// The ID of this change.
   final String id;
@@ -1004,7 +938,20 @@ class SnapdChange {
   final List<SnapdTask> tasks;
 
   /// The snaps that are associated with this change.
+  @JsonKey(
+    name: 'data',
+    toJson: _snapNamesToJson,
+    fromJson: _snapNamesFromJson,
+  )
   final List<String> snapNames;
+
+  static Map<String, dynamic> _snapNamesToJson(List<String> snapNames) {
+    return {'snap-names': snapNames};
+  }
+
+  static List<String> _snapNamesFromJson(Map<String, dynamic> json) {
+    return json['snap-names']?.cast<String>() ?? const [];
+  }
 
   const SnapdChange(
       {this.id = '',
@@ -1018,24 +965,10 @@ class SnapdChange {
       this.tasks = const [],
       this.snapNames = const []});
 
-  factory SnapdChange._fromJson(value) {
-    var data = value['data'] ?? {};
-    var snapNames = data['snap-names']?.cast<String>() ?? <String>[];
-    return SnapdChange(
-        id: value['id'] ?? '',
-        kind: value['kind'] ?? '',
-        summary: value['summary'] ?? '',
-        status: value['status'] ?? '',
-        ready: value['ready'] ?? false,
-        err: value['err'],
-        spawnTime: _parseDateTime(value['spawn-time']) ?? DateTime.utc(1970),
-        readyTime: _parseDateTime(value['ready-time']),
-        tasks: value['tasks']
-                ?.map<SnapdTask>((v) => SnapdTask._fromJson(v))
-                .toList() ??
-            [],
-        snapNames: snapNames);
-  }
+  factory SnapdChange.fromJson(Map<String, dynamic> json) =>
+      _$SnapdChangeFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapdChangeToJson(this);
 
   @override
   String toString() =>
@@ -1069,6 +1002,8 @@ class SnapdChange {
 }
 
 /// Information about a task in a [SnapdChange].
+@immutable
+@JsonSerializable()
 class SnapdTask {
   /// The ID of this task.
   final String id;
@@ -1091,27 +1026,20 @@ class SnapdTask {
   /// The time this task completed.
   final DateTime? readyTime;
 
-  const SnapdTask(
+  SnapdTask(
       {this.id = '',
       this.kind = '',
       this.summary = '',
       this.status = '',
       this.progress = const SnapdTaskProgress(),
-      required this.spawnTime,
-      this.readyTime});
+      DateTime? spawnTime,
+      this.readyTime})
+      : spawnTime = spawnTime ?? DateTime.utc(1970);
 
-  factory SnapdTask._fromJson(value) {
-    return SnapdTask(
-        id: value['id'] ?? '',
-        kind: value['kind'] ?? '',
-        summary: value['summary'] ?? '',
-        status: value['status'] ?? '',
-        progress: value['progress'] != null
-            ? SnapdTaskProgress._fromJson(value['progress'])
-            : SnapdTaskProgress(),
-        spawnTime: _parseDateTime(value['spawn-time']) ?? DateTime.utc(1970),
-        readyTime: _parseDateTime(value['ready-time']));
-  }
+  factory SnapdTask.fromJson(Map<String, dynamic> json) =>
+      _$SnapdTaskFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapdTaskToJson(this);
 
   @override
   String toString() =>
@@ -1137,6 +1065,8 @@ class SnapdTask {
 }
 
 /// Progress of a [SnapdTask].
+@immutable
+@JsonSerializable()
 class SnapdTaskProgress {
   /// Optional label.
   final String label;
@@ -1149,12 +1079,10 @@ class SnapdTaskProgress {
 
   const SnapdTaskProgress({this.label = '', this.done = 0, this.total = 0});
 
-  factory SnapdTaskProgress._fromJson(value) {
-    return SnapdTaskProgress(
-        label: value['label'] ?? '',
-        done: value['done'] ?? 0,
-        total: value['total'] ?? 0);
-  }
+  factory SnapdTaskProgress.fromJson(Map<String, dynamic> json) =>
+      _$SnapdTaskProgressFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapdTaskProgressToJson(this);
 
   @override
   String toString() =>
@@ -1307,7 +1235,7 @@ class SnapdClient {
   /// Gets information about the system that snapd is running on.
   Future<SnapdSystemInfoResponse> systemInfo() async {
     var result = await _getSync('/v2/system-info');
-    return SnapdSystemInfoResponse._fromJson(result);
+    return SnapdSystemInfoResponse.fromJson(result);
   }
 
   /// Gets informtion on all installed snaps.
@@ -1315,7 +1243,7 @@ class SnapdClient {
     var result = await _getSync('/v2/snaps');
     var snaps = <Snap>[];
     for (var snap in result) {
-      snaps.add(Snap._fromJson(snap));
+      snaps.add(Snap.fromJson(snap));
     }
     return snaps;
   }
@@ -1324,7 +1252,7 @@ class SnapdClient {
   Future<Snap> getSnap(String name) async {
     var encodedName = Uri.encodeComponent(name);
     var result = await _getSync('/v2/snaps/$encodedName');
-    return Snap._fromJson(result);
+    return Snap.fromJson(result);
   }
 
   /// Gets information on all installed apps.
@@ -1343,7 +1271,7 @@ class SnapdClient {
     var result = await _getSync('/v2/apps', queryParameters);
     var apps = <SnapApp>[];
     for (var app in result) {
-      apps.add(SnapApp._fromJson(app));
+      apps.add(SnapApp.fromJson(app));
     }
     return apps;
   }
@@ -1353,7 +1281,7 @@ class SnapdClient {
     var result = await _getSync('/v2/categories');
     var categories = <SnapdCategoryDetails>[];
     for (var category in result) {
-      categories.add(SnapdCategoryDetails._fromJson(category));
+      categories.add(SnapdCategoryDetails.fromJson(category));
     }
     return categories;
   }
@@ -1375,7 +1303,7 @@ class SnapdClient {
       }
     }
     var result = await _getSync('/v2/connections', queryParameters);
-    return SnapdConnectionsResponse._fromJson(result);
+    return SnapdConnectionsResponse.fromJson(result);
   }
 
   /// Refreshes the snaps given by [names].
@@ -1461,7 +1389,7 @@ class SnapdClient {
     var result = await _getSync('/v2/find', queryParameters);
     var snaps = <Snap>[];
     for (var snap in result) {
-      snaps.add(Snap._fromJson(snap));
+      snaps.add(Snap.fromJson(snap));
     }
     return snaps;
   }
@@ -1474,7 +1402,7 @@ class SnapdClient {
       request['otp'] = otp;
     }
     var result = await _postSync('/v2/login', request);
-    return SnapdLoginResponse._fromJson(result);
+    return SnapdLoginResponse.fromJson(result);
   }
 
   /// Logs out acccount with [id] from the snap store.
@@ -1560,7 +1488,7 @@ class SnapdClient {
   /// Gets the status the change with the given [id].
   Future<SnapdChange> getChange(String id) async {
     var result = await _getSync('/v2/changes/$id');
-    return SnapdChange._fromJson(result);
+    return SnapdChange.fromJson(result);
   }
 
   /// Get changes that have occurred / are occurring on the snap daemon.
@@ -1585,7 +1513,7 @@ class SnapdClient {
     var result = await _getSync('/v2/changes', queryParameters);
     var changes = <SnapdChange>[];
     for (var change in result) {
-      changes.add(SnapdChange._fromJson(change));
+      changes.add(SnapdChange.fromJson(change));
     }
     return changes;
   }
@@ -1594,7 +1522,7 @@ class SnapdClient {
   Future<SnapdChange> abortChange(String id) async {
     var queryParameters = {'action': 'abort'};
     var result = await _postSync('/v2/changes/$id', queryParameters);
-    return SnapdChange._fromJson(result);
+    return SnapdChange.fromJson(result);
   }
 
   /// Terminates all active connections. If a client remains unclosed, the Dart process may not terminate.
