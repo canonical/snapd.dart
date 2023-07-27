@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.11
+
+* feat: JSON conversion
+
 ## 0.4.10
 
 * Add deep equality to:
