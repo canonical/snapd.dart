@@ -25,6 +25,9 @@ enum SnapdConnectionFilter { all }
 /// Filter to select which apps to return from a collection search.
 enum SnapFindFilter { refresh, private }
 
+/// Scope to search snaps.
+enum SnapFindScope { wide }
+
 class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
   const _SnapdDateTimeConverter();
 
@@ -1358,12 +1361,15 @@ class SnapdClient {
   /// If [filter] is provided, alter the collection searched:
   ///   - 'refresh': search refreshable snaps. Can't be used with [query] nor [name].
   ///   - 'private': search private snaps. Can't be used with [query].
+  /// If [scope] is provided, adjust the search scope.
+  ///   - 'wide': search for snaps that don't have a stable release.
   Future<List<Snap>> find(
       {String? query,
       String? name,
       String? category,
       @Deprecated('Replaced with category') String? section,
-      SnapFindFilter? filter}) async {
+      SnapFindFilter? filter,
+      SnapFindScope? scope}) async {
     var queryParameters = <String, String>{};
     if (query != null) {
       queryParameters['q'] = query;
@@ -1384,6 +1390,12 @@ class SnapdClient {
       }[filter];
       if (value != null) {
         queryParameters['select'] = value;
+      }
+    }
+    if (scope != null) {
+      var value = {SnapFindScope.wide: 'wide'}[scope];
+      if (value != null) {
+        queryParameters['scope'] = value;
       }
     }
     var result = await _getSync('/v2/find', queryParameters);

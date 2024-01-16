@@ -108,10 +108,10 @@ class MockChannel {
   MockChannel(
       {this.channel = '',
       this.confinement = '',
-      this.releasedAt = '',
-      this.revision = '',
+      this.releasedAt = '2000-01-01T00:00:00.000000Z',
+      this.revision = '1',
       this.size = 0,
-      this.version = ''});
+      this.version = '1.0'});
 
   dynamic toJson() {
     var object = <dynamic, dynamic>{
@@ -756,6 +756,7 @@ class MockSnapdServer {
     var category = parameters['category'];
     var section = parameters['section'];
     var select = parameters['select'];
+    var scope = parameters['scope'];
 
     if (section != null && category != null) {
       _writeErrorResponse(
@@ -779,6 +780,12 @@ class MockSnapdServer {
         continue;
       }
       if ((select == 'private') != snap.private) {
+        continue;
+      }
+      if ((scope != 'wide') &&
+          !(snap.channels?.entries
+                  .any((e) => e.value.channel.endsWith('/stable')) ??
+              false)) {
         continue;
       }
       snaps.add(snap.toJson());
@@ -2068,9 +2075,18 @@ void main() {
 
   test('find', () async {
     var snapd = MockSnapdServer(storeSnaps: [
-      MockSnap(name: 'swordfish'),
-      MockSnap(name: 'bear'),
-      MockSnap(name: 'fishy')
+      MockSnap(
+          name: 'swordfish',
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')}),
+      MockSnap(
+          name: 'bear',
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')}),
+      MockSnap(
+          name: 'fishy',
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')}),
+      MockSnap(
+          name: 'hidden',
+          channels: {'latest/edge': MockChannel(channel: 'latest/edge')})
     ]);
     await snapd.start();
     addTearDown(() async {
@@ -2091,9 +2107,15 @@ void main() {
 
   test('find - query', () async {
     var snapd = MockSnapdServer(storeSnaps: [
-      MockSnap(name: 'swordfish'),
-      MockSnap(name: 'bear'),
-      MockSnap(name: 'fishy')
+      MockSnap(
+          name: 'swordfish',
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')}),
+      MockSnap(
+          name: 'bear',
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')}),
+      MockSnap(
+          name: 'fishy',
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')})
     ]);
     await snapd.start();
     addTearDown(() async {
@@ -2113,9 +2135,18 @@ void main() {
 
   test('find - name', () async {
     var snapd = MockSnapdServer(storeSnaps: [
-      MockSnap(name: 'swordfish'),
-      MockSnap(name: 'bear'),
-      MockSnap(name: 'fishy')
+      MockSnap(name: 'swordfish', channels: {
+        'latest/stable':
+            MockChannel(channel: 'latest/stable', version: '1.0', revision: '1')
+      }),
+      MockSnap(name: 'bear', channels: {
+        'latest/stable':
+            MockChannel(channel: 'latest/stable', version: '1.0', revision: '1')
+      }),
+      MockSnap(name: 'fishy', channels: {
+        'latest/stable':
+            MockChannel(channel: 'latest/stable', version: '1.0', revision: '1')
+      })
     ]);
     await snapd.start();
     addTearDown(() async {
@@ -2134,9 +2165,18 @@ void main() {
 
   test('find - category', () async {
     var snapd = MockSnapdServer(storeSnaps: [
-      MockSnap(name: 'swordfish', categories: [MockCategory(name: 'sharp')]),
-      MockSnap(name: 'bear', categories: [MockCategory(name: 'soft')]),
-      MockSnap(name: 'fishy', categories: [MockCategory(name: 'soft')])
+      MockSnap(
+          name: 'swordfish',
+          categories: [MockCategory(name: 'sharp')],
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')}),
+      MockSnap(
+          name: 'bear',
+          categories: [MockCategory(name: 'soft')],
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')}),
+      MockSnap(
+          name: 'fishy',
+          categories: [MockCategory(name: 'soft')],
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')})
     ]);
     await snapd.start();
     addTearDown(() async {
@@ -2156,9 +2196,18 @@ void main() {
 
   test('find - section', () async {
     var snapd = MockSnapdServer(storeSnaps: [
-      MockSnap(name: 'swordfish', categories: [MockCategory(name: 'sharp')]),
-      MockSnap(name: 'bear', categories: [MockCategory(name: 'soft')]),
-      MockSnap(name: 'fishy', categories: [MockCategory(name: 'soft')])
+      MockSnap(
+          name: 'swordfish',
+          categories: [MockCategory(name: 'sharp')],
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')}),
+      MockSnap(
+          name: 'bear',
+          categories: [MockCategory(name: 'soft')],
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')}),
+      MockSnap(
+          name: 'fishy',
+          categories: [MockCategory(name: 'soft')],
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')})
     ]);
     await snapd.start();
     addTearDown(() async {
@@ -2179,9 +2228,18 @@ void main() {
 
   test('find - select: refresh', () async {
     var snapd = MockSnapdServer(storeSnaps: [
-      MockSnap(name: 'swordfish'),
-      MockSnap(name: 'bear', refreshable: true),
-      MockSnap(name: 'fishy')
+      MockSnap(name: 'swordfish', channels: {
+        'latest/stable':
+            MockChannel(channel: 'latest/stable', version: '1.0', revision: '1')
+      }),
+      MockSnap(name: 'bear', refreshable: true, channels: {
+        'latest/stable':
+            MockChannel(channel: 'latest/stable', version: '1.0', revision: '1')
+      }),
+      MockSnap(name: 'fishy', channels: {
+        'latest/stable':
+            MockChannel(channel: 'latest/stable', version: '1.0', revision: '1')
+      })
     ]);
     await snapd.start();
     addTearDown(() async {
@@ -2200,9 +2258,16 @@ void main() {
 
   test('find - select: private', () async {
     var snapd = MockSnapdServer(storeSnaps: [
-      MockSnap(name: 'swordfish'),
-      MockSnap(name: 'bear'),
-      MockSnap(name: 'fishy', private: true)
+      MockSnap(
+          name: 'swordfish',
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')}),
+      MockSnap(
+          name: 'bear',
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')}),
+      MockSnap(
+          name: 'fishy',
+          private: true,
+          channels: {'latest/stable': MockChannel(channel: 'latest/stable')})
     ]);
     await snapd.start();
     addTearDown(() async {
@@ -2217,6 +2282,27 @@ void main() {
     var snaps = await client.find(filter: SnapFindFilter.private);
     expect(snaps, hasLength(1));
     expect(snaps[0].name, equals('fishy'));
+  });
+
+  test('find - scope: wide', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(
+          name: 'unstable',
+          channels: {'latest/edge': MockChannel(channel: 'latest/edge')})
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var snaps = await client.find(scope: SnapFindScope.wide);
+    expect(snaps, hasLength(1));
+    expect(snaps[0].name, equals('unstable'));
   });
 
   test('install', () async {
