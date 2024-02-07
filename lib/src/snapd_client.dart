@@ -1318,6 +1318,15 @@ class SnapdClient {
     return await _postAsync('/v2/snaps', request);
   }
 
+  /// Installs the snaps given by [names].
+  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
+  Future<String> installMany(List<String> names) async {
+    var request = {};
+    request['action'] = 'install';
+    request['snaps'] = names;
+    return await _postAsync('/v2/snaps', request);
+  }
+
   /// Connects a plug to a slot.
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
   Future<String> connect(
