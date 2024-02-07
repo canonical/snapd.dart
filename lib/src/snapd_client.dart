@@ -1320,10 +1320,13 @@ class SnapdClient {
 
   /// Installs the snaps given by [names].
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> installMany(List<String> names) async {
+  Future<String> installMany(List<String> names, {bool classic = false}) async {
     var request = {};
     request['action'] = 'install';
     request['snaps'] = names;
+    if (classic) {
+      request['classic'] = true;
+    }
     return await _postAsync('/v2/snaps', request);
   }
 
