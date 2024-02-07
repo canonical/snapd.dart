@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.13
+
+* Add SnapdClient.installMany()
+
 ## 0.4.12
 
 * Support searching with wide scope.
