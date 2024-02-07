@@ -944,6 +944,21 @@ class MockSnapdServer {
           error = 'Snaps not installed: ${missingSnaps.join(', ')}';
         }
         break;
+      case 'install':
+        snapNames = List.from(req['snaps'] ?? []);
+        var missingSnaps = <String>[];
+        for (var name in snapNames) {
+          var snap = storeSnaps[name];
+          if (snap == null) {
+            missingSnaps.add(name);
+          } else {
+            snaps[snap.name] = snap;
+          }
+        }
+        if (missingSnaps.isNotEmpty) {
+          error = 'Snaps not installed: ${missingSnaps.join(', ')}';
+        }
+        break;
       default:
         _writeErrorResponse(request.response, 'unknown action');
         snapNames = [];
@@ -2580,6 +2595,30 @@ void main() {
     expect(snapd.snaps['test1']!.refreshed, isFalse);
     expect(snapd.snaps['test2']!.refreshed, isTrue);
     expect(snapd.snaps['test3']!.refreshed, isTrue);
+  });
+
+  test('install many', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'test1'),
+      MockSnap(name: 'test2'),
+      MockSnap(name: 'test3')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps, hasLength(0));
+    var changeId = await client.installMany(['test1', 'test2', 'test3']);
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps, hasLength(3));
+    expect(snapd.snaps.keys.toList(), equals(['test1', 'test2', 'test3']));
   });
 
   test('enable', () async {
