@@ -952,6 +952,7 @@ class MockSnapdServer {
           if (snap == null) {
             missingSnaps.add(name);
           } else {
+            snap.classic = req['classic'] ?? false;
             snaps[snap.name] = snap;
           }
         }
@@ -2619,6 +2620,29 @@ void main() {
     expect(change.ready, isTrue);
     expect(snapd.snaps, hasLength(3));
     expect(snapd.snaps.keys.toList(), equals(['test1', 'test2', 'test3']));
+    expect(snapd.snaps['test1']!.classic, isFalse);
+  });
+
+  test('install many classic', () async {
+    var snapd = MockSnapdServer(
+        storeSnaps: [MockSnap(name: 'test1'), MockSnap(name: 'test2')]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps, hasLength(0));
+    var changeId = await client.installMany(['test1', 'test2'], classic: true);
+    var change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(snapd.snaps, hasLength(2));
+    expect(snapd.snaps['test1']!.classic, isTrue);
+    expect(snapd.snaps['test2']!.classic, isTrue);
   });
 
   test('enable', () async {
