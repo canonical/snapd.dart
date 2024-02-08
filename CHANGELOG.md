@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.14
+
+* Add classic parameter to SnapdClient.installMany().
+
 ## 0.4.13
 
 * Add SnapdClient.installMany()
