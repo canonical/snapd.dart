@@ -328,6 +328,44 @@ class MockSnap {
   }
 }
 
+class MockSnapDeclaration {
+  final String type;
+  final String authorityId;
+  final int revision;
+  final int series;
+  final String snapId;
+  final String publisherId;
+  final String snapName;
+  final String timestamp;
+  final String signKey;
+
+  const MockSnapDeclaration({
+    this.type = 'snap-declaration',
+    this.authorityId = '',
+    this.revision = 0,
+    this.series = 0,
+    this.snapId = '',
+    this.publisherId = '',
+    this.snapName = '',
+    this.timestamp = '',
+    this.signKey = '',
+  });
+
+  @override
+  String toString() {
+    return '''type: $type
+authority-id: $authorityId
+revision: $revision
+series: $series
+snap-id: $snapId
+publisher-id: $publisherId
+snap-name: $snapName
+timestamp: $timestamp
+sign-key-sha3-384: $signKey
+''';
+  }
+}
+
 class MockAccount {
   final int id;
   final String? username;
@@ -453,6 +491,7 @@ class MockSnapdServer {
   final String series;
   final snaps = <String, MockSnap>{};
   final storeSnaps = <String, MockSnap>{};
+  final snapDeclarations = <String, MockSnapDeclaration>{};
   final String systemMode;
   final String version;
 
@@ -480,6 +519,7 @@ class MockSnapdServer {
     this.series = '',
     List<MockSnap> snaps = const [],
     List<MockSnap> storeSnaps = const [],
+    List<MockSnapDeclaration> snapDeclarations = const [],
     this.systemMode = '',
     this.version = '',
   }) {
@@ -491,6 +531,9 @@ class MockSnapdServer {
     }
     for (var snap in storeSnaps) {
       this.storeSnaps[snap.name] = snap;
+    }
+    for (var declaration in snapDeclarations) {
+      this.snapDeclarations[declaration.snapName] = declaration;
     }
   }
 
@@ -797,9 +840,19 @@ class MockSnapdServer {
 
   void _processAssertions(HttpRequest request) async {
     var subpath = request.uri.path.replaceFirst('/v2/assertions', '');
+    var params = request.uri.queryParameters;
     switch (subpath) {
       case '/snap-declaration':
-        _processFindById(request);
+        var declarations = [];
+        for (var entry in snapDeclarations.entries) {
+          if ((params['snap-id'] != null &&
+                  params['snap-id'] == entry.value.snapId) &&
+              (params['series'] != null &&
+                  params['series'] == entry.value.series.toString())) {
+            declarations.add(entry.value.toString());
+          }
+        }
+        _writeSyncResponseRaw(request.response, declarations.join('\n\n'));
         break;
       default:
         throw UnimplementedError('Assertion $subpath is not implemented.');
@@ -2355,6 +2408,11 @@ void main() {
             'latest/stable': MockChannel(
                 channel: 'latest/stable', version: '1.0', revision: '1')
           })
+    ], snapDeclarations: [
+      MockSnapDeclaration(
+          series: 16, snapName: 'swordfish', snapId: 'swordfishId'),
+      MockSnapDeclaration(series: 16, snapName: 'bear', snapId: 'bearId'),
+      MockSnapDeclaration(series: 16, snapName: 'fishy')
     ]);
     await snapd.start();
     addTearDown(() async {
