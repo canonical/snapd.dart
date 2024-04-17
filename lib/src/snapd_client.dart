@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 import 'package:path/path.dart' as p;
+import 'package:yaml/yaml.dart';
 
 part 'snapd_client.g.dart';
 
@@ -541,6 +542,62 @@ class Snap {
       website
     ]);
   }
+}
+
+/// Response received from snap-declaration assertions.
+@immutable
+@JsonSerializable()
+class SnapDeclaration {
+  final String type;
+  final String authorityId;
+  final int revision;
+  final int series;
+  final String snapId;
+  final String publisherId;
+  final String snapName;
+  final String timestamp;
+  final String signKey;
+
+  const SnapDeclaration({
+    this.type = '',
+    this.authorityId = '',
+    this.revision = 0,
+    this.series = 0,
+    this.snapId = '',
+    this.publisherId = '',
+    this.snapName = '',
+    this.timestamp = '',
+    this.signKey = '',
+  });
+
+  factory SnapDeclaration.fromJson(Map<String, dynamic> json) =>
+      _$SnapDeclarationFromJson(json);
+
+  Map<String, dynamic> toJson() => _$SnapDeclarationToJson(this);
+
+  @override
+  String toString() =>
+      '$runtimeType(type: $type, authority-id: $authorityId, revision: $revision, series: $series, snap-id: $snapId, publisher-id: $publisherId, snap-name: $snapName, timestamp: $timestamp, sign-key: $signKey)';
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+
+    return other is SnapDeclaration &&
+        other.type == type &&
+        other.authorityId == authorityId &&
+        other.revision == revision &&
+        other.series == series &&
+        other.snapId == snapId &&
+        other.publisherId == publisherId &&
+        other.snapName == snapName &&
+        other.timestamp == timestamp &&
+        other.signKey == signKey;
+  }
+
+  @override
+  int get hashCode => Object.hash(type, authorityId, revision, series, snapId,
+      publisherId, snapName, timestamp, signKey);
 }
 
 /// Response received when getting system information.
@@ -1418,6 +1475,21 @@ class SnapdClient {
     return snaps;
   }
 
+  /// List all assertions of the given [assertion] type.
+  /// If no [assertion] type is provided, lists available assertion types.
+  Future<Map<String, dynamic>> assertions(
+      {String? assertion, Map<String, String>? params}) async {
+    if (assertion == null) {
+      final result = await _getSync('/v2/assertions');
+      return result;
+    }
+
+    final raw = await _getSyncRaw('/v2/assertions/$assertion', params ?? {});
+    final YamlMap yaml = loadYaml(raw, recover: true) ?? YamlMap.wrap({});
+    return Map.fromEntries(yaml.entries)
+        .map((key, value) => MapEntry(key.toString(), value));
+  }
+
   /// Logs into the snap store.
   Future<SnapdLoginResponse> login(String email, String password,
       {String? otp}) async {
@@ -1563,6 +1635,17 @@ class SnapdClient {
     await request.close();
     var snapdResponse = await _parseResponse(await request.done);
     return snapdResponse.result;
+  }
+
+  /// Does a syncronous request to snapd without parsing the response.
+  Future<String> _getSyncRaw(String path,
+      [Map<String, String> queryParameters = const {}]) async {
+    var request =
+        await _client.getUrl(Uri.http('localhost', path, queryParameters));
+    _setHeaders(request);
+    await request.close();
+    final done = await request.done;
+    return await done.transform(utf8.decoder).join();
   }
 
   /// Does a synchronous request to snapd.
