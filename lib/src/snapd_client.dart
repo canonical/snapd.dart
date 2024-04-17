@@ -1629,23 +1629,26 @@ class SnapdClient {
   /// Does a synchronous request to snapd.
   Future<dynamic> _getSync(String path,
       [Map<String, String> queryParameters = const {}]) async {
-    var request =
-        await _client.getUrl(Uri.http('localhost', path, queryParameters));
-    _setHeaders(request);
-    await request.close();
-    var snapdResponse = await _parseResponse(await request.done);
+    final response = await _getSyncResponse(path, queryParameters);
+    var snapdResponse = await _parseResponse(response);
     return snapdResponse.result;
   }
 
-  /// Does a syncronous request to snapd without parsing the response.
+  /// Does a synchronous request to snapd without parsing the response.
   Future<String> _getSyncRaw(String path,
+      [Map<String, String> queryParameters = const {}]) async {
+    final response = await _getSyncResponse(path, queryParameters);
+    return response.transform(utf8.decoder).join();
+  }
+
+  /// Does a synchronous request and returns the response.
+  Future<HttpClientResponse> _getSyncResponse(String path,
       [Map<String, String> queryParameters = const {}]) async {
     var request =
         await _client.getUrl(Uri.http('localhost', path, queryParameters));
     _setHeaders(request);
     await request.close();
-    final done = await request.done;
-    return await done.transform(utf8.decoder).join();
+    return await request.done;
   }
 
   /// Does a synchronous request to snapd.
