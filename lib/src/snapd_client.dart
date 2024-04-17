@@ -1477,7 +1477,10 @@ class SnapdClient {
 
   /// List all assertions of the given [assertion] type.
   /// If no [assertion] type is provided, lists available assertion types.
-  Future<Map<String, dynamic>> assertions(
+  /// If [params] are provided, the assertions are filtered to items that have
+  /// matching fields defined by their assertion type. More information can be
+  /// found in the snapd documentation: https://snapcraft.io/docs/snapd-rest-api#heading--assertion-type
+  Future<Map<String, dynamic>> getAssertions(
       {String? assertion, Map<String, String>? params}) async {
     if (assertion == null) {
       final result = await _getSync('/v2/assertions');

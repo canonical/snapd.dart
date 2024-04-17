@@ -2425,7 +2425,7 @@ void main() {
     });
 
     var assertion =
-        await client.assertions(assertion: 'snap-declaration', params: {
+        await client.getAssertions(assertion: 'snap-declaration', params: {
       'series': '16',
       'remote': 'true',
       'snap-id': 'bearId',
