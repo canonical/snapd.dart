@@ -536,6 +536,8 @@ class MockSnapdServer {
       await _processPostChange(request, path.substring('/v2/changes/'.length));
     } else if (method == 'GET' && path == '/v2/find') {
       _processFind(request);
+    } else if (method == 'GET' && path.startsWith('/v2/assertions')) {
+      _processAssertions(request);
     } else if (method == 'POST' && path == '/v2/interfaces') {
       await _processInterfaces(request);
     } else if (method == 'POST' && path == '/v2/login') {
@@ -791,6 +793,17 @@ class MockSnapdServer {
       snaps.add(snap.toJson());
     }
     _writeSyncResponse(request.response, snaps);
+  }
+
+  void _processAssertions(HttpRequest request) async {
+    var subpath = request.uri.path.replaceFirst('/v2/assertions', '');
+    switch (subpath) {
+      case '/snap-declaration':
+        _processFindById(request);
+        break;
+      default:
+        throw UnimplementedError('Assertion $subpath is not implemented.');
+    }
   }
 
   Future<void> _processInterfaces(HttpRequest request) async {
@@ -1126,6 +1139,10 @@ class MockSnapdServer {
       'status': response.reasonPhrase,
       'result': result
     });
+  }
+
+  void _writeSyncResponseRaw(HttpResponse response, dynamic result) {
+    response.add(utf8.encode(result).toList());
   }
 
   void _writeAsyncResponse(HttpResponse response, String change) {
@@ -2319,6 +2336,45 @@ void main() {
     var snaps = await client.find(scope: SnapFindScope.wide);
     expect(snaps, hasLength(1));
     expect(snaps[0].name, equals('unstable'));
+  });
+
+  test('assertions', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'swordfish', id: 'swordfishId', channels: {
+        'latest/stable': MockChannel(
+            channel: 'latest/stable', version: '1.0', revision: '1'),
+      }),
+      MockSnap(name: 'bear', id: 'bearId', channels: {
+        'latest/stable':
+            MockChannel(channel: 'latest/stable', version: '1.0', revision: '1')
+      }),
+      MockSnap(
+          name: 'fishy',
+          // no ID
+          channels: {
+            'latest/stable': MockChannel(
+                channel: 'latest/stable', version: '1.0', revision: '1')
+          })
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var assertion =
+        await client.assertions(assertion: 'snap-declaration', params: {
+      'series': '16',
+      'remote': 'true',
+      'snap-id': 'bearId',
+    });
+    expect(assertion, isNotNull);
+    expect(assertion, isA<Map>());
+    expect(assertion.toString().contains('bearId'), isTrue);
   });
 
   test('install', () async {

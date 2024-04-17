@@ -213,6 +213,31 @@ const _$SnapStatusEnumMap = {
   SnapStatus.active: 'active',
 };
 
+SnapDeclaration _$SnapDeclarationFromJson(Map json) => SnapDeclaration(
+      type: json['type'] as String? ?? '',
+      authorityId: json['authority-id'] as String? ?? '',
+      revision: json['revision'] as int? ?? 0,
+      series: json['series'] as int? ?? 0,
+      snapId: json['snap-id'] as String? ?? '',
+      publisherId: json['publisher-id'] as String? ?? '',
+      snapName: json['snap-name'] as String? ?? '',
+      timestamp: json['timestamp'] as String? ?? '',
+      signKey: json['sign-key'] as String? ?? '',
+    );
+
+Map<String, dynamic> _$SnapDeclarationToJson(SnapDeclaration instance) =>
+    <String, dynamic>{
+      'type': instance.type,
+      'authority-id': instance.authorityId,
+      'revision': instance.revision,
+      'series': instance.series,
+      'snap-id': instance.snapId,
+      'publisher-id': instance.publisherId,
+      'snap-name': instance.snapName,
+      'timestamp': instance.timestamp,
+      'sign-key': instance.signKey,
+    };
+
 SnapdSystemInfoResponse _$SnapdSystemInfoResponseFromJson(Map json) =>
     SnapdSystemInfoResponse(
       architecture: json['architecture'] as String? ?? '',
