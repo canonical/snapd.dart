@@ -2391,6 +2391,59 @@ void main() {
     expect(snaps[0].name, equals('unstable'));
   });
 
+  test('findByID', () async {
+    var snapd = MockSnapdServer(storeSnaps: [
+      MockSnap(name: 'swordfish', id: 'swordfishId', channels: {
+        'latest/stable': MockChannel(
+            channel: 'latest/stable', version: '1.0', revision: '1'),
+      }),
+      MockSnap(name: 'bear', id: 'bearId', channels: {
+        'latest/stable':
+            MockChannel(channel: 'latest/stable', version: '1.0', revision: '1')
+      }),
+      MockSnap(name: 'fis', id: 'fish1Id', channels: {
+        'latest/stable':
+            MockChannel(channel: 'latest/stable', version: '1.0', revision: '1')
+      }),
+      MockSnap(name: 'fi', id: 'fish2Id', channels: {
+        'latest/stable':
+            MockChannel(channel: 'latest/stable', version: '1.0', revision: '1')
+      }),
+      MockSnap(name: 'fish', id: 'fish3Id', channels: {
+        'latest/stable':
+            MockChannel(channel: 'latest/stable', version: '1.0', revision: '1')
+      })
+    ], snapDeclarations: [
+      MockSnapDeclaration(
+          series: 16, snapName: 'swordfish', snapId: 'swordfishId'),
+      MockSnapDeclaration(series: 16, snapName: 'bear', snapId: 'bearId'),
+      MockSnapDeclaration(series: 16, snapName: 'fis', snapId: 'fish1Id'),
+      MockSnapDeclaration(series: 16, snapName: 'fi', snapId: 'fish2Id'),
+      MockSnapDeclaration(series: 16, snapName: 'fish', snapId: 'fish3Id')
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    var client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    var snap = await client.findById('slugId');
+    expect(snap, isNull);
+
+    snap = await client.findById('bearId');
+    expect(snap, isNotNull);
+    expect(snap?.name, equals('bear'));
+
+    // make sure the underlying 'find' looks for the proper snap ID
+    snap = await client.findById('fish2Id');
+    expect(snap, isNotNull);
+    expect(snap?.name, equals('fi'));
+  });
+
   test('assertions', () async {
     var snapd = MockSnapdServer(storeSnaps: [
       MockSnap(name: 'swordfish', id: 'swordfishId', channels: {

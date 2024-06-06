@@ -1475,6 +1475,28 @@ class SnapdClient {
     return snaps;
   }
 
+  /// Convenience function to find a snap by its ID. Under the hood, this
+  /// function combines the [assertions] and [find] endpoints.
+  ///
+  /// If no snap is found, this function will return null.
+  Future<Snap?> findById(String snapId,
+      {String? series, String? remote}) async {
+    final queryParameters = {
+      'series': series ?? '16',
+      'remote': remote ?? 'true',
+      'snap-id': snapId,
+    };
+    final result = await getAssertions(
+        assertion: 'snap-declaration', params: queryParameters);
+    final declaration = SnapDeclaration.fromJson(result);
+    final findResult = await find(name: declaration.snapName);
+    final matchingSnaps = findResult
+        .where((element) => element.id == declaration.snapId)
+        .firstOrNull;
+
+    return matchingSnaps;
+  }
+
   /// List all assertions of the given [assertion] type.
   /// If no [assertion] type is provided, lists available assertion types.
   /// If [params] are provided, the assertions are filtered to items that have
