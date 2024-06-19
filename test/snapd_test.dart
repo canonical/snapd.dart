@@ -1003,7 +1003,7 @@ class MockSnapdServer {
     String? error;
     switch (action) {
       case 'refresh':
-        snapNames = req['snaps'] as List<String>? ?? [];
+        snapNames = List<String>.from(req['snaps'] as List? ?? []);
         final missingSnaps = <String>[];
         for (final name in snapNames) {
           final snap = snaps[name];
@@ -1018,7 +1018,7 @@ class MockSnapdServer {
         }
         break;
       case 'install':
-        snapNames = req['snaps'] as List<String>? ?? [];
+        snapNames = List<String>.from(req['snaps'] as List? ?? []);
         final missingSnaps = <String>[];
         for (final name in snapNames) {
           final snap = storeSnaps[name];

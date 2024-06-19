@@ -999,7 +999,7 @@ class SnapdConnectionsResponse {
 
   @override
   String toString() =>
-      'SnapdConnectionResponse(established: $established, plugs: $plugs, slots: $slots, undesired: $undesired)';
+      'SnapdConnectionsResponse(established: $established, plugs: $plugs, slots: $slots, undesired: $undesired)';
 }
 
 /// Gives the state of an asynchronous operation.
@@ -1229,15 +1229,30 @@ abstract class _SnapdResponse {
 
 /// Response returned when a sync request is completed.
 class _SnapdSyncResponse extends _SnapdResponse {
-  _SnapdSyncResponse(dynamic result, {super.statusCode, super.status})
+  _SnapdSyncResponse(Object? result, {super.statusCode, super.status})
       : _result = result;
-  final dynamic _result;
+  final Object? _result;
 
   @override
-  dynamic get result => _result;
+  Object? get result => _result;
 
   @override
   String get change => throw 'Result is sync';
+}
+
+/// Response retuned when an async request has been started.
+class _SnapdAsyncResponse extends _SnapdResponse {
+  const _SnapdAsyncResponse(
+    this.change, {
+    super.statusCode,
+    super.status,
+  });
+
+  @override
+  final String change;
+
+  @override
+  dynamic get result => throw 'Result is async';
 }
 
 /// Response returned when an error occurred.
@@ -1660,7 +1675,9 @@ class SnapdClient {
     String path, [
     Map<String, String> queryParameters = const {},
   ]) async {
-    return _getSync(path, queryParameters);
+    return List<Map<String, Object?>>.from(
+      await _getSync(path, queryParameters),
+    );
   }
 
   /// Does a synchronous request to snapd without parsing the response.
@@ -1715,19 +1732,23 @@ class SnapdClient {
     final type = jsonResponse['type'] as String;
     final statusCode = jsonResponse['status-code'] as int;
     final status = jsonResponse['status'] as String;
-    if (type == 'error') {
-      final result = jsonResponse['result'];
-      return _SnapdErrorResponse.fromJson(statusCode, status, result);
-    } else if (type != 'sync' && type != 'async') {
-      throw "Unknown snapd response '$type'";
-    } else {
-      final result =
-          type == 'sync' ? jsonResponse['result'] : jsonResponse['change'];
+    if (type == 'sync') {
       return _SnapdSyncResponse(
-        result as String,
+        jsonResponse['result'],
         statusCode: statusCode,
         status: status,
       );
+    } else if (type == 'async') {
+      return _SnapdAsyncResponse(
+        jsonResponse['change'] as String,
+        statusCode: statusCode,
+        status: status,
+      );
+    } else if (type == 'error') {
+      final result = jsonResponse['result'];
+      return _SnapdErrorResponse.fromJson(statusCode, status, result);
+    } else {
+      throw "Unknown snapd response '$type'";
     }
   }
 
