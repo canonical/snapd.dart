@@ -6,12 +6,12 @@ void usage() {
 }
 
 void main(List<String> args) async {
-  var client = SnapdClient();
+  final client = SnapdClient();
   await client.loadAuthorization();
 
   String? snap;
   SnapdConnectionFilter? filter;
-  for (var arg in args) {
+  for (final arg in args) {
     if (arg.startsWith('--')) {
       if (arg == '--all') {
         filter = SnapdConnectionFilter.all;
@@ -29,10 +29,10 @@ void main(List<String> args) async {
     }
   }
 
-  var response = await client.getConnections(snap: snap, filter: filter);
-  var rows = [];
+  final response = await client.getConnections(snap: snap, filter: filter);
+  final rows = <List<String>>[];
   String getInterfaceDescription(
-      String interface, Map<String, dynamic> attributes) {
+      String interface, Map<String, dynamic> attributes,) {
     if (interface == 'content') {
       return 'content[${attributes['content']}]';
     } else {
@@ -48,31 +48,31 @@ void main(List<String> args) async {
     return '${slot.snap != 'snapd' ? slot.snap : ''}:${slot.slot}';
   }
 
-  for (var plug in response.plugs) {
-    var interfaceDescription =
+  for (final plug in response.plugs) {
+    final interfaceDescription =
         getInterfaceDescription(plug.interface ?? '', plug.attributes);
-    var plugDescription = getPlugDescription(plug);
+    final plugDescription = getPlugDescription(plug);
     if (plug.connections.isNotEmpty) {
-      for (var slot in plug.connections) {
-        var slotDescription = getSlotDescription(slot);
+      for (final slot in plug.connections) {
+        final slotDescription = getSlotDescription(slot);
         rows.add([interfaceDescription, plugDescription, slotDescription]);
       }
     } else {
       rows.add([interfaceDescription, plugDescription, '-']);
     }
   }
-  for (var slot in response.slots) {
-    var interfaceDescription =
+  for (final slot in response.slots) {
+    final interfaceDescription =
         getInterfaceDescription(slot.interface ?? '', slot.attributes);
-    var slotDescription = getSlotDescription(slot);
+    final slotDescription = getSlotDescription(slot);
     if (slot.connections.isNotEmpty) {
-      for (var plug in slot.connections) {
+      for (final plug in slot.connections) {
         // Skip connections to self - already added above.
         if (plug.snap == snap) {
           continue;
         }
 
-        var plugDescription = getPlugDescription(plug);
+        final plugDescription = getPlugDescription(plug);
         rows.add([interfaceDescription, plugDescription, slotDescription]);
       }
     } else {
@@ -81,7 +81,7 @@ void main(List<String> args) async {
   }
   rows.sort((a, b) {
     for (var i = 0; i < a.length; i++) {
-      var d = a[i].compareTo(b[i]);
+      final d = a[i].compareTo(b[i]);
       if (d != 0) {
         return d;
       }
@@ -89,13 +89,13 @@ void main(List<String> args) async {
     return 0;
   });
   rows.insert(0, ['Interface', 'Plug', 'Slot']);
-  var columnWidths = [0, 0, 0];
-  for (var row in rows) {
+  final columnWidths = [0, 0, 0];
+  for (final row in rows) {
     for (var i = 0; i < columnWidths.length; i++) {
       columnWidths[i] = max(columnWidths[i], row[i].length + 1);
     }
   }
-  for (var row in rows) {
+  for (final row in rows) {
     var line = '';
     for (var i = 0; i < columnWidths.length; i++) {
       line += row[i].padRight(columnWidths[i]);

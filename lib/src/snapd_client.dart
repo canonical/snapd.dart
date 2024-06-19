@@ -15,7 +15,15 @@ enum SnapStatus { unknown, available, priced, installed, active }
 enum SnapConfinement { unknown, strict, devmode, classic }
 
 /// Filter to select which changes to get from snapd.
-enum SnapdChangeFilter { all, inProgress, ready }
+enum SnapdChangeFilter {
+  all('all'),
+  inProgress('in-progress'),
+  ready('ready');
+
+  const SnapdChangeFilter(this.value);
+
+  final String value;
+}
 
 /// Filter to select which apps to get from snapd.
 enum SnapdAppFilter { service }
@@ -42,13 +50,13 @@ class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
 
 /// An exception thrown by a request to snapd.
 class SnapdException implements Exception {
+  SnapdException({required this.message, this.kind});
+
   /// Error kind.
   final String? kind;
 
   /// Message with error.
   final String message;
-
-  SnapdException({this.kind, required this.message});
 
   @override
   String toString() => '$runtimeType(kind: $kind, message: $message)';
@@ -58,6 +66,22 @@ class SnapdException implements Exception {
 @immutable
 @JsonSerializable()
 class SnapApp {
+  // FIXME(robert-ancell) Implement
+  //List<SnapActivator> activators.
+
+  const SnapApp({
+    required this.snap,
+    required this.name,
+    this.desktopFile,
+    this.daemon,
+    this.enabled = true,
+    this.active = true,
+    this.commonId,
+  });
+
+  factory SnapApp.fromJson(Map<String, dynamic> json) =>
+      _$SnapAppFromJson(json);
+
   /// The snap this app is part of
   final String? snap;
 
@@ -79,26 +103,11 @@ class SnapApp {
   /// A unique ID for this app.
   final String? commonId;
 
-  // FIXME(robert-ancell) Implement
-  //List<SnapActivator> activators.
-
-  const SnapApp(
-      {required this.snap,
-      required this.name,
-      this.desktopFile,
-      this.daemon,
-      this.enabled = true,
-      this.active = true,
-      this.commonId});
-
-  factory SnapApp.fromJson(Map<String, dynamic> json) =>
-      _$SnapAppFromJson(json);
-
   Map<String, dynamic> toJson() => _$SnapAppToJson(this);
 
   @override
   String toString() =>
-      '$runtimeType(snap: $snap, name: $name, desktopFile: $desktopFile, daemon: $daemon, enabled: $enabled, active: $active, commonId: $commonId)';
+      'SnapApp(snap: $snap, name: $name, desktopFile: $desktopFile, daemon: $daemon, enabled: $enabled, active: $active, commonId: $commonId)';
 
   @override
   bool operator ==(Object other) {
@@ -123,16 +132,16 @@ class SnapApp {
 @immutable
 @JsonSerializable()
 class SnapCategory {
+  const SnapCategory({required this.name, this.featured = false});
+
+  factory SnapCategory.fromJson(Map<String, dynamic> json) =>
+      _$SnapCategoryFromJson(json);
+
   /// Name of the category this snap is in.
   final String name;
 
   /// True if this snap is featured in this category.
   final bool featured;
-
-  const SnapCategory({required this.name, this.featured = false});
-
-  factory SnapCategory.fromJson(Map<String, dynamic> json) =>
-      _$SnapCategoryFromJson(json);
 
   Map<String, dynamic> toJson() => _$SnapCategoryToJson(this);
 
@@ -156,18 +165,18 @@ class SnapCategory {
 @immutable
 @JsonSerializable()
 class SnapdCategoryDetails {
-  /// Name of the category.
-  final String name;
-
   const SnapdCategoryDetails({required this.name});
 
   factory SnapdCategoryDetails.fromJson(Map<String, dynamic> json) =>
       _$SnapdCategoryDetailsFromJson(json);
 
+  /// Name of the category.
+  final String name;
+
   Map<String, dynamic> toJson() => _$SnapdCategoryDetailsToJson(this);
 
   @override
-  String toString() => '$runtimeType(name: $name)';
+  String toString() => 'SnapdCategoryDetails(name: $name)';
 
   @override
   bool operator ==(Object other) {
@@ -184,6 +193,17 @@ class SnapdCategoryDetails {
 @immutable
 @JsonSerializable()
 class SnapChannel {
+  const SnapChannel({
+    required this.releasedAt,
+    this.confinement = SnapConfinement.unknown,
+    this.revision = '',
+    this.size = 0,
+    this.version = '',
+  });
+
+  factory SnapChannel.fromJson(Map<String, dynamic> json) =>
+      _$SnapChannelFromJson(json);
+
   /// Confinement of this snap in this channel.
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   final SnapConfinement confinement;
@@ -199,16 +219,6 @@ class SnapChannel {
 
   /// Version of this snap in this channel.
   final String version;
-
-  const SnapChannel(
-      {this.confinement = SnapConfinement.unknown,
-      required this.releasedAt,
-      this.revision = '',
-      this.size = 0,
-      this.version = ''});
-
-  factory SnapChannel.fromJson(Map<String, dynamic> json) =>
-      _$SnapChannelFromJson(json);
 
   Map<String, dynamic> toJson() => _$SnapChannelToJson(this);
 
@@ -237,6 +247,16 @@ class SnapChannel {
 @immutable
 @JsonSerializable()
 class SnapPublisher {
+  const SnapPublisher({
+    this.id = '',
+    this.username = '',
+    this.displayName = '',
+    this.validation,
+  });
+
+  factory SnapPublisher.fromJson(Map<String, dynamic> json) =>
+      _$SnapPublisherFromJson(json);
+
   /// Unique ID for this publisher.
   final String id;
 
@@ -248,15 +268,6 @@ class SnapPublisher {
 
   /// Validation level for this publisher.
   final String? validation;
-
-  const SnapPublisher(
-      {this.id = '',
-      this.username = '',
-      this.displayName = '',
-      this.validation});
-
-  factory SnapPublisher.fromJson(Map<String, dynamic> json) =>
-      _$SnapPublisherFromJson(json);
 
   Map<String, dynamic> toJson() => _$SnapPublisherToJson(this);
 
@@ -283,6 +294,16 @@ class SnapPublisher {
 @immutable
 @JsonSerializable()
 class SnapMedia {
+  const SnapMedia({
+    required this.type,
+    required this.url,
+    this.width,
+    this.height,
+  });
+
+  factory SnapMedia.fromJson(Map<String, dynamic> json) =>
+      _$SnapMediaFromJson(json);
+
   /// Media type
   final String type;
 
@@ -294,12 +315,6 @@ class SnapMedia {
 
   /// Height of media in pixels.
   final int? height;
-
-  const SnapMedia(
-      {required this.type, required this.url, this.width, this.height});
-
-  factory SnapMedia.fromJson(Map<String, dynamic> json) =>
-      _$SnapMediaFromJson(json);
 
   Map<String, dynamic> toJson() => _$SnapMediaToJson(this);
 
@@ -326,6 +341,43 @@ class SnapMedia {
 @immutable
 @JsonSerializable()
 class Snap {
+  const Snap({
+    required this.name,
+    this.apps = const [],
+    this.base,
+    this.categories = const [],
+    this.channel = '',
+    this.channels = const {},
+    this.commonIds = const [],
+    this.confinement = SnapConfinement.unknown,
+    this.contact = '',
+    this.description = '',
+    this.devmode = false,
+    this.downloadSize,
+    this.hold,
+    this.id = '',
+    this.installDate,
+    this.installedSize,
+    this.jailmode = false,
+    this.license,
+    this.media = const [],
+    this.mountedFrom,
+    this.private = false,
+    this.publisher,
+    this.revision = '',
+    this.status = SnapStatus.unknown,
+    this.storeUrl,
+    this.summary = '',
+    this.title = '',
+    this.trackingChannel,
+    this.tracks = const [],
+    this.type = '',
+    this.version = '',
+    this.website,
+  });
+
+  factory Snap.fromJson(Map<String, dynamic> json) => _$SnapFromJson(json);
+
   /// Apps this snap provides.
   final List<SnapApp> apps;
 
@@ -422,42 +474,6 @@ class Snap {
   /// Website URL.
   final String? website;
 
-  const Snap(
-      {this.apps = const [],
-      this.base,
-      this.categories = const [],
-      this.channel = '',
-      this.channels = const {},
-      this.commonIds = const [],
-      this.confinement = SnapConfinement.unknown,
-      this.contact = '',
-      this.description = '',
-      this.devmode = false,
-      this.downloadSize,
-      this.hold,
-      this.id = '',
-      this.installDate,
-      this.installedSize,
-      this.jailmode = false,
-      this.license,
-      this.media = const [],
-      this.mountedFrom,
-      required this.name,
-      this.private = false,
-      this.publisher,
-      this.revision = '',
-      this.status = SnapStatus.unknown,
-      this.storeUrl,
-      this.summary = '',
-      this.title = '',
-      this.trackingChannel,
-      this.tracks = const [],
-      this.type = '',
-      this.version = '',
-      this.website});
-
-  factory Snap.fromJson(Map<String, dynamic> json) => _$SnapFromJson(json);
-
   Map<String, dynamic> toJson() => _$SnapToJson(this);
 
   @override
@@ -539,7 +555,7 @@ class Snap {
       deepHash(tracks),
       type,
       version,
-      website
+      website,
     ]);
   }
 }
@@ -548,16 +564,6 @@ class Snap {
 @immutable
 @JsonSerializable()
 class SnapDeclaration {
-  final String type;
-  final String authorityId;
-  final int revision;
-  final int series;
-  final String snapId;
-  final String publisherId;
-  final String snapName;
-  final String timestamp;
-  final String signKey;
-
   const SnapDeclaration({
     this.type = '',
     this.authorityId = '',
@@ -572,6 +578,15 @@ class SnapDeclaration {
 
   factory SnapDeclaration.fromJson(Map<String, dynamic> json) =>
       _$SnapDeclarationFromJson(json);
+  final String type;
+  final String authorityId;
+  final int revision;
+  final int series;
+  final String snapId;
+  final String publisherId;
+  final String snapName;
+  final String timestamp;
+  final String signKey;
 
   Map<String, dynamic> toJson() => _$SnapDeclarationToJson(this);
 
@@ -596,14 +611,39 @@ class SnapDeclaration {
   }
 
   @override
-  int get hashCode => Object.hash(type, authorityId, revision, series, snapId,
-      publisherId, snapName, timestamp, signKey);
+  int get hashCode => Object.hash(
+        type,
+        authorityId,
+        revision,
+        series,
+        snapId,
+        publisherId,
+        snapName,
+        timestamp,
+        signKey,
+      );
 }
 
 /// Response received when getting system information.
 @immutable
 @JsonSerializable()
 class SnapdSystemInfoResponse {
+  const SnapdSystemInfoResponse({
+    required this.refresh,
+    this.architecture = '',
+    this.buildId = '',
+    this.confinement = SnapConfinement.unknown,
+    this.kernelVersion = '',
+    this.managed = false,
+    this.onClassic = false,
+    this.series = '',
+    this.systemMode = '',
+    this.version = '',
+  });
+
+  factory SnapdSystemInfoResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemInfoResponseFromJson(json);
+
   /// The architecture snapd is running on.
   final String architecture;
 
@@ -645,21 +685,6 @@ class SnapdSystemInfoResponse {
   /// The version of snapd.
   final String version;
 
-  const SnapdSystemInfoResponse(
-      {this.architecture = '',
-      this.buildId = '',
-      this.confinement = SnapConfinement.unknown,
-      this.kernelVersion = '',
-      this.managed = false,
-      this.onClassic = false,
-      required this.refresh,
-      this.series = '',
-      this.systemMode = '',
-      this.version = ''});
-
-  factory SnapdSystemInfoResponse.fromJson(Map<String, dynamic> json) =>
-      _$SnapdSystemInfoResponseFromJson(json);
-
   Map<String, dynamic> toJson() => _$SnapdSystemInfoResponseToJson(this);
 
   @override
@@ -671,20 +696,20 @@ class SnapdSystemInfoResponse {
 @immutable
 @JsonSerializable()
 class SnapdSystemRefreshInfo {
+  // FIXME(robert-ancell): Refresh timer.
+  //final String timer;
+
+  const SnapdSystemRefreshInfo({required this.next, this.last});
+
+  factory SnapdSystemRefreshInfo.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemRefreshInfoFromJson(json);
+
   /// The last time the system refreshed.
   final DateTime? last;
 
   /// The next time the system refreshed.
   @_SnapdDateTimeConverter()
   final DateTime next;
-
-  // FIXME(robert-ancell): Refresh timer.
-  //final String timer;
-
-  const SnapdSystemRefreshInfo({this.last, required this.next});
-
-  factory SnapdSystemRefreshInfo.fromJson(Map<String, dynamic> json) =>
-      _$SnapdSystemRefreshInfoFromJson(json);
 
   Map<String, dynamic> toJson() => _$SnapdSystemRefreshInfoToJson(this);
 
@@ -696,6 +721,18 @@ class SnapdSystemRefreshInfo {
 @immutable
 @JsonSerializable()
 class SnapdLoginResponse {
+  const SnapdLoginResponse({
+    required this.id,
+    this.username,
+    this.email,
+    this.macaroon,
+    this.discharges = const [],
+    this.sshKeys = const [],
+  });
+
+  factory SnapdLoginResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdLoginResponseFromJson(json);
+
   /// Id for this account, which can be used in [SnapdClient.logout].
   final int id;
 
@@ -714,17 +751,6 @@ class SnapdLoginResponse {
   /// Secure Shell keys this user has.
   final List<String> sshKeys;
 
-  const SnapdLoginResponse(
-      {required this.id,
-      this.username,
-      this.email,
-      this.macaroon,
-      this.discharges = const [],
-      this.sshKeys = const []});
-
-  factory SnapdLoginResponse.fromJson(Map<String, dynamic> json) =>
-      _$SnapdLoginResponseFromJson(json);
-
   Map<String, dynamic> toJson() => _$SnapdLoginResponseToJson(this);
 
   @override
@@ -736,6 +762,17 @@ class SnapdLoginResponse {
 @immutable
 @JsonSerializable()
 class SnapPlug {
+  const SnapPlug({
+    required this.snap,
+    required this.plug,
+    this.attributes = const {},
+    this.interface,
+    this.connections = const [],
+  });
+
+  factory SnapPlug.fromJson(Map<String, dynamic> json) =>
+      _$SnapPlugFromJson(json);
+
   /// The snap this plug is provided by.
   final String snap;
 
@@ -752,21 +789,11 @@ class SnapPlug {
   // Slots connected to this plug.
   final List<SnapSlot> connections;
 
-  const SnapPlug(
-      {required this.snap,
-      required this.plug,
-      this.attributes = const {},
-      this.interface,
-      this.connections = const []});
-
-  factory SnapPlug.fromJson(Map<String, dynamic> json) =>
-      _$SnapPlugFromJson(json);
-
   Map<String, dynamic> toJson() => _$SnapPlugToJson(this);
 
   @override
   String toString() {
-    var values = {'snap': snap, 'plug': plug};
+    final values = {'snap': snap, 'plug': plug};
     if (attributes.isNotEmpty) {
       values['attributes'] = '$attributes';
     }
@@ -776,12 +803,12 @@ class SnapPlug {
     if (connections.isNotEmpty) {
       values['connections'] = '$connections';
     }
-    var args = values.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+    final args = values.entries.map((e) => '${e.key}: ${e.value}').join(', ');
     return '$runtimeType($args)';
   }
 
   @override
-  bool operator ==(other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
     final deepEquals = const DeepCollectionEquality().equals;
 
@@ -795,18 +822,31 @@ class SnapPlug {
 
   @override
   int get hashCode => Object.hash(
-      snap,
-      plug,
-      Object.hashAllUnordered(
-          attributes.entries.map((e) => Object.hash(e.key, e.value))),
-      interface,
-      Object.hashAll(connections));
+        snap,
+        plug,
+        Object.hashAllUnordered(
+          attributes.entries.map((e) => Object.hash(e.key, e.value)),
+        ),
+        interface,
+        Object.hashAll(connections),
+      );
 }
 
 /// Information on a snap slot.
 @immutable
 @JsonSerializable()
 class SnapSlot {
+  const SnapSlot({
+    required this.snap,
+    required this.slot,
+    this.attributes = const {},
+    this.interface,
+    this.connections = const [],
+  });
+
+  factory SnapSlot.fromJson(Map<String, dynamic> json) =>
+      _$SnapSlotFromJson(json);
+
   /// The snap this slot is provided by.
   final String snap;
 
@@ -823,21 +863,11 @@ class SnapSlot {
   // Plugs connected to this slot.
   final List<SnapPlug> connections;
 
-  const SnapSlot(
-      {required this.snap,
-      required this.slot,
-      this.attributes = const {},
-      this.interface,
-      this.connections = const []});
-
-  factory SnapSlot.fromJson(Map<String, dynamic> json) =>
-      _$SnapSlotFromJson(json);
-
   Map<String, dynamic> toJson() => _$SnapSlotToJson(this);
 
   @override
   String toString() {
-    var values = {'snap': snap, 'slot': slot};
+    final values = {'snap': snap, 'slot': slot};
     if (attributes.isNotEmpty) {
       values['attributes'] = '$attributes';
     }
@@ -847,12 +877,12 @@ class SnapSlot {
     if (connections.isNotEmpty) {
       values['connections'] = '$connections';
     }
-    var args = values.entries.map((e) => '${e.key}: ${e.value}').join(', ');
+    final args = values.entries.map((e) => '${e.key}: ${e.value}').join(', ');
     return '$runtimeType($args)';
   }
 
   @override
-  bool operator ==(other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
     final deepEquals = const DeepCollectionEquality().equals;
 
@@ -866,18 +896,31 @@ class SnapSlot {
 
   @override
   int get hashCode => Object.hash(
-      snap,
-      slot,
-      Object.hashAllUnordered(
-          attributes.entries.map((e) => Object.hash(e.key, e.value))),
-      interface,
-      Object.hashAll(connections));
+        snap,
+        slot,
+        Object.hashAllUnordered(
+          attributes.entries.map((e) => Object.hash(e.key, e.value)),
+        ),
+        interface,
+        Object.hashAll(connections),
+      );
 }
 
 /// Information on a connection between a snap plugs and slots.
 @immutable
 @JsonSerializable()
 class SnapConnection {
+  const SnapConnection({
+    required this.slot,
+    required this.plug,
+    required this.interface,
+    this.slotAttributes = const {},
+    this.plugAttributes = const {},
+    this.manual = false,
+  });
+
+  factory SnapConnection.fromJson(Map<String, dynamic> json) =>
+      _$SnapConnectionFromJson(json);
   // The slot used in this connection.
   final SnapSlot slot;
 
@@ -898,17 +941,6 @@ class SnapConnection {
   // True if this is manually connected.
   final bool manual;
 
-  const SnapConnection(
-      {required this.slot,
-      this.slotAttributes = const {},
-      required this.plug,
-      this.plugAttributes = const {},
-      required this.interface,
-      this.manual = false});
-
-  factory SnapConnection.fromJson(Map<String, dynamic> json) =>
-      _$SnapConnectionFromJson(json);
-
   Map<String, dynamic> toJson() => _$SnapConnectionToJson(this);
 
   @override
@@ -916,7 +948,7 @@ class SnapConnection {
       '$runtimeType(slot: $slot, slotAttributes: $slotAttributes, plug: $plug, plugAttributes: $plugAttributes, interface: $interface, manual: $manual)';
 
   @override
-  bool operator ==(other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
     final mapEquals = const DeepCollectionEquality().equals;
 
@@ -931,13 +963,29 @@ class SnapConnection {
 
   @override
   int get hashCode => Object.hash(
-      slot, slotAttributes, plug, plugAttributes, interface, manual);
+        slot,
+        slotAttributes,
+        plug,
+        plugAttributes,
+        interface,
+        manual,
+      );
 }
 
 /// Response received when getting connections.
 @immutable
 @JsonSerializable()
 class SnapdConnectionsResponse {
+  const SnapdConnectionsResponse({
+    this.established = const [],
+    this.plugs = const [],
+    this.slots = const [],
+    this.undesired = const [],
+  });
+
+  factory SnapdConnectionsResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdConnectionsResponseFromJson(json);
+
   /// Connections that have been established.
   final List<SnapConnection> established;
 
@@ -950,15 +998,6 @@ class SnapdConnectionsResponse {
   /// Auto-connected connections that have been manually disconnected.
   final List<SnapConnection> undesired;
 
-  const SnapdConnectionsResponse(
-      {this.established = const [],
-      this.plugs = const [],
-      this.slots = const [],
-      this.undesired = const []});
-
-  factory SnapdConnectionsResponse.fromJson(Map<String, dynamic> json) =>
-      _$SnapdConnectionsResponseFromJson(json);
-
   Map<String, dynamic> toJson() => _$SnapdConnectionsResponseToJson(this);
 
   @override
@@ -970,6 +1009,22 @@ class SnapdConnectionsResponse {
 @immutable
 @JsonSerializable()
 class SnapdChange {
+  const SnapdChange({
+    required this.spawnTime,
+    this.id = '',
+    this.kind = '',
+    this.summary = '',
+    this.status = '',
+    this.ready = false,
+    this.readyTime,
+    this.err,
+    this.tasks = const [],
+    this.snapNames = const [],
+  });
+
+  factory SnapdChange.fromJson(Map<String, dynamic> json) =>
+      _$SnapdChangeFromJson(json);
+
   /// The ID of this change.
   final String id;
 
@@ -1010,23 +1065,9 @@ class SnapdChange {
   }
 
   static List<String> _snapNamesFromJson(Map<String, dynamic> json) {
-    return json['snap-names']?.cast<String>() ?? const [];
+    return json['snap-names']?.cast<String>() as List<String>? ??
+        const <String>[];
   }
-
-  const SnapdChange(
-      {this.id = '',
-      this.kind = '',
-      this.summary = '',
-      this.status = '',
-      this.ready = false,
-      required this.spawnTime,
-      this.readyTime,
-      this.err,
-      this.tasks = const [],
-      this.snapNames = const []});
-
-  factory SnapdChange.fromJson(Map<String, dynamic> json) =>
-      _$SnapdChangeFromJson(json);
 
   Map<String, dynamic> toJson() => _$SnapdChangeToJson(this);
 
@@ -1035,7 +1076,7 @@ class SnapdChange {
       "$runtimeType(id: $id, kind: $kind, summary: '$summary', status: $status, ready: $ready, err: $err, spawnTime: $spawnTime, readyTime: $readyTime, tasks: $tasks, snapNames: $snapNames)";
 
   @override
-  bool operator ==(other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
     final deepEquals = const DeepCollectionEquality().equals;
 
@@ -1056,8 +1097,18 @@ class SnapdChange {
   int get hashCode {
     final deepHash = const DeepCollectionEquality().hash;
 
-    return Object.hash(id, kind, summary, status, ready, err, spawnTime,
-        readyTime, deepHash(tasks), deepHash(snapNames));
+    return Object.hash(
+      id,
+      kind,
+      summary,
+      status,
+      ready,
+      err,
+      spawnTime,
+      readyTime,
+      deepHash(tasks),
+      deepHash(snapNames),
+    );
   }
 }
 
@@ -1065,6 +1116,19 @@ class SnapdChange {
 @immutable
 @JsonSerializable()
 class SnapdTask {
+  SnapdTask({
+    this.id = '',
+    this.kind = '',
+    this.summary = '',
+    this.status = '',
+    this.progress = const SnapdTaskProgress(),
+    DateTime? spawnTime,
+    this.readyTime,
+  }) : spawnTime = spawnTime ?? DateTime.utc(1970);
+
+  factory SnapdTask.fromJson(Map<String, dynamic> json) =>
+      _$SnapdTaskFromJson(json);
+
   /// The ID of this task.
   final String id;
 
@@ -1086,19 +1150,6 @@ class SnapdTask {
   /// The time this task completed.
   final DateTime? readyTime;
 
-  SnapdTask(
-      {this.id = '',
-      this.kind = '',
-      this.summary = '',
-      this.status = '',
-      this.progress = const SnapdTaskProgress(),
-      DateTime? spawnTime,
-      this.readyTime})
-      : spawnTime = spawnTime ?? DateTime.utc(1970);
-
-  factory SnapdTask.fromJson(Map<String, dynamic> json) =>
-      _$SnapdTaskFromJson(json);
-
   Map<String, dynamic> toJson() => _$SnapdTaskToJson(this);
 
   @override
@@ -1106,7 +1157,7 @@ class SnapdTask {
       "$runtimeType(id: $id, kind: $kind, summary: '$summary', status: $status, progress: $progress, spawnTime: $spawnTime, readyTime: $readyTime)";
 
   @override
-  bool operator ==(other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
     return other is SnapdTask &&
@@ -1128,6 +1179,11 @@ class SnapdTask {
 @immutable
 @JsonSerializable()
 class SnapdTaskProgress {
+  const SnapdTaskProgress({this.label = '', this.done = 0, this.total = 0});
+
+  factory SnapdTaskProgress.fromJson(Map<String, dynamic> json) =>
+      _$SnapdTaskProgressFromJson(json);
+
   /// Optional label.
   final String label;
 
@@ -1137,11 +1193,6 @@ class SnapdTaskProgress {
   /// Total number of progress items in this task.
   final int total;
 
-  const SnapdTaskProgress({this.label = '', this.done = 0, this.total = 0});
-
-  factory SnapdTaskProgress.fromJson(Map<String, dynamic> json) =>
-      _$SnapdTaskProgressFromJson(json);
-
   Map<String, dynamic> toJson() => _$SnapdTaskProgressToJson(this);
 
   @override
@@ -1149,7 +1200,7 @@ class SnapdTaskProgress {
       "$runtimeType(label: '$label', done: $done, total: $total)";
 
   @override
-  bool operator ==(other) {
+  bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
     return other is SnapdTaskProgress &&
@@ -1164,6 +1215,8 @@ class SnapdTaskProgress {
 
 /// General response from snapd.
 abstract class _SnapdResponse {
+  const _SnapdResponse({this.statusCode = 0, this.status = ''});
+
   /// HTTP status code.
   final int statusCode;
 
@@ -1175,12 +1228,12 @@ abstract class _SnapdResponse {
 
   /// Request change ID. Throws an exception if not an async result.
   String get change;
-
-  const _SnapdResponse({this.statusCode = 0, this.status = ''});
 }
 
-/// Response retuned when a sync request is completed.
+/// Response returned when a sync request is completed.
 class _SnapdSyncResponse extends _SnapdResponse {
+  _SnapdSyncResponse(dynamic result, {super.statusCode, super.status})
+      : _result = result;
   final dynamic _result;
 
   @override
@@ -1188,29 +1241,28 @@ class _SnapdSyncResponse extends _SnapdResponse {
 
   @override
   String get change => throw 'Result is sync';
-
-  _SnapdSyncResponse(dynamic result, {int statusCode = 0, String status = ''})
-      : _result = result,
-        super(statusCode: statusCode, status: status);
 }
 
-/// Response retuned when an async request has been started.
-class _SnapdAsyncResponse extends _SnapdResponse {
-  final String _change;
-
-  @override
-  dynamic get result => throw 'Result is async';
-
-  @override
-  String get change => _change;
-
-  _SnapdAsyncResponse(change, {int statusCode = 0, String status = ''})
-      : _change = change,
-        super(statusCode: statusCode, status: status);
-}
-
-/// Response retuned when an error occurred.
+/// Response returned when an error occurred.
 class _SnapdErrorResponse extends _SnapdResponse {
+  const _SnapdErrorResponse(
+    this.message, {
+    super.statusCode,
+    super.status,
+    this.kind = '',
+    this.value,
+  });
+
+  factory _SnapdErrorResponse.fromJson(int statusCode, String status, value) {
+    return _SnapdErrorResponse(
+      value['message'] as String? ?? '',
+      statusCode: statusCode,
+      status: status,
+      kind: value['kind'] as String?,
+      value: value['value'],
+    );
+  }
+
   /// Error message returned.
   final String message;
 
@@ -1225,51 +1277,40 @@ class _SnapdErrorResponse extends _SnapdResponse {
 
   @override
   String get change => throw SnapdException(kind: kind, message: message);
-
-  const _SnapdErrorResponse(this.message,
-      {int statusCode = 0, String status = '', this.kind = '', this.value})
-      : super(statusCode: statusCode, status: status);
-
-  factory _SnapdErrorResponse.fromJson(int statusCode, String status, value) {
-    return _SnapdErrorResponse(value['message'] ?? '',
-        statusCode: statusCode,
-        status: status,
-        kind: value['kind'],
-        value: value['value']);
-  }
 }
 
 /// Manages a connection to the snapd server.
 class SnapdClient {
+  SnapdClient({
+    this.userAgent = 'snapd.dart',
+    String socketPath = '/var/run/snapd.socket',
+  }) : _client = HttpClient() {
+    _client.connectionFactory = (uri, proxyHost, proxyPort) {
+      final address =
+          InternetAddress(socketPath, type: InternetAddressType.unix);
+      return Socket.startConnect(address, 0);
+    };
+  }
+
   final HttpClient _client;
+  String? userAgent;
   String? _macaroon;
   List<String> _discharges = [];
-  String? _userAgent;
 
   /// True if snapd operations are allowed to interact with the user.
   /// This affects operations that use polkit authorisation.
   bool allowInteraction = true;
 
-  SnapdClient(
-      {String userAgent = 'snapd.dart', socketPath = '/var/run/snapd.socket'})
-      : _userAgent = userAgent,
-        _client = HttpClient() {
-    _client.connectionFactory = (Uri uri, String? proxyHost, int? proxyPort) {
-      var address = InternetAddress(socketPath, type: InternetAddressType.unix);
-      return Socket.startConnect(address, 0);
-    };
-  }
-
   /// Loads the saved authorization for this user.
   Future<void> loadAuthorization({String? path}) async {
     if (path == null) {
-      var home = Platform.environment['HOME'];
+      final home = Platform.environment['HOME'];
       if (home == null) {
         throw 'Unable to determine home directory';
       }
       path = p.join(home, '.snap', 'auth.json');
     }
-    var file = File(path);
+    final file = File(path);
     String contents;
     try {
       contents = await file.readAsString();
@@ -1278,10 +1319,10 @@ class SnapdClient {
       return;
     }
 
-    var authData = json.decode(contents);
-    var macaroon = authData['macaroon'];
-    var discharges = authData['discharges'] != null
-        ? authData['discharges'].cast<String>()
+    final authData = json.decode(contents);
+    final macaroon = authData['macaroon'] as String;
+    final discharges = authData['discharges'] != null
+        ? authData['discharges'].cast<String>() as List<String>
         : <String>[];
     setAuthorization(macaroon, discharges);
   }
@@ -1294,133 +1335,136 @@ class SnapdClient {
 
   /// Gets information about the system that snapd is running on.
   Future<SnapdSystemInfoResponse> systemInfo() async {
-    var result = await _getSync('/v2/system-info');
+    final result = await _getSync<Map<String, dynamic>>('/v2/system-info');
     return SnapdSystemInfoResponse.fromJson(result);
   }
 
-  /// Gets informtion on all installed snaps.
+  /// Gets information on all installed snaps.
   Future<List<Snap>> getSnaps() async {
-    var result = await _getSync('/v2/snaps');
-    var snaps = <Snap>[];
-    for (var snap in result) {
-      snaps.add(Snap.fromJson(snap));
-    }
-    return snaps;
+    final result = await _getSyncList('/v2/snaps');
+    return result.map(Snap.fromJson).toList();
   }
 
   /// Gets information on an installed snap with the given [name].
   Future<Snap> getSnap(String name) async {
-    var encodedName = Uri.encodeComponent(name);
-    var result = await _getSync('/v2/snaps/$encodedName');
+    final encodedName = Uri.encodeComponent(name);
+    final result =
+        await _getSync<Map<String, dynamic>>('/v2/snaps/$encodedName');
     return Snap.fromJson(result);
   }
 
   /// Gets information on all installed apps.
-  Future<List<SnapApp>> getApps(
-      {List<String>? names, SnapdAppFilter? filter}) async {
-    var queryParameters = <String, String>{};
-    if (names != null) {
-      queryParameters['names'] = names.join(',');
-    }
-    if (filter != null) {
-      var value = {SnapdAppFilter.service: 'service'}[filter];
-      if (value != null) {
-        queryParameters['select'] = value;
-      }
-    }
-    var result = await _getSync('/v2/apps', queryParameters);
-    var apps = <SnapApp>[];
-    for (var app in result) {
-      apps.add(SnapApp.fromJson(app));
-    }
-    return apps;
+  Future<List<SnapApp>> getApps({
+    List<String>? names,
+    SnapdAppFilter? filter,
+  }) async {
+    final queryParameters = <String, String>{
+      if (names != null) 'names': names.join(','),
+      if (filter != null) 'select': filter.name,
+    };
+    final result = await _getSyncList('/v2/apps', queryParameters);
+    return result.map(SnapApp.fromJson).toList();
   }
 
   /// Gets all the store categories available.
   Future<List<SnapdCategoryDetails>> getCategories() async {
-    var result = await _getSync('/v2/categories');
-    var categories = <SnapdCategoryDetails>[];
-    for (var category in result) {
-      categories.add(SnapdCategoryDetails.fromJson(category));
-    }
-    return categories;
+    final result = await _getSyncList('/v2/categories');
+    return result.map(SnapdCategoryDetails.fromJson).toList();
   }
 
   /// Gets the connections, plugs and slots used on this system.
-  Future<SnapdConnectionsResponse> getConnections(
-      {String? snap, String? interface, SnapdConnectionFilter? filter}) async {
-    var queryParameters = <String, String>{};
-    if (snap != null) {
-      queryParameters['snap'] = snap;
-    }
-    if (interface != null) {
-      queryParameters['interface'] = interface;
-    }
-    if (filter != null) {
-      var value = {SnapdConnectionFilter.all: 'all'}[filter];
-      if (value != null) {
-        queryParameters['select'] = value;
-      }
-    }
-    var result = await _getSync('/v2/connections', queryParameters);
+  Future<SnapdConnectionsResponse> getConnections({
+    String? snap,
+    String? interface,
+    SnapdConnectionFilter? filter,
+  }) async {
+    final queryParameters = <String, String>{
+      if (snap != null) 'snap': snap,
+      if (interface != null) 'interface': interface,
+      if (filter != null) 'select': filter.name,
+    };
+    final result = await _getSync<Map<String, dynamic>>(
+      '/v2/connections',
+      queryParameters,
+    );
     return SnapdConnectionsResponse.fromJson(result);
   }
 
   /// Refreshes the snaps given by [names].
-  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
   Future<String> refreshMany(List<String> names) async {
-    var request = {};
-    request['action'] = 'refresh';
-    request['snaps'] = names;
-    return await _postAsync('/v2/snaps', request);
+    final request = {
+      'action': 'refresh',
+      'snaps': names,
+    };
+    return _postAsync('/v2/snaps', request);
   }
 
   /// Installs the snaps given by [names].
-  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
   Future<String> installMany(List<String> names, {bool classic = false}) async {
-    var request = {};
-    request['action'] = 'install';
-    request['snaps'] = names;
-    if (classic) {
-      request['classic'] = true;
-    }
-    return await _postAsync('/v2/snaps', request);
+    final request = {
+      'action': 'install',
+      'snaps': names,
+      if (classic) 'classic': true,
+    };
+    return _postAsync('/v2/snaps', request);
   }
 
   /// Connects a plug to a slot.
   /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
   Future<String> connect(
-      String snap, String plug, String slotSnap, String slot) async {
-    var request = {
+    String snap,
+    String plug,
+    String slotSnap,
+    String slot,
+  ) async {
+    final request = {
       'action': 'connect',
       'plugs': [
-        {'snap': snap, 'plug': plug}
+        {
+          'snap': snap,
+          'plug': plug,
+        },
       ],
       'slots': [
-        {'snap': slotSnap, 'slot': slot}
-      ]
+        {
+          'snap': slotSnap,
+          'slot': slot,
+        },
+      ],
     };
-    return await _postAsync('/v2/interfaces', request);
+    return _postAsync('/v2/interfaces', request);
   }
 
-  /// Disonnects a plug from a slot.
-  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
+  /// Disconnects a plug from a slot.
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
   Future<String> disconnect(
-      String plugSnap, String plug, String slotSnap, String slot) async {
-    var request = {
+    String plugSnap,
+    String plug,
+    String slotSnap,
+    String slot,
+  ) async {
+    final request = {
       'action': 'disconnect',
       'plugs': [
-        {'snap': plugSnap, 'plug': plug}
+        {
+          'snap': plugSnap,
+          'plug': plug,
+        },
       ],
       'slots': [
-        {'snap': slotSnap, 'slot': slot}
-      ]
+        {
+          'snap': slotSnap,
+          'slot': slot,
+        },
+      ],
     };
-    return await _postAsync('/v2/interfaces', request);
+    return _postAsync('/v2/interfaces', request);
   }
-
-  /// Sets the user agent sent in requests to snapd.
-  set userAgent(String? value) => _userAgent = value;
 
   /// Searches for snaps in the store.
   ///
@@ -1432,283 +1476,271 @@ class SnapdClient {
   ///   - 'private': search private snaps. Can't be used with [query].
   /// If [scope] is provided, adjust the search scope.
   ///   - 'wide': search for snaps that don't have a stable release.
-  Future<List<Snap>> find(
-      {String? query,
-      String? name,
-      String? category,
-      @Deprecated('Replaced with category') String? section,
-      SnapFindFilter? filter,
-      SnapFindScope? scope}) async {
-    var queryParameters = <String, String>{};
-    if (query != null) {
-      queryParameters['q'] = query;
-    }
-    if (name != null) {
-      queryParameters['name'] = name;
-    }
-    if (category != null) {
-      queryParameters['category'] = category;
-    }
-    if (section != null) {
-      queryParameters['section'] = section;
-    }
-    if (filter != null) {
-      var value = {
-        SnapFindFilter.private: 'private',
-        SnapFindFilter.refresh: 'refresh'
-      }[filter];
-      if (value != null) {
-        queryParameters['select'] = value;
-      }
-    }
-    if (scope != null) {
-      var value = {SnapFindScope.wide: 'wide'}[scope];
-      if (value != null) {
-        queryParameters['scope'] = value;
-      }
-    }
-    var result = await _getSync('/v2/find', queryParameters);
-    var snaps = <Snap>[];
-    for (var snap in result) {
-      snaps.add(Snap.fromJson(snap));
-    }
-    return snaps;
+  Future<List<Snap>> find({
+    String? query,
+    String? name,
+    String? category,
+    @Deprecated('Replaced with category') String? section,
+    SnapFindFilter? filter,
+    SnapFindScope? scope,
+  }) async {
+    final queryParameters = <String, String>{
+      if (query != null) 'q': query,
+      if (name != null) 'name': name,
+      if (category != null) 'category': category,
+      if (section != null) 'section': section,
+      if (filter != null) 'select': filter.name,
+      if (scope != null) 'scope': scope.name,
+    };
+    final result = await _getSyncList('/v2/find', queryParameters);
+    return result.map(Snap.fromJson).toList();
   }
 
   /// List all assertions of the given [assertion] type.
   /// If no [assertion] type is provided, lists available assertion types.
   /// If [params] are provided, the assertions are filtered to items that have
   /// matching fields defined by their assertion type. More information can be
-  /// found in the snapd documentation: https://snapcraft.io/docs/snapd-rest-api#heading--assertion-type
-  Future<Map<String, dynamic>> getAssertions(
-      {String? assertion, Map<String, String>? params}) async {
+  /// found in the snapd documentation:
+  /// https://snapcraft.io/docs/snapd-rest-api#heading--assertion-type
+  Future<Map<String, dynamic>> getAssertions({
+    String? assertion,
+    Map<String, String>? params,
+  }) async {
     if (assertion == null) {
-      final result = await _getSync('/v2/assertions');
+      final result = await _getSync<Map<String, dynamic>>('/v2/assertions');
       return result;
     }
 
     final raw = await _getSyncRaw('/v2/assertions/$assertion', params ?? {});
-    final YamlMap yaml = loadYaml(raw, recover: true) ?? YamlMap.wrap({});
-    return Map.fromEntries(yaml.entries)
-        .map((key, value) => MapEntry(key.toString(), value));
+    final yaml = loadYaml(raw, recover: true) as YamlMap? ?? YamlMap.wrap({});
+    return Map<String, dynamic>.from(yaml);
   }
 
   /// Logs into the snap store.
-  Future<SnapdLoginResponse> login(String email, String password,
-      {String? otp}) async {
-    var request = {'email': email, 'password': password};
-    if (otp != null) {
-      request['otp'] = otp;
-    }
-    var result = await _postSync('/v2/login', request);
+  Future<SnapdLoginResponse> login(
+    String email,
+    String password, {
+    String? otp,
+  }) async {
+    final request = {
+      'email': email,
+      'password': password,
+      if (otp != null) 'otp': otp,
+    };
+    final result = await _postSync<Map<String, dynamic>>('/v2/login', request);
     return SnapdLoginResponse.fromJson(result);
   }
 
-  /// Logs out acccount with [id] from the snap store.
-  Future logout(int id) async {
+  /// Logs out account with [id] from the snap store.
+  Future<void> logout(int id) async {
     await _postSync('/v2/logout', {'id': id});
   }
 
   /// Installs the snap with the given [name].
-  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> install(String name,
-      {String? channel,
-      String? revision,
-      bool classic = false,
-      bool dangerous = false,
-      bool devmode = false,
-      bool jailmode = false}) async {
-    var request = <String, dynamic>{'action': 'install'};
-    if (channel != null) {
-      request['channel'] = channel;
-    }
-    if (revision != null) {
-      request['revision'] = revision;
-    }
-    if (classic) {
-      request['classic'] = true;
-    }
-    if (dangerous) {
-      request['dangerous'] = true;
-    }
-    if (devmode) {
-      request['devmode'] = true;
-    }
-    if (jailmode) {
-      request['jailmode'] = true;
-    }
-    var encodedName = Uri.encodeComponent(name);
-    return await _postAsync('/v2/snaps/$encodedName', request);
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
+  Future<String> install(
+    String name, {
+    String? channel,
+    String? revision,
+    bool classic = false,
+    bool dangerous = false,
+    bool devmode = false,
+    bool jailmode = false,
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'install',
+      if (channel != null) 'channel': channel,
+      if (revision != null) 'revision': revision,
+      if (classic) 'classic': true,
+      if (dangerous) 'dangerous': true,
+      if (devmode) 'devmode': true,
+      if (jailmode) 'jailmode': true,
+    };
+
+    final encodedName = Uri.encodeComponent(name);
+    return _postAsync('/v2/snaps/$encodedName', request);
   }
 
   /// Refreshes the snap with the given [name].
-  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
-  Future<String> refresh(String name,
-      {String? channel, bool classic = false}) async {
-    var request = {};
-    request['action'] = 'refresh';
-    if (channel != null) {
-      request['channel'] = channel;
-    }
-    if (classic) {
-      request['classic'] = true;
-    }
-    var encodedName = Uri.encodeComponent(name);
-    return await _postAsync('/v2/snaps/$encodedName', request);
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
+  Future<String> refresh(
+    String name, {
+    String? channel,
+    bool classic = false,
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'refresh',
+      if (channel != null) 'channel': channel,
+      if (classic) 'classic': true,
+    };
+
+    final encodedName = Uri.encodeComponent(name);
+    return _postAsync('/v2/snaps/$encodedName', request);
   }
 
   /// Removes the snap with the given [name].
-  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
   Future<String> remove(String name, {bool purge = false}) async {
-    var request = <String, dynamic>{'action': 'remove'};
-    if (purge) {
-      request['purge'] = true;
-    }
-    var encodedName = Uri.encodeComponent(name);
-    return await _postAsync('/v2/snaps/$encodedName', request);
+    final request = <String, Object?>{
+      'action': 'remove',
+      if (purge) 'purge': true,
+    };
+    final encodedName = Uri.encodeComponent(name);
+    return _postAsync('/v2/snaps/$encodedName', request);
   }
 
   // Enable the snap with the given [name].
-  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
   Future<String> enable(String name) async {
-    var request = <String, dynamic>{'action': 'enable'};
-    var encodedName = Uri.encodeComponent(name);
-    return await _postAsync('/v2/snaps/$encodedName', request);
+    final request = <String, dynamic>{'action': 'enable'};
+    final encodedName = Uri.encodeComponent(name);
+    return _postAsync('/v2/snaps/$encodedName', request);
   }
 
   // Disable the snap with the given [name].
-  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
   Future<String> disable(String name) async {
-    var request = <String, dynamic>{'action': 'disable'};
-    var encodedName = Uri.encodeComponent(name);
-    return await _postAsync('/v2/snaps/$encodedName', request);
+    final request = <String, dynamic>{'action': 'disable'};
+    final encodedName = Uri.encodeComponent(name);
+    return _postAsync('/v2/snaps/$encodedName', request);
   }
 
   /// Gets the status the change with the given [id].
   Future<SnapdChange> getChange(String id) async {
-    var result = await _getSync('/v2/changes/$id');
+    final result = await _getSync<Map<String, dynamic>>('/v2/changes/$id');
     return SnapdChange.fromJson(result);
   }
 
   /// Get changes that have occurred / are occurring on the snap daemon.
   /// Use [filter] to choose which changes to receive.
   /// Use [name] to return only changes to the snap with that name.
-  Future<List<SnapdChange>> getChanges(
-      {SnapdChangeFilter? filter, String? name}) async {
-    var queryParameters = <String, String>{};
-    if (filter != null) {
-      var value = {
-        SnapdChangeFilter.all: 'all',
-        SnapdChangeFilter.inProgress: 'in-progress',
-        SnapdChangeFilter.ready: 'ready'
-      }[filter];
-      if (value != null) {
-        queryParameters['select'] = value;
-      }
-    }
-    if (name != null) {
-      queryParameters['for'] = name;
-    }
-    var result = await _getSync('/v2/changes', queryParameters);
-    var changes = <SnapdChange>[];
-    for (var change in result) {
-      changes.add(SnapdChange.fromJson(change));
-    }
-    return changes;
+  Future<List<SnapdChange>> getChanges({
+    SnapdChangeFilter? filter,
+    String? name,
+  }) async {
+    final queryParameters = <String, String>{
+      if (filter != null) 'select': filter.value,
+      if (name != null) 'for': name,
+    };
+    final result = await _getSyncList('/v2/changes', queryParameters);
+    return result.map(SnapdChange.fromJson).toList();
   }
 
   /// Aborts the change with the given [id].
   Future<SnapdChange> abortChange(String id) async {
-    var queryParameters = {'action': 'abort'};
-    var result = await _postSync('/v2/changes/$id', queryParameters);
+    final queryParameters = {'action': 'abort'};
+    final result = await _postSync<Map<String, dynamic>>(
+      '/v2/changes/$id',
+      queryParameters,
+    );
     return SnapdChange.fromJson(result);
   }
 
-  /// Terminates all active connections. If a client remains unclosed, the Dart process may not terminate.
+  /// Terminates all active connections. If a client remains unclosed, the Dart
+  /// process may not terminate.
   void close() {
     _client.close();
   }
 
   /// Does a synchronous request to snapd.
-  Future<dynamic> _getSync(String path,
-      [Map<String, String> queryParameters = const {}]) async {
+  Future<T> _getSync<T>(
+    String path, [
+    Map<String, String> queryParameters = const {},
+  ]) async {
     final response = await _getSyncResponse(path, queryParameters);
-    var snapdResponse = await _parseResponse(response);
-    return snapdResponse.result;
+    final snapdResponse = await _parseResponse(response);
+    return snapdResponse.result as T;
+  }
+
+  /// Does a synchronous request to snapd expecting a list back.
+  Future<List<Map<String, Object?>>> _getSyncList(
+    String path, [
+    Map<String, String> queryParameters = const {},
+  ]) async {
+    return _getSync(path, queryParameters);
   }
 
   /// Does a synchronous request to snapd without parsing the response.
-  Future<String> _getSyncRaw(String path,
-      [Map<String, String> queryParameters = const {}]) async {
+  Future<String> _getSyncRaw(
+    String path, [
+    Map<String, String> queryParameters = const {},
+  ]) async {
     final response = await _getSyncResponse(path, queryParameters);
     return response.transform(utf8.decoder).join();
   }
 
   /// Does a synchronous request and returns the response.
-  Future<HttpClientResponse> _getSyncResponse(String path,
-      [Map<String, String> queryParameters = const {}]) async {
-    var request =
+  Future<HttpClientResponse> _getSyncResponse(
+    String path, [
+    Map<String, String> queryParameters = const {},
+  ]) async {
+    final request =
         await _client.getUrl(Uri.http('localhost', path, queryParameters));
     _setHeaders(request);
     await request.close();
-    return await request.done;
+    return request.done;
   }
 
   /// Does a synchronous request to snapd.
-  Future<dynamic> _postSync(String path, [dynamic body]) async {
-    var request = await _client.post('localhost', 0, path);
+  Future<T> _postSync<T>(String path, [dynamic body]) async {
+    final request = await _client.post('localhost', 0, path);
     _setHeaders(request);
     request.headers.contentType = ContentType('application', 'json');
     request.write(json.encode(body));
     await request.close();
-    var snapdResponse = await _parseResponse(await request.done);
-    return snapdResponse.result;
+    final snapdResponse = await _parseResponse(await request.done);
+    return snapdResponse.result as T;
   }
 
   /// Does an asynchronous request to snapd.
-  /// Returns the change ID for this operation, use [getChange] to get the status of this operation.
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
   Future<String> _postAsync(String path, [dynamic body]) async {
-    var request = await _client.post('localhost', 0, path);
+    final request = await _client.post('localhost', 0, path);
     _setHeaders(request);
     request.headers.contentType = ContentType('application', 'json');
     request.write(json.encode(body));
     await request.close();
-    var snapdResponse = await _parseResponse(await request.done);
+    final snapdResponse = await _parseResponse(await request.done);
     return snapdResponse.change;
   }
 
   /// Decodes a response from snapd.
   Future<_SnapdResponse> _parseResponse(HttpClientResponse response) async {
-    var body = await response.transform(utf8.decoder).join();
-    var jsonResponse = json.decode(body);
-    _SnapdResponse snapdResponse;
-    var type = jsonResponse['type'];
-    var statusCode = jsonResponse['status-code'];
-    var status = jsonResponse['status'];
-    if (type == 'sync') {
-      snapdResponse = _SnapdSyncResponse(jsonResponse['result'],
-          statusCode: statusCode, status: status);
-    } else if (type == 'async') {
-      snapdResponse = _SnapdAsyncResponse(jsonResponse['change'],
-          statusCode: statusCode, status: status);
-    } else if (type == 'error') {
-      var result = jsonResponse['result'];
-      snapdResponse = _SnapdErrorResponse.fromJson(statusCode, status, result);
-    } else {
+    final body = await response.transform(utf8.decoder).join();
+    final jsonResponse = json.decode(body);
+    final type = jsonResponse['type'] as String;
+    final statusCode = jsonResponse['status-code'] as int;
+    final status = jsonResponse['status'] as String;
+    if (type == 'error') {
+      final result = jsonResponse['result'];
+      return _SnapdErrorResponse.fromJson(statusCode, status, result);
+    } else if (type != 'sync' && type != 'async') {
       throw "Unknown snapd response '$type'";
+    } else {
+      final result =
+          type == 'sync' ? jsonResponse['result'] : jsonResponse['change'];
+      return _SnapdSyncResponse(
+        result as String,
+        statusCode: statusCode,
+        status: status,
+      );
     }
-
-    return snapdResponse;
   }
 
   /// Makes base HTTP headers to send.
   void _setHeaders(HttpClientRequest request) {
-    if (_userAgent != null) {
-      request.headers.set(HttpHeaders.userAgentHeader, _userAgent!);
+    if (userAgent != null) {
+      request.headers.set(HttpHeaders.userAgentHeader, userAgent!);
     }
     if (_macaroon != null) {
       var authorization = 'Macaroon root="$_macaroon"';
-      for (var discharge in _discharges) {
+      for (final discharge in _discharges) {
         authorization += ',discharge="$discharge"';
       }
       request.headers.set(HttpHeaders.authorizationHeader, authorization);

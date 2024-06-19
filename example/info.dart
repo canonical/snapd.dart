@@ -5,9 +5,9 @@ void main(List<String> args) async {
     print('Usage: info <snap>');
     return;
   }
-  var name = args[0];
+  final name = args[0];
 
-  var client = SnapdClient();
+  final client = SnapdClient();
 
   Snap? localSnap;
   try {
@@ -18,7 +18,7 @@ void main(List<String> args) async {
 
   Snap? storeSnap;
   try {
-    var snaps = await client.find(name: name);
+    final snaps = await client.find(name: name);
     storeSnap = snaps[0];
   } on SnapdException {
     storeSnap = null;
@@ -30,9 +30,9 @@ void main(List<String> args) async {
     return;
   }
 
-  var publisher = storeSnap?.publisher?.displayName;
-  var summary = storeSnap != null ? storeSnap.summary : localSnap!.summary;
-  var license =
+  final publisher = storeSnap?.publisher?.displayName;
+  final summary = storeSnap != null ? storeSnap.summary : localSnap!.summary;
+  final license =
       storeSnap != null ? storeSnap.license : localSnap!.license ?? 'unset';
   var description =
       storeSnap != null ? storeSnap.description : localSnap!.description;
@@ -49,7 +49,7 @@ void main(List<String> args) async {
   if (description.endsWith('\n')) {
     description = description.substring(0, description.length - 1);
   }
-  for (var line in description.split('\n')) {
+  for (final line in description.split('\n')) {
     print('  $line');
   }
   if (storeSnap != null) {
@@ -63,10 +63,10 @@ void main(List<String> args) async {
   }
   if (storeSnap != null && storeSnap.tracks.isNotEmpty) {
     print('channels:');
-    for (var track in storeSnap.tracks) {
-      for (var risk in ['stable', 'candidate', 'beta', 'edge']) {
-        var name = '$track/$risk';
-        var channel = storeSnap.channels[name];
+    for (final track in storeSnap.tracks) {
+      for (final risk in ['stable', 'candidate', 'beta', 'edge']) {
+        final name = '$track/$risk';
+        final channel = storeSnap.channels[name];
         var description = '↑';
         if (channel != null) {
           description = '${channel.version} (${channel.revision})';
