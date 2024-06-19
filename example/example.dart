@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:math';
 import 'package:snapd/snapd.dart';
 
@@ -20,7 +22,8 @@ void main() async {
     }
     final publisher = snap.publisher?.username;
     rows.add(
-        [snap.name, snap.version, snap.revision, channel, publisher ?? '-'],);
+      [snap.name, snap.version, snap.revision, channel, publisher ?? '-'],
+    );
   }
   final columnWidths = [0, 0, 0, 0, 0];
   for (final row in rows) {

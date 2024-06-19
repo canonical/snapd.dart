@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:math';
 import 'package:snapd/snapd.dart';
 
@@ -32,7 +34,9 @@ void main(List<String> args) async {
   final response = await client.getConnections(snap: snap, filter: filter);
   final rows = <List<String>>[];
   String getInterfaceDescription(
-      String interface, Map<String, dynamic> attributes,) {
+    String interface,
+    Map<String, dynamic> attributes,
+  ) {
     if (interface == 'content') {
       return 'content[${attributes['content']}]';
     } else {

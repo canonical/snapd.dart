@@ -59,7 +59,7 @@ class SnapdException implements Exception {
   final String message;
 
   @override
-  String toString() => '$runtimeType(kind: $kind, message: $message)';
+  String toString() => 'SnapdException(kind: $kind, message: $message)';
 }
 
 /// Describes an app provided by a snap.
@@ -146,7 +146,7 @@ class SnapCategory {
   Map<String, dynamic> toJson() => _$SnapCategoryToJson(this);
 
   @override
-  String toString() => '$runtimeType(name: $name, featured: $featured)';
+  String toString() => 'SnapCategory(name: $name, featured: $featured)';
 
   @override
   bool operator ==(Object other) {
@@ -224,7 +224,7 @@ class SnapChannel {
 
   @override
   String toString() =>
-      '$runtimeType(confinement: $confinement, releasedAt: $releasedAt, revision: $revision, size: $size, version: $version)';
+      'SnapChannel(confinement: $confinement, releasedAt: $releasedAt, revision: $revision, size: $size, version: $version)';
 
   @override
   bool operator ==(Object other) {
@@ -273,7 +273,7 @@ class SnapPublisher {
 
   @override
   String toString() =>
-      '$runtimeType(id: $id, username: $username, displayName: $displayName, validation: $validation)';
+      'SnapPublisher(id: $id, username: $username, displayName: $displayName, validation: $validation)';
 
   @override
   bool operator ==(Object other) {
@@ -320,7 +320,7 @@ class SnapMedia {
 
   @override
   String toString() =>
-      '$runtimeType(type: $type, url: $url, width: $width, height: $height)';
+      'SnapMedia(type: $type, url: $url, width: $width, height: $height)';
 
   @override
   bool operator ==(Object other) {
@@ -478,7 +478,7 @@ class Snap {
 
   @override
   String toString() =>
-      "$runtimeType(apps: $apps, base: $base, categories: $categories, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, hold: $hold, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
+      "Snap(apps: $apps, base: $base, categories: $categories, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, hold: $hold, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
 
   @override
   bool operator ==(Object other) {
@@ -592,7 +592,7 @@ class SnapDeclaration {
 
   @override
   String toString() =>
-      '$runtimeType(type: $type, authority-id: $authorityId, revision: $revision, series: $series, snap-id: $snapId, publisher-id: $publisherId, snap-name: $snapName, timestamp: $timestamp, sign-key: $signKey)';
+      'SnapDeclaration(type: $type, authority-id: $authorityId, revision: $revision, series: $series, snap-id: $snapId, publisher-id: $publisherId, snap-name: $snapName, timestamp: $timestamp, sign-key: $signKey)';
 
   @override
   bool operator ==(Object other) {
@@ -689,7 +689,7 @@ class SnapdSystemInfoResponse {
 
   @override
   String toString() =>
-      '$runtimeType(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, refreshLast: ${refresh.last}, refreshNext: ${refresh.next}, series: $series, systemMode: $systemMode, version: $version)';
+      'SnapdSystemInfoResponse(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, refreshLast: ${refresh.last}, refreshNext: ${refresh.next}, series: $series, systemMode: $systemMode, version: $version)';
 }
 
 /// Contains information about refreshes.
@@ -714,7 +714,7 @@ class SnapdSystemRefreshInfo {
   Map<String, dynamic> toJson() => _$SnapdSystemRefreshInfoToJson(this);
 
   @override
-  String toString() => '$runtimeType(last: $last, next: $next)';
+  String toString() => 'SnapdSystemRefreshInfo(last: $last, next: $next)';
 }
 
 /// Response received when logging in.
@@ -755,7 +755,7 @@ class SnapdLoginResponse {
 
   @override
   String toString() =>
-      '$runtimeType(id: $id, username: $username, email: $email, macaroon: $macaroon, discharges: $discharges)';
+      'SnapdLoginResponse(id: $id, username: $username, email: $email, macaroon: $macaroon, discharges: $discharges)';
 }
 
 /// Information on a snap plug.
@@ -793,18 +793,15 @@ class SnapPlug {
 
   @override
   String toString() {
-    final values = {'snap': snap, 'plug': plug};
-    if (attributes.isNotEmpty) {
-      values['attributes'] = '$attributes';
-    }
-    if (interface != null) {
-      values['interface'] = '$interface';
-    }
-    if (connections.isNotEmpty) {
-      values['connections'] = '$connections';
-    }
+    final values = <String, dynamic>{
+      'snap': snap,
+      'plug': plug,
+      if (attributes.isNotEmpty) 'attributes': '$attributes',
+      if (interface != null) 'interface': '$interface',
+      if (connections.isNotEmpty) 'connections': '$connections',
+    };
     final args = values.entries.map((e) => '${e.key}: ${e.value}').join(', ');
-    return '$runtimeType($args)';
+    return 'SnapPlug($args)';
   }
 
   @override
@@ -878,7 +875,7 @@ class SnapSlot {
       values['connections'] = '$connections';
     }
     final args = values.entries.map((e) => '${e.key}: ${e.value}').join(', ');
-    return '$runtimeType($args)';
+    return 'SnapSlot($args)';
   }
 
   @override
@@ -945,7 +942,7 @@ class SnapConnection {
 
   @override
   String toString() =>
-      '$runtimeType(slot: $slot, slotAttributes: $slotAttributes, plug: $plug, plugAttributes: $plugAttributes, interface: $interface, manual: $manual)';
+      'SnapConnection(slot: $slot, slotAttributes: $slotAttributes, plug: $plug, plugAttributes: $plugAttributes, interface: $interface, manual: $manual)';
 
   @override
   bool operator ==(Object other) {
@@ -1002,7 +999,7 @@ class SnapdConnectionsResponse {
 
   @override
   String toString() =>
-      '$runtimeType(established: $established, plugs: $plugs, slots: $slots, undesired: $undesired)';
+      'SnapdConnectionResponse(established: $established, plugs: $plugs, slots: $slots, undesired: $undesired)';
 }
 
 /// Gives the state of an asynchronous operation.
@@ -1073,7 +1070,7 @@ class SnapdChange {
 
   @override
   String toString() =>
-      "$runtimeType(id: $id, kind: $kind, summary: '$summary', status: $status, ready: $ready, err: $err, spawnTime: $spawnTime, readyTime: $readyTime, tasks: $tasks, snapNames: $snapNames)";
+      "SnapdChange(id: $id, kind: $kind, summary: '$summary', status: $status, ready: $ready, err: $err, spawnTime: $spawnTime, readyTime: $readyTime, tasks: $tasks, snapNames: $snapNames)";
 
   @override
   bool operator ==(Object other) {
@@ -1154,7 +1151,7 @@ class SnapdTask {
 
   @override
   String toString() =>
-      "$runtimeType(id: $id, kind: $kind, summary: '$summary', status: $status, progress: $progress, spawnTime: $spawnTime, readyTime: $readyTime)";
+      "SnapdTask(id: $id, kind: $kind, summary: '$summary', status: $status, progress: $progress, spawnTime: $spawnTime, readyTime: $readyTime)";
 
   @override
   bool operator ==(Object other) {
@@ -1197,7 +1194,7 @@ class SnapdTaskProgress {
 
   @override
   String toString() =>
-      "$runtimeType(label: '$label', done: $done, total: $total)";
+      "SnapdTaskProgress(label: '$label', done: $done, total: $total)";
 
   @override
   bool operator ==(Object other) {
@@ -1314,6 +1311,7 @@ class SnapdClient {
     String contents;
     try {
       contents = await file.readAsString();
+      // ignore: avoid_catches_without_on_clauses
     } catch (e) {
       setAuthorization('', []);
       return;

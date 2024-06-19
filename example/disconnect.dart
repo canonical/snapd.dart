@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:snapd/snapd.dart';
 
 void usage() {
@@ -33,7 +35,11 @@ void main(List<String> args) async {
   }
 
   final id = await client.disconnect(
-      plugSnap, plug, slotSnap ?? 'snapd', slot ?? plug,);
+    plugSnap,
+    plug,
+    slotSnap ?? 'snapd',
+    slot ?? plug,
+  );
   while (true) {
     final change = await client.getChange(id);
     if (change.ready) {

@@ -23,7 +23,6 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.4.6
   json_serializable: ^6.7.0
-  ubuntu_lints: ^0.3.1
   test: ^1.16.8
   test_cov: ^1.0.1
-
+  ubuntu_lints: ^0.3.1

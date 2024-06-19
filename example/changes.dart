@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:snapd/snapd.dart';
 
 void main() async {
@@ -10,7 +12,8 @@ void main() async {
   print('ID Status Spawn Ready Summary');
   for (final change in changes) {
     print(
-        '${change.id} ${change.status} ${change.spawnTime} ${change.readyTime} ${change.summary}',);
+      '${change.id} ${change.status} ${change.spawnTime} ${change.readyTime} ${change.summary}',
+    );
   }
 
   client.close();
