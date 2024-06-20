@@ -49,13 +49,13 @@ Map<String, dynamic> _$SnapdCategoryDetailsToJson(
     };
 
 SnapChannel _$SnapChannelFromJson(Map json) => SnapChannel(
+      releasedAt: DateTime.parse(json['released-at'] as String),
       confinement: $enumDecodeNullable(
               _$SnapConfinementEnumMap, json['confinement'],
               unknownValue: SnapConfinement.unknown) ??
           SnapConfinement.unknown,
-      releasedAt: DateTime.parse(json['released-at'] as String),
       revision: json['revision'] as String? ?? '',
-      size: json['size'] as int? ?? 0,
+      size: (json['size'] as num?)?.toInt() ?? 0,
       version: json['version'] as String? ?? '',
     );
 
@@ -93,8 +93,8 @@ Map<String, dynamic> _$SnapPublisherToJson(SnapPublisher instance) =>
 SnapMedia _$SnapMediaFromJson(Map json) => SnapMedia(
       type: json['type'] as String,
       url: json['url'] as String,
-      width: json['width'] as int?,
-      height: json['height'] as int?,
+      width: (json['width'] as num?)?.toInt(),
+      height: (json['height'] as num?)?.toInt(),
     );
 
 Map<String, dynamic> _$SnapMediaToJson(SnapMedia instance) => <String, dynamic>{
@@ -105,6 +105,7 @@ Map<String, dynamic> _$SnapMediaToJson(SnapMedia instance) => <String, dynamic>{
     };
 
 Snap _$SnapFromJson(Map json) => Snap(
+      name: json['name'] as String,
       apps: (json['apps'] as List<dynamic>?)
               ?.map(
                   (e) => SnapApp.fromJson(Map<String, dynamic>.from(e as Map)))
@@ -132,14 +133,14 @@ Snap _$SnapFromJson(Map json) => Snap(
       contact: json['contact'] as String? ?? '',
       description: json['description'] as String? ?? '',
       devmode: json['devmode'] as bool? ?? false,
-      downloadSize: json['download-size'] as int?,
+      downloadSize: (json['download-size'] as num?)?.toInt(),
       hold:
           json['hold'] == null ? null : DateTime.parse(json['hold'] as String),
       id: json['id'] as String? ?? '',
       installDate: json['install-date'] == null
           ? null
           : DateTime.parse(json['install-date'] as String),
-      installedSize: json['installed-size'] as int?,
+      installedSize: (json['installed-size'] as num?)?.toInt(),
       jailmode: json['jailmode'] as bool? ?? false,
       license: json['license'] as String?,
       media: (json['media'] as List<dynamic>?)
@@ -148,7 +149,6 @@ Snap _$SnapFromJson(Map json) => Snap(
               .toList() ??
           const [],
       mountedFrom: json['mounted-from'] as String?,
-      name: json['name'] as String,
       private: json['private'] as bool? ?? false,
       publisher: json['publisher'] == null
           ? null
@@ -216,8 +216,8 @@ const _$SnapStatusEnumMap = {
 SnapDeclaration _$SnapDeclarationFromJson(Map json) => SnapDeclaration(
       type: json['type'] as String? ?? '',
       authorityId: json['authority-id'] as String? ?? '',
-      revision: json['revision'] as int? ?? 0,
-      series: json['series'] as int? ?? 0,
+      revision: (json['revision'] as num?)?.toInt() ?? 0,
+      series: (json['series'] as num?)?.toInt() ?? 0,
       snapId: json['snap-id'] as String? ?? '',
       publisherId: json['publisher-id'] as String? ?? '',
       snapName: json['snap-name'] as String? ?? '',
@@ -240,6 +240,8 @@ Map<String, dynamic> _$SnapDeclarationToJson(SnapDeclaration instance) =>
 
 SnapdSystemInfoResponse _$SnapdSystemInfoResponseFromJson(Map json) =>
     SnapdSystemInfoResponse(
+      refresh: SnapdSystemRefreshInfo.fromJson(
+          Map<String, dynamic>.from(json['refresh'] as Map)),
       architecture: json['architecture'] as String? ?? '',
       buildId: json['build-id'] as String? ?? '',
       confinement: $enumDecodeNullable(
@@ -249,8 +251,6 @@ SnapdSystemInfoResponse _$SnapdSystemInfoResponseFromJson(Map json) =>
       kernelVersion: json['kernel-version'] as String? ?? '',
       managed: json['managed'] as bool? ?? false,
       onClassic: json['on-classic'] as bool? ?? false,
-      refresh: SnapdSystemRefreshInfo.fromJson(
-          Map<String, dynamic>.from(json['refresh'] as Map)),
       series: json['series'] as String? ?? '',
       systemMode: json['system-mode'] as String? ?? '',
       version: json['version'] as String? ?? '',
@@ -273,9 +273,9 @@ Map<String, dynamic> _$SnapdSystemInfoResponseToJson(
 
 SnapdSystemRefreshInfo _$SnapdSystemRefreshInfoFromJson(Map json) =>
     SnapdSystemRefreshInfo(
+      next: const _SnapdDateTimeConverter().fromJson(json['next'] as String?),
       last:
           json['last'] == null ? null : DateTime.parse(json['last'] as String),
-      next: const _SnapdDateTimeConverter().fromJson(json['next'] as String?),
     );
 
 Map<String, dynamic> _$SnapdSystemRefreshInfoToJson(
@@ -286,7 +286,7 @@ Map<String, dynamic> _$SnapdSystemRefreshInfoToJson(
     };
 
 SnapdLoginResponse _$SnapdLoginResponseFromJson(Map json) => SnapdLoginResponse(
-      id: json['id'] as int,
+      id: (json['id'] as num).toInt(),
       username: json['username'] as String?,
       email: json['email'] as String?,
       macaroon: json['macaroon'] as String?,
@@ -358,16 +358,16 @@ Map<String, dynamic> _$SnapSlotToJson(SnapSlot instance) => <String, dynamic>{
 
 SnapConnection _$SnapConnectionFromJson(Map json) => SnapConnection(
       slot: SnapSlot.fromJson(Map<String, dynamic>.from(json['slot'] as Map)),
+      plug: SnapPlug.fromJson(Map<String, dynamic>.from(json['plug'] as Map)),
+      interface: json['interface'] as String,
       slotAttributes: (json['slot-attrs'] as Map?)?.map(
             (k, e) => MapEntry(k as String, e),
           ) ??
           const {},
-      plug: SnapPlug.fromJson(Map<String, dynamic>.from(json['plug'] as Map)),
       plugAttributes: (json['plug-attrs'] as Map?)?.map(
             (k, e) => MapEntry(k as String, e),
           ) ??
           const {},
-      interface: json['interface'] as String,
       manual: json['manual'] as bool? ?? false,
     );
 
@@ -415,12 +415,12 @@ Map<String, dynamic> _$SnapdConnectionsResponseToJson(
     };
 
 SnapdChange _$SnapdChangeFromJson(Map json) => SnapdChange(
+      spawnTime: DateTime.parse(json['spawn-time'] as String),
       id: json['id'] as String? ?? '',
       kind: json['kind'] as String? ?? '',
       summary: json['summary'] as String? ?? '',
       status: json['status'] as String? ?? '',
       ready: json['ready'] as bool? ?? false,
-      spawnTime: DateTime.parse(json['spawn-time'] as String),
       readyTime: json['ready-time'] == null
           ? null
           : DateTime.parse(json['ready-time'] as String),
@@ -479,8 +479,8 @@ Map<String, dynamic> _$SnapdTaskToJson(SnapdTask instance) => <String, dynamic>{
 
 SnapdTaskProgress _$SnapdTaskProgressFromJson(Map json) => SnapdTaskProgress(
       label: json['label'] as String? ?? '',
-      done: json['done'] as int? ?? 0,
-      total: json['total'] as int? ?? 0,
+      done: (json['done'] as num?)?.toInt() ?? 0,
+      total: (json['total'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$SnapdTaskProgressToJson(SnapdTaskProgress instance) =>

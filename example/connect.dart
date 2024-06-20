@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:snapd/snapd.dart';
 
 void usage() {
@@ -5,7 +7,7 @@ void usage() {
 }
 
 void main(List<String> args) async {
-  var client = SnapdClient();
+  final client = SnapdClient();
   await client.loadAuthorization();
 
   if (args.isEmpty || args.length > 2) {
@@ -13,17 +15,17 @@ void main(List<String> args) async {
     return;
   }
 
-  var tokens = args[0].split(':');
+  final tokens = args[0].split(':');
   if (tokens.length != 2) {
     usage();
     return;
   }
-  var plugSnap = tokens[0];
-  var plug = tokens[1];
+  final plugSnap = tokens[0];
+  final plug = tokens[1];
   String? slotSnap;
   String? slot;
   if (args.length > 1) {
-    var tokens = args[1].split(':');
+    final tokens = args[1].split(':');
     if (tokens.length > 2) {
       usage();
       return;
@@ -32,15 +34,15 @@ void main(List<String> args) async {
     slot = tokens.length == 2 ? tokens[1] : null;
   }
 
-  var id =
+  final id =
       await client.connect(plugSnap, plug, slotSnap ?? 'snapd', slot ?? plug);
   while (true) {
-    var change = await client.getChange(id);
+    final change = await client.getChange(id);
     if (change.ready) {
       break;
     }
 
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
   }
 
   client.close();

@@ -1,8 +1,9 @@
 name: snapd
 version: 0.4.14
 
-description:
-  Provides a client to access snapd, which allows you to manage, search and install snaps on a Linux system.
+description: >
+  Provides a client to access snapd, which allows you to manage, search and
+  install snaps on a Linux system.
 
 homepage: https://github.com/canonical/snapd.dart
 
@@ -22,7 +23,6 @@ dependencies:
 dev_dependencies:
   build_runner: ^2.4.6
   json_serializable: ^6.7.0
-  lints: ^2.0.0
   test: ^1.16.8
   test_cov: ^1.0.1
-
+  ubuntu_lints: ^0.3.1

@@ -1,12 +1,14 @@
+// ignore_for_file: avoid_print
+
 import 'package:snapd/snapd.dart';
 
 void main() async {
-  var client = SnapdClient();
+  final client = SnapdClient();
   await client.loadAuthorization();
 
   // Get the installed apps.
-  var apps = await client.getApps();
-  for (var app in apps) {
+  final apps = await client.getApps();
+  for (final app in apps) {
     print(app.name);
   }
 

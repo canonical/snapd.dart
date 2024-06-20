@@ -3,3 +3,5 @@
 pubspec.lock
 test/.test_cov.dart
 coverage/
+.idea/
+build/

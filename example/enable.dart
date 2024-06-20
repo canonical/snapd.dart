@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:snapd/snapd.dart';
 
 void main(List<String> args) async {
@@ -5,18 +7,18 @@ void main(List<String> args) async {
     print('Usage: install <snap>');
     return;
   }
-  var name = args[0];
+  final name = args[0];
 
-  var client = SnapdClient();
+  final client = SnapdClient();
   await client.loadAuthorization();
-  var id = await client.enable(name);
+  final id = await client.enable(name);
   while (true) {
-    var change = await client.getChange(id);
+    final change = await client.getChange(id);
     if (change.ready) {
       break;
     }
 
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
   }
 
   client.close();
