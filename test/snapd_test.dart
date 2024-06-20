@@ -1290,12 +1290,6 @@ void main() {
     expect(info.series, equals('16'));
     expect(info.systemMode, equals('run'));
     expect(info.version, equals('2.49'));
-    expect(
-      info.toString(),
-      equals(
-        'SnapdSystemInfoResponse(architecture: amd64, buildId: 2a0c915752b1c3c5dd7980220cd246876fb0a510, confinement: SnapConfinement.strict, kernelVersion: 5.11.0, managed: true, onClassic: true, refreshLast: 2022-05-28 20:10:00.000Z, refreshNext: 2022-05-29 01:18:00.000Z, series: 16, systemMode: run, version: 2.49)',
-      ),
-    );
   });
 
   test('user agent', () async {
@@ -1392,12 +1386,6 @@ void main() {
     expect(response.macaroon, equals('macaroon'));
     expect(response.discharges, equals(['discharge1', 'discharge2']));
     expect(response.sshKeys, equals(['key1', 'key2']));
-    expect(
-      response.toString(),
-      equals(
-        'SnapdLoginResponse(id: 42, username: admin, email: admin@example.com, macaroon: macaroon, discharges: [discharge1, discharge2])',
-      ),
-    );
   });
 
   test('login - otp', () async {
@@ -1662,12 +1650,6 @@ void main() {
     expect(snap.hashCode, equals(expectedSnap.hashCode));
     expect(snap.toJson(), equals(expectedSnap.toJson()));
     expect(Snap.fromJson(snap.toJson()), equals(snap));
-    expect(
-      snap.toString(),
-      equals(
-        "Snap(apps: [], base: null, categories: [], channel: , channels: {}, commonIds: [], confinement: SnapConfinement.unknown, contact: , description: 'Hello\\nSalut\\nHola', devmode: false, downloadSize: null, hold: null, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: null, installedSize: null, jailmode: false, license: null, media: [], mountedFrom: null, name: hello, private: false, publisher: null, revision: 42, status: SnapStatus.unknown, storeUrl: null, summary: 'Hello is an app', title: 'Hello', trackingChannel: null, tracks: [], type: app, version: 1.2, website: null)",
-      ),
-    );
   });
 
   test('snap optional properties', () async {
@@ -1827,12 +1809,6 @@ void main() {
     expect(snap.hashCode, equals(expectedSnap.hashCode));
     expect(snap.toJson(), equals(expectedSnap.toJson()));
     expect(Snap.fromJson(snap.toJson()), equals(snap));
-    expect(
-      snap.toString(),
-      equals(
-        "Snap(apps: [SnapApp(snap: hello, name: hello1, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null), SnapApp(snap: hello, name: hello2, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null)], base: core20, categories: [SnapCategory(name: category1, featured: false), SnapCategory(name: category2, featured: true)], channel: stable, channels: {latest/stable: SnapChannel(confinement: SnapConfinement.strict, releasedAt: 2022-05-02 21:24:15.330374Z, revision: 42, size: 123456, version: 1.2), insider/stable: SnapChannel(confinement: SnapConfinement.classic, releasedAt: 2022-04-26 12:54:32.578086Z, revision: 43, size: 888888, version: 1.3)}, commonIds: [com.example.Hello, com.example.Hallo], confinement: SnapConfinement.classic, contact: hello@example.com, description: 'Hello\\nSalut\\nHola', devmode: true, downloadSize: 123456, hold: 2315-06-19 13:00:37.186885Z, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: 2022-05-13 09:51:03.920998Z, installedSize: 654321, jailmode: true, license: GPL-3, media: [SnapMedia(type: icon, url: http://example.com/hello-icon.png, width: null, height: null), SnapMedia(type: screenshot, url: http://example.com/hello-screenshot.jpg, width: 1024, height: 768)], mountedFrom: /var/lib/snapd/snaps/hello_1.2.snap, name: hello, private: true, publisher: SnapPublisher(id: JvtzsxbsHivZLdvzrt0iqW529riGLfXJ, username: publisher, displayName: Publisher, validation: verified), revision: 42, status: SnapStatus.available, storeUrl: https://snapcraft.io/hello, summary: 'Hello is an app', title: 'Hello', trackingChannel: latest/stable, tracks: [latest, insider], type: app, version: 1.2, website: http://example.com/hello)",
-      ),
-    );
   });
 
   test('categories', () async {
@@ -1851,12 +1827,6 @@ void main() {
     expect(categories, hasLength(2));
     expect(categories[0].name, equals('category1'));
     expect(categories[1].name, equals('category2'));
-    expect(
-      categories.toString(),
-      equals(
-        '[SnapdCategoryDetails(name: category1), SnapdCategoryDetails(name: category2)]',
-      ),
-    );
   });
 
   test('connections', () async {
@@ -1917,12 +1887,6 @@ void main() {
         ),
       ]),
     );
-    expect(
-      response.toString(),
-      equals(
-        'SnapdConnectionsResponse(established: [SnapConnection(slot: SnapSlot(snap: test3, slot: slot3), slotAttributes: {}, plug: SnapPlug(snap: test1, plug: plug1), plugAttributes: {}, interface: interface1, manual: false)], plugs: [SnapPlug(snap: test1, plug: plug1, interface: interface1, connections: [SnapSlot(snap: test3, slot: slot3)])], slots: [SnapSlot(snap: test3, slot: slot3, interface: interface1, connections: [SnapPlug(snap: test1, plug: plug1)])], undesired: [])',
-      ),
-    );
   });
 
   test('connection attributes', () async {
@@ -1973,18 +1937,6 @@ void main() {
           attributes: {'slot-attribute1': 'slot-attribute-value1'},
         ),
       ]),
-    );
-    expect(
-      response.plugs.toString(),
-      equals(
-        '[SnapPlug(snap: test1, plug: plug1, attributes: {plug-attribute1: plug-attribute-value1}, interface: interface1)]',
-      ),
-    );
-    expect(
-      response.slots.toString(),
-      equals(
-        '[SnapSlot(snap: test2, slot: slot1, attributes: {slot-attribute1: slot-attribute-value1}, interface: interface1)]',
-      ),
     );
   });
 
@@ -2214,12 +2166,6 @@ void main() {
     expect(change.ready, isTrue);
     expect(plug1.slotSnap, equals(snap3));
     expect(plug1.slot, equals(slot3));
-    expect(
-      change.toString(),
-      equals(
-        "SnapdChange(id: 0, kind: , summary: '', status: , ready: true, err: null, spawnTime: 2022-04-28 13:56:00.000Z, readyTime: null, tasks: [SnapdTask(id: 0, kind: , summary: '', status: , progress: SnapdTaskProgress(label: '', done: 10, total: 10), spawnTime: 1970-01-01 00:00:00.000Z, readyTime: null)], snapNames: [test1, test3])",
-      ),
-    );
   });
 
   test('disconnect', () async {
@@ -2572,7 +2518,10 @@ void main() {
           snapId: 'swordfishId',
         ),
         const MockSnapDeclaration(
-            series: 16, snapName: 'bear', snapId: 'bearId'),
+          series: 16,
+          snapName: 'bear',
+          snapId: 'bearId',
+        ),
         const MockSnapDeclaration(series: 16, snapName: 'fishy'),
       ],
     );
@@ -3039,7 +2988,10 @@ void main() {
               summary: 'Task',
               status: 'Doing',
               progress: const SnapdTaskProgress(
-                  label: 'Progress', done: 22, total: 33),
+                label: 'Progress',
+                done: 22,
+                total: 33,
+              ),
               spawnTime: DateTime.utc(1970),
             ),
           ],
