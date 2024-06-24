@@ -78,17 +78,17 @@ const _$SnapConfinementEnumMap = {
 
 _$SnapPublisherImpl _$$SnapPublisherImplFromJson(Map json) =>
     _$SnapPublisherImpl(
-      id: json['id'] as String?,
+      id: json['id'] as String,
+      displayName: json['display-name'] as String,
       username: json['username'] as String?,
-      displayName: json['display-name'] as String?,
       validation: json['validation'] as String?,
     );
 
 Map<String, dynamic> _$$SnapPublisherImplToJson(_$SnapPublisherImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
-      'username': instance.username,
       'display-name': instance.displayName,
+      'username': instance.username,
       'validation': instance.validation,
     };
 
@@ -108,19 +108,25 @@ Map<String, dynamic> _$$SnapMediaImplToJson(_$SnapMediaImpl instance) =>
     };
 
 _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
+      id: json['id'] as String,
       name: json['name'] as String,
+      revision: json['revision'] as String,
+      version: json['version'] as String,
+      channel: json['channel'] as String,
+      base: json['base'] as String,
+      contact: json['contact'] as String,
+      description: json['description'] as String,
+      type: json['type'] as String,
       apps: (json['apps'] as List<dynamic>?)
               ?.map(
                   (e) => SnapApp.fromJson(Map<String, dynamic>.from(e as Map)))
               .toList() ??
           const [],
-      base: json['base'] as String?,
       categories: (json['categories'] as List<dynamic>?)
               ?.map((e) =>
                   SnapCategory.fromJson(Map<String, dynamic>.from(e as Map)))
               .toList() ??
           const [],
-      channel: json['channel'] as String?,
       channels: (json['channels'] as Map?)?.map(
             (k, e) => MapEntry(k as String,
                 SnapChannel.fromJson(Map<String, dynamic>.from(e as Map))),
@@ -134,13 +140,10 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
               _$SnapConfinementEnumMap, json['confinement'],
               unknownValue: SnapConfinement.unknown) ??
           SnapConfinement.unknown,
-      contact: json['contact'] as String?,
-      description: json['description'] as String? ?? '',
       devmode: json['devmode'] as bool? ?? false,
       downloadSize: (json['download-size'] as num?)?.toInt(),
       hold:
           json['hold'] == null ? null : DateTime.parse(json['hold'] as String),
-      id: json['id'] as String?,
       installDate: json['install-date'] == null
           ? null
           : DateTime.parse(json['install-date'] as String),
@@ -158,7 +161,6 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
           ? null
           : SnapPublisher.fromJson(
               Map<String, dynamic>.from(json['publisher'] as Map)),
-      revision: json['revision'] as String?,
       status: $enumDecodeNullable(_$SnapStatusEnumMap, json['status']) ??
           SnapStatus.unknown,
       storeUrl: json['store-url'] as String?,
@@ -169,27 +171,28 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      type: json['type'] as String?,
-      version: json['version'] as String?,
       website: json['website'] as String?,
     );
 
 Map<String, dynamic> _$$SnapImplToJson(_$SnapImpl instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
-      'apps': instance.apps.map((e) => e.toJson()).toList(),
-      'base': instance.base,
-      'categories': instance.categories.map((e) => e.toJson()).toList(),
+      'revision': instance.revision,
+      'version': instance.version,
       'channel': instance.channel,
+      'base': instance.base,
+      'contact': instance.contact,
+      'description': instance.description,
+      'type': instance.type,
+      'apps': instance.apps.map((e) => e.toJson()).toList(),
+      'categories': instance.categories.map((e) => e.toJson()).toList(),
       'channels': instance.channels.map((k, e) => MapEntry(k, e.toJson())),
       'common-ids': instance.commonIds,
       'confinement': _$SnapConfinementEnumMap[instance.confinement]!,
-      'contact': instance.contact,
-      'description': instance.description,
       'devmode': instance.devmode,
       'download-size': instance.downloadSize,
       'hold': instance.hold?.toIso8601String(),
-      'id': instance.id,
       'install-date': instance.installDate?.toIso8601String(),
       'installed-size': instance.installedSize,
       'jailmode': instance.jailmode,
@@ -198,15 +201,12 @@ Map<String, dynamic> _$$SnapImplToJson(_$SnapImpl instance) =>
       'mounted-from': instance.mountedFrom,
       'private': instance.private,
       'publisher': instance.publisher?.toJson(),
-      'revision': instance.revision,
       'status': _$SnapStatusEnumMap[instance.status]!,
       'store-url': instance.storeUrl,
       'summary': instance.summary,
       'title': instance.title,
       'tracking-channel': instance.trackingChannel,
       'tracks': instance.tracks,
-      'type': instance.type,
-      'version': instance.version,
       'website': instance.website,
     };
 
@@ -220,11 +220,11 @@ const _$SnapStatusEnumMap = {
 
 _$SnapDeclarationImpl _$$SnapDeclarationImplFromJson(Map json) =>
     _$SnapDeclarationImpl(
+      snapId: json['snap-id'] as String,
       type: json['type'] as String?,
       authorityId: json['authority-id'] as String?,
       revision: (json['revision'] as num?)?.toInt() ?? 0,
       series: (json['series'] as num?)?.toInt() ?? 0,
-      snapId: json['snap-id'] as String?,
       publisherId: json['publisher-id'] as String?,
       snapName: json['snap-name'] as String?,
       timestamp: json['timestamp'] as String?,
@@ -234,11 +234,11 @@ _$SnapDeclarationImpl _$$SnapDeclarationImplFromJson(Map json) =>
 Map<String, dynamic> _$$SnapDeclarationImplToJson(
         _$SnapDeclarationImpl instance) =>
     <String, dynamic>{
+      'snap-id': instance.snapId,
       'type': instance.type,
       'authority-id': instance.authorityId,
       'revision': instance.revision,
       'series': instance.series,
-      'snap-id': instance.snapId,
       'publisher-id': instance.publisherId,
       'snap-name': instance.snapName,
       'timestamp': instance.timestamp,
@@ -430,10 +430,10 @@ Map<String, dynamic> _$$SnapdConnectionsResponseImplToJson(
     };
 
 _$SnapdChangeImpl _$$SnapdChangeImplFromJson(Map json) => _$SnapdChangeImpl(
+      id: json['id'] as String,
       spawnTime: json['spawn-time'] == null
           ? null
           : DateTime.parse(json['spawn-time'] as String),
-      id: json['id'] as String?,
       kind: json['kind'] as String?,
       summary: json['summary'] as String?,
       status: json['status'] as String?,
@@ -455,8 +455,8 @@ _$SnapdChangeImpl _$$SnapdChangeImplFromJson(Map json) => _$SnapdChangeImpl(
 
 Map<String, dynamic> _$$SnapdChangeImplToJson(_$SnapdChangeImpl instance) =>
     <String, dynamic>{
-      'spawn-time': instance.spawnTime?.toIso8601String(),
       'id': instance.id,
+      'spawn-time': instance.spawnTime?.toIso8601String(),
       'kind': instance.kind,
       'summary': instance.summary,
       'status': instance.status,
@@ -468,10 +468,10 @@ Map<String, dynamic> _$$SnapdChangeImplToJson(_$SnapdChangeImpl instance) =>
     };
 
 _$SnapdTaskImpl _$$SnapdTaskImplFromJson(Map json) => _$SnapdTaskImpl(
+      id: json['id'] as String,
       spawnTime: json['spawn-time'] == null
           ? null
           : DateTime.parse(json['spawn-time'] as String),
-      id: json['id'] as String?,
       kind: json['kind'] as String?,
       summary: json['summary'] as String? ?? '',
       status: json['status'] as String?,
@@ -486,8 +486,8 @@ _$SnapdTaskImpl _$$SnapdTaskImplFromJson(Map json) => _$SnapdTaskImpl(
 
 Map<String, dynamic> _$$SnapdTaskImplToJson(_$SnapdTaskImpl instance) =>
     <String, dynamic>{
-      'spawn-time': instance.spawnTime?.toIso8601String(),
       'id': instance.id,
+      'spawn-time': instance.spawnTime?.toIso8601String(),
       'kind': instance.kind,
       'summary': instance.summary,
       'status': instance.status,

@@ -1642,6 +1642,9 @@ void main() {
       id: 'QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV',
       name: 'hello',
       revision: '42',
+      channel: '',
+      base: 'core22',
+      contact: '',
       summary: 'Hello is an app',
       title: 'Hello',
       type: 'app',
@@ -3022,7 +3025,7 @@ void main() {
     expect(nameChanges[0].id, equals('1'));
     expect(nameChanges[1].id, equals('2'));
 
-    final abortedChange = await client.abortChange(nameChanges[0].id ?? '');
+    final abortedChange = await client.abortChange(nameChanges[0].id);
     expect(abortedChange.id, equals('1'));
     expect(abortedChange.ready, isTrue);
     nameChanges = await client.getChanges(name: 'snap2');

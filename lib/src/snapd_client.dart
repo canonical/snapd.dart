@@ -124,9 +124,9 @@ class SnapChannel with _$SnapChannel {
 @freezed
 class SnapPublisher with _$SnapPublisher {
   const factory SnapPublisher({
-    String? id,
+    required String id,
+    required String displayName,
     String? username,
-    String? displayName,
     String? validation,
   }) = _SnapPublisher;
 
@@ -150,22 +150,25 @@ class SnapMedia with _$SnapMedia {
 @freezed
 class Snap with _$Snap {
   const factory Snap({
+    required String id,
     required String name,
+    required String revision,
+    required String version,
+    required String channel,
+    required String base,
+    required String contact,
+    required String description,
+    required String type,
     @Default([]) List<SnapApp> apps,
-    String? base,
     @Default([]) List<SnapCategory> categories,
-    String? channel,
     @Default({}) Map<String, SnapChannel> channels,
     @Default([]) List<String> commonIds,
     @JsonKey(unknownEnumValue: SnapConfinement.unknown)
     @Default(SnapConfinement.unknown)
     SnapConfinement confinement,
-    String? contact,
-    @Default('') String description,
     @Default(false) bool devmode,
     int? downloadSize,
     DateTime? hold,
-    String? id,
     DateTime? installDate,
     int? installedSize,
     @Default(false) bool jailmode,
@@ -174,15 +177,12 @@ class Snap with _$Snap {
     String? mountedFrom,
     @Default(false) bool private,
     SnapPublisher? publisher,
-    String? revision,
     @Default(SnapStatus.unknown) SnapStatus status,
     String? storeUrl,
     @Default('') String summary,
     String? title,
     String? trackingChannel,
     @Default([]) List<String> tracks,
-    String? type,
-    String? version,
     String? website,
   }) = _Snap;
 
@@ -193,11 +193,11 @@ class Snap with _$Snap {
 @freezed
 class SnapDeclaration with _$SnapDeclaration {
   const factory SnapDeclaration({
+    required String snapId,
     String? type,
     String? authorityId,
     @Default(0) int revision,
     @Default(0) int series,
-    String? snapId,
     String? publisherId,
     String? snapName,
     String? timestamp,
@@ -326,8 +326,8 @@ class SnapdConnectionsResponse with _$SnapdConnectionsResponse {
 @freezed
 class SnapdChange with _$SnapdChange {
   const factory SnapdChange({
+    required String id,
     DateTime? spawnTime,
-    String? id,
     String? kind,
     String? summary,
     String? status,
@@ -361,8 +361,8 @@ class SnapdChange with _$SnapdChange {
 @freezed
 class SnapdTask with _$SnapdTask {
   const factory SnapdTask({
+    required String id,
     DateTime? spawnTime,
-    String? id,
     String? kind,
     @Default('') String summary,
     String? status,

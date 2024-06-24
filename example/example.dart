@@ -20,9 +20,9 @@ void main() async {
     rows.add(
       [
         snap.name,
-        snap.version ?? '',
-        snap.revision ?? '',
-        snap.channel ?? '-',
+        snap.version,
+        snap.revision,
+        snap.channel,
         publisher ?? '-',
       ],
     );
