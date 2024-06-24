@@ -4230,7 +4230,7 @@ SnapdChange _$SnapdChangeFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SnapdChange {
-  DateTime get spawnTime => throw _privateConstructorUsedError;
+  DateTime? get spawnTime => throw _privateConstructorUsedError;
   String get id => throw _privateConstructorUsedError;
   String get kind => throw _privateConstructorUsedError;
   String get summary => throw _privateConstructorUsedError;
@@ -4258,7 +4258,7 @@ abstract class $SnapdChangeCopyWith<$Res> {
       _$SnapdChangeCopyWithImpl<$Res, SnapdChange>;
   @useResult
   $Res call(
-      {DateTime spawnTime,
+      {DateTime? spawnTime,
       String id,
       String kind,
       String summary,
@@ -4287,7 +4287,7 @@ class _$SnapdChangeCopyWithImpl<$Res, $Val extends SnapdChange>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? spawnTime = null,
+    Object? spawnTime = freezed,
     Object? id = null,
     Object? kind = null,
     Object? summary = null,
@@ -4299,10 +4299,10 @@ class _$SnapdChangeCopyWithImpl<$Res, $Val extends SnapdChange>
     Object? snapNames = null,
   }) {
     return _then(_value.copyWith(
-      spawnTime: null == spawnTime
+      spawnTime: freezed == spawnTime
           ? _value.spawnTime
           : spawnTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -4352,7 +4352,7 @@ abstract class _$$SnapdChangeImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {DateTime spawnTime,
+      {DateTime? spawnTime,
       String id,
       String kind,
       String summary,
@@ -4379,7 +4379,7 @@ class __$$SnapdChangeImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? spawnTime = null,
+    Object? spawnTime = freezed,
     Object? id = null,
     Object? kind = null,
     Object? summary = null,
@@ -4391,10 +4391,10 @@ class __$$SnapdChangeImplCopyWithImpl<$Res>
     Object? snapNames = null,
   }) {
     return _then(_$SnapdChangeImpl(
-      spawnTime: null == spawnTime
+      spawnTime: freezed == spawnTime
           ? _value.spawnTime
           : spawnTime // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
@@ -4439,7 +4439,7 @@ class __$$SnapdChangeImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SnapdChangeImpl implements _SnapdChange {
   const _$SnapdChangeImpl(
-      {required this.spawnTime,
+      {this.spawnTime,
       this.id = '',
       this.kind = '',
       this.summary = '',
@@ -4460,7 +4460,7 @@ class _$SnapdChangeImpl implements _SnapdChange {
       _$$SnapdChangeImplFromJson(json);
 
   @override
-  final DateTime spawnTime;
+  final DateTime? spawnTime;
   @override
   @JsonKey()
   final String id;
@@ -4557,7 +4557,7 @@ class _$SnapdChangeImpl implements _SnapdChange {
 
 abstract class _SnapdChange implements SnapdChange {
   const factory _SnapdChange(
-      {required final DateTime spawnTime,
+      {final DateTime? spawnTime,
       final String id,
       final String kind,
       final String summary,
@@ -4576,7 +4576,7 @@ abstract class _SnapdChange implements SnapdChange {
       _$SnapdChangeImpl.fromJson;
 
   @override
-  DateTime get spawnTime;
+  DateTime? get spawnTime;
   @override
   String get id;
   @override
@@ -4781,7 +4781,7 @@ class __$$SnapdTaskImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SnapdTaskImpl implements _SnapdTask {
   const _$SnapdTaskImpl(
-      {required this.spawnTime,
+      {this.spawnTime,
       this.id = '',
       this.kind = '',
       this.summary = '',
@@ -4855,7 +4855,7 @@ class _$SnapdTaskImpl implements _SnapdTask {
 
 abstract class _SnapdTask implements SnapdTask {
   const factory _SnapdTask(
-      {required final DateTime? spawnTime,
+      {final DateTime? spawnTime,
       final String id,
       final String kind,
       final String summary,

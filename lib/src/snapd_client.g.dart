@@ -430,7 +430,9 @@ Map<String, dynamic> _$$SnapdConnectionsResponseImplToJson(
     };
 
 _$SnapdChangeImpl _$$SnapdChangeImplFromJson(Map json) => _$SnapdChangeImpl(
-      spawnTime: DateTime.parse(json['spawn-time'] as String),
+      spawnTime: json['spawn-time'] == null
+          ? null
+          : DateTime.parse(json['spawn-time'] as String),
       id: json['id'] as String? ?? '',
       kind: json['kind'] as String? ?? '',
       summary: json['summary'] as String? ?? '',
@@ -453,7 +455,7 @@ _$SnapdChangeImpl _$$SnapdChangeImplFromJson(Map json) => _$SnapdChangeImpl(
 
 Map<String, dynamic> _$$SnapdChangeImplToJson(_$SnapdChangeImpl instance) =>
     <String, dynamic>{
-      'spawn-time': instance.spawnTime.toIso8601String(),
+      'spawn-time': instance.spawnTime?.toIso8601String(),
       'id': instance.id,
       'kind': instance.kind,
       'summary': instance.summary,

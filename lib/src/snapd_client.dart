@@ -326,7 +326,7 @@ class SnapdConnectionsResponse with _$SnapdConnectionsResponse {
 @freezed
 class SnapdChange with _$SnapdChange {
   const factory SnapdChange({
-    required DateTime spawnTime,
+    DateTime? spawnTime,
     @Default('') String id,
     @Default('') String kind,
     @Default('') String summary,
@@ -361,7 +361,7 @@ class SnapdChange with _$SnapdChange {
 @freezed
 class SnapdTask with _$SnapdTask {
   const factory SnapdTask({
-    required DateTime? spawnTime,
+    DateTime? spawnTime,
     @Default('') String id,
     @Default('') String kind,
     @Default('') String summary,
@@ -371,11 +371,7 @@ class SnapdTask with _$SnapdTask {
   }) = _SnapdTask;
 
   factory SnapdTask.fromJson(Map<String, dynamic> json) =>
-      _$SnapdTaskFromJson(json).copyWith(
-        spawnTime: json['spawnTime'] != null
-            ? DateTime.parse(json['spawnTime'] as String)
-            : DateTime.utc(1970),
-      );
+      _$SnapdTaskFromJson(json);
 }
 
 /// Progress of a [SnapdTask].
