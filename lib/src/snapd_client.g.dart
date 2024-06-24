@@ -7,8 +7,8 @@ part of 'snapd_client.dart';
 // **************************************************************************
 
 _$SnapAppImpl _$$SnapAppImplFromJson(Map json) => _$SnapAppImpl(
-      snap: json['snap'] as String?,
       name: json['name'] as String,
+      snap: json['snap'] as String?,
       desktopFile: json['desktop-file'] as String?,
       daemon: json['daemon'] as String?,
       enabled: json['enabled'] as bool? ?? true,
@@ -18,8 +18,8 @@ _$SnapAppImpl _$$SnapAppImplFromJson(Map json) => _$SnapAppImpl(
 
 Map<String, dynamic> _$$SnapAppImplToJson(_$SnapAppImpl instance) =>
     <String, dynamic>{
-      'snap': instance.snap,
       'name': instance.name,
+      'snap': instance.snap,
       'desktop-file': instance.desktopFile,
       'daemon': instance.daemon,
       'enabled': instance.enabled,
@@ -55,9 +55,9 @@ _$SnapChannelImpl _$$SnapChannelImplFromJson(Map json) => _$SnapChannelImpl(
               _$SnapConfinementEnumMap, json['confinement'],
               unknownValue: SnapConfinement.unknown) ??
           SnapConfinement.unknown,
-      revision: json['revision'] as String? ?? '',
+      revision: json['revision'] as String?,
       size: (json['size'] as num?)?.toInt() ?? 0,
-      version: json['version'] as String? ?? '',
+      version: json['version'] as String?,
     );
 
 Map<String, dynamic> _$$SnapChannelImplToJson(_$SnapChannelImpl instance) =>
@@ -78,9 +78,9 @@ const _$SnapConfinementEnumMap = {
 
 _$SnapPublisherImpl _$$SnapPublisherImplFromJson(Map json) =>
     _$SnapPublisherImpl(
-      id: json['id'] as String? ?? '',
-      username: json['username'] as String? ?? '',
-      displayName: json['display-name'] as String? ?? '',
+      id: json['id'] as String?,
+      username: json['username'] as String?,
+      displayName: json['display-name'] as String?,
       validation: json['validation'] as String?,
     );
 
@@ -120,7 +120,7 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
                   SnapCategory.fromJson(Map<String, dynamic>.from(e as Map)))
               .toList() ??
           const [],
-      channel: json['channel'] as String? ?? '',
+      channel: json['channel'] as String?,
       channels: (json['channels'] as Map?)?.map(
             (k, e) => MapEntry(k as String,
                 SnapChannel.fromJson(Map<String, dynamic>.from(e as Map))),
@@ -140,7 +140,7 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
       downloadSize: (json['download-size'] as num?)?.toInt(),
       hold:
           json['hold'] == null ? null : DateTime.parse(json['hold'] as String),
-      id: json['id'] as String? ?? '',
+      id: json['id'] as String?,
       installDate: json['install-date'] == null
           ? null
           : DateTime.parse(json['install-date'] as String),
@@ -158,7 +158,7 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
           ? null
           : SnapPublisher.fromJson(
               Map<String, dynamic>.from(json['publisher'] as Map)),
-      revision: json['revision'] as String? ?? '',
+      revision: json['revision'] as String?,
       status: $enumDecodeNullable(_$SnapStatusEnumMap, json['status']) ??
           SnapStatus.unknown,
       storeUrl: json['store-url'] as String?,
@@ -169,8 +169,8 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
               ?.map((e) => e as String)
               .toList() ??
           const [],
-      type: json['type'] as String? ?? '',
-      version: json['version'] as String? ?? '',
+      type: json['type'] as String?,
+      version: json['version'] as String?,
       website: json['website'] as String?,
     );
 
@@ -220,15 +220,15 @@ const _$SnapStatusEnumMap = {
 
 _$SnapDeclarationImpl _$$SnapDeclarationImplFromJson(Map json) =>
     _$SnapDeclarationImpl(
-      type: json['type'] as String? ?? '',
-      authorityId: json['authority-id'] as String? ?? '',
+      type: json['type'] as String?,
+      authorityId: json['authority-id'] as String?,
       revision: (json['revision'] as num?)?.toInt() ?? 0,
       series: (json['series'] as num?)?.toInt() ?? 0,
-      snapId: json['snap-id'] as String? ?? '',
-      publisherId: json['publisher-id'] as String? ?? '',
-      snapName: json['snap-name'] as String? ?? '',
-      timestamp: json['timestamp'] as String? ?? '',
-      signKey: json['sign-key'] as String? ?? '',
+      snapId: json['snap-id'] as String?,
+      publisherId: json['publisher-id'] as String?,
+      snapName: json['snap-name'] as String?,
+      timestamp: json['timestamp'] as String?,
+      signKey: json['sign-key'] as String?,
     );
 
 Map<String, dynamic> _$$SnapDeclarationImplToJson(
@@ -250,18 +250,18 @@ _$SnapdSystemInfoResponseImpl _$$SnapdSystemInfoResponseImplFromJson(
     _$SnapdSystemInfoResponseImpl(
       refresh: SnapdSystemRefreshInfo.fromJson(
           Map<String, dynamic>.from(json['refresh'] as Map)),
-      architecture: json['architecture'] as String? ?? '',
-      buildId: json['build-id'] as String? ?? '',
+      architecture: json['architecture'] as String?,
+      buildId: json['build-id'] as String?,
       confinement: $enumDecodeNullable(
               _$SnapConfinementEnumMap, json['confinement'],
               unknownValue: SnapConfinement.unknown) ??
           SnapConfinement.unknown,
-      kernelVersion: json['kernel-version'] as String? ?? '',
+      kernelVersion: json['kernel-version'] as String?,
       managed: json['managed'] as bool? ?? false,
       onClassic: json['on-classic'] as bool? ?? false,
-      series: json['series'] as String? ?? '',
-      systemMode: json['system-mode'] as String? ?? '',
-      version: json['version'] as String? ?? '',
+      series: json['series'] as String?,
+      systemMode: json['system-mode'] as String?,
+      version: json['version'] as String?,
     );
 
 Map<String, dynamic> _$$SnapdSystemInfoResponseImplToJson(
@@ -433,10 +433,10 @@ _$SnapdChangeImpl _$$SnapdChangeImplFromJson(Map json) => _$SnapdChangeImpl(
       spawnTime: json['spawn-time'] == null
           ? null
           : DateTime.parse(json['spawn-time'] as String),
-      id: json['id'] as String? ?? '',
-      kind: json['kind'] as String? ?? '',
-      summary: json['summary'] as String? ?? '',
-      status: json['status'] as String? ?? '',
+      id: json['id'] as String?,
+      kind: json['kind'] as String?,
+      summary: json['summary'] as String?,
+      status: json['status'] as String?,
       ready: json['ready'] as bool? ?? false,
       readyTime: json['ready-time'] == null
           ? null
@@ -471,10 +471,10 @@ _$SnapdTaskImpl _$$SnapdTaskImplFromJson(Map json) => _$SnapdTaskImpl(
       spawnTime: json['spawn-time'] == null
           ? null
           : DateTime.parse(json['spawn-time'] as String),
-      id: json['id'] as String? ?? '',
-      kind: json['kind'] as String? ?? '',
+      id: json['id'] as String?,
+      kind: json['kind'] as String?,
       summary: json['summary'] as String? ?? '',
-      status: json['status'] as String? ?? '',
+      status: json['status'] as String?,
       progress: json['progress'] == null
           ? const SnapdTaskProgress()
           : SnapdTaskProgress.fromJson(

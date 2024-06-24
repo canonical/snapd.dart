@@ -67,8 +67,8 @@ class SnapdException implements Exception {
 @freezed
 class SnapApp with _$SnapApp {
   const factory SnapApp({
-    required String? snap,
     required String name,
+    String? snap,
     String? desktopFile,
     String? daemon,
     @Default(true) bool enabled,
@@ -111,9 +111,9 @@ class SnapChannel with _$SnapChannel {
     @JsonKey(unknownEnumValue: SnapConfinement.unknown)
     @Default(SnapConfinement.unknown)
     SnapConfinement confinement,
-    @Default('') String revision,
+    String? revision,
     @Default(0) int size,
-    @Default('') String version,
+    String? version,
   }) = _SnapChannel;
 
   factory SnapChannel.fromJson(Map<String, dynamic> json) =>
@@ -124,9 +124,9 @@ class SnapChannel with _$SnapChannel {
 @freezed
 class SnapPublisher with _$SnapPublisher {
   const factory SnapPublisher({
-    @Default('') String id,
-    @Default('') String username,
-    @Default('') String displayName,
+    String? id,
+    String? username,
+    String? displayName,
     String? validation,
   }) = _SnapPublisher;
 
@@ -154,7 +154,7 @@ class Snap with _$Snap {
     @Default([]) List<SnapApp> apps,
     String? base,
     @Default([]) List<SnapCategory> categories,
-    @Default('') String channel,
+    String? channel,
     @Default({}) Map<String, SnapChannel> channels,
     @Default([]) List<String> commonIds,
     @JsonKey(unknownEnumValue: SnapConfinement.unknown)
@@ -165,7 +165,7 @@ class Snap with _$Snap {
     @Default(false) bool devmode,
     int? downloadSize,
     DateTime? hold,
-    @Default('') String id,
+    String? id,
     DateTime? installDate,
     int? installedSize,
     @Default(false) bool jailmode,
@@ -174,15 +174,15 @@ class Snap with _$Snap {
     String? mountedFrom,
     @Default(false) bool private,
     SnapPublisher? publisher,
-    @Default('') String revision,
+    String? revision,
     @Default(SnapStatus.unknown) SnapStatus status,
     String? storeUrl,
     @Default('') String summary,
     String? title,
     String? trackingChannel,
     @Default([]) List<String> tracks,
-    @Default('') String type,
-    @Default('') String version,
+    String? type,
+    String? version,
     String? website,
   }) = _Snap;
 
@@ -193,15 +193,15 @@ class Snap with _$Snap {
 @freezed
 class SnapDeclaration with _$SnapDeclaration {
   const factory SnapDeclaration({
-    @Default('') String type,
-    @Default('') String authorityId,
+    String? type,
+    String? authorityId,
     @Default(0) int revision,
     @Default(0) int series,
-    @Default('') String snapId,
-    @Default('') String publisherId,
-    @Default('') String snapName,
-    @Default('') String timestamp,
-    @Default('') String signKey,
+    String? snapId,
+    String? publisherId,
+    String? snapName,
+    String? timestamp,
+    String? signKey,
   }) = _SnapDeclaration;
 
   factory SnapDeclaration.fromJson(Map<String, dynamic> json) =>
@@ -213,17 +213,17 @@ class SnapDeclaration with _$SnapDeclaration {
 class SnapdSystemInfoResponse with _$SnapdSystemInfoResponse {
   const factory SnapdSystemInfoResponse({
     required SnapdSystemRefreshInfo refresh,
-    @Default('') String architecture,
-    @Default('') String buildId,
+    String? architecture,
+    String? buildId,
     @JsonKey(unknownEnumValue: SnapConfinement.unknown)
     @Default(SnapConfinement.unknown)
     SnapConfinement confinement,
-    @Default('') String kernelVersion,
+    String? kernelVersion,
     @Default(false) bool managed,
     @Default(false) bool onClassic,
-    @Default('') String series,
-    @Default('') String systemMode,
-    @Default('') String version,
+    String? series,
+    String? systemMode,
+    String? version,
   }) = _SnapdSystemInfoResponse;
 
   factory SnapdSystemInfoResponse.fromJson(Map<String, dynamic> json) =>
@@ -327,10 +327,10 @@ class SnapdConnectionsResponse with _$SnapdConnectionsResponse {
 class SnapdChange with _$SnapdChange {
   const factory SnapdChange({
     DateTime? spawnTime,
-    @Default('') String id,
-    @Default('') String kind,
-    @Default('') String summary,
-    @Default('') String status,
+    String? id,
+    String? kind,
+    String? summary,
+    String? status,
     @Default(false) bool ready,
     DateTime? readyTime,
     String? err,
@@ -362,10 +362,10 @@ class SnapdChange with _$SnapdChange {
 class SnapdTask with _$SnapdTask {
   const factory SnapdTask({
     DateTime? spawnTime,
-    @Default('') String id,
-    @Default('') String kind,
+    String? id,
+    String? kind,
     @Default('') String summary,
-    @Default('') String status,
+    String? status,
     @Default(SnapdTaskProgress()) SnapdTaskProgress progress,
     DateTime? readyTime,
   }) = _SnapdTask;
@@ -438,7 +438,7 @@ class _SnapdErrorResponse extends _SnapdResponse {
     this.message, {
     super.statusCode,
     super.status,
-    this.kind = '',
+    this.kind,
     this.value,
   });
 

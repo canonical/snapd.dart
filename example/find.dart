@@ -18,7 +18,7 @@ void main(List<String> args) async {
   ];
   for (final snap in snaps) {
     final publisher = snap.publisher?.username;
-    rows.add([snap.name, snap.version, publisher ?? '-', snap.summary]);
+    rows.add([snap.name, snap.version ?? '', publisher ?? '-', snap.summary]);
   }
   final columnWidths = [0, 0, 0, 0];
   for (final row in rows) {

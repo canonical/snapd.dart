@@ -20,8 +20,8 @@ SnapApp _$SnapAppFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SnapApp {
-  String? get snap => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
+  String? get snap => throw _privateConstructorUsedError;
   String? get desktopFile => throw _privateConstructorUsedError;
   String? get daemon => throw _privateConstructorUsedError;
   bool get enabled => throw _privateConstructorUsedError;
@@ -39,8 +39,8 @@ abstract class $SnapAppCopyWith<$Res> {
       _$SnapAppCopyWithImpl<$Res, SnapApp>;
   @useResult
   $Res call(
-      {String? snap,
-      String name,
+      {String name,
+      String? snap,
       String? desktopFile,
       String? daemon,
       bool enabled,
@@ -61,8 +61,8 @@ class _$SnapAppCopyWithImpl<$Res, $Val extends SnapApp>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? snap = freezed,
     Object? name = null,
+    Object? snap = freezed,
     Object? desktopFile = freezed,
     Object? daemon = freezed,
     Object? enabled = null,
@@ -70,14 +70,14 @@ class _$SnapAppCopyWithImpl<$Res, $Val extends SnapApp>
     Object? commonId = freezed,
   }) {
     return _then(_value.copyWith(
-      snap: freezed == snap
-          ? _value.snap
-          : snap // ignore: cast_nullable_to_non_nullable
-              as String?,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      snap: freezed == snap
+          ? _value.snap
+          : snap // ignore: cast_nullable_to_non_nullable
+              as String?,
       desktopFile: freezed == desktopFile
           ? _value.desktopFile
           : desktopFile // ignore: cast_nullable_to_non_nullable
@@ -110,8 +110,8 @@ abstract class _$$SnapAppImplCopyWith<$Res> implements $SnapAppCopyWith<$Res> {
   @override
   @useResult
   $Res call(
-      {String? snap,
-      String name,
+      {String name,
+      String? snap,
       String? desktopFile,
       String? daemon,
       bool enabled,
@@ -130,8 +130,8 @@ class __$$SnapAppImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? snap = freezed,
     Object? name = null,
+    Object? snap = freezed,
     Object? desktopFile = freezed,
     Object? daemon = freezed,
     Object? enabled = null,
@@ -139,14 +139,14 @@ class __$$SnapAppImplCopyWithImpl<$Res>
     Object? commonId = freezed,
   }) {
     return _then(_$SnapAppImpl(
-      snap: freezed == snap
-          ? _value.snap
-          : snap // ignore: cast_nullable_to_non_nullable
-              as String?,
       name: null == name
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
+      snap: freezed == snap
+          ? _value.snap
+          : snap // ignore: cast_nullable_to_non_nullable
+              as String?,
       desktopFile: freezed == desktopFile
           ? _value.desktopFile
           : desktopFile // ignore: cast_nullable_to_non_nullable
@@ -175,8 +175,8 @@ class __$$SnapAppImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SnapAppImpl implements _SnapApp {
   const _$SnapAppImpl(
-      {required this.snap,
-      required this.name,
+      {required this.name,
+      this.snap,
       this.desktopFile,
       this.daemon,
       this.enabled = true,
@@ -187,9 +187,9 @@ class _$SnapAppImpl implements _SnapApp {
       _$$SnapAppImplFromJson(json);
 
   @override
-  final String? snap;
-  @override
   final String name;
+  @override
+  final String? snap;
   @override
   final String? desktopFile;
   @override
@@ -205,7 +205,7 @@ class _$SnapAppImpl implements _SnapApp {
 
   @override
   String toString() {
-    return 'SnapApp(snap: $snap, name: $name, desktopFile: $desktopFile, daemon: $daemon, enabled: $enabled, active: $active, commonId: $commonId)';
+    return 'SnapApp(name: $name, snap: $snap, desktopFile: $desktopFile, daemon: $daemon, enabled: $enabled, active: $active, commonId: $commonId)';
   }
 
   @override
@@ -213,8 +213,8 @@ class _$SnapAppImpl implements _SnapApp {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SnapAppImpl &&
-            (identical(other.snap, snap) || other.snap == snap) &&
             (identical(other.name, name) || other.name == name) &&
+            (identical(other.snap, snap) || other.snap == snap) &&
             (identical(other.desktopFile, desktopFile) ||
                 other.desktopFile == desktopFile) &&
             (identical(other.daemon, daemon) || other.daemon == daemon) &&
@@ -227,7 +227,7 @@ class _$SnapAppImpl implements _SnapApp {
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
-      runtimeType, snap, name, desktopFile, daemon, enabled, active, commonId);
+      runtimeType, name, snap, desktopFile, daemon, enabled, active, commonId);
 
   @JsonKey(ignore: true)
   @override
@@ -245,8 +245,8 @@ class _$SnapAppImpl implements _SnapApp {
 
 abstract class _SnapApp implements SnapApp {
   const factory _SnapApp(
-      {required final String? snap,
-      required final String name,
+      {required final String name,
+      final String? snap,
       final String? desktopFile,
       final String? daemon,
       final bool enabled,
@@ -256,9 +256,9 @@ abstract class _SnapApp implements SnapApp {
   factory _SnapApp.fromJson(Map<String, dynamic> json) = _$SnapAppImpl.fromJson;
 
   @override
-  String? get snap;
-  @override
   String get name;
+  @override
+  String? get snap;
   @override
   String? get desktopFile;
   @override
@@ -577,9 +577,9 @@ mixin _$SnapChannel {
   DateTime get releasedAt => throw _privateConstructorUsedError;
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   SnapConfinement get confinement => throw _privateConstructorUsedError;
-  String get revision => throw _privateConstructorUsedError;
+  String? get revision => throw _privateConstructorUsedError;
   int get size => throw _privateConstructorUsedError;
-  String get version => throw _privateConstructorUsedError;
+  String? get version => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -597,9 +597,9 @@ abstract class $SnapChannelCopyWith<$Res> {
       {DateTime releasedAt,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       SnapConfinement confinement,
-      String revision,
+      String? revision,
       int size,
-      String version});
+      String? version});
 }
 
 /// @nodoc
@@ -617,9 +617,9 @@ class _$SnapChannelCopyWithImpl<$Res, $Val extends SnapChannel>
   $Res call({
     Object? releasedAt = null,
     Object? confinement = null,
-    Object? revision = null,
+    Object? revision = freezed,
     Object? size = null,
-    Object? version = null,
+    Object? version = freezed,
   }) {
     return _then(_value.copyWith(
       releasedAt: null == releasedAt
@@ -630,18 +630,18 @@ class _$SnapChannelCopyWithImpl<$Res, $Val extends SnapChannel>
           ? _value.confinement
           : confinement // ignore: cast_nullable_to_non_nullable
               as SnapConfinement,
-      revision: null == revision
+      revision: freezed == revision
           ? _value.revision
           : revision // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       size: null == size
           ? _value.size
           : size // ignore: cast_nullable_to_non_nullable
               as int,
-      version: null == version
+      version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -658,9 +658,9 @@ abstract class _$$SnapChannelImplCopyWith<$Res>
       {DateTime releasedAt,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       SnapConfinement confinement,
-      String revision,
+      String? revision,
       int size,
-      String version});
+      String? version});
 }
 
 /// @nodoc
@@ -676,9 +676,9 @@ class __$$SnapChannelImplCopyWithImpl<$Res>
   $Res call({
     Object? releasedAt = null,
     Object? confinement = null,
-    Object? revision = null,
+    Object? revision = freezed,
     Object? size = null,
-    Object? version = null,
+    Object? version = freezed,
   }) {
     return _then(_$SnapChannelImpl(
       releasedAt: null == releasedAt
@@ -689,18 +689,18 @@ class __$$SnapChannelImplCopyWithImpl<$Res>
           ? _value.confinement
           : confinement // ignore: cast_nullable_to_non_nullable
               as SnapConfinement,
-      revision: null == revision
+      revision: freezed == revision
           ? _value.revision
           : revision // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       size: null == size
           ? _value.size
           : size // ignore: cast_nullable_to_non_nullable
               as int,
-      version: null == version
+      version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -712,9 +712,9 @@ class _$SnapChannelImpl implements _SnapChannel {
       {required this.releasedAt,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       this.confinement = SnapConfinement.unknown,
-      this.revision = '',
+      this.revision,
       this.size = 0,
-      this.version = ''});
+      this.version});
 
   factory _$SnapChannelImpl.fromJson(Map<String, dynamic> json) =>
       _$$SnapChannelImplFromJson(json);
@@ -725,14 +725,12 @@ class _$SnapChannelImpl implements _SnapChannel {
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   final SnapConfinement confinement;
   @override
-  @JsonKey()
-  final String revision;
+  final String? revision;
   @override
   @JsonKey()
   final int size;
   @override
-  @JsonKey()
-  final String version;
+  final String? version;
 
   @override
   String toString() {
@@ -778,9 +776,9 @@ abstract class _SnapChannel implements SnapChannel {
       {required final DateTime releasedAt,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       final SnapConfinement confinement,
-      final String revision,
+      final String? revision,
       final int size,
-      final String version}) = _$SnapChannelImpl;
+      final String? version}) = _$SnapChannelImpl;
 
   factory _SnapChannel.fromJson(Map<String, dynamic> json) =
       _$SnapChannelImpl.fromJson;
@@ -791,11 +789,11 @@ abstract class _SnapChannel implements SnapChannel {
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   SnapConfinement get confinement;
   @override
-  String get revision;
+  String? get revision;
   @override
   int get size;
   @override
-  String get version;
+  String? get version;
   @override
   @JsonKey(ignore: true)
   _$$SnapChannelImplCopyWith<_$SnapChannelImpl> get copyWith =>
@@ -808,9 +806,9 @@ SnapPublisher _$SnapPublisherFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SnapPublisher {
-  String get id => throw _privateConstructorUsedError;
-  String get username => throw _privateConstructorUsedError;
-  String get displayName => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
+  String? get username => throw _privateConstructorUsedError;
+  String? get displayName => throw _privateConstructorUsedError;
   String? get validation => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -826,7 +824,7 @@ abstract class $SnapPublisherCopyWith<$Res> {
       _$SnapPublisherCopyWithImpl<$Res, SnapPublisher>;
   @useResult
   $Res call(
-      {String id, String username, String displayName, String? validation});
+      {String? id, String? username, String? displayName, String? validation});
 }
 
 /// @nodoc
@@ -842,24 +840,24 @@ class _$SnapPublisherCopyWithImpl<$Res, $Val extends SnapPublisher>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? username = null,
-    Object? displayName = null,
+    Object? id = freezed,
+    Object? username = freezed,
+    Object? displayName = freezed,
     Object? validation = freezed,
   }) {
     return _then(_value.copyWith(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      username: null == username
+              as String?,
+      username: freezed == username
           ? _value.username
           : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      displayName: null == displayName
+              as String?,
+      displayName: freezed == displayName
           ? _value.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       validation: freezed == validation
           ? _value.validation
           : validation // ignore: cast_nullable_to_non_nullable
@@ -877,7 +875,7 @@ abstract class _$$SnapPublisherImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String id, String username, String displayName, String? validation});
+      {String? id, String? username, String? displayName, String? validation});
 }
 
 /// @nodoc
@@ -891,24 +889,24 @@ class __$$SnapPublisherImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? id = null,
-    Object? username = null,
-    Object? displayName = null,
+    Object? id = freezed,
+    Object? username = freezed,
+    Object? displayName = freezed,
     Object? validation = freezed,
   }) {
     return _then(_$SnapPublisherImpl(
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      username: null == username
+              as String?,
+      username: freezed == username
           ? _value.username
           : username // ignore: cast_nullable_to_non_nullable
-              as String,
-      displayName: null == displayName
+              as String?,
+      displayName: freezed == displayName
           ? _value.displayName
           : displayName // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       validation: freezed == validation
           ? _value.validation
           : validation // ignore: cast_nullable_to_non_nullable
@@ -921,23 +919,17 @@ class __$$SnapPublisherImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SnapPublisherImpl implements _SnapPublisher {
   const _$SnapPublisherImpl(
-      {this.id = '',
-      this.username = '',
-      this.displayName = '',
-      this.validation});
+      {this.id, this.username, this.displayName, this.validation});
 
   factory _$SnapPublisherImpl.fromJson(Map<String, dynamic> json) =>
       _$$SnapPublisherImplFromJson(json);
 
   @override
-  @JsonKey()
-  final String id;
+  final String? id;
   @override
-  @JsonKey()
-  final String username;
+  final String? username;
   @override
-  @JsonKey()
-  final String displayName;
+  final String? displayName;
   @override
   final String? validation;
 
@@ -981,20 +973,20 @@ class _$SnapPublisherImpl implements _SnapPublisher {
 
 abstract class _SnapPublisher implements SnapPublisher {
   const factory _SnapPublisher(
-      {final String id,
-      final String username,
-      final String displayName,
+      {final String? id,
+      final String? username,
+      final String? displayName,
       final String? validation}) = _$SnapPublisherImpl;
 
   factory _SnapPublisher.fromJson(Map<String, dynamic> json) =
       _$SnapPublisherImpl.fromJson;
 
   @override
-  String get id;
+  String? get id;
   @override
-  String get username;
+  String? get username;
   @override
-  String get displayName;
+  String? get displayName;
   @override
   String? get validation;
   @override
@@ -1201,7 +1193,7 @@ mixin _$Snap {
   List<SnapApp> get apps => throw _privateConstructorUsedError;
   String? get base => throw _privateConstructorUsedError;
   List<SnapCategory> get categories => throw _privateConstructorUsedError;
-  String get channel => throw _privateConstructorUsedError;
+  String? get channel => throw _privateConstructorUsedError;
   Map<String, SnapChannel> get channels => throw _privateConstructorUsedError;
   List<String> get commonIds => throw _privateConstructorUsedError;
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
@@ -1211,7 +1203,7 @@ mixin _$Snap {
   bool get devmode => throw _privateConstructorUsedError;
   int? get downloadSize => throw _privateConstructorUsedError;
   DateTime? get hold => throw _privateConstructorUsedError;
-  String get id => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
   DateTime? get installDate => throw _privateConstructorUsedError;
   int? get installedSize => throw _privateConstructorUsedError;
   bool get jailmode => throw _privateConstructorUsedError;
@@ -1220,15 +1212,15 @@ mixin _$Snap {
   String? get mountedFrom => throw _privateConstructorUsedError;
   bool get private => throw _privateConstructorUsedError;
   SnapPublisher? get publisher => throw _privateConstructorUsedError;
-  String get revision => throw _privateConstructorUsedError;
+  String? get revision => throw _privateConstructorUsedError;
   SnapStatus get status => throw _privateConstructorUsedError;
   String? get storeUrl => throw _privateConstructorUsedError;
   String get summary => throw _privateConstructorUsedError;
   String? get title => throw _privateConstructorUsedError;
   String? get trackingChannel => throw _privateConstructorUsedError;
   List<String> get tracks => throw _privateConstructorUsedError;
-  String get type => throw _privateConstructorUsedError;
-  String get version => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  String? get version => throw _privateConstructorUsedError;
   String? get website => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -1246,7 +1238,7 @@ abstract class $SnapCopyWith<$Res> {
       List<SnapApp> apps,
       String? base,
       List<SnapCategory> categories,
-      String channel,
+      String? channel,
       Map<String, SnapChannel> channels,
       List<String> commonIds,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
@@ -1256,7 +1248,7 @@ abstract class $SnapCopyWith<$Res> {
       bool devmode,
       int? downloadSize,
       DateTime? hold,
-      String id,
+      String? id,
       DateTime? installDate,
       int? installedSize,
       bool jailmode,
@@ -1265,15 +1257,15 @@ abstract class $SnapCopyWith<$Res> {
       String? mountedFrom,
       bool private,
       SnapPublisher? publisher,
-      String revision,
+      String? revision,
       SnapStatus status,
       String? storeUrl,
       String summary,
       String? title,
       String? trackingChannel,
       List<String> tracks,
-      String type,
-      String version,
+      String? type,
+      String? version,
       String? website});
 
   $SnapPublisherCopyWith<$Res>? get publisher;
@@ -1296,7 +1288,7 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
     Object? apps = null,
     Object? base = freezed,
     Object? categories = null,
-    Object? channel = null,
+    Object? channel = freezed,
     Object? channels = null,
     Object? commonIds = null,
     Object? confinement = null,
@@ -1305,7 +1297,7 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
     Object? devmode = null,
     Object? downloadSize = freezed,
     Object? hold = freezed,
-    Object? id = null,
+    Object? id = freezed,
     Object? installDate = freezed,
     Object? installedSize = freezed,
     Object? jailmode = null,
@@ -1314,15 +1306,15 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
     Object? mountedFrom = freezed,
     Object? private = null,
     Object? publisher = freezed,
-    Object? revision = null,
+    Object? revision = freezed,
     Object? status = null,
     Object? storeUrl = freezed,
     Object? summary = null,
     Object? title = freezed,
     Object? trackingChannel = freezed,
     Object? tracks = null,
-    Object? type = null,
-    Object? version = null,
+    Object? type = freezed,
+    Object? version = freezed,
     Object? website = freezed,
   }) {
     return _then(_value.copyWith(
@@ -1342,10 +1334,10 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.categories
           : categories // ignore: cast_nullable_to_non_nullable
               as List<SnapCategory>,
-      channel: null == channel
+      channel: freezed == channel
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       channels: null == channels
           ? _value.channels
           : channels // ignore: cast_nullable_to_non_nullable
@@ -1378,10 +1370,10 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.hold
           : hold // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       installDate: freezed == installDate
           ? _value.installDate
           : installDate // ignore: cast_nullable_to_non_nullable
@@ -1414,10 +1406,10 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.publisher
           : publisher // ignore: cast_nullable_to_non_nullable
               as SnapPublisher?,
-      revision: null == revision
+      revision: freezed == revision
           ? _value.revision
           : revision // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -1442,14 +1434,14 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.tracks
           : tracks // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      type: null == type
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      version: null == version
+              as String?,
+      version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       website: freezed == website
           ? _value.website
           : website // ignore: cast_nullable_to_non_nullable
@@ -1482,7 +1474,7 @@ abstract class _$$SnapImplCopyWith<$Res> implements $SnapCopyWith<$Res> {
       List<SnapApp> apps,
       String? base,
       List<SnapCategory> categories,
-      String channel,
+      String? channel,
       Map<String, SnapChannel> channels,
       List<String> commonIds,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
@@ -1492,7 +1484,7 @@ abstract class _$$SnapImplCopyWith<$Res> implements $SnapCopyWith<$Res> {
       bool devmode,
       int? downloadSize,
       DateTime? hold,
-      String id,
+      String? id,
       DateTime? installDate,
       int? installedSize,
       bool jailmode,
@@ -1501,15 +1493,15 @@ abstract class _$$SnapImplCopyWith<$Res> implements $SnapCopyWith<$Res> {
       String? mountedFrom,
       bool private,
       SnapPublisher? publisher,
-      String revision,
+      String? revision,
       SnapStatus status,
       String? storeUrl,
       String summary,
       String? title,
       String? trackingChannel,
       List<String> tracks,
-      String type,
-      String version,
+      String? type,
+      String? version,
       String? website});
 
   @override
@@ -1530,7 +1522,7 @@ class __$$SnapImplCopyWithImpl<$Res>
     Object? apps = null,
     Object? base = freezed,
     Object? categories = null,
-    Object? channel = null,
+    Object? channel = freezed,
     Object? channels = null,
     Object? commonIds = null,
     Object? confinement = null,
@@ -1539,7 +1531,7 @@ class __$$SnapImplCopyWithImpl<$Res>
     Object? devmode = null,
     Object? downloadSize = freezed,
     Object? hold = freezed,
-    Object? id = null,
+    Object? id = freezed,
     Object? installDate = freezed,
     Object? installedSize = freezed,
     Object? jailmode = null,
@@ -1548,15 +1540,15 @@ class __$$SnapImplCopyWithImpl<$Res>
     Object? mountedFrom = freezed,
     Object? private = null,
     Object? publisher = freezed,
-    Object? revision = null,
+    Object? revision = freezed,
     Object? status = null,
     Object? storeUrl = freezed,
     Object? summary = null,
     Object? title = freezed,
     Object? trackingChannel = freezed,
     Object? tracks = null,
-    Object? type = null,
-    Object? version = null,
+    Object? type = freezed,
+    Object? version = freezed,
     Object? website = freezed,
   }) {
     return _then(_$SnapImpl(
@@ -1576,10 +1568,10 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value._categories
           : categories // ignore: cast_nullable_to_non_nullable
               as List<SnapCategory>,
-      channel: null == channel
+      channel: freezed == channel
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       channels: null == channels
           ? _value._channels
           : channels // ignore: cast_nullable_to_non_nullable
@@ -1612,10 +1604,10 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value.hold
           : hold // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       installDate: freezed == installDate
           ? _value.installDate
           : installDate // ignore: cast_nullable_to_non_nullable
@@ -1648,10 +1640,10 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value.publisher
           : publisher // ignore: cast_nullable_to_non_nullable
               as SnapPublisher?,
-      revision: null == revision
+      revision: freezed == revision
           ? _value.revision
           : revision // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
@@ -1676,14 +1668,14 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value._tracks
           : tracks // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      type: null == type
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      version: null == version
+              as String?,
+      version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       website: freezed == website
           ? _value.website
           : website // ignore: cast_nullable_to_non_nullable
@@ -1700,7 +1692,7 @@ class _$SnapImpl implements _Snap {
       final List<SnapApp> apps = const [],
       this.base,
       final List<SnapCategory> categories = const [],
-      this.channel = '',
+      this.channel,
       final Map<String, SnapChannel> channels = const {},
       final List<String> commonIds = const [],
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
@@ -1710,7 +1702,7 @@ class _$SnapImpl implements _Snap {
       this.devmode = false,
       this.downloadSize,
       this.hold,
-      this.id = '',
+      this.id,
       this.installDate,
       this.installedSize,
       this.jailmode = false,
@@ -1719,15 +1711,15 @@ class _$SnapImpl implements _Snap {
       this.mountedFrom,
       this.private = false,
       this.publisher,
-      this.revision = '',
+      this.revision,
       this.status = SnapStatus.unknown,
       this.storeUrl,
       this.summary = '',
       this.title,
       this.trackingChannel,
       final List<String> tracks = const [],
-      this.type = '',
-      this.version = '',
+      this.type,
+      this.version,
       this.website})
       : _apps = apps,
         _categories = categories,
@@ -1762,8 +1754,7 @@ class _$SnapImpl implements _Snap {
   }
 
   @override
-  @JsonKey()
-  final String channel;
+  final String? channel;
   final Map<String, SnapChannel> _channels;
   @override
   @JsonKey()
@@ -1798,8 +1789,7 @@ class _$SnapImpl implements _Snap {
   @override
   final DateTime? hold;
   @override
-  @JsonKey()
-  final String id;
+  final String? id;
   @override
   final DateTime? installDate;
   @override
@@ -1826,8 +1816,7 @@ class _$SnapImpl implements _Snap {
   @override
   final SnapPublisher? publisher;
   @override
-  @JsonKey()
-  final String revision;
+  final String? revision;
   @override
   @JsonKey()
   final SnapStatus status;
@@ -1850,11 +1839,9 @@ class _$SnapImpl implements _Snap {
   }
 
   @override
-  @JsonKey()
-  final String type;
+  final String? type;
   @override
-  @JsonKey()
-  final String version;
+  final String? version;
   @override
   final String? website;
 
@@ -1973,7 +1960,7 @@ abstract class _Snap implements Snap {
       final List<SnapApp> apps,
       final String? base,
       final List<SnapCategory> categories,
-      final String channel,
+      final String? channel,
       final Map<String, SnapChannel> channels,
       final List<String> commonIds,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
@@ -1983,7 +1970,7 @@ abstract class _Snap implements Snap {
       final bool devmode,
       final int? downloadSize,
       final DateTime? hold,
-      final String id,
+      final String? id,
       final DateTime? installDate,
       final int? installedSize,
       final bool jailmode,
@@ -1992,15 +1979,15 @@ abstract class _Snap implements Snap {
       final String? mountedFrom,
       final bool private,
       final SnapPublisher? publisher,
-      final String revision,
+      final String? revision,
       final SnapStatus status,
       final String? storeUrl,
       final String summary,
       final String? title,
       final String? trackingChannel,
       final List<String> tracks,
-      final String type,
-      final String version,
+      final String? type,
+      final String? version,
       final String? website}) = _$SnapImpl;
 
   factory _Snap.fromJson(Map<String, dynamic> json) = _$SnapImpl.fromJson;
@@ -2014,7 +2001,7 @@ abstract class _Snap implements Snap {
   @override
   List<SnapCategory> get categories;
   @override
-  String get channel;
+  String? get channel;
   @override
   Map<String, SnapChannel> get channels;
   @override
@@ -2033,7 +2020,7 @@ abstract class _Snap implements Snap {
   @override
   DateTime? get hold;
   @override
-  String get id;
+  String? get id;
   @override
   DateTime? get installDate;
   @override
@@ -2051,7 +2038,7 @@ abstract class _Snap implements Snap {
   @override
   SnapPublisher? get publisher;
   @override
-  String get revision;
+  String? get revision;
   @override
   SnapStatus get status;
   @override
@@ -2065,9 +2052,9 @@ abstract class _Snap implements Snap {
   @override
   List<String> get tracks;
   @override
-  String get type;
+  String? get type;
   @override
-  String get version;
+  String? get version;
   @override
   String? get website;
   @override
@@ -2082,15 +2069,15 @@ SnapDeclaration _$SnapDeclarationFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$SnapDeclaration {
-  String get type => throw _privateConstructorUsedError;
-  String get authorityId => throw _privateConstructorUsedError;
+  String? get type => throw _privateConstructorUsedError;
+  String? get authorityId => throw _privateConstructorUsedError;
   int get revision => throw _privateConstructorUsedError;
   int get series => throw _privateConstructorUsedError;
-  String get snapId => throw _privateConstructorUsedError;
-  String get publisherId => throw _privateConstructorUsedError;
-  String get snapName => throw _privateConstructorUsedError;
-  String get timestamp => throw _privateConstructorUsedError;
-  String get signKey => throw _privateConstructorUsedError;
+  String? get snapId => throw _privateConstructorUsedError;
+  String? get publisherId => throw _privateConstructorUsedError;
+  String? get snapName => throw _privateConstructorUsedError;
+  String? get timestamp => throw _privateConstructorUsedError;
+  String? get signKey => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -2105,15 +2092,15 @@ abstract class $SnapDeclarationCopyWith<$Res> {
       _$SnapDeclarationCopyWithImpl<$Res, SnapDeclaration>;
   @useResult
   $Res call(
-      {String type,
-      String authorityId,
+      {String? type,
+      String? authorityId,
       int revision,
       int series,
-      String snapId,
-      String publisherId,
-      String snapName,
-      String timestamp,
-      String signKey});
+      String? snapId,
+      String? publisherId,
+      String? snapName,
+      String? timestamp,
+      String? signKey});
 }
 
 /// @nodoc
@@ -2129,25 +2116,25 @@ class _$SnapDeclarationCopyWithImpl<$Res, $Val extends SnapDeclaration>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? type = null,
-    Object? authorityId = null,
+    Object? type = freezed,
+    Object? authorityId = freezed,
     Object? revision = null,
     Object? series = null,
-    Object? snapId = null,
-    Object? publisherId = null,
-    Object? snapName = null,
-    Object? timestamp = null,
-    Object? signKey = null,
+    Object? snapId = freezed,
+    Object? publisherId = freezed,
+    Object? snapName = freezed,
+    Object? timestamp = freezed,
+    Object? signKey = freezed,
   }) {
     return _then(_value.copyWith(
-      type: null == type
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      authorityId: null == authorityId
+              as String?,
+      authorityId: freezed == authorityId
           ? _value.authorityId
           : authorityId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       revision: null == revision
           ? _value.revision
           : revision // ignore: cast_nullable_to_non_nullable
@@ -2156,26 +2143,26 @@ class _$SnapDeclarationCopyWithImpl<$Res, $Val extends SnapDeclaration>
           ? _value.series
           : series // ignore: cast_nullable_to_non_nullable
               as int,
-      snapId: null == snapId
+      snapId: freezed == snapId
           ? _value.snapId
           : snapId // ignore: cast_nullable_to_non_nullable
-              as String,
-      publisherId: null == publisherId
+              as String?,
+      publisherId: freezed == publisherId
           ? _value.publisherId
           : publisherId // ignore: cast_nullable_to_non_nullable
-              as String,
-      snapName: null == snapName
+              as String?,
+      snapName: freezed == snapName
           ? _value.snapName
           : snapName // ignore: cast_nullable_to_non_nullable
-              as String,
-      timestamp: null == timestamp
+              as String?,
+      timestamp: freezed == timestamp
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
-              as String,
-      signKey: null == signKey
+              as String?,
+      signKey: freezed == signKey
           ? _value.signKey
           : signKey // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 }
@@ -2189,15 +2176,15 @@ abstract class _$$SnapDeclarationImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String type,
-      String authorityId,
+      {String? type,
+      String? authorityId,
       int revision,
       int series,
-      String snapId,
-      String publisherId,
-      String snapName,
-      String timestamp,
-      String signKey});
+      String? snapId,
+      String? publisherId,
+      String? snapName,
+      String? timestamp,
+      String? signKey});
 }
 
 /// @nodoc
@@ -2211,25 +2198,25 @@ class __$$SnapDeclarationImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? type = null,
-    Object? authorityId = null,
+    Object? type = freezed,
+    Object? authorityId = freezed,
     Object? revision = null,
     Object? series = null,
-    Object? snapId = null,
-    Object? publisherId = null,
-    Object? snapName = null,
-    Object? timestamp = null,
-    Object? signKey = null,
+    Object? snapId = freezed,
+    Object? publisherId = freezed,
+    Object? snapName = freezed,
+    Object? timestamp = freezed,
+    Object? signKey = freezed,
   }) {
     return _then(_$SnapDeclarationImpl(
-      type: null == type
+      type: freezed == type
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
-              as String,
-      authorityId: null == authorityId
+              as String?,
+      authorityId: freezed == authorityId
           ? _value.authorityId
           : authorityId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       revision: null == revision
           ? _value.revision
           : revision // ignore: cast_nullable_to_non_nullable
@@ -2238,26 +2225,26 @@ class __$$SnapDeclarationImplCopyWithImpl<$Res>
           ? _value.series
           : series // ignore: cast_nullable_to_non_nullable
               as int,
-      snapId: null == snapId
+      snapId: freezed == snapId
           ? _value.snapId
           : snapId // ignore: cast_nullable_to_non_nullable
-              as String,
-      publisherId: null == publisherId
+              as String?,
+      publisherId: freezed == publisherId
           ? _value.publisherId
           : publisherId // ignore: cast_nullable_to_non_nullable
-              as String,
-      snapName: null == snapName
+              as String?,
+      snapName: freezed == snapName
           ? _value.snapName
           : snapName // ignore: cast_nullable_to_non_nullable
-              as String,
-      timestamp: null == timestamp
+              as String?,
+      timestamp: freezed == timestamp
           ? _value.timestamp
           : timestamp // ignore: cast_nullable_to_non_nullable
-              as String,
-      signKey: null == signKey
+              as String?,
+      signKey: freezed == signKey
           ? _value.signKey
           : signKey // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -2266,25 +2253,23 @@ class __$$SnapDeclarationImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SnapDeclarationImpl implements _SnapDeclaration {
   const _$SnapDeclarationImpl(
-      {this.type = '',
-      this.authorityId = '',
+      {this.type,
+      this.authorityId,
       this.revision = 0,
       this.series = 0,
-      this.snapId = '',
-      this.publisherId = '',
-      this.snapName = '',
-      this.timestamp = '',
-      this.signKey = ''});
+      this.snapId,
+      this.publisherId,
+      this.snapName,
+      this.timestamp,
+      this.signKey});
 
   factory _$SnapDeclarationImpl.fromJson(Map<String, dynamic> json) =>
       _$$SnapDeclarationImplFromJson(json);
 
   @override
-  @JsonKey()
-  final String type;
+  final String? type;
   @override
-  @JsonKey()
-  final String authorityId;
+  final String? authorityId;
   @override
   @JsonKey()
   final int revision;
@@ -2292,20 +2277,15 @@ class _$SnapDeclarationImpl implements _SnapDeclaration {
   @JsonKey()
   final int series;
   @override
-  @JsonKey()
-  final String snapId;
+  final String? snapId;
   @override
-  @JsonKey()
-  final String publisherId;
+  final String? publisherId;
   @override
-  @JsonKey()
-  final String snapName;
+  final String? snapName;
   @override
-  @JsonKey()
-  final String timestamp;
+  final String? timestamp;
   @override
-  @JsonKey()
-  final String signKey;
+  final String? signKey;
 
   @override
   String toString() {
@@ -2355,37 +2335,37 @@ class _$SnapDeclarationImpl implements _SnapDeclaration {
 
 abstract class _SnapDeclaration implements SnapDeclaration {
   const factory _SnapDeclaration(
-      {final String type,
-      final String authorityId,
+      {final String? type,
+      final String? authorityId,
       final int revision,
       final int series,
-      final String snapId,
-      final String publisherId,
-      final String snapName,
-      final String timestamp,
-      final String signKey}) = _$SnapDeclarationImpl;
+      final String? snapId,
+      final String? publisherId,
+      final String? snapName,
+      final String? timestamp,
+      final String? signKey}) = _$SnapDeclarationImpl;
 
   factory _SnapDeclaration.fromJson(Map<String, dynamic> json) =
       _$SnapDeclarationImpl.fromJson;
 
   @override
-  String get type;
+  String? get type;
   @override
-  String get authorityId;
+  String? get authorityId;
   @override
   int get revision;
   @override
   int get series;
   @override
-  String get snapId;
+  String? get snapId;
   @override
-  String get publisherId;
+  String? get publisherId;
   @override
-  String get snapName;
+  String? get snapName;
   @override
-  String get timestamp;
+  String? get timestamp;
   @override
-  String get signKey;
+  String? get signKey;
   @override
   @JsonKey(ignore: true)
   _$$SnapDeclarationImplCopyWith<_$SnapDeclarationImpl> get copyWith =>
@@ -2400,16 +2380,16 @@ SnapdSystemInfoResponse _$SnapdSystemInfoResponseFromJson(
 /// @nodoc
 mixin _$SnapdSystemInfoResponse {
   SnapdSystemRefreshInfo get refresh => throw _privateConstructorUsedError;
-  String get architecture => throw _privateConstructorUsedError;
-  String get buildId => throw _privateConstructorUsedError;
+  String? get architecture => throw _privateConstructorUsedError;
+  String? get buildId => throw _privateConstructorUsedError;
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   SnapConfinement get confinement => throw _privateConstructorUsedError;
-  String get kernelVersion => throw _privateConstructorUsedError;
+  String? get kernelVersion => throw _privateConstructorUsedError;
   bool get managed => throw _privateConstructorUsedError;
   bool get onClassic => throw _privateConstructorUsedError;
-  String get series => throw _privateConstructorUsedError;
-  String get systemMode => throw _privateConstructorUsedError;
-  String get version => throw _privateConstructorUsedError;
+  String? get series => throw _privateConstructorUsedError;
+  String? get systemMode => throw _privateConstructorUsedError;
+  String? get version => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -2425,16 +2405,16 @@ abstract class $SnapdSystemInfoResponseCopyWith<$Res> {
   @useResult
   $Res call(
       {SnapdSystemRefreshInfo refresh,
-      String architecture,
-      String buildId,
+      String? architecture,
+      String? buildId,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       SnapConfinement confinement,
-      String kernelVersion,
+      String? kernelVersion,
       bool managed,
       bool onClassic,
-      String series,
-      String systemMode,
-      String version});
+      String? series,
+      String? systemMode,
+      String? version});
 
   $SnapdSystemRefreshInfoCopyWith<$Res> get refresh;
 }
@@ -2454,37 +2434,37 @@ class _$SnapdSystemInfoResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? refresh = null,
-    Object? architecture = null,
-    Object? buildId = null,
+    Object? architecture = freezed,
+    Object? buildId = freezed,
     Object? confinement = null,
-    Object? kernelVersion = null,
+    Object? kernelVersion = freezed,
     Object? managed = null,
     Object? onClassic = null,
-    Object? series = null,
-    Object? systemMode = null,
-    Object? version = null,
+    Object? series = freezed,
+    Object? systemMode = freezed,
+    Object? version = freezed,
   }) {
     return _then(_value.copyWith(
       refresh: null == refresh
           ? _value.refresh
           : refresh // ignore: cast_nullable_to_non_nullable
               as SnapdSystemRefreshInfo,
-      architecture: null == architecture
+      architecture: freezed == architecture
           ? _value.architecture
           : architecture // ignore: cast_nullable_to_non_nullable
-              as String,
-      buildId: null == buildId
+              as String?,
+      buildId: freezed == buildId
           ? _value.buildId
           : buildId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       confinement: null == confinement
           ? _value.confinement
           : confinement // ignore: cast_nullable_to_non_nullable
               as SnapConfinement,
-      kernelVersion: null == kernelVersion
+      kernelVersion: freezed == kernelVersion
           ? _value.kernelVersion
           : kernelVersion // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       managed: null == managed
           ? _value.managed
           : managed // ignore: cast_nullable_to_non_nullable
@@ -2493,18 +2473,18 @@ class _$SnapdSystemInfoResponseCopyWithImpl<$Res,
           ? _value.onClassic
           : onClassic // ignore: cast_nullable_to_non_nullable
               as bool,
-      series: null == series
+      series: freezed == series
           ? _value.series
           : series // ignore: cast_nullable_to_non_nullable
-              as String,
-      systemMode: null == systemMode
+              as String?,
+      systemMode: freezed == systemMode
           ? _value.systemMode
           : systemMode // ignore: cast_nullable_to_non_nullable
-              as String,
-      version: null == version
+              as String?,
+      version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ) as $Val);
   }
 
@@ -2528,16 +2508,16 @@ abstract class _$$SnapdSystemInfoResponseImplCopyWith<$Res>
   @useResult
   $Res call(
       {SnapdSystemRefreshInfo refresh,
-      String architecture,
-      String buildId,
+      String? architecture,
+      String? buildId,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       SnapConfinement confinement,
-      String kernelVersion,
+      String? kernelVersion,
       bool managed,
       bool onClassic,
-      String series,
-      String systemMode,
-      String version});
+      String? series,
+      String? systemMode,
+      String? version});
 
   @override
   $SnapdSystemRefreshInfoCopyWith<$Res> get refresh;
@@ -2557,37 +2537,37 @@ class __$$SnapdSystemInfoResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? refresh = null,
-    Object? architecture = null,
-    Object? buildId = null,
+    Object? architecture = freezed,
+    Object? buildId = freezed,
     Object? confinement = null,
-    Object? kernelVersion = null,
+    Object? kernelVersion = freezed,
     Object? managed = null,
     Object? onClassic = null,
-    Object? series = null,
-    Object? systemMode = null,
-    Object? version = null,
+    Object? series = freezed,
+    Object? systemMode = freezed,
+    Object? version = freezed,
   }) {
     return _then(_$SnapdSystemInfoResponseImpl(
       refresh: null == refresh
           ? _value.refresh
           : refresh // ignore: cast_nullable_to_non_nullable
               as SnapdSystemRefreshInfo,
-      architecture: null == architecture
+      architecture: freezed == architecture
           ? _value.architecture
           : architecture // ignore: cast_nullable_to_non_nullable
-              as String,
-      buildId: null == buildId
+              as String?,
+      buildId: freezed == buildId
           ? _value.buildId
           : buildId // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       confinement: null == confinement
           ? _value.confinement
           : confinement // ignore: cast_nullable_to_non_nullable
               as SnapConfinement,
-      kernelVersion: null == kernelVersion
+      kernelVersion: freezed == kernelVersion
           ? _value.kernelVersion
           : kernelVersion // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       managed: null == managed
           ? _value.managed
           : managed // ignore: cast_nullable_to_non_nullable
@@ -2596,18 +2576,18 @@ class __$$SnapdSystemInfoResponseImplCopyWithImpl<$Res>
           ? _value.onClassic
           : onClassic // ignore: cast_nullable_to_non_nullable
               as bool,
-      series: null == series
+      series: freezed == series
           ? _value.series
           : series // ignore: cast_nullable_to_non_nullable
-              as String,
-      systemMode: null == systemMode
+              as String?,
+      systemMode: freezed == systemMode
           ? _value.systemMode
           : systemMode // ignore: cast_nullable_to_non_nullable
-              as String,
-      version: null == version
+              as String?,
+      version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
     ));
   }
 }
@@ -2617,16 +2597,16 @@ class __$$SnapdSystemInfoResponseImplCopyWithImpl<$Res>
 class _$SnapdSystemInfoResponseImpl implements _SnapdSystemInfoResponse {
   const _$SnapdSystemInfoResponseImpl(
       {required this.refresh,
-      this.architecture = '',
-      this.buildId = '',
+      this.architecture,
+      this.buildId,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       this.confinement = SnapConfinement.unknown,
-      this.kernelVersion = '',
+      this.kernelVersion,
       this.managed = false,
       this.onClassic = false,
-      this.series = '',
-      this.systemMode = '',
-      this.version = ''});
+      this.series,
+      this.systemMode,
+      this.version});
 
   factory _$SnapdSystemInfoResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$SnapdSystemInfoResponseImplFromJson(json);
@@ -2634,17 +2614,14 @@ class _$SnapdSystemInfoResponseImpl implements _SnapdSystemInfoResponse {
   @override
   final SnapdSystemRefreshInfo refresh;
   @override
-  @JsonKey()
-  final String architecture;
+  final String? architecture;
   @override
-  @JsonKey()
-  final String buildId;
+  final String? buildId;
   @override
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   final SnapConfinement confinement;
   @override
-  @JsonKey()
-  final String kernelVersion;
+  final String? kernelVersion;
   @override
   @JsonKey()
   final bool managed;
@@ -2652,14 +2629,11 @@ class _$SnapdSystemInfoResponseImpl implements _SnapdSystemInfoResponse {
   @JsonKey()
   final bool onClassic;
   @override
-  @JsonKey()
-  final String series;
+  final String? series;
   @override
-  @JsonKey()
-  final String systemMode;
+  final String? systemMode;
   @override
-  @JsonKey()
-  final String version;
+  final String? version;
 
   @override
   String toString() {
@@ -2721,16 +2695,16 @@ class _$SnapdSystemInfoResponseImpl implements _SnapdSystemInfoResponse {
 abstract class _SnapdSystemInfoResponse implements SnapdSystemInfoResponse {
   const factory _SnapdSystemInfoResponse(
       {required final SnapdSystemRefreshInfo refresh,
-      final String architecture,
-      final String buildId,
+      final String? architecture,
+      final String? buildId,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       final SnapConfinement confinement,
-      final String kernelVersion,
+      final String? kernelVersion,
       final bool managed,
       final bool onClassic,
-      final String series,
-      final String systemMode,
-      final String version}) = _$SnapdSystemInfoResponseImpl;
+      final String? series,
+      final String? systemMode,
+      final String? version}) = _$SnapdSystemInfoResponseImpl;
 
   factory _SnapdSystemInfoResponse.fromJson(Map<String, dynamic> json) =
       _$SnapdSystemInfoResponseImpl.fromJson;
@@ -2738,24 +2712,24 @@ abstract class _SnapdSystemInfoResponse implements SnapdSystemInfoResponse {
   @override
   SnapdSystemRefreshInfo get refresh;
   @override
-  String get architecture;
+  String? get architecture;
   @override
-  String get buildId;
+  String? get buildId;
   @override
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   SnapConfinement get confinement;
   @override
-  String get kernelVersion;
+  String? get kernelVersion;
   @override
   bool get managed;
   @override
   bool get onClassic;
   @override
-  String get series;
+  String? get series;
   @override
-  String get systemMode;
+  String? get systemMode;
   @override
-  String get version;
+  String? get version;
   @override
   @JsonKey(ignore: true)
   _$$SnapdSystemInfoResponseImplCopyWith<_$SnapdSystemInfoResponseImpl>
@@ -4231,10 +4205,10 @@ SnapdChange _$SnapdChangeFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$SnapdChange {
   DateTime? get spawnTime => throw _privateConstructorUsedError;
-  String get id => throw _privateConstructorUsedError;
-  String get kind => throw _privateConstructorUsedError;
-  String get summary => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
+  String? get kind => throw _privateConstructorUsedError;
+  String? get summary => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
   bool get ready => throw _privateConstructorUsedError;
   DateTime? get readyTime => throw _privateConstructorUsedError;
   String? get err => throw _privateConstructorUsedError;
@@ -4259,10 +4233,10 @@ abstract class $SnapdChangeCopyWith<$Res> {
   @useResult
   $Res call(
       {DateTime? spawnTime,
-      String id,
-      String kind,
-      String summary,
-      String status,
+      String? id,
+      String? kind,
+      String? summary,
+      String? status,
       bool ready,
       DateTime? readyTime,
       String? err,
@@ -4288,10 +4262,10 @@ class _$SnapdChangeCopyWithImpl<$Res, $Val extends SnapdChange>
   @override
   $Res call({
     Object? spawnTime = freezed,
-    Object? id = null,
-    Object? kind = null,
-    Object? summary = null,
-    Object? status = null,
+    Object? id = freezed,
+    Object? kind = freezed,
+    Object? summary = freezed,
+    Object? status = freezed,
     Object? ready = null,
     Object? readyTime = freezed,
     Object? err = freezed,
@@ -4303,22 +4277,22 @@ class _$SnapdChangeCopyWithImpl<$Res, $Val extends SnapdChange>
           ? _value.spawnTime
           : spawnTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      kind: null == kind
+              as String?,
+      kind: freezed == kind
           ? _value.kind
           : kind // ignore: cast_nullable_to_non_nullable
-              as String,
-      summary: null == summary
+              as String?,
+      summary: freezed == summary
           ? _value.summary
           : summary // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
+              as String?,
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       ready: null == ready
           ? _value.ready
           : ready // ignore: cast_nullable_to_non_nullable
@@ -4353,10 +4327,10 @@ abstract class _$$SnapdChangeImplCopyWith<$Res>
   @useResult
   $Res call(
       {DateTime? spawnTime,
-      String id,
-      String kind,
-      String summary,
-      String status,
+      String? id,
+      String? kind,
+      String? summary,
+      String? status,
       bool ready,
       DateTime? readyTime,
       String? err,
@@ -4380,10 +4354,10 @@ class __$$SnapdChangeImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? spawnTime = freezed,
-    Object? id = null,
-    Object? kind = null,
-    Object? summary = null,
-    Object? status = null,
+    Object? id = freezed,
+    Object? kind = freezed,
+    Object? summary = freezed,
+    Object? status = freezed,
     Object? ready = null,
     Object? readyTime = freezed,
     Object? err = freezed,
@@ -4395,22 +4369,22 @@ class __$$SnapdChangeImplCopyWithImpl<$Res>
           ? _value.spawnTime
           : spawnTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      kind: null == kind
+              as String?,
+      kind: freezed == kind
           ? _value.kind
           : kind // ignore: cast_nullable_to_non_nullable
-              as String,
-      summary: null == summary
+              as String?,
+      summary: freezed == summary
           ? _value.summary
           : summary // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
+              as String?,
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       ready: null == ready
           ? _value.ready
           : ready // ignore: cast_nullable_to_non_nullable
@@ -4440,10 +4414,10 @@ class __$$SnapdChangeImplCopyWithImpl<$Res>
 class _$SnapdChangeImpl implements _SnapdChange {
   const _$SnapdChangeImpl(
       {this.spawnTime,
-      this.id = '',
-      this.kind = '',
-      this.summary = '',
-      this.status = '',
+      this.id,
+      this.kind,
+      this.summary,
+      this.status,
       this.ready = false,
       this.readyTime,
       this.err,
@@ -4462,17 +4436,13 @@ class _$SnapdChangeImpl implements _SnapdChange {
   @override
   final DateTime? spawnTime;
   @override
-  @JsonKey()
-  final String id;
+  final String? id;
   @override
-  @JsonKey()
-  final String kind;
+  final String? kind;
   @override
-  @JsonKey()
-  final String summary;
+  final String? summary;
   @override
-  @JsonKey()
-  final String status;
+  final String? status;
   @override
   @JsonKey()
   final bool ready;
@@ -4558,10 +4528,10 @@ class _$SnapdChangeImpl implements _SnapdChange {
 abstract class _SnapdChange implements SnapdChange {
   const factory _SnapdChange(
       {final DateTime? spawnTime,
-      final String id,
-      final String kind,
-      final String summary,
-      final String status,
+      final String? id,
+      final String? kind,
+      final String? summary,
+      final String? status,
       final bool ready,
       final DateTime? readyTime,
       final String? err,
@@ -4578,13 +4548,13 @@ abstract class _SnapdChange implements SnapdChange {
   @override
   DateTime? get spawnTime;
   @override
-  String get id;
+  String? get id;
   @override
-  String get kind;
+  String? get kind;
   @override
-  String get summary;
+  String? get summary;
   @override
-  String get status;
+  String? get status;
   @override
   bool get ready;
   @override
@@ -4612,10 +4582,10 @@ SnapdTask _$SnapdTaskFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$SnapdTask {
   DateTime? get spawnTime => throw _privateConstructorUsedError;
-  String get id => throw _privateConstructorUsedError;
-  String get kind => throw _privateConstructorUsedError;
+  String? get id => throw _privateConstructorUsedError;
+  String? get kind => throw _privateConstructorUsedError;
   String get summary => throw _privateConstructorUsedError;
-  String get status => throw _privateConstructorUsedError;
+  String? get status => throw _privateConstructorUsedError;
   SnapdTaskProgress get progress => throw _privateConstructorUsedError;
   DateTime? get readyTime => throw _privateConstructorUsedError;
 
@@ -4632,10 +4602,10 @@ abstract class $SnapdTaskCopyWith<$Res> {
   @useResult
   $Res call(
       {DateTime? spawnTime,
-      String id,
-      String kind,
+      String? id,
+      String? kind,
       String summary,
-      String status,
+      String? status,
       SnapdTaskProgress progress,
       DateTime? readyTime});
 
@@ -4656,10 +4626,10 @@ class _$SnapdTaskCopyWithImpl<$Res, $Val extends SnapdTask>
   @override
   $Res call({
     Object? spawnTime = freezed,
-    Object? id = null,
-    Object? kind = null,
+    Object? id = freezed,
+    Object? kind = freezed,
     Object? summary = null,
-    Object? status = null,
+    Object? status = freezed,
     Object? progress = null,
     Object? readyTime = freezed,
   }) {
@@ -4668,22 +4638,22 @@ class _$SnapdTaskCopyWithImpl<$Res, $Val extends SnapdTask>
           ? _value.spawnTime
           : spawnTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      kind: null == kind
+              as String?,
+      kind: freezed == kind
           ? _value.kind
           : kind // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       summary: null == summary
           ? _value.summary
           : summary // ignore: cast_nullable_to_non_nullable
               as String,
-      status: null == status
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       progress: null == progress
           ? _value.progress
           : progress // ignore: cast_nullable_to_non_nullable
@@ -4714,10 +4684,10 @@ abstract class _$$SnapdTaskImplCopyWith<$Res>
   @useResult
   $Res call(
       {DateTime? spawnTime,
-      String id,
-      String kind,
+      String? id,
+      String? kind,
       String summary,
-      String status,
+      String? status,
       SnapdTaskProgress progress,
       DateTime? readyTime});
 
@@ -4737,10 +4707,10 @@ class __$$SnapdTaskImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? spawnTime = freezed,
-    Object? id = null,
-    Object? kind = null,
+    Object? id = freezed,
+    Object? kind = freezed,
     Object? summary = null,
-    Object? status = null,
+    Object? status = freezed,
     Object? progress = null,
     Object? readyTime = freezed,
   }) {
@@ -4749,22 +4719,22 @@ class __$$SnapdTaskImplCopyWithImpl<$Res>
           ? _value.spawnTime
           : spawnTime // ignore: cast_nullable_to_non_nullable
               as DateTime?,
-      id: null == id
+      id: freezed == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      kind: null == kind
+              as String?,
+      kind: freezed == kind
           ? _value.kind
           : kind // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       summary: null == summary
           ? _value.summary
           : summary // ignore: cast_nullable_to_non_nullable
               as String,
-      status: null == status
+      status: freezed == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
-              as String,
+              as String?,
       progress: null == progress
           ? _value.progress
           : progress // ignore: cast_nullable_to_non_nullable
@@ -4782,10 +4752,10 @@ class __$$SnapdTaskImplCopyWithImpl<$Res>
 class _$SnapdTaskImpl implements _SnapdTask {
   const _$SnapdTaskImpl(
       {this.spawnTime,
-      this.id = '',
-      this.kind = '',
+      this.id,
+      this.kind,
       this.summary = '',
-      this.status = '',
+      this.status,
       this.progress = const SnapdTaskProgress(),
       this.readyTime});
 
@@ -4795,17 +4765,14 @@ class _$SnapdTaskImpl implements _SnapdTask {
   @override
   final DateTime? spawnTime;
   @override
-  @JsonKey()
-  final String id;
+  final String? id;
   @override
-  @JsonKey()
-  final String kind;
+  final String? kind;
   @override
   @JsonKey()
   final String summary;
   @override
-  @JsonKey()
-  final String status;
+  final String? status;
   @override
   @JsonKey()
   final SnapdTaskProgress progress;
@@ -4856,10 +4823,10 @@ class _$SnapdTaskImpl implements _SnapdTask {
 abstract class _SnapdTask implements SnapdTask {
   const factory _SnapdTask(
       {final DateTime? spawnTime,
-      final String id,
-      final String kind,
+      final String? id,
+      final String? kind,
       final String summary,
-      final String status,
+      final String? status,
       final SnapdTaskProgress progress,
       final DateTime? readyTime}) = _$SnapdTaskImpl;
 
@@ -4869,13 +4836,13 @@ abstract class _SnapdTask implements SnapdTask {
   @override
   DateTime? get spawnTime;
   @override
-  String get id;
+  String? get id;
   @override
-  String get kind;
+  String? get kind;
   @override
   String get summary;
   @override
-  String get status;
+  String? get status;
   @override
   SnapdTaskProgress get progress;
   @override

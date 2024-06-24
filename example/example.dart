@@ -16,13 +16,15 @@ void main() async {
     ['Name', 'Version', 'Rev', 'Tracking', 'Publisher'],
   ];
   for (final snap in snaps) {
-    var channel = '-';
-    if (snap.channel != '') {
-      channel = snap.channel;
-    }
     final publisher = snap.publisher?.username;
     rows.add(
-      [snap.name, snap.version, snap.revision, channel, publisher ?? '-'],
+      [
+        snap.name,
+        snap.version ?? '',
+        snap.revision ?? '',
+        snap.channel ?? '-',
+        publisher ?? '-',
+      ],
     );
   }
   final columnWidths = [0, 0, 0, 0, 0];

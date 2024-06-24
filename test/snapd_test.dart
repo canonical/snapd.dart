@@ -7,19 +7,20 @@ import 'package:test/test.dart';
 
 class MockApp {
   MockApp({
+    required this.name,
     this.active,
     this.commonId,
     this.daemon,
     this.desktopFile,
     this.enabled,
-    this.name = '',
   });
+
+  final String name;
   final bool? active;
   final String? commonId;
   final String? daemon;
   final String? desktopFile;
   final bool? enabled;
-  final String name;
 
   dynamic toJson(String snapName) {
     final object = <dynamic, dynamic>{'name': name, 'snap': snapName};
@@ -52,10 +53,10 @@ class MockCategory {
 }
 
 class MockMedia {
-  MockMedia({this.height, this.type = '', this.url = '', this.width});
+  MockMedia({this.height, this.type, this.url, this.width});
   final int? height;
-  final String type;
-  final String url;
+  final String? type;
+  final String? url;
   final int? width;
 
   dynamic toJson() {
@@ -72,14 +73,14 @@ class MockMedia {
 
 class MockPublisher {
   MockPublisher({
-    this.displayName = '',
-    this.id = '',
-    this.username = '',
+    this.displayName,
+    this.id,
+    this.username,
     this.validation,
   });
-  final String displayName;
-  final String id;
-  final String username;
+  final String? displayName;
+  final String? id;
+  final String? username;
   final String? validation;
 
   dynamic toJson() {
@@ -97,15 +98,15 @@ class MockPublisher {
 
 class MockChannel {
   MockChannel({
-    this.channel = '',
-    this.confinement = '',
+    this.channel,
+    this.confinement,
     this.releasedAt = '2000-01-01T00:00:00.000000Z',
     this.revision = '1',
     this.size = 0,
     this.version = '1.0',
   });
-  final String channel;
-  final String confinement;
+  final String? channel;
+  final String? confinement;
   final String releasedAt;
   final String revision;
   final int size;
@@ -143,10 +144,11 @@ class MockSlot {
 
 class MockSnap {
   MockSnap({
+    required this.name,
     this.apps = const [],
     this.base,
     this.categories = const [],
-    this.channel = '',
+    this.channel,
     this.channels,
     this.commonIds,
     this.contact,
@@ -156,19 +158,18 @@ class MockSnap {
     this.downloadSize,
     this.enabled = true,
     this.hold,
-    this.id = '',
+    this.id,
     this.installDate,
     this.installedSize,
     this.jailmode = false,
     this.license,
     this.media,
     this.mountedFrom,
-    this.name = '',
     this.plugs = const [],
     this.private = false,
     this.publisher,
     this.refreshable = false,
-    this.revision = '',
+    this.revision,
     this.slots = const [],
     this.status,
     this.storeUrl,
@@ -176,14 +177,15 @@ class MockSnap {
     this.title = '',
     this.trackingChannel,
     this.tracks,
-    this.type = '',
-    this.version = '',
+    this.type,
+    this.version,
     this.website,
   });
+  final String name;
   final List<MockApp> apps;
   final String? base;
   final List<MockCategory> categories;
-  final String channel;
+  final String? channel;
   final Map<String, MockChannel>? channels;
   final List<String>? commonIds;
   final String? contact;
@@ -191,18 +193,17 @@ class MockSnap {
   final String description;
   final int? downloadSize;
   final String? hold;
-  final String id;
+  final String? id;
   final String? installDate;
   final int? installedSize;
   final String? license;
   final List<MockMedia>? media;
   final String? mountedFrom;
-  final String name;
   final List<MockPlug> plugs;
   final bool private;
   final MockPublisher? publisher;
   final bool refreshable;
-  final String revision;
+  final String? revision;
   final List<MockSlot> slots;
   final String? status;
   final String? storeUrl;
@@ -210,8 +211,8 @@ class MockSnap {
   final String title;
   final String? trackingChannel;
   final List<String>? tracks;
-  final String type;
-  final String version;
+  final String? type;
+  final String? version;
   final String? website;
 
   String? installedChannel;
@@ -326,25 +327,25 @@ class MockSnap {
 
 class MockSnapDeclaration {
   const MockSnapDeclaration({
+    required this.snapName,
     this.type = 'snap-declaration',
-    this.authorityId = '',
+    this.authorityId,
     this.revision = 0,
     this.series = 0,
-    this.snapId = '',
-    this.publisherId = '',
-    this.snapName = '',
-    this.timestamp = '',
-    this.signKey = '',
+    this.snapId,
+    this.publisherId,
+    this.timestamp,
+    this.signKey,
   });
   final String type;
-  final String authorityId;
+  final String? authorityId;
   final int revision;
   final int series;
-  final String snapId;
-  final String publisherId;
+  final String? snapId;
+  final String? publisherId;
   final String snapName;
-  final String timestamp;
-  final String signKey;
+  final String? timestamp;
+  final String? signKey;
 
   @override
   String toString() {
@@ -385,16 +386,16 @@ class MockAccount {
 class MockTask {
   MockTask({
     required this.id,
-    this.kind = '',
+    this.kind,
     this.progress,
     this.summary = '',
-    this.status = '',
+    this.status,
   });
   final String id;
-  final String kind;
+  final String? kind;
   final MockTaskProgress? progress;
   final String summary;
-  final String status;
+  final String? status;
 
   dynamic toJson() {
     final object = <String, dynamic>{
@@ -424,9 +425,9 @@ class MockTaskProgress {
 class MockChange {
   MockChange({
     required this.id,
-    this.kind = '',
+    this.kind,
     this.summary = '',
-    this.status = '',
+    this.status,
     this.tasks = const [],
     this.ready = false,
     this.snapNames = const [],
@@ -435,9 +436,9 @@ class MockChange {
     this.error,
   });
   final String id;
-  final String kind;
+  final String? kind;
   final String summary;
-  final String status;
+  final String? status;
   final List<MockTask> tasks;
   final bool ready;
   final List<String> snapNames;
@@ -467,22 +468,22 @@ class MockChange {
 class MockSnapdServer {
   MockSnapdServer({
     this.accounts = const [],
-    this.architecture = '',
-    this.buildId = '',
+    this.architecture,
+    this.buildId,
     this.categories = const [],
     List<MockChange> changes = const [],
-    this.confinement = '',
-    this.kernelVersion = '',
+    this.confinement,
+    this.kernelVersion,
     this.managed = false,
     this.onClassic = false,
     this.refreshLast,
     this.refreshNext,
-    this.series = '',
+    this.series,
     List<MockSnap> snaps = const [],
     List<MockSnap> storeSnaps = const [],
     List<MockSnapDeclaration> snapDeclarations = const [],
-    this.systemMode = '',
-    this.version = '',
+    this.systemMode,
+    this.version,
   }) {
     for (final change in changes) {
       this.changes.add(change);
@@ -503,28 +504,28 @@ class MockSnapdServer {
   StreamSubscription<HttpRequest>? _requestSubscription;
 
   final List<MockAccount> accounts;
-  final String architecture;
-  final String buildId;
+  final String? architecture;
+  final String? buildId;
   final List<String> categories;
   final changes = <MockChange>[];
-  final String confinement;
-  final String kernelVersion;
+  final String? confinement;
+  final String? kernelVersion;
   final bool managed;
   final bool onClassic;
   final String? refreshLast;
   final String? refreshNext;
   final removedSnaps = <String, MockSnap>{};
-  final String series;
+  final String? series;
   final snaps = <String, MockSnap>{};
   final storeSnaps = <String, MockSnap>{};
   final snapDeclarations = <String, MockSnapDeclaration>{};
-  final String systemMode;
-  final String version;
+  final String? systemMode;
+  final String? version;
 
-  // Last user agent received.
+  /// Last user agent received.
   String? lastUserAgent;
 
-  // Last macaroon received.
+  /// Last macaroon received.
   String? lastMacaroon;
   List<String>? lastDischarges;
 
@@ -827,7 +828,7 @@ class MockSnapdServer {
       }
       if ((scope != 'wide') &&
           !(snap.channels?.entries
-                  .any((e) => e.value.channel.endsWith('/stable')) ??
+                  .any((e) => e.value.channel?.endsWith('/stable') ?? false) ??
               false)) {
         continue;
       }
@@ -1161,9 +1162,9 @@ class MockSnapdServer {
   }
 
   MockChange _addChange({
-    String kind = '',
+    String? kind,
     String summary = '',
-    String status = '',
+    String? status,
     List<MockTask> tasks = const [],
     bool ready = false,
     String spawnTime = '2022-04-28T13:56Z',
@@ -2982,17 +2983,16 @@ void main() {
             'snap2',
           ],
           tasks: [
-            SnapdTask(
+            const SnapdTask(
               id: '11',
               kind: 'task-kind',
               summary: 'Task',
               status: 'Doing',
-              progress: const SnapdTaskProgress(
+              progress: SnapdTaskProgress(
                 label: 'Progress',
                 done: 22,
                 total: 33,
               ),
-              spawnTime: DateTime.utc(1970),
             ),
           ],
         ),
@@ -3022,7 +3022,7 @@ void main() {
     expect(nameChanges[0].id, equals('1'));
     expect(nameChanges[1].id, equals('2'));
 
-    final abortedChange = await client.abortChange(nameChanges[0].id);
+    final abortedChange = await client.abortChange(nameChanges[0].id ?? '');
     expect(abortedChange.id, equals('1'));
     expect(abortedChange.ready, isTrue);
     nameChanges = await client.getChanges(name: 'snap2');
