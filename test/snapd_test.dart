@@ -146,7 +146,7 @@ class MockSnap {
   MockSnap({
     required this.name,
     this.id = '',
-    this.revision = '',
+    this.revision = '1',
     this.version = '',
     this.channel = '',
     this.contact = '',
