@@ -110,10 +110,10 @@ Map<String, dynamic> _$$SnapMediaImplToJson(_$SnapMediaImpl instance) =>
 _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
       id: json['id'] as String,
       name: json['name'] as String,
-      revision: json['revision'] as String,
       version: json['version'] as String,
       channel: json['channel'] as String,
       type: json['type'] as String,
+      revision: Snap._parseRevision(json['revision']),
       contact: json['contact'] as String? ?? '',
       description: json['description'] as String? ?? '',
       summary: json['summary'] as String? ?? '',
@@ -178,10 +178,10 @@ Map<String, dynamic> _$$SnapImplToJson(_$SnapImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'revision': instance.revision,
       'version': instance.version,
       'channel': instance.channel,
       'type': instance.type,
+      'revision': instance.revision,
       'contact': instance.contact,
       'description': instance.description,
       'summary': instance.summary,

@@ -152,10 +152,10 @@ class Snap with _$Snap {
   const factory Snap({
     required String id,
     required String name,
-    required String revision,
     required String version,
     required String channel,
     required String type,
+    @JsonKey(fromJson: Snap._parseRevision) required int revision,
     @Default('') String contact,
     @Default('') String description,
     @Default('') String summary,
@@ -187,6 +187,16 @@ class Snap with _$Snap {
   }) = _Snap;
 
   factory Snap.fromJson(Map<String, dynamic> json) => _$SnapFromJson(json);
+
+  static int _parseRevision(dynamic revision) {
+    if (revision is String) {
+      return int.tryParse(revision) ?? -1;
+    } else if (revision is int) {
+      return revision;
+    } else {
+      return -1;
+    }
+  }
 }
 
 /// Response received from snap-declaration assertions.

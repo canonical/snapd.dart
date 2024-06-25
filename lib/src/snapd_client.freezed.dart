@@ -1194,10 +1194,11 @@ Snap _$SnapFromJson(Map<String, dynamic> json) {
 mixin _$Snap {
   String get id => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
-  String get revision => throw _privateConstructorUsedError;
   String get version => throw _privateConstructorUsedError;
   String get channel => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
+  @JsonKey(fromJson: Snap._parseRevision)
+  int get revision => throw _privateConstructorUsedError;
   String get contact => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   String get summary => throw _privateConstructorUsedError;
@@ -1239,10 +1240,10 @@ abstract class $SnapCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
-      String revision,
       String version,
       String channel,
       String type,
+      @JsonKey(fromJson: Snap._parseRevision) int revision,
       String contact,
       String description,
       String summary,
@@ -1289,10 +1290,10 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? revision = null,
     Object? version = null,
     Object? channel = null,
     Object? type = null,
+    Object? revision = null,
     Object? contact = null,
     Object? description = null,
     Object? summary = null,
@@ -1329,10 +1330,6 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      revision: null == revision
-          ? _value.revision
-          : revision // ignore: cast_nullable_to_non_nullable
-              as String,
       version: null == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
@@ -1345,6 +1342,10 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      revision: null == revision
+          ? _value.revision
+          : revision // ignore: cast_nullable_to_non_nullable
+              as int,
       contact: null == contact
           ? _value.contact
           : contact // ignore: cast_nullable_to_non_nullable
@@ -1475,10 +1476,10 @@ abstract class _$$SnapImplCopyWith<$Res> implements $SnapCopyWith<$Res> {
   $Res call(
       {String id,
       String name,
-      String revision,
       String version,
       String channel,
       String type,
+      @JsonKey(fromJson: Snap._parseRevision) int revision,
       String contact,
       String description,
       String summary,
@@ -1523,10 +1524,10 @@ class __$$SnapImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? name = null,
-    Object? revision = null,
     Object? version = null,
     Object? channel = null,
     Object? type = null,
+    Object? revision = null,
     Object? contact = null,
     Object? description = null,
     Object? summary = null,
@@ -1563,10 +1564,6 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value.name
           : name // ignore: cast_nullable_to_non_nullable
               as String,
-      revision: null == revision
-          ? _value.revision
-          : revision // ignore: cast_nullable_to_non_nullable
-              as String,
       version: null == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
@@ -1579,6 +1576,10 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      revision: null == revision
+          ? _value.revision
+          : revision // ignore: cast_nullable_to_non_nullable
+              as int,
       contact: null == contact
           ? _value.contact
           : contact // ignore: cast_nullable_to_non_nullable
@@ -1693,10 +1694,10 @@ class _$SnapImpl implements _Snap {
   const _$SnapImpl(
       {required this.id,
       required this.name,
-      required this.revision,
       required this.version,
       required this.channel,
       required this.type,
+      @JsonKey(fromJson: Snap._parseRevision) required this.revision,
       this.contact = '',
       this.description = '',
       this.summary = '',
@@ -1739,13 +1740,14 @@ class _$SnapImpl implements _Snap {
   @override
   final String name;
   @override
-  final String revision;
-  @override
   final String version;
   @override
   final String channel;
   @override
   final String type;
+  @override
+  @JsonKey(fromJson: Snap._parseRevision)
+  final int revision;
   @override
   @JsonKey()
   final String contact;
@@ -1851,7 +1853,7 @@ class _$SnapImpl implements _Snap {
 
   @override
   String toString() {
-    return 'Snap(id: $id, name: $name, revision: $revision, version: $version, channel: $channel, type: $type, contact: $contact, description: $description, summary: $summary, channels: $channels, apps: $apps, categories: $categories, tracks: $tracks, commonIds: $commonIds, media: $media, confinement: $confinement, status: $status, devmode: $devmode, jailmode: $jailmode, private: $private, base: $base, title: $title, trackingChannel: $trackingChannel, website: $website, license: $license, mountedFrom: $mountedFrom, storeUrl: $storeUrl, hold: $hold, installDate: $installDate, downloadSize: $downloadSize, installedSize: $installedSize, publisher: $publisher)';
+    return 'Snap(id: $id, name: $name, version: $version, channel: $channel, type: $type, revision: $revision, contact: $contact, description: $description, summary: $summary, channels: $channels, apps: $apps, categories: $categories, tracks: $tracks, commonIds: $commonIds, media: $media, confinement: $confinement, status: $status, devmode: $devmode, jailmode: $jailmode, private: $private, base: $base, title: $title, trackingChannel: $trackingChannel, website: $website, license: $license, mountedFrom: $mountedFrom, storeUrl: $storeUrl, hold: $hold, installDate: $installDate, downloadSize: $downloadSize, installedSize: $installedSize, publisher: $publisher)';
   }
 
   @override
@@ -1861,11 +1863,11 @@ class _$SnapImpl implements _Snap {
             other is _$SnapImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.name, name) || other.name == name) &&
-            (identical(other.revision, revision) ||
-                other.revision == revision) &&
             (identical(other.version, version) || other.version == version) &&
             (identical(other.channel, channel) || other.channel == channel) &&
             (identical(other.type, type) || other.type == type) &&
+            (identical(other.revision, revision) ||
+                other.revision == revision) &&
             (identical(other.contact, contact) || other.contact == contact) &&
             (identical(other.description, description) ||
                 other.description == description) &&
@@ -1912,10 +1914,10 @@ class _$SnapImpl implements _Snap {
         runtimeType,
         id,
         name,
-        revision,
         version,
         channel,
         type,
+        revision,
         contact,
         description,
         summary,
@@ -1962,10 +1964,10 @@ abstract class _Snap implements Snap {
   const factory _Snap(
       {required final String id,
       required final String name,
-      required final String revision,
       required final String version,
       required final String channel,
       required final String type,
+      @JsonKey(fromJson: Snap._parseRevision) required final int revision,
       final String contact,
       final String description,
       final String summary,
@@ -2001,13 +2003,14 @@ abstract class _Snap implements Snap {
   @override
   String get name;
   @override
-  String get revision;
-  @override
   String get version;
   @override
   String get channel;
   @override
   String get type;
+  @override
+  @JsonKey(fromJson: Snap._parseRevision)
+  int get revision;
   @override
   String get contact;
   @override

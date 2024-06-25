@@ -21,7 +21,7 @@ void main() async {
       [
         snap.name,
         snap.version,
-        snap.revision,
+        snap.revision.toString(),
         snap.channel,
         publisher ?? '-',
       ],
