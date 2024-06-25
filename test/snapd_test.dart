@@ -7,19 +7,20 @@ import 'package:test/test.dart';
 
 class MockApp {
   MockApp({
+    required this.name,
     this.active,
     this.commonId,
     this.daemon,
     this.desktopFile,
     this.enabled,
-    this.name = '',
   });
+
+  final String name;
   final bool? active;
   final String? commonId;
   final String? daemon;
   final String? desktopFile;
   final bool? enabled;
-  final String name;
 
   dynamic toJson(String snapName) {
     final object = <dynamic, dynamic>{'name': name, 'snap': snapName};
@@ -52,10 +53,10 @@ class MockCategory {
 }
 
 class MockMedia {
-  MockMedia({this.height, this.type = '', this.url = '', this.width});
+  MockMedia({this.height, this.type, this.url, this.width});
   final int? height;
-  final String type;
-  final String url;
+  final String? type;
+  final String? url;
   final int? width;
 
   dynamic toJson() {
@@ -72,14 +73,14 @@ class MockMedia {
 
 class MockPublisher {
   MockPublisher({
-    this.displayName = '',
-    this.id = '',
-    this.username = '',
+    this.displayName,
+    this.id,
+    this.username,
     this.validation,
   });
-  final String displayName;
-  final String id;
-  final String username;
+  final String? displayName;
+  final String? id;
+  final String? username;
   final String? validation;
 
   dynamic toJson() {
@@ -97,15 +98,15 @@ class MockPublisher {
 
 class MockChannel {
   MockChannel({
-    this.channel = '',
-    this.confinement = '',
+    this.channel,
+    this.confinement,
     this.releasedAt = '2000-01-01T00:00:00.000000Z',
     this.revision = '1',
     this.size = 0,
     this.version = '1.0',
   });
-  final String channel;
-  final String confinement;
+  final String? channel;
+  final String? confinement;
   final String releasedAt;
   final String revision;
   final int size;
@@ -143,32 +144,34 @@ class MockSlot {
 
 class MockSnap {
   MockSnap({
+    required this.name,
+    this.id = '',
+    this.revision = '1',
+    this.version = '',
+    this.channel = '',
+    this.contact = '',
+    this.description = '',
+    this.type = '',
     this.apps = const [],
     this.base,
     this.categories = const [],
-    this.channel = '',
     this.channels,
     this.commonIds,
-    this.contact,
     this.confinement,
-    this.description = '',
     this.devmode = false,
     this.downloadSize,
     this.enabled = true,
     this.hold,
-    this.id = '',
     this.installDate,
     this.installedSize,
     this.jailmode = false,
     this.license,
     this.media,
     this.mountedFrom,
-    this.name = '',
     this.plugs = const [],
     this.private = false,
     this.publisher,
     this.refreshable = false,
-    this.revision = '',
     this.slots = const [],
     this.status,
     this.storeUrl,
@@ -176,14 +179,13 @@ class MockSnap {
     this.title = '',
     this.trackingChannel,
     this.tracks,
-    this.type = '',
-    this.version = '',
     this.website,
   });
+  final String name;
   final List<MockApp> apps;
   final String? base;
   final List<MockCategory> categories;
-  final String channel;
+  final String? channel;
   final Map<String, MockChannel>? channels;
   final List<String>? commonIds;
   final String? contact;
@@ -191,18 +193,17 @@ class MockSnap {
   final String description;
   final int? downloadSize;
   final String? hold;
-  final String id;
+  final String? id;
   final String? installDate;
   final int? installedSize;
   final String? license;
   final List<MockMedia>? media;
   final String? mountedFrom;
-  final String name;
   final List<MockPlug> plugs;
   final bool private;
   final MockPublisher? publisher;
   final bool refreshable;
-  final String revision;
+  final String? revision;
   final List<MockSlot> slots;
   final String? status;
   final String? storeUrl;
@@ -210,8 +211,8 @@ class MockSnap {
   final String title;
   final String? trackingChannel;
   final List<String>? tracks;
-  final String type;
-  final String version;
+  final String? type;
+  final String? version;
   final String? website;
 
   String? installedChannel;
@@ -326,25 +327,25 @@ class MockSnap {
 
 class MockSnapDeclaration {
   const MockSnapDeclaration({
+    required this.snapName,
     this.type = 'snap-declaration',
-    this.authorityId = '',
+    this.authorityId,
     this.revision = 0,
     this.series = 0,
-    this.snapId = '',
-    this.publisherId = '',
-    this.snapName = '',
-    this.timestamp = '',
-    this.signKey = '',
+    this.snapId,
+    this.publisherId,
+    this.timestamp,
+    this.signKey,
   });
   final String type;
-  final String authorityId;
+  final String? authorityId;
   final int revision;
   final int series;
-  final String snapId;
-  final String publisherId;
+  final String? snapId;
+  final String? publisherId;
   final String snapName;
-  final String timestamp;
-  final String signKey;
+  final String? timestamp;
+  final String? signKey;
 
   @override
   String toString() {
@@ -385,16 +386,16 @@ class MockAccount {
 class MockTask {
   MockTask({
     required this.id,
-    this.kind = '',
+    this.kind,
     this.progress,
     this.summary = '',
-    this.status = '',
+    this.status,
   });
   final String id;
-  final String kind;
+  final String? kind;
   final MockTaskProgress? progress;
   final String summary;
-  final String status;
+  final String? status;
 
   dynamic toJson() {
     final object = <String, dynamic>{
@@ -424,9 +425,9 @@ class MockTaskProgress {
 class MockChange {
   MockChange({
     required this.id,
-    this.kind = '',
+    this.kind,
     this.summary = '',
-    this.status = '',
+    this.status,
     this.tasks = const [],
     this.ready = false,
     this.snapNames = const [],
@@ -435,9 +436,9 @@ class MockChange {
     this.error,
   });
   final String id;
-  final String kind;
+  final String? kind;
   final String summary;
-  final String status;
+  final String? status;
   final List<MockTask> tasks;
   final bool ready;
   final List<String> snapNames;
@@ -467,22 +468,22 @@ class MockChange {
 class MockSnapdServer {
   MockSnapdServer({
     this.accounts = const [],
-    this.architecture = '',
-    this.buildId = '',
+    this.architecture,
+    this.buildId,
     this.categories = const [],
     List<MockChange> changes = const [],
-    this.confinement = '',
-    this.kernelVersion = '',
+    this.confinement,
+    this.kernelVersion,
     this.managed = false,
     this.onClassic = false,
     this.refreshLast,
     this.refreshNext,
-    this.series = '',
+    this.series,
     List<MockSnap> snaps = const [],
     List<MockSnap> storeSnaps = const [],
     List<MockSnapDeclaration> snapDeclarations = const [],
-    this.systemMode = '',
-    this.version = '',
+    this.systemMode,
+    this.version,
   }) {
     for (final change in changes) {
       this.changes.add(change);
@@ -503,28 +504,28 @@ class MockSnapdServer {
   StreamSubscription<HttpRequest>? _requestSubscription;
 
   final List<MockAccount> accounts;
-  final String architecture;
-  final String buildId;
+  final String? architecture;
+  final String? buildId;
   final List<String> categories;
   final changes = <MockChange>[];
-  final String confinement;
-  final String kernelVersion;
+  final String? confinement;
+  final String? kernelVersion;
   final bool managed;
   final bool onClassic;
   final String? refreshLast;
   final String? refreshNext;
   final removedSnaps = <String, MockSnap>{};
-  final String series;
+  final String? series;
   final snaps = <String, MockSnap>{};
   final storeSnaps = <String, MockSnap>{};
   final snapDeclarations = <String, MockSnapDeclaration>{};
-  final String systemMode;
-  final String version;
+  final String? systemMode;
+  final String? version;
 
-  // Last user agent received.
+  /// Last user agent received.
   String? lastUserAgent;
 
-  // Last macaroon received.
+  /// Last macaroon received.
   String? lastMacaroon;
   List<String>? lastDischarges;
 
@@ -827,7 +828,7 @@ class MockSnapdServer {
       }
       if ((scope != 'wide') &&
           !(snap.channels?.entries
-                  .any((e) => e.value.channel.endsWith('/stable')) ??
+                  .any((e) => e.value.channel?.endsWith('/stable') ?? false) ??
               false)) {
         continue;
       }
@@ -1161,9 +1162,9 @@ class MockSnapdServer {
   }
 
   MockChange _addChange({
-    String kind = '',
+    String? kind,
     String summary = '',
-    String status = '',
+    String? status,
     List<MockTask> tasks = const [],
     bool ready = false,
     String spawnTime = '2022-04-28T13:56Z',
@@ -1290,12 +1291,6 @@ void main() {
     expect(info.series, equals('16'));
     expect(info.systemMode, equals('run'));
     expect(info.version, equals('2.49'));
-    expect(
-      info.toString(),
-      equals(
-        'SnapdSystemInfoResponse(architecture: amd64, buildId: 2a0c915752b1c3c5dd7980220cd246876fb0a510, confinement: SnapConfinement.strict, kernelVersion: 5.11.0, managed: true, onClassic: true, refreshLast: 2022-05-28 20:10:00.000Z, refreshNext: 2022-05-29 01:18:00.000Z, series: 16, systemMode: run, version: 2.49)',
-      ),
-    );
   });
 
   test('user agent', () async {
@@ -1392,12 +1387,6 @@ void main() {
     expect(response.macaroon, equals('macaroon'));
     expect(response.discharges, equals(['discharge1', 'discharge2']));
     expect(response.sshKeys, equals(['key1', 'key2']));
-    expect(
-      response.toString(),
-      equals(
-        'SnapdLoginResponse(id: 42, username: admin, email: admin@example.com, macaroon: macaroon, discharges: [discharge1, discharge2])',
-      ),
-    );
   });
 
   test('login - otp', () async {
@@ -1652,7 +1641,8 @@ void main() {
       description: 'Hello\nSalut\nHola',
       id: 'QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV',
       name: 'hello',
-      revision: '42',
+      revision: 42,
+      channel: '',
       summary: 'Hello is an app',
       title: 'Hello',
       type: 'app',
@@ -1662,12 +1652,6 @@ void main() {
     expect(snap.hashCode, equals(expectedSnap.hashCode));
     expect(snap.toJson(), equals(expectedSnap.toJson()));
     expect(Snap.fromJson(snap.toJson()), equals(snap));
-    expect(
-      snap.toString(),
-      equals(
-        "Snap(apps: [], base: null, categories: [], channel: , channels: {}, commonIds: [], confinement: SnapConfinement.unknown, contact: , description: 'Hello\\nSalut\\nHola', devmode: false, downloadSize: null, hold: null, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: null, installedSize: null, jailmode: false, license: null, media: [], mountedFrom: null, name: hello, private: false, publisher: null, revision: 42, status: SnapStatus.unknown, storeUrl: null, summary: 'Hello is an app', title: 'Hello', trackingChannel: null, tracks: [], type: app, version: 1.2, website: null)",
-      ),
-    );
   });
 
   test('snap optional properties', () async {
@@ -1812,7 +1796,7 @@ void main() {
         displayName: 'Publisher',
         validation: 'verified',
       ),
-      revision: '42',
+      revision: 42,
       status: SnapStatus.available,
       storeUrl: 'https://snapcraft.io/hello',
       summary: 'Hello is an app',
@@ -1827,12 +1811,6 @@ void main() {
     expect(snap.hashCode, equals(expectedSnap.hashCode));
     expect(snap.toJson(), equals(expectedSnap.toJson()));
     expect(Snap.fromJson(snap.toJson()), equals(snap));
-    expect(
-      snap.toString(),
-      equals(
-        "Snap(apps: [SnapApp(snap: hello, name: hello1, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null), SnapApp(snap: hello, name: hello2, desktopFile: null, daemon: null, enabled: true, active: true, commonId: null)], base: core20, categories: [SnapCategory(name: category1, featured: false), SnapCategory(name: category2, featured: true)], channel: stable, channels: {latest/stable: SnapChannel(confinement: SnapConfinement.strict, releasedAt: 2022-05-02 21:24:15.330374Z, revision: 42, size: 123456, version: 1.2), insider/stable: SnapChannel(confinement: SnapConfinement.classic, releasedAt: 2022-04-26 12:54:32.578086Z, revision: 43, size: 888888, version: 1.3)}, commonIds: [com.example.Hello, com.example.Hallo], confinement: SnapConfinement.classic, contact: hello@example.com, description: 'Hello\\nSalut\\nHola', devmode: true, downloadSize: 123456, hold: 2315-06-19 13:00:37.186885Z, id: QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV, installDate: 2022-05-13 09:51:03.920998Z, installedSize: 654321, jailmode: true, license: GPL-3, media: [SnapMedia(type: icon, url: http://example.com/hello-icon.png, width: null, height: null), SnapMedia(type: screenshot, url: http://example.com/hello-screenshot.jpg, width: 1024, height: 768)], mountedFrom: /var/lib/snapd/snaps/hello_1.2.snap, name: hello, private: true, publisher: SnapPublisher(id: JvtzsxbsHivZLdvzrt0iqW529riGLfXJ, username: publisher, displayName: Publisher, validation: verified), revision: 42, status: SnapStatus.available, storeUrl: https://snapcraft.io/hello, summary: 'Hello is an app', title: 'Hello', trackingChannel: latest/stable, tracks: [latest, insider], type: app, version: 1.2, website: http://example.com/hello)",
-      ),
-    );
   });
 
   test('categories', () async {
@@ -1851,12 +1829,6 @@ void main() {
     expect(categories, hasLength(2));
     expect(categories[0].name, equals('category1'));
     expect(categories[1].name, equals('category2'));
-    expect(
-      categories.toString(),
-      equals(
-        '[SnapdCategoryDetails(name: category1), SnapdCategoryDetails(name: category2)]',
-      ),
-    );
   });
 
   test('connections', () async {
@@ -1917,12 +1889,6 @@ void main() {
         ),
       ]),
     );
-    expect(
-      response.toString(),
-      equals(
-        'SnapdConnectionsResponse(established: [SnapConnection(slot: SnapSlot(snap: test3, slot: slot3), slotAttributes: {}, plug: SnapPlug(snap: test1, plug: plug1), plugAttributes: {}, interface: interface1, manual: false)], plugs: [SnapPlug(snap: test1, plug: plug1, interface: interface1, connections: [SnapSlot(snap: test3, slot: slot3)])], slots: [SnapSlot(snap: test3, slot: slot3, interface: interface1, connections: [SnapPlug(snap: test1, plug: plug1)])], undesired: [])',
-      ),
-    );
   });
 
   test('connection attributes', () async {
@@ -1973,18 +1939,6 @@ void main() {
           attributes: {'slot-attribute1': 'slot-attribute-value1'},
         ),
       ]),
-    );
-    expect(
-      response.plugs.toString(),
-      equals(
-        '[SnapPlug(snap: test1, plug: plug1, attributes: {plug-attribute1: plug-attribute-value1}, interface: interface1)]',
-      ),
-    );
-    expect(
-      response.slots.toString(),
-      equals(
-        '[SnapSlot(snap: test2, slot: slot1, attributes: {slot-attribute1: slot-attribute-value1}, interface: interface1)]',
-      ),
     );
   });
 
@@ -2214,12 +2168,6 @@ void main() {
     expect(change.ready, isTrue);
     expect(plug1.slotSnap, equals(snap3));
     expect(plug1.slot, equals(slot3));
-    expect(
-      change.toString(),
-      equals(
-        "SnapdChange(id: 0, kind: , summary: '', status: , ready: true, err: null, spawnTime: 2022-04-28 13:56:00.000Z, readyTime: null, tasks: [SnapdTask(id: 0, kind: , summary: '', status: , progress: SnapdTaskProgress(label: '', done: 10, total: 10), spawnTime: 1970-01-01 00:00:00.000Z, readyTime: null)], snapNames: [test1, test3])",
-      ),
-    );
   });
 
   test('disconnect', () async {
@@ -2572,7 +2520,10 @@ void main() {
           snapId: 'swordfishId',
         ),
         const MockSnapDeclaration(
-            series: 16, snapName: 'bear', snapId: 'bearId'),
+          series: 16,
+          snapName: 'bear',
+          snapId: 'bearId',
+        ),
         const MockSnapDeclaration(series: 16, snapName: 'fishy'),
       ],
     );
@@ -3033,14 +2984,16 @@ void main() {
             'snap2',
           ],
           tasks: [
-            SnapdTask(
+            const SnapdTask(
               id: '11',
               kind: 'task-kind',
               summary: 'Task',
               status: 'Doing',
-              progress: const SnapdTaskProgress(
-                  label: 'Progress', done: 22, total: 33),
-              spawnTime: DateTime.utc(1970),
+              progress: SnapdTaskProgress(
+                label: 'Progress',
+                done: 22,
+                total: 33,
+              ),
             ),
           ],
         ),

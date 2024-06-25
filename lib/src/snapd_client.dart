@@ -1,12 +1,13 @@
+// ignore_for_file: invalid_annotation_target
+
 import 'dart:convert';
 import 'dart:io';
-import 'package:collection/collection.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:meta/meta.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
 part 'snapd_client.g.dart';
+part 'snapd_client.freezed.dart';
 
 /// The current state of a snap.
 enum SnapStatus { unknown, available, priced, installed, active }
@@ -63,999 +64,302 @@ class SnapdException implements Exception {
 }
 
 /// Describes an app provided by a snap.
-@immutable
-@JsonSerializable()
-class SnapApp {
-  // FIXME(robert-ancell) Implement
-  //List<SnapActivator> activators.
-
-  const SnapApp({
-    required this.snap,
-    required this.name,
-    this.desktopFile,
-    this.daemon,
-    this.enabled = true,
-    this.active = true,
-    this.commonId,
-  });
+@freezed
+class SnapApp with _$SnapApp {
+  const factory SnapApp({
+    required String name,
+    String? snap,
+    String? desktopFile,
+    String? daemon,
+    @Default(true) bool enabled,
+    @Default(true) bool active,
+    String? commonId,
+  }) = _SnapApp;
 
   factory SnapApp.fromJson(Map<String, dynamic> json) =>
       _$SnapAppFromJson(json);
-
-  /// The snap this app is part of
-  final String? snap;
-
-  /// Name of the app.
-  final String name;
-
-  /// Desktop file the app uses.
-  final String? desktopFile;
-
-  /// Type of daemon this app is.
-  final String? daemon;
-
-  /// True if this service is enabled.
-  final bool enabled;
-
-  /// True if this service is active.
-  final bool active;
-
-  /// A unique ID for this app.
-  final String? commonId;
-
-  Map<String, dynamic> toJson() => _$SnapAppToJson(this);
-
-  @override
-  String toString() =>
-      'SnapApp(snap: $snap, name: $name, desktopFile: $desktopFile, daemon: $daemon, enabled: $enabled, active: $active, commonId: $commonId)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is SnapApp &&
-        other.snap == snap &&
-        other.name == name &&
-        other.desktopFile == desktopFile &&
-        other.daemon == daemon &&
-        other.enabled == enabled &&
-        other.active == active &&
-        other.commonId == commonId;
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(snap, name, desktopFile, daemon, enabled, active, commonId);
 }
 
 /// Describes an category this snap is part of.
-@immutable
-@JsonSerializable()
-class SnapCategory {
-  const SnapCategory({required this.name, this.featured = false});
+@freezed
+class SnapCategory with _$SnapCategory {
+  const factory SnapCategory({
+    required String name,
+    @Default(false) bool featured,
+  }) = _SnapCategory;
 
   factory SnapCategory.fromJson(Map<String, dynamic> json) =>
       _$SnapCategoryFromJson(json);
-
-  /// Name of the category this snap is in.
-  final String name;
-
-  /// True if this snap is featured in this category.
-  final bool featured;
-
-  Map<String, dynamic> toJson() => _$SnapCategoryToJson(this);
-
-  @override
-  String toString() => 'SnapCategory(name: $name, featured: $featured)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is SnapCategory &&
-        other.name == name &&
-        other.featured == featured;
-  }
-
-  @override
-  int get hashCode => Object.hash(name, featured);
 }
 
 /// Describes a snap category.
-@immutable
-@JsonSerializable()
-class SnapdCategoryDetails {
-  const SnapdCategoryDetails({required this.name});
+@freezed
+class SnapCategoryDetails with _$SnapCategoryDetails {
+  const factory SnapCategoryDetails({
+    required String name,
+  }) = _SnapCategoryDetails;
 
-  factory SnapdCategoryDetails.fromJson(Map<String, dynamic> json) =>
-      _$SnapdCategoryDetailsFromJson(json);
-
-  /// Name of the category.
-  final String name;
-
-  Map<String, dynamic> toJson() => _$SnapdCategoryDetailsToJson(this);
-
-  @override
-  String toString() => 'SnapdCategoryDetails(name: $name)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is SnapdCategoryDetails && other.name == name;
-  }
-
-  @override
-  int get hashCode => name.hashCode;
+  factory SnapCategoryDetails.fromJson(Map<String, dynamic> json) =>
+      _$SnapCategoryDetailsFromJson(json);
 }
 
 /// Describes a channel available for a snap.
-@immutable
-@JsonSerializable()
-class SnapChannel {
-  const SnapChannel({
-    required this.releasedAt,
-    this.confinement = SnapConfinement.unknown,
-    this.revision = '',
-    this.size = 0,
-    this.version = '',
-  });
+@freezed
+class SnapChannel with _$SnapChannel {
+  const factory SnapChannel({
+    required DateTime releasedAt,
+    @JsonKey(unknownEnumValue: SnapConfinement.unknown)
+    @Default(SnapConfinement.unknown)
+    SnapConfinement confinement,
+    String? revision,
+    @Default(0) int size,
+    String? version,
+  }) = _SnapChannel;
 
   factory SnapChannel.fromJson(Map<String, dynamic> json) =>
       _$SnapChannelFromJson(json);
-
-  /// Confinement of this snap in this channel.
-  @JsonKey(unknownEnumValue: SnapConfinement.unknown)
-  final SnapConfinement confinement;
-
-  /// The date this revision was released into the channel.
-  final DateTime releasedAt;
-
-  /// Revision of this snap in this channel.
-  final String revision;
-
-  /// Size of the snap in this channel in bytes.
-  final int size;
-
-  /// Version of this snap in this channel.
-  final String version;
-
-  Map<String, dynamic> toJson() => _$SnapChannelToJson(this);
-
-  @override
-  String toString() =>
-      'SnapChannel(confinement: $confinement, releasedAt: $releasedAt, revision: $revision, size: $size, version: $version)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is SnapChannel &&
-        other.confinement == confinement &&
-        other.releasedAt == releasedAt &&
-        other.revision == revision &&
-        other.size == size &&
-        other.version == version;
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(confinement, releasedAt, revision, size, version);
 }
 
 /// Describes a snap publisher.
-@immutable
-@JsonSerializable()
-class SnapPublisher {
-  const SnapPublisher({
-    this.id = '',
-    this.username = '',
-    this.displayName = '',
-    this.validation,
-  });
+@freezed
+class SnapPublisher with _$SnapPublisher {
+  const factory SnapPublisher({
+    required String id,
+    required String displayName,
+    String? username,
+    String? validation,
+  }) = _SnapPublisher;
 
   factory SnapPublisher.fromJson(Map<String, dynamic> json) =>
       _$SnapPublisherFromJson(json);
-
-  /// Unique ID for this publisher.
-  final String id;
-
-  /// Unique username for this publisher.
-  final String username;
-
-  /// Name to use when displaying this publisher.
-  final String displayName;
-
-  /// Validation level for this publisher.
-  final String? validation;
-
-  Map<String, dynamic> toJson() => _$SnapPublisherToJson(this);
-
-  @override
-  String toString() =>
-      'SnapPublisher(id: $id, username: $username, displayName: $displayName, validation: $validation)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is SnapPublisher &&
-        other.id == id &&
-        other.username == username &&
-        other.displayName == displayName &&
-        other.validation == validation;
-  }
-
-  @override
-  int get hashCode => Object.hash(id, username, displayName, validation);
 }
 
 /// Describes a piece of media associated with a snap.
-@immutable
-@JsonSerializable()
-class SnapMedia {
-  const SnapMedia({
-    required this.type,
-    required this.url,
-    this.width,
-    this.height,
-  });
-
+@freezed
+class SnapMedia with _$SnapMedia {
+  const factory SnapMedia({
+    required String type,
+    required String url,
+    int? width,
+    int? height,
+  }) = _SnapMedia;
   factory SnapMedia.fromJson(Map<String, dynamic> json) =>
       _$SnapMediaFromJson(json);
-
-  /// Media type
-  final String type;
-
-  /// URL of media.
-  final String url;
-
-  /// Width of media in pixels.
-  final int? width;
-
-  /// Height of media in pixels.
-  final int? height;
-
-  Map<String, dynamic> toJson() => _$SnapMediaToJson(this);
-
-  @override
-  String toString() =>
-      'SnapMedia(type: $type, url: $url, width: $width, height: $height)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is SnapMedia &&
-        other.type == type &&
-        other.url == url &&
-        other.width == width &&
-        other.height == height;
-  }
-
-  @override
-  int get hashCode => Object.hash(type, url, width, height);
 }
 
-/// Describes a snap package.
-@immutable
-@JsonSerializable()
-class Snap {
-  const Snap({
-    required this.name,
-    this.apps = const [],
-    this.base,
-    this.categories = const [],
-    this.channel = '',
-    this.channels = const {},
-    this.commonIds = const [],
-    this.confinement = SnapConfinement.unknown,
-    this.contact = '',
-    this.description = '',
-    this.devmode = false,
-    this.downloadSize,
-    this.hold,
-    this.id = '',
-    this.installDate,
-    this.installedSize,
-    this.jailmode = false,
-    this.license,
-    this.media = const [],
-    this.mountedFrom,
-    this.private = false,
-    this.publisher,
-    this.revision = '',
-    this.status = SnapStatus.unknown,
-    this.storeUrl,
-    this.summary = '',
-    this.title = '',
-    this.trackingChannel,
-    this.tracks = const [],
-    this.type = '',
-    this.version = '',
-    this.website,
-  });
+@freezed
+class Snap with _$Snap {
+  const factory Snap({
+    required String id,
+    required String name,
+    required String version,
+    required String channel,
+    required String type,
+    @JsonKey(fromJson: Snap._parseRevision) required int revision,
+    @Default('') String contact,
+    @Default('') String description,
+    @Default('') String summary,
+    @Default({}) Map<String, SnapChannel> channels,
+    @Default([]) List<SnapApp> apps,
+    @Default([]) List<SnapCategory> categories,
+    @Default([]) List<String> tracks,
+    @Default([]) List<String> commonIds,
+    @Default([]) List<SnapMedia> media,
+    @JsonKey(unknownEnumValue: SnapConfinement.unknown)
+    @Default(SnapConfinement.unknown)
+    SnapConfinement confinement,
+    @Default(SnapStatus.unknown) SnapStatus status,
+    @Default(false) bool devmode,
+    @Default(false) bool jailmode,
+    @Default(false) bool private,
+    String? base,
+    String? title,
+    String? trackingChannel,
+    String? website,
+    String? license,
+    String? mountedFrom,
+    String? storeUrl,
+    DateTime? hold,
+    DateTime? installDate,
+    int? downloadSize,
+    int? installedSize,
+    SnapPublisher? publisher,
+  }) = _Snap;
 
   factory Snap.fromJson(Map<String, dynamic> json) => _$SnapFromJson(json);
 
-  /// Apps this snap provides.
-  final List<SnapApp> apps;
-
-  /// The base snap this snap uses.
-  final String? base;
-
-  /// Categories this snap belongs to.
-  final List<SnapCategory> categories;
-
-  /// The channel this snap is from, e.g. "stable".
-  final String channel;
-
-  /// Channels available for this snap.
-  final Map<String, SnapChannel> channels;
-
-  /// Common IDs this snap contains.
-  final List<String> commonIds;
-
-  /// The confinement this snap is using.
-  final SnapConfinement confinement;
-
-  /// Contact URL.
-  final String? contact;
-
-  /// Multi line description.
-  final String description;
-
-  /// True if this snap is running in developer mode.
-  final bool devmode;
-
-  /// Download size in bytes.
-  final int? downloadSize;
-
-  /// The date this snap will re-enable autmatic refreshing or null if no hold is present.
-  final DateTime? hold;
-
-  /// Unique ID for this snap.
-  final String id;
-
-  /// The date this snap was installed.
-  final DateTime? installDate;
-
-  /// Installed size in bytes.
-  final int? installedSize;
-
-  /// True if this snap is running in enforced confinement (jail) mode.
-  final bool jailmode;
-
-  /// Package license.
-  final String? license;
-
-  /// Media associated with this snap.
-  final List<SnapMedia> media;
-
-  /// The path this snap is mounted from, which is a .snap file for installed snaps and a directory for snaps in try mode.
-  final String? mountedFrom;
-
-  /// Unique name for this snap. Use [title] for displaying.
-  final String name;
-
-  /// True if this snap is only available to the developer.
-  final bool private;
-
-  /// Publisher information.
-  final SnapPublisher? publisher;
-
-  /// Revision of this snap.
-  final String revision;
-
-  /// The current status of this snap.
-  final SnapStatus status;
-
-  /// URL linking to the snap store page on this snap.
-  final String? storeUrl;
-
-  /// Single line summary.
-  final String summary;
-
-  /// Title of this snap.
-  final String? title;
-
-  /// The channel that updates will be installed from, e.g. "stable".
-  final String? trackingChannel;
-
-  /// Tracks this snap uses.
-  final List<String> tracks;
-
-  /// Type of snap.
-  final String type;
-
-  /// Version of this snap.
-  final String version;
-
-  /// Website URL.
-  final String? website;
-
-  Map<String, dynamic> toJson() => _$SnapToJson(this);
-
-  @override
-  String toString() =>
-      "Snap(apps: $apps, base: $base, categories: $categories, channel: $channel, channels: $channels, commonIds: $commonIds, confinement: $confinement, contact: $contact, description: '${description.replaceAll('\n', '\\n')}', devmode: $devmode, downloadSize: $downloadSize, hold: $hold, id: $id, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, name: $name, private: $private, publisher: $publisher, revision: $revision, status: $status, storeUrl: $storeUrl, summary: '$summary', title: '$title', trackingChannel: $trackingChannel, tracks: $tracks, type: $type, version: $version, website: $website)";
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    final deepEquals = const DeepCollectionEquality().equals;
-
-    return other is Snap &&
-        deepEquals(other.apps, apps) &&
-        other.base == base &&
-        deepEquals(other.categories, categories) &&
-        other.channel == channel &&
-        deepEquals(other.channels, channels) &&
-        deepEquals(other.commonIds, commonIds) &&
-        other.confinement == confinement &&
-        other.contact == contact &&
-        other.description == description &&
-        other.devmode == devmode &&
-        other.downloadSize == downloadSize &&
-        other.hold == hold &&
-        other.id == id &&
-        other.installDate == installDate &&
-        other.installedSize == installedSize &&
-        other.jailmode == jailmode &&
-        other.license == license &&
-        deepEquals(other.media, media) &&
-        other.mountedFrom == mountedFrom &&
-        other.name == name &&
-        other.private == private &&
-        other.publisher == publisher &&
-        other.revision == revision &&
-        other.status == status &&
-        other.storeUrl == storeUrl &&
-        other.summary == summary &&
-        other.title == title &&
-        other.trackingChannel == trackingChannel &&
-        deepEquals(other.tracks, tracks) &&
-        other.type == type &&
-        other.version == version &&
-        other.website == website;
-  }
-
-  @override
-  int get hashCode {
-    final deepHash = const DeepCollectionEquality().hash;
-    return Object.hashAll([
-      deepHash(apps),
-      base,
-      deepHash(categories),
-      channel,
-      deepHash(channels),
-      deepHash(commonIds),
-      confinement,
-      contact,
-      description,
-      devmode,
-      downloadSize,
-      hold,
-      id,
-      installDate,
-      installedSize,
-      jailmode,
-      license,
-      deepHash(media),
-      mountedFrom,
-      name,
-      private,
-      publisher,
-      revision,
-      status,
-      storeUrl,
-      summary,
-      title,
-      trackingChannel,
-      deepHash(tracks),
-      type,
-      version,
-      website,
-    ]);
+  static int _parseRevision(dynamic revision) {
+    if (revision is String) {
+      try {
+        return int.parse(revision.replaceFirst('x', '-'));
+      } on FormatException catch (_) {
+        throw FormatException('Revision had invalid format $revision');
+      }
+    } else if (revision is int) {
+      return revision;
+    } else {
+      throw FormatException('Revision had invalid format $revision');
+    }
   }
 }
 
 /// Response received from snap-declaration assertions.
-@immutable
-@JsonSerializable()
-class SnapDeclaration {
-  const SnapDeclaration({
-    this.type = '',
-    this.authorityId = '',
-    this.revision = 0,
-    this.series = 0,
-    this.snapId = '',
-    this.publisherId = '',
-    this.snapName = '',
-    this.timestamp = '',
-    this.signKey = '',
-  });
+@freezed
+class SnapDeclaration with _$SnapDeclaration {
+  const factory SnapDeclaration({
+    required String snapId,
+    String? type,
+    String? authorityId,
+    @Default(0) int revision,
+    @Default(0) int series,
+    String? publisherId,
+    String? snapName,
+    String? timestamp,
+    String? signKey,
+  }) = _SnapDeclaration;
 
   factory SnapDeclaration.fromJson(Map<String, dynamic> json) =>
       _$SnapDeclarationFromJson(json);
-  final String type;
-  final String authorityId;
-  final int revision;
-  final int series;
-  final String snapId;
-  final String publisherId;
-  final String snapName;
-  final String timestamp;
-  final String signKey;
-
-  Map<String, dynamic> toJson() => _$SnapDeclarationToJson(this);
-
-  @override
-  String toString() =>
-      'SnapDeclaration(type: $type, authority-id: $authorityId, revision: $revision, series: $series, snap-id: $snapId, publisher-id: $publisherId, snap-name: $snapName, timestamp: $timestamp, sign-key: $signKey)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is SnapDeclaration &&
-        other.type == type &&
-        other.authorityId == authorityId &&
-        other.revision == revision &&
-        other.series == series &&
-        other.snapId == snapId &&
-        other.publisherId == publisherId &&
-        other.snapName == snapName &&
-        other.timestamp == timestamp &&
-        other.signKey == signKey;
-  }
-
-  @override
-  int get hashCode => Object.hash(
-        type,
-        authorityId,
-        revision,
-        series,
-        snapId,
-        publisherId,
-        snapName,
-        timestamp,
-        signKey,
-      );
 }
 
 /// Response received when getting system information.
-@immutable
-@JsonSerializable()
-class SnapdSystemInfoResponse {
-  const SnapdSystemInfoResponse({
-    required this.refresh,
-    this.architecture = '',
-    this.buildId = '',
-    this.confinement = SnapConfinement.unknown,
-    this.kernelVersion = '',
-    this.managed = false,
-    this.onClassic = false,
-    this.series = '',
-    this.systemMode = '',
-    this.version = '',
-  });
+@freezed
+class SnapdSystemInfoResponse with _$SnapdSystemInfoResponse {
+  const factory SnapdSystemInfoResponse({
+    required SnapdSystemRefreshInfo refresh,
+    String? architecture,
+    String? buildId,
+    @JsonKey(unknownEnumValue: SnapConfinement.unknown)
+    @Default(SnapConfinement.unknown)
+    SnapConfinement confinement,
+    String? kernelVersion,
+    @Default(false) bool managed,
+    @Default(false) bool onClassic,
+    String? series,
+    String? systemMode,
+    String? version,
+  }) = _SnapdSystemInfoResponse;
 
   factory SnapdSystemInfoResponse.fromJson(Map<String, dynamic> json) =>
       _$SnapdSystemInfoResponseFromJson(json);
-
-  /// The architecture snapd is running on.
-  final String architecture;
-
-  /// The build of snapd.
-  final String buildId;
-
-  /// The confinement level that is supported.
-  @JsonKey(unknownEnumValue: SnapConfinement.unknown)
-  final SnapConfinement confinement;
-
-  /// The version of the Linux kernel this is running on.
-  final String kernelVersion;
-
-  // FIXME(robert-ancell): locations
-
-  final bool managed;
-
-  /// True if running on a classic system.
-  final bool onClassic;
-
-  // FIXME(robert-ancell): os-release
-
-  /// Contains information about refreshes.
-  final SnapdSystemRefreshInfo refresh;
-
-  @Deprecated('Use refresh.last instead')
-  DateTime? get refreshLast => refresh.last;
-
-  @Deprecated('Use refresh.next instead')
-  DateTime get refreshNext => refresh.next;
-
-  // FIXME(robert-ancell): sandbox-features
-
-  /// The core series in use.
-  final String series;
-
-  final String systemMode;
-
-  /// The version of snapd.
-  final String version;
-
-  Map<String, dynamic> toJson() => _$SnapdSystemInfoResponseToJson(this);
-
-  @override
-  String toString() =>
-      'SnapdSystemInfoResponse(architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, refreshLast: ${refresh.last}, refreshNext: ${refresh.next}, series: $series, systemMode: $systemMode, version: $version)';
 }
 
 /// Contains information about refreshes.
-@immutable
-@JsonSerializable()
-class SnapdSystemRefreshInfo {
-  // FIXME(robert-ancell): Refresh timer.
-  //final String timer;
-
-  const SnapdSystemRefreshInfo({required this.next, this.last});
+@freezed
+class SnapdSystemRefreshInfo with _$SnapdSystemRefreshInfo {
+  const factory SnapdSystemRefreshInfo({
+    @_SnapdDateTimeConverter() required DateTime next,
+    DateTime? last,
+  }) = _SnapdSystemRefreshInfo;
 
   factory SnapdSystemRefreshInfo.fromJson(Map<String, dynamic> json) =>
       _$SnapdSystemRefreshInfoFromJson(json);
-
-  /// The last time the system refreshed.
-  final DateTime? last;
-
-  /// The next time the system refreshed.
-  @_SnapdDateTimeConverter()
-  final DateTime next;
-
-  Map<String, dynamic> toJson() => _$SnapdSystemRefreshInfoToJson(this);
-
-  @override
-  String toString() => 'SnapdSystemRefreshInfo(last: $last, next: $next)';
 }
 
 /// Response received when logging in.
-@immutable
-@JsonSerializable()
-class SnapdLoginResponse {
-  const SnapdLoginResponse({
-    required this.id,
-    this.username,
-    this.email,
-    this.macaroon,
-    this.discharges = const [],
-    this.sshKeys = const [],
-  });
+@freezed
+class SnapdLoginResponse with _$SnapdLoginResponse {
+  const factory SnapdLoginResponse({
+    required int id,
+    String? username,
+    String? email,
+    String? macaroon,
+    @Default([]) List<String> discharges,
+    @Default([]) List<String> sshKeys,
+  }) = _SnapdLoginResponse;
 
   factory SnapdLoginResponse.fromJson(Map<String, dynamic> json) =>
       _$SnapdLoginResponseFromJson(json);
-
-  /// Id for this account, which can be used in [SnapdClient.logout].
-  final int id;
-
-  /// Username logged in with.
-  final String? username;
-
-  /// Email address logged in with.
-  final String? email;
-
-  /// Macaroon provided by the server.
-  final String? macaroon;
-
-  /// Discharges provided bu the server.
-  final List<String> discharges;
-
-  /// Secure Shell keys this user has.
-  final List<String> sshKeys;
-
-  Map<String, dynamic> toJson() => _$SnapdLoginResponseToJson(this);
-
-  @override
-  String toString() =>
-      'SnapdLoginResponse(id: $id, username: $username, email: $email, macaroon: $macaroon, discharges: $discharges)';
 }
 
 /// Information on a snap plug.
-@immutable
-@JsonSerializable()
-class SnapPlug {
-  const SnapPlug({
-    required this.snap,
-    required this.plug,
-    this.attributes = const {},
-    this.interface,
-    this.connections = const [],
-  });
+@freezed
+class SnapPlug with _$SnapPlug {
+  const factory SnapPlug({
+    required String snap,
+    required String plug,
+    @JsonKey(name: 'attrs') @Default({}) Map<String, dynamic> attributes,
+    String? interface,
+    @Default([]) List<SnapSlot> connections,
+  }) = _SnapPlug;
 
   factory SnapPlug.fromJson(Map<String, dynamic> json) =>
       _$SnapPlugFromJson(json);
-
-  /// The snap this plug is provided by.
-  final String snap;
-
-  /// The plug name.
-  final String plug;
-
-  // Attributes for the plug.
-  @JsonKey(name: 'attrs')
-  final Map<String, dynamic> attributes;
-
-  /// The interface this plug uses.
-  final String? interface;
-
-  // Slots connected to this plug.
-  final List<SnapSlot> connections;
-
-  Map<String, dynamic> toJson() => _$SnapPlugToJson(this);
-
-  @override
-  String toString() {
-    final values = <String, dynamic>{
-      'snap': snap,
-      'plug': plug,
-      if (attributes.isNotEmpty) 'attributes': '$attributes',
-      if (interface != null) 'interface': '$interface',
-      if (connections.isNotEmpty) 'connections': '$connections',
-    };
-    final args = values.entries.map((e) => '${e.key}: ${e.value}').join(', ');
-    return 'SnapPlug($args)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    final deepEquals = const DeepCollectionEquality().equals;
-
-    return other is SnapPlug &&
-        other.snap == snap &&
-        other.plug == plug &&
-        deepEquals(other.attributes, attributes) &&
-        other.interface == interface &&
-        deepEquals(other.connections, connections);
-  }
-
-  @override
-  int get hashCode => Object.hash(
-        snap,
-        plug,
-        Object.hashAllUnordered(
-          attributes.entries.map((e) => Object.hash(e.key, e.value)),
-        ),
-        interface,
-        Object.hashAll(connections),
-      );
 }
 
 /// Information on a snap slot.
-@immutable
-@JsonSerializable()
-class SnapSlot {
-  const SnapSlot({
-    required this.snap,
-    required this.slot,
-    this.attributes = const {},
-    this.interface,
-    this.connections = const [],
-  });
+@freezed
+class SnapSlot with _$SnapSlot {
+  const factory SnapSlot({
+    required String snap,
+    required String slot,
+    @JsonKey(name: 'attrs') @Default({}) Map<String, dynamic> attributes,
+    String? interface,
+    @Default([]) List<SnapPlug> connections,
+  }) = _SnapSlot;
 
   factory SnapSlot.fromJson(Map<String, dynamic> json) =>
       _$SnapSlotFromJson(json);
-
-  /// The snap this slot is provided by.
-  final String snap;
-
-  /// The slot name.
-  final String slot;
-
-  // Attributes for the slot.
-  @JsonKey(name: 'attrs')
-  final Map<String, dynamic> attributes;
-
-  /// The interface this slot uses.
-  final String? interface;
-
-  // Plugs connected to this slot.
-  final List<SnapPlug> connections;
-
-  Map<String, dynamic> toJson() => _$SnapSlotToJson(this);
-
-  @override
-  String toString() {
-    final values = {'snap': snap, 'slot': slot};
-    if (attributes.isNotEmpty) {
-      values['attributes'] = '$attributes';
-    }
-    if (interface != null) {
-      values['interface'] = '$interface';
-    }
-    if (connections.isNotEmpty) {
-      values['connections'] = '$connections';
-    }
-    final args = values.entries.map((e) => '${e.key}: ${e.value}').join(', ');
-    return 'SnapSlot($args)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    final deepEquals = const DeepCollectionEquality().equals;
-
-    return other is SnapSlot &&
-        other.snap == snap &&
-        other.slot == slot &&
-        deepEquals(other.attributes, attributes) &&
-        other.interface == interface &&
-        deepEquals(other.connections, connections);
-  }
-
-  @override
-  int get hashCode => Object.hash(
-        snap,
-        slot,
-        Object.hashAllUnordered(
-          attributes.entries.map((e) => Object.hash(e.key, e.value)),
-        ),
-        interface,
-        Object.hashAll(connections),
-      );
 }
 
 /// Information on a connection between a snap plugs and slots.
-@immutable
-@JsonSerializable()
-class SnapConnection {
-  const SnapConnection({
-    required this.slot,
-    required this.plug,
-    required this.interface,
-    this.slotAttributes = const {},
-    this.plugAttributes = const {},
-    this.manual = false,
-  });
+@freezed
+class SnapConnection with _$SnapConnection {
+  const factory SnapConnection({
+    required SnapSlot slot,
+    required SnapPlug plug,
+    required String interface,
+    @JsonKey(name: 'slot-attrs')
+    @Default({})
+    Map<String, dynamic> slotAttributes,
+    @JsonKey(name: 'plug-attrs')
+    @Default({})
+    Map<String, dynamic> plugAttributes,
+    @Default(false) bool manual,
+  }) = _SnapConnection;
 
   factory SnapConnection.fromJson(Map<String, dynamic> json) =>
       _$SnapConnectionFromJson(json);
-  // The slot used in this connection.
-  final SnapSlot slot;
-
-  // Attributes for the slot.
-  @JsonKey(name: 'slot-attrs')
-  final Map<String, dynamic> slotAttributes;
-
-  // The plug used in this connection.
-  final SnapPlug plug;
-
-  // Attributes for the plug.
-  @JsonKey(name: 'plug-attrs')
-  final Map<String, dynamic> plugAttributes;
-
-  // The interface the connection uses.
-  final String interface;
-
-  // True if this is manually connected.
-  final bool manual;
-
-  Map<String, dynamic> toJson() => _$SnapConnectionToJson(this);
-
-  @override
-  String toString() =>
-      'SnapConnection(slot: $slot, slotAttributes: $slotAttributes, plug: $plug, plugAttributes: $plugAttributes, interface: $interface, manual: $manual)';
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    final mapEquals = const DeepCollectionEquality().equals;
-
-    return other is SnapConnection &&
-        other.slot == slot &&
-        mapEquals(other.slotAttributes, slotAttributes) &&
-        other.plug == plug &&
-        mapEquals(other.plugAttributes, plugAttributes) &&
-        other.interface == interface &&
-        other.manual == manual;
-  }
-
-  @override
-  int get hashCode => Object.hash(
-        slot,
-        slotAttributes,
-        plug,
-        plugAttributes,
-        interface,
-        manual,
-      );
 }
 
 /// Response received when getting connections.
-@immutable
-@JsonSerializable()
-class SnapdConnectionsResponse {
-  const SnapdConnectionsResponse({
-    this.established = const [],
-    this.plugs = const [],
-    this.slots = const [],
-    this.undesired = const [],
-  });
+@freezed
+class SnapdConnectionsResponse with _$SnapdConnectionsResponse {
+  const factory SnapdConnectionsResponse({
+    @Default([]) List<SnapConnection> established,
+    @Default([]) List<SnapPlug> plugs,
+    @Default([]) List<SnapSlot> slots,
+    @Default([]) List<SnapConnection> undesired,
+  }) = _SnapdConnectionsResponse;
 
   factory SnapdConnectionsResponse.fromJson(Map<String, dynamic> json) =>
       _$SnapdConnectionsResponseFromJson(json);
-
-  /// Connections that have been established.
-  final List<SnapConnection> established;
-
-  /// Plugs on this system.
-  final List<SnapPlug> plugs;
-
-  /// Slots on this system.
-  final List<SnapSlot> slots;
-
-  /// Auto-connected connections that have been manually disconnected.
-  final List<SnapConnection> undesired;
-
-  Map<String, dynamic> toJson() => _$SnapdConnectionsResponseToJson(this);
-
-  @override
-  String toString() =>
-      'SnapdConnectionsResponse(established: $established, plugs: $plugs, slots: $slots, undesired: $undesired)';
 }
 
 /// Gives the state of an asynchronous operation.
-@immutable
-@JsonSerializable()
-class SnapdChange {
-  const SnapdChange({
-    required this.spawnTime,
-    this.id = '',
-    this.kind = '',
-    this.summary = '',
-    this.status = '',
-    this.ready = false,
-    this.readyTime,
-    this.err,
-    this.tasks = const [],
-    this.snapNames = const [],
-  });
+@freezed
+class SnapdChange with _$SnapdChange {
+  const factory SnapdChange({
+    required String id,
+    DateTime? spawnTime,
+    String? kind,
+    String? summary,
+    String? status,
+    @Default(false) bool ready,
+    DateTime? readyTime,
+    String? err,
+    @Default([]) List<SnapdTask> tasks,
+    @JsonKey(
+      name: 'data',
+      toJson: SnapdChange._snapNamesToJson,
+      fromJson: SnapdChange._snapNamesFromJson,
+    )
+    @Default([])
+    List<String> snapNames,
+  }) = _SnapdChange;
 
   factory SnapdChange.fromJson(Map<String, dynamic> json) =>
       _$SnapdChangeFromJson(json);
-
-  /// The ID of this change.
-  final String id;
-
-  /// The kind of change, e.g. 'install-snap'.
-  final String kind;
-
-  /// Short description of the change. e.g. 'Install snap "moon-buggy"'
-  final String summary;
-
-  /// Status of the change, e.g. 'Doing'.
-  final String status;
-
-  /// True when this change is complete.
-  final bool ready;
-
-  /// Error that occurred doing this change.
-  final String? err;
-
-  /// The time this change started.
-  final DateTime spawnTime;
-
-  /// The time this change completed.
-  final DateTime? readyTime;
-
-  /// The tasks of this change.
-  final List<SnapdTask> tasks;
-
-  /// The snaps that are associated with this change.
-  @JsonKey(
-    name: 'data',
-    toJson: _snapNamesToJson,
-    fromJson: _snapNamesFromJson,
-  )
-  final List<String> snapNames;
 
   static Map<String, dynamic> _snapNamesToJson(List<String> snapNames) {
     return {'snap-names': snapNames};
@@ -1065,149 +369,36 @@ class SnapdChange {
     return json['snap-names']?.cast<String>() as List<String>? ??
         const <String>[];
   }
-
-  Map<String, dynamic> toJson() => _$SnapdChangeToJson(this);
-
-  @override
-  String toString() =>
-      "SnapdChange(id: $id, kind: $kind, summary: '$summary', status: $status, ready: $ready, err: $err, spawnTime: $spawnTime, readyTime: $readyTime, tasks: $tasks, snapNames: $snapNames)";
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    final deepEquals = const DeepCollectionEquality().equals;
-
-    return other is SnapdChange &&
-        other.id == id &&
-        other.kind == kind &&
-        other.summary == summary &&
-        other.status == status &&
-        other.ready == ready &&
-        other.err == err &&
-        other.spawnTime == spawnTime &&
-        other.readyTime == readyTime &&
-        deepEquals(other.tasks, tasks) &&
-        deepEquals(other.snapNames, snapNames);
-  }
-
-  @override
-  int get hashCode {
-    final deepHash = const DeepCollectionEquality().hash;
-
-    return Object.hash(
-      id,
-      kind,
-      summary,
-      status,
-      ready,
-      err,
-      spawnTime,
-      readyTime,
-      deepHash(tasks),
-      deepHash(snapNames),
-    );
-  }
 }
 
 /// Information about a task in a [SnapdChange].
-@immutable
-@JsonSerializable()
-class SnapdTask {
-  SnapdTask({
-    this.id = '',
-    this.kind = '',
-    this.summary = '',
-    this.status = '',
-    this.progress = const SnapdTaskProgress(),
+@freezed
+class SnapdTask with _$SnapdTask {
+  const factory SnapdTask({
+    required String id,
     DateTime? spawnTime,
-    this.readyTime,
-  }) : spawnTime = spawnTime ?? DateTime.utc(1970);
+    String? kind,
+    @Default('') String summary,
+    String? status,
+    @Default(SnapdTaskProgress()) SnapdTaskProgress progress,
+    DateTime? readyTime,
+  }) = _SnapdTask;
 
   factory SnapdTask.fromJson(Map<String, dynamic> json) =>
       _$SnapdTaskFromJson(json);
-
-  /// The ID of this task.
-  final String id;
-
-  /// The kind of task, e.g. 'download-snap'install-snap'.
-  final String kind;
-
-  /// Short description of the task. e.g. ''Download snap "moon-buggy" (12) from channel "stable"'
-  final String summary;
-
-  /// Status of the task, e.g. 'Doing'.
-  final String status;
-
-  /// Progress of this task.
-  final SnapdTaskProgress progress;
-
-  /// The time this task started.
-  final DateTime spawnTime;
-
-  /// The time this task completed.
-  final DateTime? readyTime;
-
-  Map<String, dynamic> toJson() => _$SnapdTaskToJson(this);
-
-  @override
-  String toString() =>
-      "SnapdTask(id: $id, kind: $kind, summary: '$summary', status: $status, progress: $progress, spawnTime: $spawnTime, readyTime: $readyTime)";
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is SnapdTask &&
-        other.id == id &&
-        other.kind == kind &&
-        other.summary == summary &&
-        other.status == status &&
-        other.progress == progress &&
-        other.spawnTime == spawnTime &&
-        other.readyTime == readyTime;
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(id, kind, summary, status, progress, spawnTime, readyTime);
 }
 
 /// Progress of a [SnapdTask].
-@immutable
-@JsonSerializable()
-class SnapdTaskProgress {
-  const SnapdTaskProgress({this.label = '', this.done = 0, this.total = 0});
+@freezed
+class SnapdTaskProgress with _$SnapdTaskProgress {
+  const factory SnapdTaskProgress({
+    @Default('') String label,
+    @Default(0) int done,
+    @Default(0) int total,
+  }) = _SnapdTaskProgress;
 
   factory SnapdTaskProgress.fromJson(Map<String, dynamic> json) =>
       _$SnapdTaskProgressFromJson(json);
-
-  /// Optional label.
-  final String label;
-
-  /// Number of progress items complete.
-  final int done;
-
-  /// Total number of progress items in this task.
-  final int total;
-
-  Map<String, dynamic> toJson() => _$SnapdTaskProgressToJson(this);
-
-  @override
-  String toString() =>
-      "SnapdTaskProgress(label: '$label', done: $done, total: $total)";
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-
-    return other is SnapdTaskProgress &&
-        other.label == label &&
-        other.done == done &&
-        other.total == total;
-  }
-
-  @override
-  int get hashCode => Object.hash(label, done, total);
 }
 
 /// General response from snapd.
@@ -1261,7 +452,7 @@ class _SnapdErrorResponse extends _SnapdResponse {
     this.message, {
     super.statusCode,
     super.status,
-    this.kind = '',
+    this.kind,
     this.value,
   });
 
@@ -1380,9 +571,9 @@ class SnapdClient {
   }
 
   /// Gets all the store categories available.
-  Future<List<SnapdCategoryDetails>> getCategories() async {
+  Future<List<SnapCategoryDetails>> getCategories() async {
     final result = await _getSyncList('/v2/categories');
-    return result.map(SnapdCategoryDetails.fromJson).toList();
+    return result.map(SnapCategoryDetails.fromJson).toList();
   }
 
   /// Gets the connections, plugs and slots used on this system.
