@@ -1,4 +1,5 @@
 .dart_tool/
+.idea/
 .packages
 pubspec.lock
 test/.test_cov.dart
