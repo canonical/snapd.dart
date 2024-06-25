@@ -1197,10 +1197,10 @@ mixin _$Snap {
   String get revision => throw _privateConstructorUsedError;
   String get version => throw _privateConstructorUsedError;
   String get channel => throw _privateConstructorUsedError;
-  String get base => throw _privateConstructorUsedError;
   String get contact => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
   String get type => throw _privateConstructorUsedError;
+  String? get base => throw _privateConstructorUsedError;
   List<SnapApp> get apps => throw _privateConstructorUsedError;
   List<SnapCategory> get categories => throw _privateConstructorUsedError;
   Map<String, SnapChannel> get channels => throw _privateConstructorUsedError;
@@ -1242,10 +1242,10 @@ abstract class $SnapCopyWith<$Res> {
       String revision,
       String version,
       String channel,
-      String base,
       String contact,
       String description,
       String type,
+      String? base,
       List<SnapApp> apps,
       List<SnapCategory> categories,
       Map<String, SnapChannel> channels,
@@ -1292,10 +1292,10 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
     Object? revision = null,
     Object? version = null,
     Object? channel = null,
-    Object? base = null,
     Object? contact = null,
     Object? description = null,
     Object? type = null,
+    Object? base = freezed,
     Object? apps = null,
     Object? categories = null,
     Object? channels = null,
@@ -1341,10 +1341,6 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as String,
-      base: null == base
-          ? _value.base
-          : base // ignore: cast_nullable_to_non_nullable
-              as String,
       contact: null == contact
           ? _value.contact
           : contact // ignore: cast_nullable_to_non_nullable
@@ -1357,6 +1353,10 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      base: freezed == base
+          ? _value.base
+          : base // ignore: cast_nullable_to_non_nullable
+              as String?,
       apps: null == apps
           ? _value.apps
           : apps // ignore: cast_nullable_to_non_nullable
@@ -1478,10 +1478,10 @@ abstract class _$$SnapImplCopyWith<$Res> implements $SnapCopyWith<$Res> {
       String revision,
       String version,
       String channel,
-      String base,
       String contact,
       String description,
       String type,
+      String? base,
       List<SnapApp> apps,
       List<SnapCategory> categories,
       Map<String, SnapChannel> channels,
@@ -1526,10 +1526,10 @@ class __$$SnapImplCopyWithImpl<$Res>
     Object? revision = null,
     Object? version = null,
     Object? channel = null,
-    Object? base = null,
     Object? contact = null,
     Object? description = null,
     Object? type = null,
+    Object? base = freezed,
     Object? apps = null,
     Object? categories = null,
     Object? channels = null,
@@ -1575,10 +1575,6 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as String,
-      base: null == base
-          ? _value.base
-          : base // ignore: cast_nullable_to_non_nullable
-              as String,
       contact: null == contact
           ? _value.contact
           : contact // ignore: cast_nullable_to_non_nullable
@@ -1591,6 +1587,10 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value.type
           : type // ignore: cast_nullable_to_non_nullable
               as String,
+      base: freezed == base
+          ? _value.base
+          : base // ignore: cast_nullable_to_non_nullable
+              as String?,
       apps: null == apps
           ? _value._apps
           : apps // ignore: cast_nullable_to_non_nullable
@@ -1696,10 +1696,10 @@ class _$SnapImpl implements _Snap {
       required this.revision,
       required this.version,
       required this.channel,
-      required this.base,
       required this.contact,
       required this.description,
       required this.type,
+      this.base,
       final List<SnapApp> apps = const [],
       final List<SnapCategory> categories = const [],
       final Map<String, SnapChannel> channels = const {},
@@ -1745,13 +1745,13 @@ class _$SnapImpl implements _Snap {
   @override
   final String channel;
   @override
-  final String base;
-  @override
   final String contact;
   @override
   final String description;
   @override
   final String type;
+  @override
+  final String? base;
   final List<SnapApp> _apps;
   @override
   @JsonKey()
@@ -1849,7 +1849,7 @@ class _$SnapImpl implements _Snap {
 
   @override
   String toString() {
-    return 'Snap(id: $id, name: $name, revision: $revision, version: $version, channel: $channel, base: $base, contact: $contact, description: $description, type: $type, apps: $apps, categories: $categories, channels: $channels, commonIds: $commonIds, confinement: $confinement, devmode: $devmode, downloadSize: $downloadSize, hold: $hold, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, private: $private, publisher: $publisher, status: $status, storeUrl: $storeUrl, summary: $summary, title: $title, trackingChannel: $trackingChannel, tracks: $tracks, website: $website)';
+    return 'Snap(id: $id, name: $name, revision: $revision, version: $version, channel: $channel, contact: $contact, description: $description, type: $type, base: $base, apps: $apps, categories: $categories, channels: $channels, commonIds: $commonIds, confinement: $confinement, devmode: $devmode, downloadSize: $downloadSize, hold: $hold, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, private: $private, publisher: $publisher, status: $status, storeUrl: $storeUrl, summary: $summary, title: $title, trackingChannel: $trackingChannel, tracks: $tracks, website: $website)';
   }
 
   @override
@@ -1863,11 +1863,11 @@ class _$SnapImpl implements _Snap {
                 other.revision == revision) &&
             (identical(other.version, version) || other.version == version) &&
             (identical(other.channel, channel) || other.channel == channel) &&
-            (identical(other.base, base) || other.base == base) &&
             (identical(other.contact, contact) || other.contact == contact) &&
             (identical(other.description, description) ||
                 other.description == description) &&
             (identical(other.type, type) || other.type == type) &&
+            (identical(other.base, base) || other.base == base) &&
             const DeepCollectionEquality().equals(other._apps, _apps) &&
             const DeepCollectionEquality()
                 .equals(other._categories, _categories) &&
@@ -1913,10 +1913,10 @@ class _$SnapImpl implements _Snap {
         revision,
         version,
         channel,
-        base,
         contact,
         description,
         type,
+        base,
         const DeepCollectionEquality().hash(_apps),
         const DeepCollectionEquality().hash(_categories),
         const DeepCollectionEquality().hash(_channels),
@@ -1963,10 +1963,10 @@ abstract class _Snap implements Snap {
       required final String revision,
       required final String version,
       required final String channel,
-      required final String base,
       required final String contact,
       required final String description,
       required final String type,
+      final String? base,
       final List<SnapApp> apps,
       final List<SnapCategory> categories,
       final Map<String, SnapChannel> channels,
@@ -2005,13 +2005,13 @@ abstract class _Snap implements Snap {
   @override
   String get channel;
   @override
-  String get base;
-  @override
   String get contact;
   @override
   String get description;
   @override
   String get type;
+  @override
+  String? get base;
   @override
   List<SnapApp> get apps;
   @override

@@ -113,10 +113,10 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
       revision: json['revision'] as String,
       version: json['version'] as String,
       channel: json['channel'] as String,
-      base: json['base'] as String,
       contact: json['contact'] as String,
       description: json['description'] as String,
       type: json['type'] as String,
+      base: json['base'] as String?,
       apps: (json['apps'] as List<dynamic>?)
               ?.map(
                   (e) => SnapApp.fromJson(Map<String, dynamic>.from(e as Map)))
@@ -181,10 +181,10 @@ Map<String, dynamic> _$$SnapImplToJson(_$SnapImpl instance) =>
       'revision': instance.revision,
       'version': instance.version,
       'channel': instance.channel,
-      'base': instance.base,
       'contact': instance.contact,
       'description': instance.description,
       'type': instance.type,
+      'base': instance.base,
       'apps': instance.apps.map((e) => e.toJson()).toList(),
       'categories': instance.categories.map((e) => e.toJson()).toList(),
       'channels': instance.channels.map((k, e) => MapEntry(k, e.toJson())),
