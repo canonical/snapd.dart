@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+* Use freezed for data classes, with some previously not required fields.
+
 ## 0.4.14
 
 * Add classic parameter to SnapdClient.installMany().
