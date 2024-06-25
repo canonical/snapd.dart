@@ -190,11 +190,15 @@ class Snap with _$Snap {
 
   static int _parseRevision(dynamic revision) {
     if (revision is String) {
-      return int.tryParse(revision) ?? -1;
+      try {
+        return int.parse(revision.replaceFirst('x', '-'));
+      } on FormatException catch (_) {
+        throw FormatException('Revision had invalid format $revision');
+      }
     } else if (revision is int) {
       return revision;
     } else {
-      return -1;
+      throw FormatException('Revision had invalid format $revision');
     }
   }
 }
