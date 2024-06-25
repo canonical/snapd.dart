@@ -1643,7 +1643,6 @@ void main() {
       name: 'hello',
       revision: '42',
       channel: '',
-      contact: '',
       summary: 'Hello is an app',
       title: 'Hello',
       type: 'app',

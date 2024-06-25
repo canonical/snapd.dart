@@ -1197,34 +1197,34 @@ mixin _$Snap {
   String get revision => throw _privateConstructorUsedError;
   String get version => throw _privateConstructorUsedError;
   String get channel => throw _privateConstructorUsedError;
+  String get type => throw _privateConstructorUsedError;
   String get contact => throw _privateConstructorUsedError;
   String get description => throw _privateConstructorUsedError;
-  String get type => throw _privateConstructorUsedError;
-  String? get base => throw _privateConstructorUsedError;
+  String get summary => throw _privateConstructorUsedError;
+  Map<String, SnapChannel> get channels => throw _privateConstructorUsedError;
   List<SnapApp> get apps => throw _privateConstructorUsedError;
   List<SnapCategory> get categories => throw _privateConstructorUsedError;
-  Map<String, SnapChannel> get channels => throw _privateConstructorUsedError;
+  List<String> get tracks => throw _privateConstructorUsedError;
   List<String> get commonIds => throw _privateConstructorUsedError;
+  List<SnapMedia> get media => throw _privateConstructorUsedError;
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   SnapConfinement get confinement => throw _privateConstructorUsedError;
-  bool get devmode => throw _privateConstructorUsedError;
-  int? get downloadSize => throw _privateConstructorUsedError;
-  DateTime? get hold => throw _privateConstructorUsedError;
-  DateTime? get installDate => throw _privateConstructorUsedError;
-  int? get installedSize => throw _privateConstructorUsedError;
-  bool get jailmode => throw _privateConstructorUsedError;
-  String? get license => throw _privateConstructorUsedError;
-  List<SnapMedia> get media => throw _privateConstructorUsedError;
-  String? get mountedFrom => throw _privateConstructorUsedError;
-  bool get private => throw _privateConstructorUsedError;
-  SnapPublisher? get publisher => throw _privateConstructorUsedError;
   SnapStatus get status => throw _privateConstructorUsedError;
-  String? get storeUrl => throw _privateConstructorUsedError;
-  String get summary => throw _privateConstructorUsedError;
+  bool get devmode => throw _privateConstructorUsedError;
+  bool get jailmode => throw _privateConstructorUsedError;
+  bool get private => throw _privateConstructorUsedError;
+  String? get base => throw _privateConstructorUsedError;
   String? get title => throw _privateConstructorUsedError;
   String? get trackingChannel => throw _privateConstructorUsedError;
-  List<String> get tracks => throw _privateConstructorUsedError;
   String? get website => throw _privateConstructorUsedError;
+  String? get license => throw _privateConstructorUsedError;
+  String? get mountedFrom => throw _privateConstructorUsedError;
+  String? get storeUrl => throw _privateConstructorUsedError;
+  DateTime? get hold => throw _privateConstructorUsedError;
+  DateTime? get installDate => throw _privateConstructorUsedError;
+  int? get downloadSize => throw _privateConstructorUsedError;
+  int? get installedSize => throw _privateConstructorUsedError;
+  SnapPublisher? get publisher => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1242,34 +1242,34 @@ abstract class $SnapCopyWith<$Res> {
       String revision,
       String version,
       String channel,
+      String type,
       String contact,
       String description,
-      String type,
-      String? base,
+      String summary,
+      Map<String, SnapChannel> channels,
       List<SnapApp> apps,
       List<SnapCategory> categories,
-      Map<String, SnapChannel> channels,
+      List<String> tracks,
       List<String> commonIds,
+      List<SnapMedia> media,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       SnapConfinement confinement,
-      bool devmode,
-      int? downloadSize,
-      DateTime? hold,
-      DateTime? installDate,
-      int? installedSize,
-      bool jailmode,
-      String? license,
-      List<SnapMedia> media,
-      String? mountedFrom,
-      bool private,
-      SnapPublisher? publisher,
       SnapStatus status,
-      String? storeUrl,
-      String summary,
+      bool devmode,
+      bool jailmode,
+      bool private,
+      String? base,
       String? title,
       String? trackingChannel,
-      List<String> tracks,
-      String? website});
+      String? website,
+      String? license,
+      String? mountedFrom,
+      String? storeUrl,
+      DateTime? hold,
+      DateTime? installDate,
+      int? downloadSize,
+      int? installedSize,
+      SnapPublisher? publisher});
 
   $SnapPublisherCopyWith<$Res>? get publisher;
 }
@@ -1292,33 +1292,33 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
     Object? revision = null,
     Object? version = null,
     Object? channel = null,
+    Object? type = null,
     Object? contact = null,
     Object? description = null,
-    Object? type = null,
-    Object? base = freezed,
+    Object? summary = null,
+    Object? channels = null,
     Object? apps = null,
     Object? categories = null,
-    Object? channels = null,
+    Object? tracks = null,
     Object? commonIds = null,
-    Object? confinement = null,
-    Object? devmode = null,
-    Object? downloadSize = freezed,
-    Object? hold = freezed,
-    Object? installDate = freezed,
-    Object? installedSize = freezed,
-    Object? jailmode = null,
-    Object? license = freezed,
     Object? media = null,
-    Object? mountedFrom = freezed,
-    Object? private = null,
-    Object? publisher = freezed,
+    Object? confinement = null,
     Object? status = null,
-    Object? storeUrl = freezed,
-    Object? summary = null,
+    Object? devmode = null,
+    Object? jailmode = null,
+    Object? private = null,
+    Object? base = freezed,
     Object? title = freezed,
     Object? trackingChannel = freezed,
-    Object? tracks = null,
     Object? website = freezed,
+    Object? license = freezed,
+    Object? mountedFrom = freezed,
+    Object? storeUrl = freezed,
+    Object? hold = freezed,
+    Object? installDate = freezed,
+    Object? downloadSize = freezed,
+    Object? installedSize = freezed,
+    Object? publisher = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -1341,6 +1341,10 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String,
       contact: null == contact
           ? _value.contact
           : contact // ignore: cast_nullable_to_non_nullable
@@ -1349,14 +1353,14 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
+      summary: null == summary
+          ? _value.summary
+          : summary // ignore: cast_nullable_to_non_nullable
               as String,
-      base: freezed == base
-          ? _value.base
-          : base // ignore: cast_nullable_to_non_nullable
-              as String?,
+      channels: null == channels
+          ? _value.channels
+          : channels // ignore: cast_nullable_to_non_nullable
+              as Map<String, SnapChannel>,
       apps: null == apps
           ? _value.apps
           : apps // ignore: cast_nullable_to_non_nullable
@@ -1365,74 +1369,42 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.categories
           : categories // ignore: cast_nullable_to_non_nullable
               as List<SnapCategory>,
-      channels: null == channels
-          ? _value.channels
-          : channels // ignore: cast_nullable_to_non_nullable
-              as Map<String, SnapChannel>,
+      tracks: null == tracks
+          ? _value.tracks
+          : tracks // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       commonIds: null == commonIds
           ? _value.commonIds
           : commonIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      confinement: null == confinement
-          ? _value.confinement
-          : confinement // ignore: cast_nullable_to_non_nullable
-              as SnapConfinement,
-      devmode: null == devmode
-          ? _value.devmode
-          : devmode // ignore: cast_nullable_to_non_nullable
-              as bool,
-      downloadSize: freezed == downloadSize
-          ? _value.downloadSize
-          : downloadSize // ignore: cast_nullable_to_non_nullable
-              as int?,
-      hold: freezed == hold
-          ? _value.hold
-          : hold // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      installDate: freezed == installDate
-          ? _value.installDate
-          : installDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      installedSize: freezed == installedSize
-          ? _value.installedSize
-          : installedSize // ignore: cast_nullable_to_non_nullable
-              as int?,
-      jailmode: null == jailmode
-          ? _value.jailmode
-          : jailmode // ignore: cast_nullable_to_non_nullable
-              as bool,
-      license: freezed == license
-          ? _value.license
-          : license // ignore: cast_nullable_to_non_nullable
-              as String?,
       media: null == media
           ? _value.media
           : media // ignore: cast_nullable_to_non_nullable
               as List<SnapMedia>,
-      mountedFrom: freezed == mountedFrom
-          ? _value.mountedFrom
-          : mountedFrom // ignore: cast_nullable_to_non_nullable
-              as String?,
-      private: null == private
-          ? _value.private
-          : private // ignore: cast_nullable_to_non_nullable
-              as bool,
-      publisher: freezed == publisher
-          ? _value.publisher
-          : publisher // ignore: cast_nullable_to_non_nullable
-              as SnapPublisher?,
+      confinement: null == confinement
+          ? _value.confinement
+          : confinement // ignore: cast_nullable_to_non_nullable
+              as SnapConfinement,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as SnapStatus,
-      storeUrl: freezed == storeUrl
-          ? _value.storeUrl
-          : storeUrl // ignore: cast_nullable_to_non_nullable
+      devmode: null == devmode
+          ? _value.devmode
+          : devmode // ignore: cast_nullable_to_non_nullable
+              as bool,
+      jailmode: null == jailmode
+          ? _value.jailmode
+          : jailmode // ignore: cast_nullable_to_non_nullable
+              as bool,
+      private: null == private
+          ? _value.private
+          : private // ignore: cast_nullable_to_non_nullable
+              as bool,
+      base: freezed == base
+          ? _value.base
+          : base // ignore: cast_nullable_to_non_nullable
               as String?,
-      summary: null == summary
-          ? _value.summary
-          : summary // ignore: cast_nullable_to_non_nullable
-              as String,
       title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -1441,14 +1413,42 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.trackingChannel
           : trackingChannel // ignore: cast_nullable_to_non_nullable
               as String?,
-      tracks: null == tracks
-          ? _value.tracks
-          : tracks // ignore: cast_nullable_to_non_nullable
-              as List<String>,
       website: freezed == website
           ? _value.website
           : website // ignore: cast_nullable_to_non_nullable
               as String?,
+      license: freezed == license
+          ? _value.license
+          : license // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mountedFrom: freezed == mountedFrom
+          ? _value.mountedFrom
+          : mountedFrom // ignore: cast_nullable_to_non_nullable
+              as String?,
+      storeUrl: freezed == storeUrl
+          ? _value.storeUrl
+          : storeUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      hold: freezed == hold
+          ? _value.hold
+          : hold // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      installDate: freezed == installDate
+          ? _value.installDate
+          : installDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      downloadSize: freezed == downloadSize
+          ? _value.downloadSize
+          : downloadSize // ignore: cast_nullable_to_non_nullable
+              as int?,
+      installedSize: freezed == installedSize
+          ? _value.installedSize
+          : installedSize // ignore: cast_nullable_to_non_nullable
+              as int?,
+      publisher: freezed == publisher
+          ? _value.publisher
+          : publisher // ignore: cast_nullable_to_non_nullable
+              as SnapPublisher?,
     ) as $Val);
   }
 
@@ -1478,34 +1478,34 @@ abstract class _$$SnapImplCopyWith<$Res> implements $SnapCopyWith<$Res> {
       String revision,
       String version,
       String channel,
+      String type,
       String contact,
       String description,
-      String type,
-      String? base,
+      String summary,
+      Map<String, SnapChannel> channels,
       List<SnapApp> apps,
       List<SnapCategory> categories,
-      Map<String, SnapChannel> channels,
+      List<String> tracks,
       List<String> commonIds,
+      List<SnapMedia> media,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       SnapConfinement confinement,
-      bool devmode,
-      int? downloadSize,
-      DateTime? hold,
-      DateTime? installDate,
-      int? installedSize,
-      bool jailmode,
-      String? license,
-      List<SnapMedia> media,
-      String? mountedFrom,
-      bool private,
-      SnapPublisher? publisher,
       SnapStatus status,
-      String? storeUrl,
-      String summary,
+      bool devmode,
+      bool jailmode,
+      bool private,
+      String? base,
       String? title,
       String? trackingChannel,
-      List<String> tracks,
-      String? website});
+      String? website,
+      String? license,
+      String? mountedFrom,
+      String? storeUrl,
+      DateTime? hold,
+      DateTime? installDate,
+      int? downloadSize,
+      int? installedSize,
+      SnapPublisher? publisher});
 
   @override
   $SnapPublisherCopyWith<$Res>? get publisher;
@@ -1526,33 +1526,33 @@ class __$$SnapImplCopyWithImpl<$Res>
     Object? revision = null,
     Object? version = null,
     Object? channel = null,
+    Object? type = null,
     Object? contact = null,
     Object? description = null,
-    Object? type = null,
-    Object? base = freezed,
+    Object? summary = null,
+    Object? channels = null,
     Object? apps = null,
     Object? categories = null,
-    Object? channels = null,
+    Object? tracks = null,
     Object? commonIds = null,
-    Object? confinement = null,
-    Object? devmode = null,
-    Object? downloadSize = freezed,
-    Object? hold = freezed,
-    Object? installDate = freezed,
-    Object? installedSize = freezed,
-    Object? jailmode = null,
-    Object? license = freezed,
     Object? media = null,
-    Object? mountedFrom = freezed,
-    Object? private = null,
-    Object? publisher = freezed,
+    Object? confinement = null,
     Object? status = null,
-    Object? storeUrl = freezed,
-    Object? summary = null,
+    Object? devmode = null,
+    Object? jailmode = null,
+    Object? private = null,
+    Object? base = freezed,
     Object? title = freezed,
     Object? trackingChannel = freezed,
-    Object? tracks = null,
     Object? website = freezed,
+    Object? license = freezed,
+    Object? mountedFrom = freezed,
+    Object? storeUrl = freezed,
+    Object? hold = freezed,
+    Object? installDate = freezed,
+    Object? downloadSize = freezed,
+    Object? installedSize = freezed,
+    Object? publisher = freezed,
   }) {
     return _then(_$SnapImpl(
       id: null == id
@@ -1575,6 +1575,10 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as String,
       contact: null == contact
           ? _value.contact
           : contact // ignore: cast_nullable_to_non_nullable
@@ -1583,14 +1587,14 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value.description
           : description // ignore: cast_nullable_to_non_nullable
               as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
+      summary: null == summary
+          ? _value.summary
+          : summary // ignore: cast_nullable_to_non_nullable
               as String,
-      base: freezed == base
-          ? _value.base
-          : base // ignore: cast_nullable_to_non_nullable
-              as String?,
+      channels: null == channels
+          ? _value._channels
+          : channels // ignore: cast_nullable_to_non_nullable
+              as Map<String, SnapChannel>,
       apps: null == apps
           ? _value._apps
           : apps // ignore: cast_nullable_to_non_nullable
@@ -1599,74 +1603,42 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value._categories
           : categories // ignore: cast_nullable_to_non_nullable
               as List<SnapCategory>,
-      channels: null == channels
-          ? _value._channels
-          : channels // ignore: cast_nullable_to_non_nullable
-              as Map<String, SnapChannel>,
+      tracks: null == tracks
+          ? _value._tracks
+          : tracks // ignore: cast_nullable_to_non_nullable
+              as List<String>,
       commonIds: null == commonIds
           ? _value._commonIds
           : commonIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
-      confinement: null == confinement
-          ? _value.confinement
-          : confinement // ignore: cast_nullable_to_non_nullable
-              as SnapConfinement,
-      devmode: null == devmode
-          ? _value.devmode
-          : devmode // ignore: cast_nullable_to_non_nullable
-              as bool,
-      downloadSize: freezed == downloadSize
-          ? _value.downloadSize
-          : downloadSize // ignore: cast_nullable_to_non_nullable
-              as int?,
-      hold: freezed == hold
-          ? _value.hold
-          : hold // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      installDate: freezed == installDate
-          ? _value.installDate
-          : installDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      installedSize: freezed == installedSize
-          ? _value.installedSize
-          : installedSize // ignore: cast_nullable_to_non_nullable
-              as int?,
-      jailmode: null == jailmode
-          ? _value.jailmode
-          : jailmode // ignore: cast_nullable_to_non_nullable
-              as bool,
-      license: freezed == license
-          ? _value.license
-          : license // ignore: cast_nullable_to_non_nullable
-              as String?,
       media: null == media
           ? _value._media
           : media // ignore: cast_nullable_to_non_nullable
               as List<SnapMedia>,
-      mountedFrom: freezed == mountedFrom
-          ? _value.mountedFrom
-          : mountedFrom // ignore: cast_nullable_to_non_nullable
-              as String?,
-      private: null == private
-          ? _value.private
-          : private // ignore: cast_nullable_to_non_nullable
-              as bool,
-      publisher: freezed == publisher
-          ? _value.publisher
-          : publisher // ignore: cast_nullable_to_non_nullable
-              as SnapPublisher?,
+      confinement: null == confinement
+          ? _value.confinement
+          : confinement // ignore: cast_nullable_to_non_nullable
+              as SnapConfinement,
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as SnapStatus,
-      storeUrl: freezed == storeUrl
-          ? _value.storeUrl
-          : storeUrl // ignore: cast_nullable_to_non_nullable
+      devmode: null == devmode
+          ? _value.devmode
+          : devmode // ignore: cast_nullable_to_non_nullable
+              as bool,
+      jailmode: null == jailmode
+          ? _value.jailmode
+          : jailmode // ignore: cast_nullable_to_non_nullable
+              as bool,
+      private: null == private
+          ? _value.private
+          : private // ignore: cast_nullable_to_non_nullable
+              as bool,
+      base: freezed == base
+          ? _value.base
+          : base // ignore: cast_nullable_to_non_nullable
               as String?,
-      summary: null == summary
-          ? _value.summary
-          : summary // ignore: cast_nullable_to_non_nullable
-              as String,
       title: freezed == title
           ? _value.title
           : title // ignore: cast_nullable_to_non_nullable
@@ -1675,14 +1647,42 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value.trackingChannel
           : trackingChannel // ignore: cast_nullable_to_non_nullable
               as String?,
-      tracks: null == tracks
-          ? _value._tracks
-          : tracks // ignore: cast_nullable_to_non_nullable
-              as List<String>,
       website: freezed == website
           ? _value.website
           : website // ignore: cast_nullable_to_non_nullable
               as String?,
+      license: freezed == license
+          ? _value.license
+          : license // ignore: cast_nullable_to_non_nullable
+              as String?,
+      mountedFrom: freezed == mountedFrom
+          ? _value.mountedFrom
+          : mountedFrom // ignore: cast_nullable_to_non_nullable
+              as String?,
+      storeUrl: freezed == storeUrl
+          ? _value.storeUrl
+          : storeUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      hold: freezed == hold
+          ? _value.hold
+          : hold // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      installDate: freezed == installDate
+          ? _value.installDate
+          : installDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      downloadSize: freezed == downloadSize
+          ? _value.downloadSize
+          : downloadSize // ignore: cast_nullable_to_non_nullable
+              as int?,
+      installedSize: freezed == installedSize
+          ? _value.installedSize
+          : installedSize // ignore: cast_nullable_to_non_nullable
+              as int?,
+      publisher: freezed == publisher
+          ? _value.publisher
+          : publisher // ignore: cast_nullable_to_non_nullable
+              as SnapPublisher?,
     ));
   }
 }
@@ -1696,40 +1696,40 @@ class _$SnapImpl implements _Snap {
       required this.revision,
       required this.version,
       required this.channel,
-      required this.contact,
-      required this.description,
       required this.type,
-      this.base,
+      this.contact = '',
+      this.description = '',
+      this.summary = '',
+      final Map<String, SnapChannel> channels = const {},
       final List<SnapApp> apps = const [],
       final List<SnapCategory> categories = const [],
-      final Map<String, SnapChannel> channels = const {},
+      final List<String> tracks = const [],
       final List<String> commonIds = const [],
+      final List<SnapMedia> media = const [],
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       this.confinement = SnapConfinement.unknown,
-      this.devmode = false,
-      this.downloadSize,
-      this.hold,
-      this.installDate,
-      this.installedSize,
-      this.jailmode = false,
-      this.license,
-      final List<SnapMedia> media = const [],
-      this.mountedFrom,
-      this.private = false,
-      this.publisher,
       this.status = SnapStatus.unknown,
-      this.storeUrl,
-      this.summary = '',
+      this.devmode = false,
+      this.jailmode = false,
+      this.private = false,
+      this.base,
       this.title,
       this.trackingChannel,
-      final List<String> tracks = const [],
-      this.website})
-      : _apps = apps,
+      this.website,
+      this.license,
+      this.mountedFrom,
+      this.storeUrl,
+      this.hold,
+      this.installDate,
+      this.downloadSize,
+      this.installedSize,
+      this.publisher})
+      : _channels = channels,
+        _apps = apps,
         _categories = categories,
-        _channels = channels,
+        _tracks = tracks,
         _commonIds = commonIds,
-        _media = media,
-        _tracks = tracks;
+        _media = media;
 
   factory _$SnapImpl.fromJson(Map<String, dynamic> json) =>
       _$$SnapImplFromJson(json);
@@ -1745,13 +1745,25 @@ class _$SnapImpl implements _Snap {
   @override
   final String channel;
   @override
-  final String contact;
-  @override
-  final String description;
-  @override
   final String type;
   @override
-  final String? base;
+  @JsonKey()
+  final String contact;
+  @override
+  @JsonKey()
+  final String description;
+  @override
+  @JsonKey()
+  final String summary;
+  final Map<String, SnapChannel> _channels;
+  @override
+  @JsonKey()
+  Map<String, SnapChannel> get channels {
+    if (_channels is EqualUnmodifiableMapView) return _channels;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_channels);
+  }
+
   final List<SnapApp> _apps;
   @override
   @JsonKey()
@@ -1770,13 +1782,13 @@ class _$SnapImpl implements _Snap {
     return EqualUnmodifiableListView(_categories);
   }
 
-  final Map<String, SnapChannel> _channels;
+  final List<String> _tracks;
   @override
   @JsonKey()
-  Map<String, SnapChannel> get channels {
-    if (_channels is EqualUnmodifiableMapView) return _channels;
+  List<String> get tracks {
+    if (_tracks is EqualUnmodifiableListView) return _tracks;
     // ignore: implicit_dynamic_type
-    return EqualUnmodifiableMapView(_channels);
+    return EqualUnmodifiableListView(_tracks);
   }
 
   final List<String> _commonIds;
@@ -1788,25 +1800,6 @@ class _$SnapImpl implements _Snap {
     return EqualUnmodifiableListView(_commonIds);
   }
 
-  @override
-  @JsonKey(unknownEnumValue: SnapConfinement.unknown)
-  final SnapConfinement confinement;
-  @override
-  @JsonKey()
-  final bool devmode;
-  @override
-  final int? downloadSize;
-  @override
-  final DateTime? hold;
-  @override
-  final DateTime? installDate;
-  @override
-  final int? installedSize;
-  @override
-  @JsonKey()
-  final bool jailmode;
-  @override
-  final String? license;
   final List<SnapMedia> _media;
   @override
   @JsonKey()
@@ -1817,39 +1810,48 @@ class _$SnapImpl implements _Snap {
   }
 
   @override
-  final String? mountedFrom;
-  @override
-  @JsonKey()
-  final bool private;
-  @override
-  final SnapPublisher? publisher;
+  @JsonKey(unknownEnumValue: SnapConfinement.unknown)
+  final SnapConfinement confinement;
   @override
   @JsonKey()
   final SnapStatus status;
   @override
-  final String? storeUrl;
+  @JsonKey()
+  final bool devmode;
   @override
   @JsonKey()
-  final String summary;
+  final bool jailmode;
+  @override
+  @JsonKey()
+  final bool private;
+  @override
+  final String? base;
   @override
   final String? title;
   @override
   final String? trackingChannel;
-  final List<String> _tracks;
-  @override
-  @JsonKey()
-  List<String> get tracks {
-    if (_tracks is EqualUnmodifiableListView) return _tracks;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_tracks);
-  }
-
   @override
   final String? website;
+  @override
+  final String? license;
+  @override
+  final String? mountedFrom;
+  @override
+  final String? storeUrl;
+  @override
+  final DateTime? hold;
+  @override
+  final DateTime? installDate;
+  @override
+  final int? downloadSize;
+  @override
+  final int? installedSize;
+  @override
+  final SnapPublisher? publisher;
 
   @override
   String toString() {
-    return 'Snap(id: $id, name: $name, revision: $revision, version: $version, channel: $channel, contact: $contact, description: $description, type: $type, base: $base, apps: $apps, categories: $categories, channels: $channels, commonIds: $commonIds, confinement: $confinement, devmode: $devmode, downloadSize: $downloadSize, hold: $hold, installDate: $installDate, installedSize: $installedSize, jailmode: $jailmode, license: $license, media: $media, mountedFrom: $mountedFrom, private: $private, publisher: $publisher, status: $status, storeUrl: $storeUrl, summary: $summary, title: $title, trackingChannel: $trackingChannel, tracks: $tracks, website: $website)';
+    return 'Snap(id: $id, name: $name, revision: $revision, version: $version, channel: $channel, type: $type, contact: $contact, description: $description, summary: $summary, channels: $channels, apps: $apps, categories: $categories, tracks: $tracks, commonIds: $commonIds, media: $media, confinement: $confinement, status: $status, devmode: $devmode, jailmode: $jailmode, private: $private, base: $base, title: $title, trackingChannel: $trackingChannel, website: $website, license: $license, mountedFrom: $mountedFrom, storeUrl: $storeUrl, hold: $hold, installDate: $installDate, downloadSize: $downloadSize, installedSize: $installedSize, publisher: $publisher)';
   }
 
   @override
@@ -1863,45 +1865,45 @@ class _$SnapImpl implements _Snap {
                 other.revision == revision) &&
             (identical(other.version, version) || other.version == version) &&
             (identical(other.channel, channel) || other.channel == channel) &&
+            (identical(other.type, type) || other.type == type) &&
             (identical(other.contact, contact) || other.contact == contact) &&
             (identical(other.description, description) ||
                 other.description == description) &&
-            (identical(other.type, type) || other.type == type) &&
-            (identical(other.base, base) || other.base == base) &&
+            (identical(other.summary, summary) || other.summary == summary) &&
+            const DeepCollectionEquality().equals(other._channels, _channels) &&
             const DeepCollectionEquality().equals(other._apps, _apps) &&
             const DeepCollectionEquality()
                 .equals(other._categories, _categories) &&
-            const DeepCollectionEquality().equals(other._channels, _channels) &&
+            const DeepCollectionEquality().equals(other._tracks, _tracks) &&
             const DeepCollectionEquality()
                 .equals(other._commonIds, _commonIds) &&
+            const DeepCollectionEquality().equals(other._media, _media) &&
             (identical(other.confinement, confinement) ||
                 other.confinement == confinement) &&
+            (identical(other.status, status) || other.status == status) &&
             (identical(other.devmode, devmode) || other.devmode == devmode) &&
-            (identical(other.downloadSize, downloadSize) ||
-                other.downloadSize == downloadSize) &&
-            (identical(other.hold, hold) || other.hold == hold) &&
-            (identical(other.installDate, installDate) ||
-                other.installDate == installDate) &&
-            (identical(other.installedSize, installedSize) ||
-                other.installedSize == installedSize) &&
             (identical(other.jailmode, jailmode) ||
                 other.jailmode == jailmode) &&
-            (identical(other.license, license) || other.license == license) &&
-            const DeepCollectionEquality().equals(other._media, _media) &&
-            (identical(other.mountedFrom, mountedFrom) ||
-                other.mountedFrom == mountedFrom) &&
             (identical(other.private, private) || other.private == private) &&
-            (identical(other.publisher, publisher) ||
-                other.publisher == publisher) &&
-            (identical(other.status, status) || other.status == status) &&
-            (identical(other.storeUrl, storeUrl) ||
-                other.storeUrl == storeUrl) &&
-            (identical(other.summary, summary) || other.summary == summary) &&
+            (identical(other.base, base) || other.base == base) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.trackingChannel, trackingChannel) ||
                 other.trackingChannel == trackingChannel) &&
-            const DeepCollectionEquality().equals(other._tracks, _tracks) &&
-            (identical(other.website, website) || other.website == website));
+            (identical(other.website, website) || other.website == website) &&
+            (identical(other.license, license) || other.license == license) &&
+            (identical(other.mountedFrom, mountedFrom) ||
+                other.mountedFrom == mountedFrom) &&
+            (identical(other.storeUrl, storeUrl) ||
+                other.storeUrl == storeUrl) &&
+            (identical(other.hold, hold) || other.hold == hold) &&
+            (identical(other.installDate, installDate) ||
+                other.installDate == installDate) &&
+            (identical(other.downloadSize, downloadSize) ||
+                other.downloadSize == downloadSize) &&
+            (identical(other.installedSize, installedSize) ||
+                other.installedSize == installedSize) &&
+            (identical(other.publisher, publisher) ||
+                other.publisher == publisher));
   }
 
   @JsonKey(ignore: true)
@@ -1913,33 +1915,33 @@ class _$SnapImpl implements _Snap {
         revision,
         version,
         channel,
+        type,
         contact,
         description,
-        type,
-        base,
+        summary,
+        const DeepCollectionEquality().hash(_channels),
         const DeepCollectionEquality().hash(_apps),
         const DeepCollectionEquality().hash(_categories),
-        const DeepCollectionEquality().hash(_channels),
+        const DeepCollectionEquality().hash(_tracks),
         const DeepCollectionEquality().hash(_commonIds),
-        confinement,
-        devmode,
-        downloadSize,
-        hold,
-        installDate,
-        installedSize,
-        jailmode,
-        license,
         const DeepCollectionEquality().hash(_media),
-        mountedFrom,
-        private,
-        publisher,
+        confinement,
         status,
-        storeUrl,
-        summary,
+        devmode,
+        jailmode,
+        private,
+        base,
         title,
         trackingChannel,
-        const DeepCollectionEquality().hash(_tracks),
-        website
+        website,
+        license,
+        mountedFrom,
+        storeUrl,
+        hold,
+        installDate,
+        downloadSize,
+        installedSize,
+        publisher
       ]);
 
   @JsonKey(ignore: true)
@@ -1963,34 +1965,34 @@ abstract class _Snap implements Snap {
       required final String revision,
       required final String version,
       required final String channel,
-      required final String contact,
-      required final String description,
       required final String type,
-      final String? base,
+      final String contact,
+      final String description,
+      final String summary,
+      final Map<String, SnapChannel> channels,
       final List<SnapApp> apps,
       final List<SnapCategory> categories,
-      final Map<String, SnapChannel> channels,
+      final List<String> tracks,
       final List<String> commonIds,
+      final List<SnapMedia> media,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       final SnapConfinement confinement,
-      final bool devmode,
-      final int? downloadSize,
-      final DateTime? hold,
-      final DateTime? installDate,
-      final int? installedSize,
-      final bool jailmode,
-      final String? license,
-      final List<SnapMedia> media,
-      final String? mountedFrom,
-      final bool private,
-      final SnapPublisher? publisher,
       final SnapStatus status,
-      final String? storeUrl,
-      final String summary,
+      final bool devmode,
+      final bool jailmode,
+      final bool private,
+      final String? base,
       final String? title,
       final String? trackingChannel,
-      final List<String> tracks,
-      final String? website}) = _$SnapImpl;
+      final String? website,
+      final String? license,
+      final String? mountedFrom,
+      final String? storeUrl,
+      final DateTime? hold,
+      final DateTime? installDate,
+      final int? downloadSize,
+      final int? installedSize,
+      final SnapPublisher? publisher}) = _$SnapImpl;
 
   factory _Snap.fromJson(Map<String, dynamic> json) = _$SnapImpl.fromJson;
 
@@ -2005,60 +2007,60 @@ abstract class _Snap implements Snap {
   @override
   String get channel;
   @override
+  String get type;
+  @override
   String get contact;
   @override
   String get description;
   @override
-  String get type;
+  String get summary;
   @override
-  String? get base;
+  Map<String, SnapChannel> get channels;
   @override
   List<SnapApp> get apps;
   @override
   List<SnapCategory> get categories;
   @override
-  Map<String, SnapChannel> get channels;
+  List<String> get tracks;
   @override
   List<String> get commonIds;
+  @override
+  List<SnapMedia> get media;
   @override
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   SnapConfinement get confinement;
   @override
+  SnapStatus get status;
+  @override
   bool get devmode;
-  @override
-  int? get downloadSize;
-  @override
-  DateTime? get hold;
-  @override
-  DateTime? get installDate;
-  @override
-  int? get installedSize;
   @override
   bool get jailmode;
   @override
-  String? get license;
-  @override
-  List<SnapMedia> get media;
-  @override
-  String? get mountedFrom;
-  @override
   bool get private;
   @override
-  SnapPublisher? get publisher;
-  @override
-  SnapStatus get status;
-  @override
-  String? get storeUrl;
-  @override
-  String get summary;
+  String? get base;
   @override
   String? get title;
   @override
   String? get trackingChannel;
   @override
-  List<String> get tracks;
-  @override
   String? get website;
+  @override
+  String? get license;
+  @override
+  String? get mountedFrom;
+  @override
+  String? get storeUrl;
+  @override
+  DateTime? get hold;
+  @override
+  DateTime? get installDate;
+  @override
+  int? get downloadSize;
+  @override
+  int? get installedSize;
+  @override
+  SnapPublisher? get publisher;
   @override
   @JsonKey(ignore: true)
   _$$SnapImplCopyWith<_$SnapImpl> get copyWith =>

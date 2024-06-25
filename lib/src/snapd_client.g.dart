@@ -113,10 +113,15 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
       revision: json['revision'] as String,
       version: json['version'] as String,
       channel: json['channel'] as String,
-      contact: json['contact'] as String,
-      description: json['description'] as String,
       type: json['type'] as String,
-      base: json['base'] as String?,
+      contact: json['contact'] as String? ?? '',
+      description: json['description'] as String? ?? '',
+      summary: json['summary'] as String? ?? '',
+      channels: (json['channels'] as Map?)?.map(
+            (k, e) => MapEntry(k as String,
+                SnapChannel.fromJson(Map<String, dynamic>.from(e as Map))),
+          ) ??
+          const {},
       apps: (json['apps'] as List<dynamic>?)
               ?.map(
                   (e) => SnapApp.fromJson(Map<String, dynamic>.from(e as Map)))
@@ -127,51 +132,46 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
                   SnapCategory.fromJson(Map<String, dynamic>.from(e as Map)))
               .toList() ??
           const [],
-      channels: (json['channels'] as Map?)?.map(
-            (k, e) => MapEntry(k as String,
-                SnapChannel.fromJson(Map<String, dynamic>.from(e as Map))),
-          ) ??
-          const {},
+      tracks: (json['tracks'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const [],
       commonIds: (json['common-ids'] as List<dynamic>?)
               ?.map((e) => e as String)
+              .toList() ??
+          const [],
+      media: (json['media'] as List<dynamic>?)
+              ?.map((e) =>
+                  SnapMedia.fromJson(Map<String, dynamic>.from(e as Map)))
               .toList() ??
           const [],
       confinement: $enumDecodeNullable(
               _$SnapConfinementEnumMap, json['confinement'],
               unknownValue: SnapConfinement.unknown) ??
           SnapConfinement.unknown,
+      status: $enumDecodeNullable(_$SnapStatusEnumMap, json['status']) ??
+          SnapStatus.unknown,
       devmode: json['devmode'] as bool? ?? false,
-      downloadSize: (json['download-size'] as num?)?.toInt(),
+      jailmode: json['jailmode'] as bool? ?? false,
+      private: json['private'] as bool? ?? false,
+      base: json['base'] as String?,
+      title: json['title'] as String?,
+      trackingChannel: json['tracking-channel'] as String?,
+      website: json['website'] as String?,
+      license: json['license'] as String?,
+      mountedFrom: json['mounted-from'] as String?,
+      storeUrl: json['store-url'] as String?,
       hold:
           json['hold'] == null ? null : DateTime.parse(json['hold'] as String),
       installDate: json['install-date'] == null
           ? null
           : DateTime.parse(json['install-date'] as String),
+      downloadSize: (json['download-size'] as num?)?.toInt(),
       installedSize: (json['installed-size'] as num?)?.toInt(),
-      jailmode: json['jailmode'] as bool? ?? false,
-      license: json['license'] as String?,
-      media: (json['media'] as List<dynamic>?)
-              ?.map((e) =>
-                  SnapMedia.fromJson(Map<String, dynamic>.from(e as Map)))
-              .toList() ??
-          const [],
-      mountedFrom: json['mounted-from'] as String?,
-      private: json['private'] as bool? ?? false,
       publisher: json['publisher'] == null
           ? null
           : SnapPublisher.fromJson(
               Map<String, dynamic>.from(json['publisher'] as Map)),
-      status: $enumDecodeNullable(_$SnapStatusEnumMap, json['status']) ??
-          SnapStatus.unknown,
-      storeUrl: json['store-url'] as String?,
-      summary: json['summary'] as String? ?? '',
-      title: json['title'] as String?,
-      trackingChannel: json['tracking-channel'] as String?,
-      tracks: (json['tracks'] as List<dynamic>?)
-              ?.map((e) => e as String)
-              .toList() ??
-          const [],
-      website: json['website'] as String?,
     );
 
 Map<String, dynamic> _$$SnapImplToJson(_$SnapImpl instance) =>
@@ -181,33 +181,33 @@ Map<String, dynamic> _$$SnapImplToJson(_$SnapImpl instance) =>
       'revision': instance.revision,
       'version': instance.version,
       'channel': instance.channel,
+      'type': instance.type,
       'contact': instance.contact,
       'description': instance.description,
-      'type': instance.type,
-      'base': instance.base,
+      'summary': instance.summary,
+      'channels': instance.channels.map((k, e) => MapEntry(k, e.toJson())),
       'apps': instance.apps.map((e) => e.toJson()).toList(),
       'categories': instance.categories.map((e) => e.toJson()).toList(),
-      'channels': instance.channels.map((k, e) => MapEntry(k, e.toJson())),
+      'tracks': instance.tracks,
       'common-ids': instance.commonIds,
-      'confinement': _$SnapConfinementEnumMap[instance.confinement]!,
-      'devmode': instance.devmode,
-      'download-size': instance.downloadSize,
-      'hold': instance.hold?.toIso8601String(),
-      'install-date': instance.installDate?.toIso8601String(),
-      'installed-size': instance.installedSize,
-      'jailmode': instance.jailmode,
-      'license': instance.license,
       'media': instance.media.map((e) => e.toJson()).toList(),
-      'mounted-from': instance.mountedFrom,
-      'private': instance.private,
-      'publisher': instance.publisher?.toJson(),
+      'confinement': _$SnapConfinementEnumMap[instance.confinement]!,
       'status': _$SnapStatusEnumMap[instance.status]!,
-      'store-url': instance.storeUrl,
-      'summary': instance.summary,
+      'devmode': instance.devmode,
+      'jailmode': instance.jailmode,
+      'private': instance.private,
+      'base': instance.base,
       'title': instance.title,
       'tracking-channel': instance.trackingChannel,
-      'tracks': instance.tracks,
       'website': instance.website,
+      'license': instance.license,
+      'mounted-from': instance.mountedFrom,
+      'store-url': instance.storeUrl,
+      'hold': instance.hold?.toIso8601String(),
+      'install-date': instance.installDate?.toIso8601String(),
+      'download-size': instance.downloadSize,
+      'installed-size': instance.installedSize,
+      'publisher': instance.publisher?.toJson(),
     };
 
 const _$SnapStatusEnumMap = {
