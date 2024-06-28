@@ -2,12 +2,13 @@
 
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:path/path.dart' as p;
 import 'package:yaml/yaml.dart';
 
-part 'snapd_client.g.dart';
 part 'snapd_client.freezed.dart';
+part 'snapd_client.g.dart';
 
 /// The current state of a snap.
 enum SnapStatus { unknown, available, priced, installed, active }
@@ -37,6 +38,10 @@ enum SnapFindFilter { refresh, private }
 
 /// Scope to search snaps.
 enum SnapFindScope { wide }
+
+enum SnapdRequestOutcome { allow, deny }
+
+enum SnapdRequestLifespan { single, session, forever, timespan }
 
 class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
   const _SnapdDateTimeConverter();
@@ -399,6 +404,36 @@ class SnapdTaskProgress with _$SnapdTaskProgress {
 
   factory SnapdTaskProgress.fromJson(Map<String, dynamic> json) =>
       _$SnapdTaskProgressFromJson(json);
+}
+
+/// Constraints for a [SnapdRule].
+@freezed
+class SnapdConstraints with _$SnapdConstraints {
+  const factory SnapdConstraints({
+    String? pathPattern,
+    List<String>? permissions,
+  }) = _SnapdConstraint;
+
+  factory SnapdConstraints.fromJson(Map<String, dynamic> json) =>
+      _$SnapdConstraintsFromJson(json);
+}
+
+/// Details of a prompting rule.
+@freezed
+class SnapdRule with _$SnapdRule {
+  const factory SnapdRule({
+    required String id,
+    required DateTime timestamp,
+    required String snap,
+    required String interface,
+    required SnapdConstraints constraints,
+    required SnapdRequestOutcome outcome,
+    required SnapdRequestLifespan lifespan,
+    DateTime? expiration,
+  }) = _SnapdRule;
+
+  factory SnapdRule.fromJson(Map<String, dynamic> json) =>
+      _$SnapdRuleFromJson(json);
 }
 
 /// General response from snapd.
@@ -843,6 +878,56 @@ class SnapdClient {
       queryParameters,
     );
     return SnapdChange.fromJson(result);
+  }
+
+  /// Gets the prompting rule with the given [id]. Optionally, [userId] can be
+  /// provided to get the rule for a specific user (admin-only).
+  Future<SnapdRule> getRule(String id, {String? userId}) async {
+    final queryParameters = <String, String>{
+      if (userId != null) 'user': userId,
+    };
+    final result = await _getSync<Map<String, dynamic>>(
+      '/v2/interfaces/requests/rules/$id',
+      queryParameters,
+    );
+    return SnapdRule.fromJson(result);
+  }
+
+  /// Gets the prompting rules for the given [snap] and [interface]. Optionally,
+  /// [userId] can be provided to get the rules for a specific user (admin-only).
+  Future<List<SnapdRule>> getRules({
+    String? snap,
+    String? interface,
+    String? userId,
+  }) async {
+    final queryParameters = <String, String>{
+      if (snap != null) 'snap': snap,
+      if (interface != null) 'interface': interface,
+      if (userId != null) 'user': userId,
+    };
+    final result = await _getSyncList(
+      '/v2/interfaces/requests/rules',
+      queryParameters,
+    );
+    return result.map(SnapdRule.fromJson).toList();
+  }
+
+  /// Removes the prompting rule with the given [id].
+  Future<void> removeRule(String id) async {
+    final request = <String, dynamic>{'action': 'remove'};
+    await _postSync('/v2/interfaces/requests/rules/$id', request);
+  }
+
+  /// Removes the prompting rules for the given [snap] and [interface].
+  Future<void> removeRules(String snap, {String? interface}) async {
+    final request = <String, dynamic>{
+      'action': 'remove',
+      'selector': <String, dynamic>{
+        'snap': snap,
+        if (interface != null) 'interface': interface,
+      },
+    };
+    await _postSync('/v2/interfaces/requests/rules', request);
   }
 
   /// Terminates all active connections. If a client remains unclosed, the Dart

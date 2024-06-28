@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:collection/collection.dart';
 import 'package:snapd/snapd.dart';
 import 'package:test/test.dart';
 
@@ -478,6 +479,7 @@ class MockSnapdServer {
     this.onClassic = false,
     this.refreshLast,
     this.refreshNext,
+    List<SnapdRule> rules = const [],
     this.series,
     List<MockSnap> snaps = const [],
     List<MockSnap> storeSnaps = const [],
@@ -497,6 +499,9 @@ class MockSnapdServer {
     for (final declaration in snapDeclarations) {
       this.snapDeclarations[declaration.snapName] = declaration;
     }
+    for (final rule in rules) {
+      this.rules.add(rule);
+    }
   }
   Directory? _tempDir;
   late String socketPath;
@@ -515,6 +520,7 @@ class MockSnapdServer {
   final String? refreshLast;
   final String? refreshNext;
   final removedSnaps = <String, MockSnap>{};
+  final rules = <SnapdRule>[];
   final String? series;
   final snaps = <String, MockSnap>{};
   final storeSnaps = <String, MockSnap>{};
@@ -570,6 +576,20 @@ class MockSnapdServer {
       _processGetChanges(request);
     } else if (method == 'GET' && path.startsWith('/v2/changes/')) {
       _processGetChange(request, path.substring('/v2/changes/'.length));
+    } else if (method == 'GET' && path == '/v2/interfaces/requests/rules') {
+      _processGetRules(request);
+    } else if (method == 'GET' &&
+        path.startsWith('/v2/interfaces/requests/rules/')) {
+      _processGetRule(
+          request, path.substring('/v2/interfaces/requests/rules/'.length));
+    } else if (method == 'POST' && path == '/v2/interfaces/requests/rules') {
+      await _processPostRules(request);
+    } else if (method == 'POST' &&
+        path.startsWith('/v2/interfaces/requests/rules/')) {
+      await _processPostRule(
+        request,
+        path.substring('/v2/interfaces/requests/rules/'.length),
+      );
     } else if (method == 'POST' && path.startsWith('/v2/changes/')) {
       await _processPostChange(request, path.substring('/v2/changes/'.length));
     } else if (method == 'GET' && path == '/v2/find') {
@@ -768,6 +788,90 @@ class MockSnapdServer {
     }
 
     _writeSyncResponse(request.response, change.toJson());
+  }
+
+  void _processGetRules(HttpRequest request) {
+    final parameters = request.uri.queryParameters;
+    final snap = parameters['snap'];
+    final interface = parameters['interface'];
+    final rules = this.rules.where((rule) {
+      if (snap != null && rule.snap != snap) {
+        return false;
+      }
+      if (interface != null && rule.interface != interface) {
+        return false;
+      }
+      return true;
+    });
+
+    _writeSyncResponse(
+      request.response,
+      rules.map((r) => r.toJson()).toList(),
+    );
+  }
+
+  void _processGetRule(HttpRequest request, String id) {
+    final rule = rules.firstWhereOrNull((r) => r.id == id);
+    if (rule == null) {
+      request.response.statusCode = HttpStatus.notFound;
+      _writeErrorResponse(request.response, 'not found');
+      return;
+    }
+
+    _writeSyncResponse(request.response, rule.toJson());
+  }
+
+  Future<void> _processPostRules(HttpRequest request) async {
+    final req = await _readJson(request);
+    final action = req['action'];
+
+    switch (action) {
+      case 'remove':
+        final selector = req['selector'] as Map<String, dynamic>?;
+        if (selector == null) {
+          _writeErrorResponse(request.response, 'missing selector');
+          return;
+        }
+        final snap = selector['snap'] as String?;
+        if (snap == null) {
+          _writeErrorResponse(request.response, 'missing snap');
+          return;
+        }
+        final interface = selector['interface'] as String?;
+
+        rules.removeWhere(
+          (rule) =>
+              rule.snap == snap &&
+              (interface == null || rule.interface == interface),
+        );
+        _writeSyncResponse(
+          request.response,
+          rules.map((r) => r.toJson()).toList(),
+        );
+
+        return;
+      default:
+        _writeErrorResponse(request.response, 'unknown action');
+    }
+  }
+
+  Future<void> _processPostRule(HttpRequest request, String id) async {
+    final req = await _readJson(request);
+    final action = req['action'];
+
+    switch (action) {
+      case 'remove':
+        final rule = rules.firstWhereOrNull((r) => r.id == id);
+        if (rule == null) {
+          _writeErrorResponse(request.response, 'not found');
+          return;
+        }
+        rules.removeWhere((rule) => rule.id == id);
+        _writeSyncResponse(request.response, rule.toJson());
+        return;
+      default:
+        _writeErrorResponse(request.response, 'unknown action');
+    }
   }
 
   Future<void> _processPostChange(HttpRequest request, String id) async {
@@ -3029,5 +3133,106 @@ void main() {
     nameChanges = await client.getChanges(name: 'snap2');
     expect(nameChanges, hasLength(1));
     expect(nameChanges[0].id, equals('2'));
+  });
+
+  test('rules', () async {
+    final rules = [
+      SnapdRule(
+        id: 'rule1',
+        timestamp: DateTime(2000),
+        snap: 'snap',
+        interface: 'home',
+        constraints: const SnapdConstraints(
+          pathPattern: '/home/user/Downloads/*',
+          permissions: ['read'],
+        ),
+        outcome: SnapdRequestOutcome.allow,
+        lifespan: SnapdRequestLifespan.forever,
+      ),
+      SnapdRule(
+        id: 'rule2',
+        timestamp: DateTime(2002),
+        snap: 'snap2',
+        interface: 'home',
+        constraints: const SnapdConstraints(
+          pathPattern: '/home/user/Downloads/*.pdf',
+          permissions: ['read', 'write'],
+        ),
+        outcome: SnapdRequestOutcome.deny,
+        lifespan: SnapdRequestLifespan.timespan,
+        expiration: DateTime(2003),
+      ),
+    ];
+
+    final snapd = MockSnapdServer(rules: rules);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final allRules = await client.getRules();
+    expect(allRules, hasLength(2));
+    expect(allRules[0], equals(rules[0]));
+    expect(allRules[1], equals(rules[1]));
+
+    final rule = await client.getRule('rule2');
+    expect(rule, equals(rules[1]));
+
+    final snap1Rules = await client.getRules(snap: 'snap');
+    expect(snap1Rules, hasLength(1));
+    expect(snap1Rules[0], equals(rules[0]));
+  });
+
+  test('rules - delete', () async {
+    final rules = [
+      SnapdRule(
+        id: 'rule1',
+        timestamp: DateTime(2000),
+        snap: 'snap',
+        interface: 'home',
+        constraints: const SnapdConstraints(
+          pathPattern: '/home/user/Downloads/*',
+          permissions: ['read'],
+        ),
+        outcome: SnapdRequestOutcome.allow,
+        lifespan: SnapdRequestLifespan.forever,
+      ),
+      SnapdRule(
+        id: 'rule2',
+        timestamp: DateTime(2002),
+        snap: 'snap2',
+        interface: 'home',
+        constraints: const SnapdConstraints(
+          pathPattern: '/home/user/Downloads/*.pdf',
+          permissions: ['read', 'write'],
+        ),
+        outcome: SnapdRequestOutcome.deny,
+        lifespan: SnapdRequestLifespan.timespan,
+        expiration: DateTime(2003),
+      ),
+    ];
+
+    final snapd = MockSnapdServer(rules: rules);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(await client.getRules(), hasLength(2));
+
+    await client.removeRule('rule2');
+
+    final allRules = await client.getRules();
+    expect(allRules, hasLength(1));
   });
 }
