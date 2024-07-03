@@ -5500,3 +5500,240 @@ abstract class _SnapdRule implements SnapdRule {
   _$$SnapdRuleImplCopyWith<_$SnapdRuleImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
+
+SnapdRuleMask _$SnapdRuleMaskFromJson(Map<String, dynamic> json) {
+  return _SnapdRuleMask.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapdRuleMask {
+  String get snap => throw _privateConstructorUsedError;
+  String get interface => throw _privateConstructorUsedError;
+  SnapdConstraints get constraints => throw _privateConstructorUsedError;
+  SnapdRequestOutcome get outcome => throw _privateConstructorUsedError;
+  SnapdRequestLifespan get lifespan => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $SnapdRuleMaskCopyWith<SnapdRuleMask> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapdRuleMaskCopyWith<$Res> {
+  factory $SnapdRuleMaskCopyWith(
+          SnapdRuleMask value, $Res Function(SnapdRuleMask) then) =
+      _$SnapdRuleMaskCopyWithImpl<$Res, SnapdRuleMask>;
+  @useResult
+  $Res call(
+      {String snap,
+      String interface,
+      SnapdConstraints constraints,
+      SnapdRequestOutcome outcome,
+      SnapdRequestLifespan lifespan});
+
+  $SnapdConstraintsCopyWith<$Res> get constraints;
+}
+
+/// @nodoc
+class _$SnapdRuleMaskCopyWithImpl<$Res, $Val extends SnapdRuleMask>
+    implements $SnapdRuleMaskCopyWith<$Res> {
+  _$SnapdRuleMaskCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? snap = null,
+    Object? interface = null,
+    Object? constraints = null,
+    Object? outcome = null,
+    Object? lifespan = null,
+  }) {
+    return _then(_value.copyWith(
+      snap: null == snap
+          ? _value.snap
+          : snap // ignore: cast_nullable_to_non_nullable
+              as String,
+      interface: null == interface
+          ? _value.interface
+          : interface // ignore: cast_nullable_to_non_nullable
+              as String,
+      constraints: null == constraints
+          ? _value.constraints
+          : constraints // ignore: cast_nullable_to_non_nullable
+              as SnapdConstraints,
+      outcome: null == outcome
+          ? _value.outcome
+          : outcome // ignore: cast_nullable_to_non_nullable
+              as SnapdRequestOutcome,
+      lifespan: null == lifespan
+          ? _value.lifespan
+          : lifespan // ignore: cast_nullable_to_non_nullable
+              as SnapdRequestLifespan,
+    ) as $Val);
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $SnapdConstraintsCopyWith<$Res> get constraints {
+    return $SnapdConstraintsCopyWith<$Res>(_value.constraints, (value) {
+      return _then(_value.copyWith(constraints: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapdRuleMaskImplCopyWith<$Res>
+    implements $SnapdRuleMaskCopyWith<$Res> {
+  factory _$$SnapdRuleMaskImplCopyWith(
+          _$SnapdRuleMaskImpl value, $Res Function(_$SnapdRuleMaskImpl) then) =
+      __$$SnapdRuleMaskImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String snap,
+      String interface,
+      SnapdConstraints constraints,
+      SnapdRequestOutcome outcome,
+      SnapdRequestLifespan lifespan});
+
+  @override
+  $SnapdConstraintsCopyWith<$Res> get constraints;
+}
+
+/// @nodoc
+class __$$SnapdRuleMaskImplCopyWithImpl<$Res>
+    extends _$SnapdRuleMaskCopyWithImpl<$Res, _$SnapdRuleMaskImpl>
+    implements _$$SnapdRuleMaskImplCopyWith<$Res> {
+  __$$SnapdRuleMaskImplCopyWithImpl(
+      _$SnapdRuleMaskImpl _value, $Res Function(_$SnapdRuleMaskImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? snap = null,
+    Object? interface = null,
+    Object? constraints = null,
+    Object? outcome = null,
+    Object? lifespan = null,
+  }) {
+    return _then(_$SnapdRuleMaskImpl(
+      snap: null == snap
+          ? _value.snap
+          : snap // ignore: cast_nullable_to_non_nullable
+              as String,
+      interface: null == interface
+          ? _value.interface
+          : interface // ignore: cast_nullable_to_non_nullable
+              as String,
+      constraints: null == constraints
+          ? _value.constraints
+          : constraints // ignore: cast_nullable_to_non_nullable
+              as SnapdConstraints,
+      outcome: null == outcome
+          ? _value.outcome
+          : outcome // ignore: cast_nullable_to_non_nullable
+              as SnapdRequestOutcome,
+      lifespan: null == lifespan
+          ? _value.lifespan
+          : lifespan // ignore: cast_nullable_to_non_nullable
+              as SnapdRequestLifespan,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapdRuleMaskImpl implements _SnapdRuleMask {
+  const _$SnapdRuleMaskImpl(
+      {required this.snap,
+      required this.interface,
+      required this.constraints,
+      required this.outcome,
+      required this.lifespan});
+
+  factory _$SnapdRuleMaskImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SnapdRuleMaskImplFromJson(json);
+
+  @override
+  final String snap;
+  @override
+  final String interface;
+  @override
+  final SnapdConstraints constraints;
+  @override
+  final SnapdRequestOutcome outcome;
+  @override
+  final SnapdRequestLifespan lifespan;
+
+  @override
+  String toString() {
+    return 'SnapdRuleMask(snap: $snap, interface: $interface, constraints: $constraints, outcome: $outcome, lifespan: $lifespan)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapdRuleMaskImpl &&
+            (identical(other.snap, snap) || other.snap == snap) &&
+            (identical(other.interface, interface) ||
+                other.interface == interface) &&
+            (identical(other.constraints, constraints) ||
+                other.constraints == constraints) &&
+            (identical(other.outcome, outcome) || other.outcome == outcome) &&
+            (identical(other.lifespan, lifespan) ||
+                other.lifespan == lifespan));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, snap, interface, constraints, outcome, lifespan);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapdRuleMaskImplCopyWith<_$SnapdRuleMaskImpl> get copyWith =>
+      __$$SnapdRuleMaskImplCopyWithImpl<_$SnapdRuleMaskImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapdRuleMaskImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapdRuleMask implements SnapdRuleMask {
+  const factory _SnapdRuleMask(
+      {required final String snap,
+      required final String interface,
+      required final SnapdConstraints constraints,
+      required final SnapdRequestOutcome outcome,
+      required final SnapdRequestLifespan lifespan}) = _$SnapdRuleMaskImpl;
+
+  factory _SnapdRuleMask.fromJson(Map<String, dynamic> json) =
+      _$SnapdRuleMaskImpl.fromJson;
+
+  @override
+  String get snap;
+  @override
+  String get interface;
+  @override
+  SnapdConstraints get constraints;
+  @override
+  SnapdRequestOutcome get outcome;
+  @override
+  SnapdRequestLifespan get lifespan;
+  @override
+  @JsonKey(ignore: true)
+  _$$SnapdRuleMaskImplCopyWith<_$SnapdRuleMaskImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}

@@ -581,7 +581,9 @@ class MockSnapdServer {
     } else if (method == 'GET' &&
         path.startsWith('/v2/interfaces/requests/rules/')) {
       _processGetRule(
-          request, path.substring('/v2/interfaces/requests/rules/'.length));
+        request,
+        path.substring('/v2/interfaces/requests/rules/'.length),
+      );
     } else if (method == 'POST' && path == '/v2/interfaces/requests/rules') {
       await _processPostRules(request);
     } else if (method == 'POST' &&
@@ -826,6 +828,29 @@ class MockSnapdServer {
     final action = req['action'];
 
     switch (action) {
+      case 'add':
+        final ruleMask = req['rule'] as Map<String, dynamic>?;
+        if (ruleMask == null) {
+          _writeErrorResponse(request.response, 'missing rule');
+          return;
+        }
+        final rule = SnapdRuleMask.fromJson(ruleMask);
+        rules.add(
+          SnapdRule(
+            id: rule.hashCode.toString(),
+            timestamp: DateTime.now(),
+            snap: rule.snap,
+            interface: rule.interface,
+            constraints: rule.constraints,
+            outcome: rule.outcome,
+            lifespan: rule.lifespan,
+          ),
+        );
+        _writeSyncResponse(
+          request.response,
+          rules.map((r) => r.toJson()).toList(),
+        );
+        return;
       case 'remove':
         final selector = req['selector'] as Map<String, dynamic>?;
         if (selector == null) {
@@ -3234,5 +3259,39 @@ void main() {
 
     final allRules = await client.getRules();
     expect(allRules, hasLength(1));
+  });
+
+  test('rules - add', () async {
+    final snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    const rule = SnapdRuleMask(
+      snap: 'snap',
+      interface: 'home',
+      constraints: SnapdConstraints(
+        pathPattern: '/home/user/Downloads/*',
+        permissions: ['read'],
+      ),
+      outcome: SnapdRequestOutcome.allow,
+      lifespan: SnapdRequestLifespan.forever,
+    );
+
+    await client.addRule(rule);
+
+    final allRules = await client.getRules();
+    expect(allRules, hasLength(1));
+    expect(allRules[0].interface, rule.interface);
+    expect(allRules[0].snap, equals(rule.snap));
+    expect(allRules[0].constraints, equals(rule.constraints));
+    expect(allRules[0].outcome, equals(rule.outcome));
+    expect(allRules[0].lifespan, equals(rule.lifespan));
   });
 }

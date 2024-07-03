@@ -562,3 +562,22 @@ const _$SnapdRequestLifespanEnumMap = {
   SnapdRequestLifespan.forever: 'forever',
   SnapdRequestLifespan.timespan: 'timespan',
 };
+
+_$SnapdRuleMaskImpl _$$SnapdRuleMaskImplFromJson(Map json) =>
+    _$SnapdRuleMaskImpl(
+      snap: json['snap'] as String,
+      interface: json['interface'] as String,
+      constraints: SnapdConstraints.fromJson(
+          Map<String, dynamic>.from(json['constraints'] as Map)),
+      outcome: $enumDecode(_$SnapdRequestOutcomeEnumMap, json['outcome']),
+      lifespan: $enumDecode(_$SnapdRequestLifespanEnumMap, json['lifespan']),
+    );
+
+Map<String, dynamic> _$$SnapdRuleMaskImplToJson(_$SnapdRuleMaskImpl instance) =>
+    <String, dynamic>{
+      'snap': instance.snap,
+      'interface': instance.interface,
+      'constraints': instance.constraints.toJson(),
+      'outcome': _$SnapdRequestOutcomeEnumMap[instance.outcome]!,
+      'lifespan': _$SnapdRequestLifespanEnumMap[instance.lifespan]!,
+    };

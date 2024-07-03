@@ -436,6 +436,21 @@ class SnapdRule with _$SnapdRule {
       _$SnapdRuleFromJson(json);
 }
 
+@freezed
+class SnapdRuleMask with _$SnapdRuleMask {
+  const factory SnapdRuleMask({
+    required String snap,
+    required String interface,
+    required SnapdConstraints constraints,
+    required SnapdRequestOutcome outcome,
+    required SnapdRequestLifespan lifespan,
+    // Duration? duration,
+  }) = _SnapdRuleMask;
+
+  factory SnapdRuleMask.fromJson(Map<String, dynamic> json) =>
+      _$SnapdRuleMaskFromJson(json);
+}
+
 /// General response from snapd.
 abstract class _SnapdResponse {
   const _SnapdResponse({this.statusCode = 0, this.status = ''});
@@ -916,6 +931,14 @@ class SnapdClient {
   Future<void> removeRule(String id) async {
     final request = <String, dynamic>{'action': 'remove'};
     await _postSync('/v2/interfaces/requests/rules/$id', request);
+  }
+
+  Future<void> addRule(SnapdRuleMask rule) async {
+    final request = <String, dynamic>{
+      'action': 'add',
+      'rule': rule.toJson(),
+    };
+    await _postSync('/v2/interfaces/requests/rules', request);
   }
 
   /// Removes the prompting rules for the given [snap] and [interface].
