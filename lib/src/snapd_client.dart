@@ -436,6 +436,7 @@ class SnapdRule with _$SnapdRule {
       _$SnapdRuleFromJson(json);
 }
 
+/// Mask for a creating or adding a prompting rule.
 @freezed
 class SnapdRuleMask with _$SnapdRuleMask {
   const factory SnapdRuleMask({
@@ -933,6 +934,7 @@ class SnapdClient {
     await _postSync('/v2/interfaces/requests/rules/$id', request);
   }
 
+  /// Adds a prompting rule.
   Future<void> addRule(SnapdRuleMask rule) async {
     final request = <String, dynamic>{
       'action': 'add',
