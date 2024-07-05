@@ -237,6 +237,7 @@ class SnapdSystemInfoResponse with _$SnapdSystemInfoResponse {
     @JsonKey(unknownEnumValue: SnapConfinement.unknown)
     @Default(SnapConfinement.unknown)
     SnapConfinement confinement,
+    Map<String, dynamic>? features,
     String? kernelVersion,
     @Default(false) bool managed,
     @Default(false) bool onClassic,
@@ -955,6 +956,22 @@ class SnapdClient {
     await _postSync('/v2/interfaces/requests/rules', request);
   }
 
+  /// Enables apparmor prompting.
+  Future<String> enablePrompting() async {
+    final request = <String, dynamic>{
+      'experimental': {'apparmor-prompting': true},
+    };
+    return _putAsync('/v2/snaps/system/conf', request);
+  }
+
+  /// Disables apparmor prompting.
+  Future<String> disablePrompting() async {
+    final request = <String, dynamic>{
+      'experimental': {'apparmor-prompting': false},
+    };
+    return _putAsync('/v2/snaps/system/conf', request);
+  }
+
   /// Terminates all active connections. If a client remains unclosed, the Dart
   /// process may not terminate.
   void close() {
@@ -1017,7 +1034,19 @@ class SnapdClient {
   /// Returns the change ID for this operation, use [getChange] to get the
   /// status of this operation.
   Future<String> _postAsync(String path, [dynamic body]) async {
-    final request = await _client.post('localhost', 0, path);
+    final snapdResponse = await _openAsync('post', path, body);
+    return snapdResponse;
+  }
+
+  /// Does an asynchronous PUT request to snapd.
+  Future<String> _putAsync(String path, [dynamic body]) async {
+    final snapdResponse = await _openAsync('put', path, body);
+    return snapdResponse;
+  }
+
+  /// Helper function to allow for both POST and PUT requests.
+  Future<String> _openAsync(String method, String path, [dynamic body]) async {
+    final request = await _client.open(method, 'localhost', 0, path);
     _setHeaders(request);
     request.headers.contentType = ContentType('application', 'json');
     request.write(json.encode(body));

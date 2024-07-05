@@ -477,6 +477,7 @@ class MockSnapdServer {
     this.kernelVersion,
     this.managed = false,
     this.onClassic = false,
+    this.promptingEnabled = false,
     this.refreshLast,
     this.refreshNext,
     List<SnapdRule> rules = const [],
@@ -517,6 +518,7 @@ class MockSnapdServer {
   final String? kernelVersion;
   final bool managed;
   final bool onClassic;
+  bool promptingEnabled;
   final String? refreshLast;
   final String? refreshNext;
   final removedSnaps = <String, MockSnap>{};
@@ -592,6 +594,8 @@ class MockSnapdServer {
         request,
         path.substring('/v2/interfaces/requests/rules/'.length),
       );
+    } else if (method == 'PUT' && path == '/v2/snaps/system/conf') {
+      await _processPutSystemConf(request);
     } else if (method == 'POST' && path.startsWith('/v2/changes/')) {
       await _processPostChange(request, path.substring('/v2/changes/'.length));
     } else if (method == 'GET' && path == '/v2/find') {
@@ -897,6 +901,24 @@ class MockSnapdServer {
       default:
         _writeErrorResponse(request.response, 'unknown action');
     }
+  }
+
+  Future<void> _processPutSystemConf(HttpRequest request) async {
+    final req = await _readJson(request);
+    final promptingEnabled =
+        req['experimental']?['apparmor-prompting'] as bool?;
+
+    if (promptingEnabled != null) {
+      this.promptingEnabled = promptingEnabled;
+    }
+
+    final change = _addChange(
+      ready: true,
+      tasks: [
+        MockTask(id: '0', progress: MockTaskProgress(done: 10, total: 10)),
+      ],
+    );
+    _writeAsyncResponse(request.response, change.id);
   }
 
   Future<void> _processPostChange(HttpRequest request, String id) async {
@@ -1280,6 +1302,12 @@ class MockSnapdServer {
       'architecture': architecture,
       'build-id': buildId,
       'confinement': confinement,
+      'features': {
+        'apparmor-prompting': {
+          'supported': true,
+          'enabled': promptingEnabled,
+        },
+      },
       'kernel-version': kernelVersion,
       'managed': managed,
       'on-classic': onClassic,
@@ -1392,6 +1420,7 @@ void main() {
       kernelVersion: '5.11.0',
       managed: true,
       onClassic: true,
+      promptingEnabled: true,
       refreshLast: '2022-05-28T20:10:00Z',
       refreshNext: '2022-05-29T01:18:00Z',
       series: '16',
@@ -1413,6 +1442,7 @@ void main() {
     expect(info.buildId, equals('2a0c915752b1c3c5dd7980220cd246876fb0a510'));
     expect(info.confinement, equals(SnapConfinement.strict));
     expect(info.kernelVersion, equals('5.11.0'));
+    expect(info.features?['apparmor-prompting']?['supported'], isTrue);
     expect(info.managed, isTrue);
     expect(info.onClassic, isTrue);
     expect(info.refresh.last, equals(DateTime.utc(2022, 5, 28, 20, 10)));
@@ -3293,5 +3323,29 @@ void main() {
     expect(allRules[0].constraints, equals(rule.constraints));
     expect(allRules[0].outcome, equals(rule.outcome));
     expect(allRules[0].lifespan, equals(rule.lifespan));
+  });
+
+  test('apparmor prompting', () async {
+    final snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final systemInfo = await client.systemInfo();
+    expect(systemInfo.features?['apparmor-prompting']?['enabled'], isFalse);
+
+    final changeId = await client.enablePrompting();
+    final change = await client.getChange(changeId);
+
+    expect(change.ready, isTrue);
+
+    final newSystemInfo = await client.systemInfo();
+    expect(newSystemInfo.features?['apparmor-prompting']?['enabled'], isTrue);
   });
 }

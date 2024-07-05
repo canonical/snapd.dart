@@ -256,6 +256,9 @@ _$SnapdSystemInfoResponseImpl _$$SnapdSystemInfoResponseImplFromJson(
               _$SnapConfinementEnumMap, json['confinement'],
               unknownValue: SnapConfinement.unknown) ??
           SnapConfinement.unknown,
+      features: (json['features'] as Map?)?.map(
+        (k, e) => MapEntry(k as String, e),
+      ),
       kernelVersion: json['kernel-version'] as String?,
       managed: json['managed'] as bool? ?? false,
       onClassic: json['on-classic'] as bool? ?? false,
@@ -271,6 +274,7 @@ Map<String, dynamic> _$$SnapdSystemInfoResponseImplToJson(
       'architecture': instance.architecture,
       'build-id': instance.buildId,
       'confinement': _$SnapConfinementEnumMap[instance.confinement]!,
+      'features': instance.features,
       'kernel-version': instance.kernelVersion,
       'managed': instance.managed,
       'on-classic': instance.onClassic,

@@ -2391,6 +2391,7 @@ mixin _$SnapdSystemInfoResponse {
   String? get buildId => throw _privateConstructorUsedError;
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   SnapConfinement get confinement => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get features => throw _privateConstructorUsedError;
   String? get kernelVersion => throw _privateConstructorUsedError;
   bool get managed => throw _privateConstructorUsedError;
   bool get onClassic => throw _privateConstructorUsedError;
@@ -2416,6 +2417,7 @@ abstract class $SnapdSystemInfoResponseCopyWith<$Res> {
       String? buildId,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       SnapConfinement confinement,
+      Map<String, dynamic>? features,
       String? kernelVersion,
       bool managed,
       bool onClassic,
@@ -2444,6 +2446,7 @@ class _$SnapdSystemInfoResponseCopyWithImpl<$Res,
     Object? architecture = freezed,
     Object? buildId = freezed,
     Object? confinement = null,
+    Object? features = freezed,
     Object? kernelVersion = freezed,
     Object? managed = null,
     Object? onClassic = null,
@@ -2468,6 +2471,10 @@ class _$SnapdSystemInfoResponseCopyWithImpl<$Res,
           ? _value.confinement
           : confinement // ignore: cast_nullable_to_non_nullable
               as SnapConfinement,
+      features: freezed == features
+          ? _value.features
+          : features // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
       kernelVersion: freezed == kernelVersion
           ? _value.kernelVersion
           : kernelVersion // ignore: cast_nullable_to_non_nullable
@@ -2519,6 +2526,7 @@ abstract class _$$SnapdSystemInfoResponseImplCopyWith<$Res>
       String? buildId,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       SnapConfinement confinement,
+      Map<String, dynamic>? features,
       String? kernelVersion,
       bool managed,
       bool onClassic,
@@ -2547,6 +2555,7 @@ class __$$SnapdSystemInfoResponseImplCopyWithImpl<$Res>
     Object? architecture = freezed,
     Object? buildId = freezed,
     Object? confinement = null,
+    Object? features = freezed,
     Object? kernelVersion = freezed,
     Object? managed = null,
     Object? onClassic = null,
@@ -2571,6 +2580,10 @@ class __$$SnapdSystemInfoResponseImplCopyWithImpl<$Res>
           ? _value.confinement
           : confinement // ignore: cast_nullable_to_non_nullable
               as SnapConfinement,
+      features: freezed == features
+          ? _value._features
+          : features // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
       kernelVersion: freezed == kernelVersion
           ? _value.kernelVersion
           : kernelVersion // ignore: cast_nullable_to_non_nullable
@@ -2608,12 +2621,14 @@ class _$SnapdSystemInfoResponseImpl implements _SnapdSystemInfoResponse {
       this.buildId,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       this.confinement = SnapConfinement.unknown,
+      final Map<String, dynamic>? features,
       this.kernelVersion,
       this.managed = false,
       this.onClassic = false,
       this.series,
       this.systemMode,
-      this.version});
+      this.version})
+      : _features = features;
 
   factory _$SnapdSystemInfoResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$SnapdSystemInfoResponseImplFromJson(json);
@@ -2627,6 +2642,16 @@ class _$SnapdSystemInfoResponseImpl implements _SnapdSystemInfoResponse {
   @override
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   final SnapConfinement confinement;
+  final Map<String, dynamic>? _features;
+  @override
+  Map<String, dynamic>? get features {
+    final value = _features;
+    if (value == null) return null;
+    if (_features is EqualUnmodifiableMapView) return _features;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
   @override
   final String? kernelVersion;
   @override
@@ -2644,7 +2669,7 @@ class _$SnapdSystemInfoResponseImpl implements _SnapdSystemInfoResponse {
 
   @override
   String toString() {
-    return 'SnapdSystemInfoResponse(refresh: $refresh, architecture: $architecture, buildId: $buildId, confinement: $confinement, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, series: $series, systemMode: $systemMode, version: $version)';
+    return 'SnapdSystemInfoResponse(refresh: $refresh, architecture: $architecture, buildId: $buildId, confinement: $confinement, features: $features, kernelVersion: $kernelVersion, managed: $managed, onClassic: $onClassic, series: $series, systemMode: $systemMode, version: $version)';
   }
 
   @override
@@ -2658,6 +2683,7 @@ class _$SnapdSystemInfoResponseImpl implements _SnapdSystemInfoResponse {
             (identical(other.buildId, buildId) || other.buildId == buildId) &&
             (identical(other.confinement, confinement) ||
                 other.confinement == confinement) &&
+            const DeepCollectionEquality().equals(other._features, _features) &&
             (identical(other.kernelVersion, kernelVersion) ||
                 other.kernelVersion == kernelVersion) &&
             (identical(other.managed, managed) || other.managed == managed) &&
@@ -2677,6 +2703,7 @@ class _$SnapdSystemInfoResponseImpl implements _SnapdSystemInfoResponse {
       architecture,
       buildId,
       confinement,
+      const DeepCollectionEquality().hash(_features),
       kernelVersion,
       managed,
       onClassic,
@@ -2706,6 +2733,7 @@ abstract class _SnapdSystemInfoResponse implements SnapdSystemInfoResponse {
       final String? buildId,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       final SnapConfinement confinement,
+      final Map<String, dynamic>? features,
       final String? kernelVersion,
       final bool managed,
       final bool onClassic,
@@ -2725,6 +2753,8 @@ abstract class _SnapdSystemInfoResponse implements SnapdSystemInfoResponse {
   @override
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   SnapConfinement get confinement;
+  @override
+  Map<String, dynamic>? get features;
   @override
   String? get kernelVersion;
   @override
