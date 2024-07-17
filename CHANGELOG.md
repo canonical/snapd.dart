@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1
+
+* Downgrade version constraints due to Flutter's version pinning.
+
 ## 0.6.0
 
 * Expose status and statusCode in SnapdException.
