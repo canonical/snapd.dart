@@ -51,7 +51,12 @@ class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
 
 /// An exception thrown by a request to snapd.
 class SnapdException implements Exception {
-  SnapdException({required this.message, this.kind});
+  SnapdException({
+    required this.message,
+    this.kind,
+    this.status = '',
+    this.statusCode = 0,
+  });
 
   /// Error kind.
   final String? kind;
@@ -59,8 +64,15 @@ class SnapdException implements Exception {
   /// Message with error.
   final String message;
 
+  /// The stringified status of the exception.
+  final String status;
+
+  /// The statusCode for the exception (defaults to 0).
+  final int statusCode;
+
   @override
-  String toString() => 'SnapdException(kind: $kind, message: $message)';
+  String toString() =>
+      'SnapdException(kind: $kind, message: $message, status: $status, statusCode: $statusCode)';
 }
 
 /// Describes an app provided by a snap.
@@ -473,13 +485,23 @@ class _SnapdErrorResponse extends _SnapdResponse {
   final String? kind;
 
   /// Error value.
-  final dynamic value;
+  final Object? value;
 
   @override
-  dynamic get result => throw SnapdException(kind: kind, message: message);
+  dynamic get result => throw SnapdException(
+        kind: kind,
+        message: message,
+        status: status,
+        statusCode: statusCode,
+      );
 
   @override
-  String get change => throw SnapdException(kind: kind, message: message);
+  String get change => throw SnapdException(
+        kind: kind,
+        message: message,
+        status: status,
+        statusCode: statusCode,
+      );
 }
 
 /// Manages a connection to the snapd server.

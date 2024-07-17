@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+* Expose status and statusCode in SnapdException.
+
 ## 0.5.0
 
 * Use freezed for data classes, with some previously not required fields.
