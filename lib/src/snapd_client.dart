@@ -201,6 +201,7 @@ class Snap with _$Snap {
     int? downloadSize,
     int? installedSize,
     SnapPublisher? publisher,
+    RefreshInhibit? refreshInhibit,
   }) = _Snap;
 
   factory Snap.fromJson(Map<String, dynamic> json) => _$SnapFromJson(json);
@@ -463,6 +464,18 @@ class SnapdRuleMask with _$SnapdRuleMask {
 
   factory SnapdRuleMask.fromJson(Map<String, dynamic> json) =>
       _$SnapdRuleMaskFromJson(json);
+}
+
+/// Contains proceed-time which is the date and time after which a refresh is
+/// forced for a running snap in the next auto-refresh in RFC3339 UTC format.
+@freezed
+class RefreshInhibit with _$RefreshInhibit {
+  const factory RefreshInhibit({
+    @_SnapdDateTimeConverter() required DateTime proceedTime,
+  }) = _RefreshInhibit;
+
+  factory RefreshInhibit.fromJson(Map<String, dynamic> json) =>
+      _$RefreshInhibitFromJson(json);
 }
 
 /// General response from snapd.

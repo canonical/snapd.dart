@@ -172,6 +172,10 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
           ? null
           : SnapPublisher.fromJson(
               Map<String, dynamic>.from(json['publisher'] as Map)),
+      refreshInhibit: json['refresh-inhibit'] == null
+          ? null
+          : RefreshInhibit.fromJson(
+              Map<String, dynamic>.from(json['refresh-inhibit'] as Map)),
     );
 
 Map<String, dynamic> _$$SnapImplToJson(_$SnapImpl instance) =>
@@ -208,6 +212,7 @@ Map<String, dynamic> _$$SnapImplToJson(_$SnapImpl instance) =>
       'download-size': instance.downloadSize,
       'installed-size': instance.installedSize,
       'publisher': instance.publisher?.toJson(),
+      'refresh-inhibit': instance.refreshInhibit?.toJson(),
     };
 
 const _$SnapStatusEnumMap = {
@@ -584,4 +589,17 @@ Map<String, dynamic> _$$SnapdRuleMaskImplToJson(_$SnapdRuleMaskImpl instance) =>
       'constraints': instance.constraints.toJson(),
       'outcome': _$SnapdRequestOutcomeEnumMap[instance.outcome]!,
       'lifespan': _$SnapdRequestLifespanEnumMap[instance.lifespan]!,
+    };
+
+_$RefreshInhibitImpl _$$RefreshInhibitImplFromJson(Map json) =>
+    _$RefreshInhibitImpl(
+      proceedTime: const _SnapdDateTimeConverter()
+          .fromJson(json['proceed-time'] as String?),
+    );
+
+Map<String, dynamic> _$$RefreshInhibitImplToJson(
+        _$RefreshInhibitImpl instance) =>
+    <String, dynamic>{
+      'proceed-time':
+          const _SnapdDateTimeConverter().toJson(instance.proceedTime),
     };

@@ -1226,6 +1226,7 @@ mixin _$Snap {
   int? get downloadSize => throw _privateConstructorUsedError;
   int? get installedSize => throw _privateConstructorUsedError;
   SnapPublisher? get publisher => throw _privateConstructorUsedError;
+  RefreshInhibit? get refreshInhibit => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -1270,9 +1271,11 @@ abstract class $SnapCopyWith<$Res> {
       DateTime? installDate,
       int? downloadSize,
       int? installedSize,
-      SnapPublisher? publisher});
+      SnapPublisher? publisher,
+      RefreshInhibit? refreshInhibit});
 
   $SnapPublisherCopyWith<$Res>? get publisher;
+  $RefreshInhibitCopyWith<$Res>? get refreshInhibit;
 }
 
 /// @nodoc
@@ -1320,6 +1323,7 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
     Object? downloadSize = freezed,
     Object? installedSize = freezed,
     Object? publisher = freezed,
+    Object? refreshInhibit = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -1450,6 +1454,10 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.publisher
           : publisher // ignore: cast_nullable_to_non_nullable
               as SnapPublisher?,
+      refreshInhibit: freezed == refreshInhibit
+          ? _value.refreshInhibit
+          : refreshInhibit // ignore: cast_nullable_to_non_nullable
+              as RefreshInhibit?,
     ) as $Val);
   }
 
@@ -1462,6 +1470,18 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
 
     return $SnapPublisherCopyWith<$Res>(_value.publisher!, (value) {
       return _then(_value.copyWith(publisher: value) as $Val);
+    });
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $RefreshInhibitCopyWith<$Res>? get refreshInhibit {
+    if (_value.refreshInhibit == null) {
+      return null;
+    }
+
+    return $RefreshInhibitCopyWith<$Res>(_value.refreshInhibit!, (value) {
+      return _then(_value.copyWith(refreshInhibit: value) as $Val);
     });
   }
 }
@@ -1506,10 +1526,13 @@ abstract class _$$SnapImplCopyWith<$Res> implements $SnapCopyWith<$Res> {
       DateTime? installDate,
       int? downloadSize,
       int? installedSize,
-      SnapPublisher? publisher});
+      SnapPublisher? publisher,
+      RefreshInhibit? refreshInhibit});
 
   @override
   $SnapPublisherCopyWith<$Res>? get publisher;
+  @override
+  $RefreshInhibitCopyWith<$Res>? get refreshInhibit;
 }
 
 /// @nodoc
@@ -1554,6 +1577,7 @@ class __$$SnapImplCopyWithImpl<$Res>
     Object? downloadSize = freezed,
     Object? installedSize = freezed,
     Object? publisher = freezed,
+    Object? refreshInhibit = freezed,
   }) {
     return _then(_$SnapImpl(
       id: null == id
@@ -1684,6 +1708,10 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value.publisher
           : publisher // ignore: cast_nullable_to_non_nullable
               as SnapPublisher?,
+      refreshInhibit: freezed == refreshInhibit
+          ? _value.refreshInhibit
+          : refreshInhibit // ignore: cast_nullable_to_non_nullable
+              as RefreshInhibit?,
     ));
   }
 }
@@ -1724,7 +1752,8 @@ class _$SnapImpl implements _Snap {
       this.installDate,
       this.downloadSize,
       this.installedSize,
-      this.publisher})
+      this.publisher,
+      this.refreshInhibit})
       : _channels = channels,
         _apps = apps,
         _categories = categories,
@@ -1850,10 +1879,12 @@ class _$SnapImpl implements _Snap {
   final int? installedSize;
   @override
   final SnapPublisher? publisher;
+  @override
+  final RefreshInhibit? refreshInhibit;
 
   @override
   String toString() {
-    return 'Snap(id: $id, name: $name, version: $version, channel: $channel, type: $type, revision: $revision, contact: $contact, description: $description, summary: $summary, channels: $channels, apps: $apps, categories: $categories, tracks: $tracks, commonIds: $commonIds, media: $media, confinement: $confinement, status: $status, devmode: $devmode, jailmode: $jailmode, private: $private, base: $base, title: $title, trackingChannel: $trackingChannel, website: $website, license: $license, mountedFrom: $mountedFrom, storeUrl: $storeUrl, hold: $hold, installDate: $installDate, downloadSize: $downloadSize, installedSize: $installedSize, publisher: $publisher)';
+    return 'Snap(id: $id, name: $name, version: $version, channel: $channel, type: $type, revision: $revision, contact: $contact, description: $description, summary: $summary, channels: $channels, apps: $apps, categories: $categories, tracks: $tracks, commonIds: $commonIds, media: $media, confinement: $confinement, status: $status, devmode: $devmode, jailmode: $jailmode, private: $private, base: $base, title: $title, trackingChannel: $trackingChannel, website: $website, license: $license, mountedFrom: $mountedFrom, storeUrl: $storeUrl, hold: $hold, installDate: $installDate, downloadSize: $downloadSize, installedSize: $installedSize, publisher: $publisher, refreshInhibit: $refreshInhibit)';
   }
 
   @override
@@ -1905,7 +1936,9 @@ class _$SnapImpl implements _Snap {
             (identical(other.installedSize, installedSize) ||
                 other.installedSize == installedSize) &&
             (identical(other.publisher, publisher) ||
-                other.publisher == publisher));
+                other.publisher == publisher) &&
+            (identical(other.refreshInhibit, refreshInhibit) ||
+                other.refreshInhibit == refreshInhibit));
   }
 
   @JsonKey(ignore: true)
@@ -1943,7 +1976,8 @@ class _$SnapImpl implements _Snap {
         installDate,
         downloadSize,
         installedSize,
-        publisher
+        publisher,
+        refreshInhibit
       ]);
 
   @JsonKey(ignore: true)
@@ -1994,7 +2028,8 @@ abstract class _Snap implements Snap {
       final DateTime? installDate,
       final int? downloadSize,
       final int? installedSize,
-      final SnapPublisher? publisher}) = _$SnapImpl;
+      final SnapPublisher? publisher,
+      final RefreshInhibit? refreshInhibit}) = _$SnapImpl;
 
   factory _Snap.fromJson(Map<String, dynamic> json) = _$SnapImpl.fromJson;
 
@@ -2064,6 +2099,8 @@ abstract class _Snap implements Snap {
   int? get installedSize;
   @override
   SnapPublisher? get publisher;
+  @override
+  RefreshInhibit? get refreshInhibit;
   @override
   @JsonKey(ignore: true)
   _$$SnapImplCopyWith<_$SnapImpl> get copyWith =>
@@ -5765,5 +5802,149 @@ abstract class _SnapdRuleMask implements SnapdRuleMask {
   @override
   @JsonKey(ignore: true)
   _$$SnapdRuleMaskImplCopyWith<_$SnapdRuleMaskImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+RefreshInhibit _$RefreshInhibitFromJson(Map<String, dynamic> json) {
+  return _RefreshInhibit.fromJson(json);
+}
+
+/// @nodoc
+mixin _$RefreshInhibit {
+  @_SnapdDateTimeConverter()
+  DateTime get proceedTime => throw _privateConstructorUsedError;
+
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  @JsonKey(ignore: true)
+  $RefreshInhibitCopyWith<RefreshInhibit> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $RefreshInhibitCopyWith<$Res> {
+  factory $RefreshInhibitCopyWith(
+          RefreshInhibit value, $Res Function(RefreshInhibit) then) =
+      _$RefreshInhibitCopyWithImpl<$Res, RefreshInhibit>;
+  @useResult
+  $Res call({@_SnapdDateTimeConverter() DateTime proceedTime});
+}
+
+/// @nodoc
+class _$RefreshInhibitCopyWithImpl<$Res, $Val extends RefreshInhibit>
+    implements $RefreshInhibitCopyWith<$Res> {
+  _$RefreshInhibitCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? proceedTime = null,
+  }) {
+    return _then(_value.copyWith(
+      proceedTime: null == proceedTime
+          ? _value.proceedTime
+          : proceedTime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$RefreshInhibitImplCopyWith<$Res>
+    implements $RefreshInhibitCopyWith<$Res> {
+  factory _$$RefreshInhibitImplCopyWith(_$RefreshInhibitImpl value,
+          $Res Function(_$RefreshInhibitImpl) then) =
+      __$$RefreshInhibitImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({@_SnapdDateTimeConverter() DateTime proceedTime});
+}
+
+/// @nodoc
+class __$$RefreshInhibitImplCopyWithImpl<$Res>
+    extends _$RefreshInhibitCopyWithImpl<$Res, _$RefreshInhibitImpl>
+    implements _$$RefreshInhibitImplCopyWith<$Res> {
+  __$$RefreshInhibitImplCopyWithImpl(
+      _$RefreshInhibitImpl _value, $Res Function(_$RefreshInhibitImpl) _then)
+      : super(_value, _then);
+
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? proceedTime = null,
+  }) {
+    return _then(_$RefreshInhibitImpl(
+      proceedTime: null == proceedTime
+          ? _value.proceedTime
+          : proceedTime // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$RefreshInhibitImpl implements _RefreshInhibit {
+  const _$RefreshInhibitImpl(
+      {@_SnapdDateTimeConverter() required this.proceedTime});
+
+  factory _$RefreshInhibitImpl.fromJson(Map<String, dynamic> json) =>
+      _$$RefreshInhibitImplFromJson(json);
+
+  @override
+  @_SnapdDateTimeConverter()
+  final DateTime proceedTime;
+
+  @override
+  String toString() {
+    return 'RefreshInhibit(proceedTime: $proceedTime)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$RefreshInhibitImpl &&
+            (identical(other.proceedTime, proceedTime) ||
+                other.proceedTime == proceedTime));
+  }
+
+  @JsonKey(ignore: true)
+  @override
+  int get hashCode => Object.hash(runtimeType, proceedTime);
+
+  @JsonKey(ignore: true)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$RefreshInhibitImplCopyWith<_$RefreshInhibitImpl> get copyWith =>
+      __$$RefreshInhibitImplCopyWithImpl<_$RefreshInhibitImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$RefreshInhibitImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _RefreshInhibit implements RefreshInhibit {
+  const factory _RefreshInhibit(
+          {@_SnapdDateTimeConverter() required final DateTime proceedTime}) =
+      _$RefreshInhibitImpl;
+
+  factory _RefreshInhibit.fromJson(Map<String, dynamic> json) =
+      _$RefreshInhibitImpl.fromJson;
+
+  @override
+  @_SnapdDateTimeConverter()
+  DateTime get proceedTime;
+  @override
+  @JsonKey(ignore: true)
+  _$$RefreshInhibitImplCopyWith<_$RefreshInhibitImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -181,7 +181,9 @@ class MockSnap {
     this.trackingChannel,
     this.tracks,
     this.website,
+    this.refreshInhibit,
   });
+
   final String name;
   final List<MockApp> apps;
   final String? base;
@@ -215,6 +217,7 @@ class MockSnap {
   final String? type;
   final String? version;
   final String? website;
+  final RefreshInhibit? refreshInhibit;
 
   String? installedChannel;
   String? installedRevision;
@@ -320,6 +323,9 @@ class MockSnap {
     }
     if (website != null) {
       object['website'] = website;
+    }
+    if (refreshInhibit != null) {
+      object['refresh-inhibit'] = refreshInhibit!.toJson();
     }
 
     return object;
@@ -1882,6 +1888,7 @@ void main() {
           type: 'app',
           version: '1.2',
           website: 'http://example.com/hello',
+          refreshInhibit: RefreshInhibit(proceedTime: DateTime(1990, 12, 31)),
         ),
       ],
     );
@@ -1965,6 +1972,7 @@ void main() {
       type: 'app',
       version: '1.2',
       website: 'http://example.com/hello',
+      refreshInhibit: RefreshInhibit(proceedTime: DateTime(1990, 12, 31)),
     );
     expect(snap, equals(expectedSnap));
     expect(snap.hashCode, equals(expectedSnap.hashCode));
