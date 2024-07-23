@@ -256,6 +256,9 @@ _$SnapdSystemInfoResponseImpl _$$SnapdSystemInfoResponseImplFromJson(
               _$SnapConfinementEnumMap, json['confinement'],
               unknownValue: SnapConfinement.unknown) ??
           SnapConfinement.unknown,
+      features: (json['features'] as Map?)?.map(
+        (k, e) => MapEntry(k as String, e),
+      ),
       kernelVersion: json['kernel-version'] as String?,
       managed: json['managed'] as bool? ?? false,
       onClassic: json['on-classic'] as bool? ?? false,
@@ -271,6 +274,7 @@ Map<String, dynamic> _$$SnapdSystemInfoResponseImplToJson(
       'architecture': instance.architecture,
       'build-id': instance.buildId,
       'confinement': _$SnapConfinementEnumMap[instance.confinement]!,
+      'features': instance.features,
       'kernel-version': instance.kernelVersion,
       'managed': instance.managed,
       'on-classic': instance.onClassic,
@@ -508,4 +512,76 @@ Map<String, dynamic> _$$SnapdTaskProgressImplToJson(
       'label': instance.label,
       'done': instance.done,
       'total': instance.total,
+    };
+
+_$SnapdConstraintImpl _$$SnapdConstraintImplFromJson(Map json) =>
+    _$SnapdConstraintImpl(
+      pathPattern: json['path-pattern'] as String?,
+      permissions: (json['permissions'] as List<dynamic>?)
+          ?.map((e) => e as String)
+          .toList(),
+    );
+
+Map<String, dynamic> _$$SnapdConstraintImplToJson(
+        _$SnapdConstraintImpl instance) =>
+    <String, dynamic>{
+      'path-pattern': instance.pathPattern,
+      'permissions': instance.permissions,
+    };
+
+_$SnapdRuleImpl _$$SnapdRuleImplFromJson(Map json) => _$SnapdRuleImpl(
+      id: json['id'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
+      snap: json['snap'] as String,
+      interface: json['interface'] as String,
+      constraints: SnapdConstraints.fromJson(
+          Map<String, dynamic>.from(json['constraints'] as Map)),
+      outcome: $enumDecode(_$SnapdRequestOutcomeEnumMap, json['outcome']),
+      lifespan: $enumDecode(_$SnapdRequestLifespanEnumMap, json['lifespan']),
+      expiration: json['expiration'] == null
+          ? null
+          : DateTime.parse(json['expiration'] as String),
+    );
+
+Map<String, dynamic> _$$SnapdRuleImplToJson(_$SnapdRuleImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'timestamp': instance.timestamp.toIso8601String(),
+      'snap': instance.snap,
+      'interface': instance.interface,
+      'constraints': instance.constraints.toJson(),
+      'outcome': _$SnapdRequestOutcomeEnumMap[instance.outcome]!,
+      'lifespan': _$SnapdRequestLifespanEnumMap[instance.lifespan]!,
+      'expiration': instance.expiration?.toIso8601String(),
+    };
+
+const _$SnapdRequestOutcomeEnumMap = {
+  SnapdRequestOutcome.allow: 'allow',
+  SnapdRequestOutcome.deny: 'deny',
+};
+
+const _$SnapdRequestLifespanEnumMap = {
+  SnapdRequestLifespan.single: 'single',
+  SnapdRequestLifespan.session: 'session',
+  SnapdRequestLifespan.forever: 'forever',
+  SnapdRequestLifespan.timespan: 'timespan',
+};
+
+_$SnapdRuleMaskImpl _$$SnapdRuleMaskImplFromJson(Map json) =>
+    _$SnapdRuleMaskImpl(
+      snap: json['snap'] as String,
+      interface: json['interface'] as String,
+      constraints: SnapdConstraints.fromJson(
+          Map<String, dynamic>.from(json['constraints'] as Map)),
+      outcome: $enumDecode(_$SnapdRequestOutcomeEnumMap, json['outcome']),
+      lifespan: $enumDecode(_$SnapdRequestLifespanEnumMap, json['lifespan']),
+    );
+
+Map<String, dynamic> _$$SnapdRuleMaskImplToJson(_$SnapdRuleMaskImpl instance) =>
+    <String, dynamic>{
+      'snap': instance.snap,
+      'interface': instance.interface,
+      'constraints': instance.constraints.toJson(),
+      'outcome': _$SnapdRequestOutcomeEnumMap[instance.outcome]!,
+      'lifespan': _$SnapdRequestLifespanEnumMap[instance.lifespan]!,
     };
