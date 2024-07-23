@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6.2
+
+* Add refresh inhibit properties to snap class
+* Exposes methods to interact with the prompting endpoints
+ 
 ## 0.6.1
 
 * Downgrade version constraints due to Flutter's version pinning.
