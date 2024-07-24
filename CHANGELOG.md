@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3
+
+* Support filters for get /v2/snaps
+
 ## 0.6.2
 
 * Add refresh inhibit properties to snap class
