@@ -36,6 +36,9 @@ enum SnapdConnectionFilter { all }
 /// Filter to select which apps to return from a collection search.
 enum SnapFindFilter { refresh, private }
 
+/// Filter to select which apps to return from a snaps list.
+enum SnapsFilter { all, enabled, refreshInhibited }
+
 /// Scope to search snaps.
 enum SnapFindScope { wide }
 
@@ -631,8 +634,11 @@ class SnapdClient {
   }
 
   /// Gets information on all installed snaps.
-  Future<List<Snap>> getSnaps() async {
-    final result = await _getSyncList('/v2/snaps');
+  Future<List<Snap>> getSnaps({SnapsFilter? filter}) async {
+    final queryParameters = <String, String>{
+      if (filter != null) 'select': filter.name.toKebabCase(),
+    };
+    final result = await _getSyncList('/v2/snaps', queryParameters);
     return result.map(Snap.fromJson).toList();
   }
 
@@ -1132,5 +1138,14 @@ class SnapdClient {
     if (allowInteraction) {
       request.headers.set('X-Allow-Interaction', 'true');
     }
+  }
+}
+
+extension on String {
+  String toKebabCase() {
+    return replaceAllMapped(
+      RegExp('[A-Z]'),
+      (match) => '-${match.group(0)!.toLowerCase()}',
+    ).toLowerCase();
   }
 }

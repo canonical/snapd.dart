@@ -1137,9 +1137,23 @@ class MockSnapdServer {
   }
 
   void _processGetSnaps(HttpRequest request) {
+    final parameters = request.uri.queryParameters;
+    final filter = parameters['select'];
+    final filteredSnaps = snaps.values
+        .where((s) {
+          if (filter == 'refresh-inhibited' && s.refreshInhibit == null) {
+            return false;
+          } else if (filter == 'enabled' && !s.enabled) {
+            return false;
+          }
+          return true;
+        })
+        .map((snap) => snap.toJson())
+        .toList();
+
     _writeSyncResponse(
       request.response,
-      snaps.values.map((snap) => snap.toJson()).toList(),
+      filteredSnaps,
     );
   }
 
@@ -1671,6 +1685,36 @@ void main() {
     expect(snaps[0].name, equals('snap1'));
     expect(snaps[1].name, equals('snap2'));
     expect(snaps[2].name, equals('snap3'));
+  });
+
+  test('snaps with filter', () async {
+    final snapd = MockSnapdServer(
+      snaps: [
+        MockSnap(name: 'snap1'),
+        MockSnap(
+          name: 'snap2',
+          refreshInhibit: RefreshInhibit(proceedTime: DateTime(1970)),
+        ),
+        MockSnap(name: 'snap3'),
+      ],
+    );
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final snaps = await client.getSnaps(filter: SnapsFilter.refreshInhibited);
+    expect(snaps, hasLength(1));
+    expect(snaps[0].name, equals('snap2'));
+    expect(
+      snaps[0].refreshInhibit,
+      equals(RefreshInhibit(proceedTime: DateTime(1970))),
+    );
   });
 
   test('snap', () async {
@@ -3355,5 +3399,12 @@ void main() {
 
     final newSystemInfo = await client.systemInfo();
     expect(newSystemInfo.features?['apparmor-prompting']?['enabled'], isTrue);
+  });
+
+  test('refresh inhibit can convert to date time', () {
+    final refreshInhibit = RefreshInhibit.fromJson(
+      {'proceed-time': '1990-12-31T07:00:00.000000000+02:00'},
+    );
+    expect(refreshInhibit.proceedTime, DateTime.utc(1990, 12, 31, 5));
   });
 }
