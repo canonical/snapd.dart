@@ -46,6 +46,16 @@ enum SnapdRequestOutcome { allow, deny }
 
 enum SnapdRequestLifespan { single, session, forever, timespan }
 
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdNoticeType {
+  changeUpdate,
+  warning,
+  refreshInhibit,
+  snapRunInhibit,
+  interfacesRequestsPrompt,
+  interfacesRequestsRuleUpdate,
+}
+
 class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
   const _SnapdDateTimeConverter();
 
@@ -469,6 +479,25 @@ class SnapdRuleMask with _$SnapdRuleMask {
       _$SnapdRuleMaskFromJson(json);
 }
 
+@freezed
+class SnapdNotice with _$SnapdNotice {
+  const factory SnapdNotice({
+    required String id,
+    required SnapdNoticeType type,
+    required String key,
+    @_SnapdDateTimeConverter() required DateTime firstOccured,
+    @_SnapdDateTimeConverter() required DateTime lastOccured,
+    @_SnapdDateTimeConverter() required DateTime lastRepeated,
+    required int occurrences,
+    required String expireAfter,
+    int? userId,
+    Map<String, String>? lastData,
+  }) = _SnapdNotice;
+
+  factory SnapdNotice.fromJson(Map<String, dynamic> json) =>
+      _$SnapdNoticeFromJson(json);
+}
+
 /// Contains proceed-time which is the date and time after which a refresh is
 /// forced for a running snap in the next auto-refresh in RFC3339 UTC format.
 @freezed
@@ -631,6 +660,27 @@ class SnapdClient {
   Future<SnapdSystemInfoResponse> systemInfo() async {
     final result = await _getSync<Map<String, dynamic>>('/v2/system-info');
     return SnapdSystemInfoResponse.fromJson(result);
+  }
+
+  Future<List<SnapdNotice>> getNotices({
+    Iterable<SnapdNoticeType>? types,
+    List<String>? keys,
+    DateTime? after,
+    String? timeout,
+    String? userId,
+    String? users,
+  }) async {
+    final queryParameters = <String, String>{
+      if (types != null)
+        'types': types.map((e) => e.name.toKebabCase()).join(','),
+      if (keys != null) 'keys': keys.join(','),
+      if (after != null) 'after': after.toUtc().toIso8601String(),
+      if (timeout != null) 'timeout': timeout,
+      if (userId != null) 'user': userId,
+      if (users != null) 'users': users,
+    };
+    final result = await _getSyncList('/v2/notices', queryParameters);
+    return result.map(SnapdNotice.fromJson).toList();
   }
 
   /// Gets information on all installed snaps.
@@ -1141,7 +1191,7 @@ class SnapdClient {
   }
 }
 
-extension on String {
+extension StringKebabX on String {
   String toKebabCase() {
     return replaceAllMapped(
       RegExp('[A-Z]'),

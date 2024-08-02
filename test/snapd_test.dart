@@ -484,6 +484,7 @@ class MockSnapdServer {
     this.managed = false,
     this.onClassic = false,
     this.promptingEnabled = false,
+    List<SnapdNotice> notices = const [],
     this.refreshLast,
     this.refreshNext,
     List<SnapdRule> rules = const [],
@@ -506,6 +507,9 @@ class MockSnapdServer {
     for (final declaration in snapDeclarations) {
       this.snapDeclarations[declaration.snapName] = declaration;
     }
+    for (final notice in notices) {
+      this.notices.add(notice);
+    }
     for (final rule in rules) {
       this.rules.add(rule);
     }
@@ -525,6 +529,7 @@ class MockSnapdServer {
   final bool managed;
   final bool onClassic;
   bool promptingEnabled;
+  final notices = <SnapdNotice>[];
   final String? refreshLast;
   final String? refreshNext;
   final removedSnaps = <String, MockSnap>{};
@@ -584,6 +589,8 @@ class MockSnapdServer {
       _processGetChanges(request);
     } else if (method == 'GET' && path.startsWith('/v2/changes/')) {
       _processGetChange(request, path.substring('/v2/changes/'.length));
+    } else if (method == 'GET' && path == '/v2/notices') {
+      _processGetNotices(request);
     } else if (method == 'GET' && path == '/v2/interfaces/requests/rules') {
       _processGetRules(request);
     } else if (method == 'GET' &&
@@ -800,6 +807,30 @@ class MockSnapdServer {
     }
 
     _writeSyncResponse(request.response, change.toJson());
+  }
+
+  void _processGetNotices(HttpRequest request) {
+    final parameters = request.uri.queryParameters;
+    final types = parameters['types']?.split(',');
+    final keys = parameters['keys']?.split(',');
+    final after = DateTime.tryParse(parameters['after'] ?? '');
+
+    final result = notices.where((notice) {
+      if (types != null && !types.contains(notice.type.name.toKebabCase())) {
+        return false;
+      }
+      if (keys != null && !keys.contains(notice.key)) {
+        return false;
+      }
+      if (after != null && notice.lastRepeated.isBefore(after)) {
+        return false;
+      }
+      return true;
+    });
+    _writeSyncResponse(
+      request.response,
+      result.map((r) => r.toJson()).toList(),
+    );
   }
 
   void _processGetRules(HttpRequest request) {
@@ -3240,6 +3271,101 @@ void main() {
     nameChanges = await client.getChanges(name: 'snap2');
     expect(nameChanges, hasLength(1));
     expect(nameChanges[0].id, equals('2'));
+  });
+
+  group('notices', () {
+    final notices = [
+      SnapdNotice(
+        id: '1',
+        userId: 1000,
+        type: SnapdNoticeType.changeUpdate,
+        key: '101',
+        firstOccured: DateTime(2000),
+        lastOccured: DateTime(2001),
+        lastRepeated: DateTime(2001),
+        occurrences: 2,
+        lastData: {'kind': 'auto-refresh'},
+        expireAfter: '168h0m0s',
+      ),
+      SnapdNotice(
+        id: '2',
+        userId: 1000,
+        type: SnapdNoticeType.interfacesRequestsRuleUpdate,
+        key: '301',
+        firstOccured: DateTime(2020),
+        lastOccured: DateTime(2021),
+        lastRepeated: DateTime(2021),
+        occurrences: 1,
+        expireAfter: '168h0m0s',
+      ),
+      SnapdNotice(
+        id: '3',
+        userId: 1000,
+        type: SnapdNoticeType.interfacesRequestsRuleUpdate,
+        key: '302',
+        firstOccured: DateTime(2020, 2),
+        lastOccured: DateTime(2021, 2),
+        lastRepeated: DateTime(2021, 2),
+        occurrences: 1,
+        expireAfter: '168h0m0s',
+      ),
+    ];
+
+    final testCases = [
+      (
+        name: 'all',
+        types: null,
+        keys: null,
+        after: null,
+        expectedIds: ['1', '2', '3'],
+      ),
+      (
+        name: 'type',
+        types: [SnapdNoticeType.changeUpdate],
+        keys: null,
+        after: null,
+        expectedIds: ['1'],
+      ),
+      (
+        name: 'key',
+        types: null,
+        keys: ['301'],
+        after: null,
+        expectedIds: ['2'],
+      ),
+      (
+        name: 'after',
+        types: null,
+        keys: null,
+        after: DateTime(2021, 1, 2),
+        expectedIds: ['3'],
+      ),
+    ];
+
+    for (final testCase in testCases) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(notices: notices);
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        final result = await client.getNotices(
+          types: testCase.types,
+          keys: testCase.keys,
+          after: testCase.after,
+        );
+        expect(result, hasLength(testCase.expectedIds.length));
+        for (final id in testCase.expectedIds) {
+          expect(result.any((notice) => notice.id == id), isTrue);
+        }
+      });
+    }
   });
 
   test('rules', () async {
