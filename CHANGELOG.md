@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.4
+
+* Add SnapdClient.getNotices()
+
 ## 0.6.3
 
 * Support filters for get /v2/snaps
