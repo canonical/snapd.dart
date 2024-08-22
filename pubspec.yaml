@@ -5,7 +5,7 @@ description:
   Provides a client to access snapd, which allows you to manage, search and install snaps on a Linux system.
 
 environment:
-  sdk: '>=2.17.0 <4.0.0'
+  sdk: '>=3.0.0 <4.0.0'
 
 platforms:
   linux:

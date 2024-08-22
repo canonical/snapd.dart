@@ -28,8 +28,12 @@ mixin _$SnapApp {
   bool get active => throw _privateConstructorUsedError;
   String? get commonId => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapApp to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapApp
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapAppCopyWith<SnapApp> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -58,6 +62,8 @@ class _$SnapAppCopyWithImpl<$Res, $Val extends SnapApp>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapApp
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -127,6 +133,8 @@ class __$$SnapAppImplCopyWithImpl<$Res>
       _$SnapAppImpl _value, $Res Function(_$SnapAppImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapApp
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -224,12 +232,14 @@ class _$SnapAppImpl implements _SnapApp {
                 other.commonId == commonId));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, name, snap, desktopFile, daemon, enabled, active, commonId);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapApp
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapAppImplCopyWith<_$SnapAppImpl> get copyWith =>
@@ -269,8 +279,11 @@ abstract class _SnapApp implements SnapApp {
   bool get active;
   @override
   String? get commonId;
+
+  /// Create a copy of SnapApp
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapAppImplCopyWith<_$SnapAppImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -284,8 +297,12 @@ mixin _$SnapCategory {
   String get name => throw _privateConstructorUsedError;
   bool get featured => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapCategory to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapCategory
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapCategoryCopyWith<SnapCategory> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -309,6 +326,8 @@ class _$SnapCategoryCopyWithImpl<$Res, $Val extends SnapCategory>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapCategory
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -347,6 +366,8 @@ class __$$SnapCategoryImplCopyWithImpl<$Res>
       _$SnapCategoryImpl _value, $Res Function(_$SnapCategoryImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapCategory
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -395,11 +416,13 @@ class _$SnapCategoryImpl implements _SnapCategory {
                 other.featured == featured));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, name, featured);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapCategory
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapCategoryImplCopyWith<_$SnapCategoryImpl> get copyWith =>
@@ -424,8 +447,11 @@ abstract class _SnapCategory implements SnapCategory {
   String get name;
   @override
   bool get featured;
+
+  /// Create a copy of SnapCategory
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapCategoryImplCopyWith<_$SnapCategoryImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -438,8 +464,12 @@ SnapCategoryDetails _$SnapCategoryDetailsFromJson(Map<String, dynamic> json) {
 mixin _$SnapCategoryDetails {
   String get name => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapCategoryDetails to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapCategoryDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapCategoryDetailsCopyWith<SnapCategoryDetails> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -463,6 +493,8 @@ class _$SnapCategoryDetailsCopyWithImpl<$Res, $Val extends SnapCategoryDetails>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapCategoryDetails
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -496,6 +528,8 @@ class __$$SnapCategoryDetailsImplCopyWithImpl<$Res>
       $Res Function(_$SnapCategoryDetailsImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapCategoryDetails
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -534,11 +568,13 @@ class _$SnapCategoryDetailsImpl implements _SnapCategoryDetails {
             (identical(other.name, name) || other.name == name));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, name);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapCategoryDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapCategoryDetailsImplCopyWith<_$SnapCategoryDetailsImpl> get copyWith =>
@@ -562,8 +598,11 @@ abstract class _SnapCategoryDetails implements SnapCategoryDetails {
 
   @override
   String get name;
+
+  /// Create a copy of SnapCategoryDetails
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapCategoryDetailsImplCopyWith<_$SnapCategoryDetailsImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -581,8 +620,12 @@ mixin _$SnapChannel {
   int get size => throw _privateConstructorUsedError;
   String? get version => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapChannel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapChannel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapChannelCopyWith<SnapChannel> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -612,6 +655,8 @@ class _$SnapChannelCopyWithImpl<$Res, $Val extends SnapChannel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapChannel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -671,6 +716,8 @@ class __$$SnapChannelImplCopyWithImpl<$Res>
       _$SnapChannelImpl _value, $Res Function(_$SnapChannelImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapChannel
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -752,12 +799,14 @@ class _$SnapChannelImpl implements _SnapChannel {
             (identical(other.version, version) || other.version == version));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, releasedAt, confinement, revision, size, version);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapChannel
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapChannelImplCopyWith<_$SnapChannelImpl> get copyWith =>
@@ -794,8 +843,11 @@ abstract class _SnapChannel implements SnapChannel {
   int get size;
   @override
   String? get version;
+
+  /// Create a copy of SnapChannel
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapChannelImplCopyWith<_$SnapChannelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -811,8 +863,12 @@ mixin _$SnapPublisher {
   String? get username => throw _privateConstructorUsedError;
   String? get validation => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapPublisher to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapPublisher
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapPublisherCopyWith<SnapPublisher> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -837,6 +893,8 @@ class _$SnapPublisherCopyWithImpl<$Res, $Val extends SnapPublisher>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapPublisher
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -886,6 +944,8 @@ class __$$SnapPublisherImplCopyWithImpl<$Res>
       _$SnapPublisherImpl _value, $Res Function(_$SnapPublisherImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapPublisher
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -955,12 +1015,14 @@ class _$SnapPublisherImpl implements _SnapPublisher {
                 other.validation == validation));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, displayName, username, validation);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapPublisher
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapPublisherImplCopyWith<_$SnapPublisherImpl> get copyWith =>
@@ -992,8 +1054,11 @@ abstract class _SnapPublisher implements SnapPublisher {
   String? get username;
   @override
   String? get validation;
+
+  /// Create a copy of SnapPublisher
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapPublisherImplCopyWith<_$SnapPublisherImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1009,8 +1074,12 @@ mixin _$SnapMedia {
   int? get width => throw _privateConstructorUsedError;
   int? get height => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapMedia to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapMedia
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapMediaCopyWith<SnapMedia> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1033,6 +1102,8 @@ class _$SnapMediaCopyWithImpl<$Res, $Val extends SnapMedia>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapMedia
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1081,6 +1152,8 @@ class __$$SnapMediaImplCopyWithImpl<$Res>
       _$SnapMediaImpl _value, $Res Function(_$SnapMediaImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapMedia
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1144,11 +1217,13 @@ class _$SnapMediaImpl implements _SnapMedia {
             (identical(other.height, height) || other.height == height));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, type, url, width, height);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapMedia
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapMediaImplCopyWith<_$SnapMediaImpl> get copyWith =>
@@ -1180,8 +1255,11 @@ abstract class _SnapMedia implements SnapMedia {
   int? get width;
   @override
   int? get height;
+
+  /// Create a copy of SnapMedia
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapMediaImplCopyWith<_$SnapMediaImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1228,8 +1306,12 @@ mixin _$Snap {
   SnapPublisher? get publisher => throw _privateConstructorUsedError;
   RefreshInhibit? get refreshInhibit => throw _privateConstructorUsedError;
 
+  /// Serializes this Snap to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of Snap
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapCopyWith<Snap> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -1288,6 +1370,8 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of Snap
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1461,6 +1545,8 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
     ) as $Val);
   }
 
+  /// Create a copy of Snap
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SnapPublisherCopyWith<$Res>? get publisher {
@@ -1473,6 +1559,8 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
     });
   }
 
+  /// Create a copy of Snap
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $RefreshInhibitCopyWith<$Res>? get refreshInhibit {
@@ -1542,6 +1630,8 @@ class __$$SnapImplCopyWithImpl<$Res>
   __$$SnapImplCopyWithImpl(_$SnapImpl _value, $Res Function(_$SnapImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of Snap
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1941,7 +2031,7 @@ class _$SnapImpl implements _Snap {
                 other.refreshInhibit == refreshInhibit));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
         runtimeType,
@@ -1980,7 +2070,9 @@ class _$SnapImpl implements _Snap {
         refreshInhibit
       ]);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of Snap
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapImplCopyWith<_$SnapImpl> get copyWith =>
@@ -2101,8 +2193,11 @@ abstract class _Snap implements Snap {
   SnapPublisher? get publisher;
   @override
   RefreshInhibit? get refreshInhibit;
+
+  /// Create a copy of Snap
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapImplCopyWith<_$SnapImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -2123,8 +2218,12 @@ mixin _$SnapDeclaration {
   String? get timestamp => throw _privateConstructorUsedError;
   String? get signKey => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapDeclaration to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapDeclaration
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapDeclarationCopyWith<SnapDeclaration> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -2157,6 +2256,8 @@ class _$SnapDeclarationCopyWithImpl<$Res, $Val extends SnapDeclaration>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapDeclaration
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -2239,6 +2340,8 @@ class __$$SnapDeclarationImplCopyWithImpl<$Res>
       _$SnapDeclarationImpl _value, $Res Function(_$SnapDeclarationImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapDeclaration
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -2357,12 +2460,14 @@ class _$SnapDeclarationImpl implements _SnapDeclaration {
             (identical(other.signKey, signKey) || other.signKey == signKey));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, snapId, type, authorityId,
       revision, series, publisherId, snapName, timestamp, signKey);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapDeclaration
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapDeclarationImplCopyWith<_$SnapDeclarationImpl> get copyWith =>
@@ -2410,8 +2515,11 @@ abstract class _SnapDeclaration implements SnapDeclaration {
   String? get timestamp;
   @override
   String? get signKey;
+
+  /// Create a copy of SnapDeclaration
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapDeclarationImplCopyWith<_$SnapDeclarationImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -2436,8 +2544,12 @@ mixin _$SnapdSystemInfoResponse {
   String? get systemMode => throw _privateConstructorUsedError;
   String? get version => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapdSystemInfoResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapdSystemInfoResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapdSystemInfoResponseCopyWith<SnapdSystemInfoResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -2476,6 +2588,8 @@ class _$SnapdSystemInfoResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapdSystemInfoResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -2539,6 +2653,8 @@ class _$SnapdSystemInfoResponseCopyWithImpl<$Res,
     ) as $Val);
   }
 
+  /// Create a copy of SnapdSystemInfoResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SnapdSystemRefreshInfoCopyWith<$Res> get refresh {
@@ -2585,6 +2701,8 @@ class __$$SnapdSystemInfoResponseImplCopyWithImpl<$Res>
       $Res Function(_$SnapdSystemInfoResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapdSystemInfoResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -2732,7 +2850,7 @@ class _$SnapdSystemInfoResponseImpl implements _SnapdSystemInfoResponse {
             (identical(other.version, version) || other.version == version));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -2748,7 +2866,9 @@ class _$SnapdSystemInfoResponseImpl implements _SnapdSystemInfoResponse {
       systemMode,
       version);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapdSystemInfoResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapdSystemInfoResponseImplCopyWith<_$SnapdSystemInfoResponseImpl>
@@ -2804,8 +2924,11 @@ abstract class _SnapdSystemInfoResponse implements SnapdSystemInfoResponse {
   String? get systemMode;
   @override
   String? get version;
+
+  /// Create a copy of SnapdSystemInfoResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapdSystemInfoResponseImplCopyWith<_$SnapdSystemInfoResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -2821,8 +2944,12 @@ mixin _$SnapdSystemRefreshInfo {
   DateTime get next => throw _privateConstructorUsedError;
   DateTime? get last => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapdSystemRefreshInfo to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapdSystemRefreshInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapdSystemRefreshInfoCopyWith<SnapdSystemRefreshInfo> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -2847,6 +2974,8 @@ class _$SnapdSystemRefreshInfoCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapdSystemRefreshInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -2888,6 +3017,8 @@ class __$$SnapdSystemRefreshInfoImplCopyWithImpl<$Res>
       $Res Function(_$SnapdSystemRefreshInfoImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapdSystemRefreshInfo
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -2936,11 +3067,13 @@ class _$SnapdSystemRefreshInfoImpl implements _SnapdSystemRefreshInfo {
             (identical(other.last, last) || other.last == last));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, next, last);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapdSystemRefreshInfo
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapdSystemRefreshInfoImplCopyWith<_$SnapdSystemRefreshInfoImpl>
@@ -2968,8 +3101,11 @@ abstract class _SnapdSystemRefreshInfo implements SnapdSystemRefreshInfo {
   DateTime get next;
   @override
   DateTime? get last;
+
+  /// Create a copy of SnapdSystemRefreshInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapdSystemRefreshInfoImplCopyWith<_$SnapdSystemRefreshInfoImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -2987,8 +3123,12 @@ mixin _$SnapdLoginResponse {
   List<String> get discharges => throw _privateConstructorUsedError;
   List<String> get sshKeys => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapdLoginResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapdLoginResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapdLoginResponseCopyWith<SnapdLoginResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -3018,6 +3158,8 @@ class _$SnapdLoginResponseCopyWithImpl<$Res, $Val extends SnapdLoginResponse>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapdLoginResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -3082,6 +3224,8 @@ class __$$SnapdLoginResponseImplCopyWithImpl<$Res>
       $Res Function(_$SnapdLoginResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapdLoginResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -3184,7 +3328,7 @@ class _$SnapdLoginResponseImpl implements _SnapdLoginResponse {
             const DeepCollectionEquality().equals(other._sshKeys, _sshKeys));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -3195,7 +3339,9 @@ class _$SnapdLoginResponseImpl implements _SnapdLoginResponse {
       const DeepCollectionEquality().hash(_discharges),
       const DeepCollectionEquality().hash(_sshKeys));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapdLoginResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapdLoginResponseImplCopyWith<_$SnapdLoginResponseImpl> get copyWith =>
@@ -3234,8 +3380,11 @@ abstract class _SnapdLoginResponse implements SnapdLoginResponse {
   List<String> get discharges;
   @override
   List<String> get sshKeys;
+
+  /// Create a copy of SnapdLoginResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapdLoginResponseImplCopyWith<_$SnapdLoginResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -3253,8 +3402,12 @@ mixin _$SnapPlug {
   String? get interface => throw _privateConstructorUsedError;
   List<SnapSlot> get connections => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapPlug to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapPlug
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapPlugCopyWith<SnapPlug> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -3282,6 +3435,8 @@ class _$SnapPlugCopyWithImpl<$Res, $Val extends SnapPlug>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapPlug
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -3340,6 +3495,8 @@ class __$$SnapPlugImplCopyWithImpl<$Res>
       _$SnapPlugImpl _value, $Res Function(_$SnapPlugImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapPlug
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -3433,7 +3590,7 @@ class _$SnapPlugImpl implements _SnapPlug {
                 .equals(other._connections, _connections));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -3443,7 +3600,9 @@ class _$SnapPlugImpl implements _SnapPlug {
       interface,
       const DeepCollectionEquality().hash(_connections));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapPlug
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapPlugImplCopyWith<_$SnapPlugImpl> get copyWith =>
@@ -3479,8 +3638,11 @@ abstract class _SnapPlug implements SnapPlug {
   String? get interface;
   @override
   List<SnapSlot> get connections;
+
+  /// Create a copy of SnapPlug
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapPlugImplCopyWith<_$SnapPlugImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -3498,8 +3660,12 @@ mixin _$SnapSlot {
   String? get interface => throw _privateConstructorUsedError;
   List<SnapPlug> get connections => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapSlot to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapSlot
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapSlotCopyWith<SnapSlot> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -3527,6 +3693,8 @@ class _$SnapSlotCopyWithImpl<$Res, $Val extends SnapSlot>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapSlot
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -3585,6 +3753,8 @@ class __$$SnapSlotImplCopyWithImpl<$Res>
       _$SnapSlotImpl _value, $Res Function(_$SnapSlotImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapSlot
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -3678,7 +3848,7 @@ class _$SnapSlotImpl implements _SnapSlot {
                 .equals(other._connections, _connections));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -3688,7 +3858,9 @@ class _$SnapSlotImpl implements _SnapSlot {
       interface,
       const DeepCollectionEquality().hash(_connections));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapSlot
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapSlotImplCopyWith<_$SnapSlotImpl> get copyWith =>
@@ -3724,8 +3896,11 @@ abstract class _SnapSlot implements SnapSlot {
   String? get interface;
   @override
   List<SnapPlug> get connections;
+
+  /// Create a copy of SnapSlot
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapSlotImplCopyWith<_$SnapSlotImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -3745,8 +3920,12 @@ mixin _$SnapConnection {
   Map<String, dynamic> get plugAttributes => throw _privateConstructorUsedError;
   bool get manual => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapConnection to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapConnection
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapConnectionCopyWith<SnapConnection> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -3779,6 +3958,8 @@ class _$SnapConnectionCopyWithImpl<$Res, $Val extends SnapConnection>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapConnection
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -3817,6 +3998,8 @@ class _$SnapConnectionCopyWithImpl<$Res, $Val extends SnapConnection>
     ) as $Val);
   }
 
+  /// Create a copy of SnapConnection
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SnapSlotCopyWith<$Res> get slot {
@@ -3825,6 +4008,8 @@ class _$SnapConnectionCopyWithImpl<$Res, $Val extends SnapConnection>
     });
   }
 
+  /// Create a copy of SnapConnection
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SnapPlugCopyWith<$Res> get plug {
@@ -3864,6 +4049,8 @@ class __$$SnapConnectionImplCopyWithImpl<$Res>
       _$SnapConnectionImpl _value, $Res Function(_$SnapConnectionImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapConnection
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -3970,7 +4157,7 @@ class _$SnapConnectionImpl implements _SnapConnection {
             (identical(other.manual, manual) || other.manual == manual));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -3981,7 +4168,9 @@ class _$SnapConnectionImpl implements _SnapConnection {
       const DeepCollectionEquality().hash(_plugAttributes),
       manual);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapConnection
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapConnectionImplCopyWith<_$SnapConnectionImpl> get copyWith =>
@@ -4022,8 +4211,11 @@ abstract class _SnapConnection implements SnapConnection {
   Map<String, dynamic> get plugAttributes;
   @override
   bool get manual;
+
+  /// Create a copy of SnapConnection
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapConnectionImplCopyWith<_$SnapConnectionImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -4040,8 +4232,12 @@ mixin _$SnapdConnectionsResponse {
   List<SnapSlot> get slots => throw _privateConstructorUsedError;
   List<SnapConnection> get undesired => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapdConnectionsResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapdConnectionsResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapdConnectionsResponseCopyWith<SnapdConnectionsResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -4070,6 +4266,8 @@ class _$SnapdConnectionsResponseCopyWithImpl<$Res,
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapdConnectionsResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -4125,6 +4323,8 @@ class __$$SnapdConnectionsResponseImplCopyWithImpl<$Res>
       $Res Function(_$SnapdConnectionsResponseImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapdConnectionsResponse
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -4224,7 +4424,7 @@ class _$SnapdConnectionsResponseImpl implements _SnapdConnectionsResponse {
                 .equals(other._undesired, _undesired));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -4233,7 +4433,9 @@ class _$SnapdConnectionsResponseImpl implements _SnapdConnectionsResponse {
       const DeepCollectionEquality().hash(_slots),
       const DeepCollectionEquality().hash(_undesired));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapdConnectionsResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapdConnectionsResponseImplCopyWith<_$SnapdConnectionsResponseImpl>
@@ -4266,8 +4468,11 @@ abstract class _SnapdConnectionsResponse implements SnapdConnectionsResponse {
   List<SnapSlot> get slots;
   @override
   List<SnapConnection> get undesired;
+
+  /// Create a copy of SnapdConnectionsResponse
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapdConnectionsResponseImplCopyWith<_$SnapdConnectionsResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
@@ -4293,8 +4498,12 @@ mixin _$SnapdChange {
       fromJson: SnapdChange._snapNamesFromJson)
   List<String> get snapNames => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapdChange to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapdChange
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapdChangeCopyWith<SnapdChange> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -4332,6 +4541,8 @@ class _$SnapdChangeCopyWithImpl<$Res, $Val extends SnapdChange>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapdChange
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -4424,6 +4635,8 @@ class __$$SnapdChangeImplCopyWithImpl<$Res>
       _$SnapdChangeImpl _value, $Res Function(_$SnapdChangeImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapdChange
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -4570,7 +4783,7 @@ class _$SnapdChangeImpl implements _SnapdChange {
                 .equals(other._snapNames, _snapNames));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -4585,7 +4798,9 @@ class _$SnapdChangeImpl implements _SnapdChange {
       const DeepCollectionEquality().hash(_tasks),
       const DeepCollectionEquality().hash(_snapNames));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapdChange
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapdChangeImplCopyWith<_$SnapdChangeImpl> get copyWith =>
@@ -4643,8 +4858,11 @@ abstract class _SnapdChange implements SnapdChange {
       toJson: SnapdChange._snapNamesToJson,
       fromJson: SnapdChange._snapNamesFromJson)
   List<String> get snapNames;
+
+  /// Create a copy of SnapdChange
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapdChangeImplCopyWith<_$SnapdChangeImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -4663,8 +4881,12 @@ mixin _$SnapdTask {
   SnapdTaskProgress get progress => throw _privateConstructorUsedError;
   DateTime? get readyTime => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapdTask to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapdTask
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapdTaskCopyWith<SnapdTask> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -4696,6 +4918,8 @@ class _$SnapdTaskCopyWithImpl<$Res, $Val extends SnapdTask>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapdTask
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -4739,6 +4963,8 @@ class _$SnapdTaskCopyWithImpl<$Res, $Val extends SnapdTask>
     ) as $Val);
   }
 
+  /// Create a copy of SnapdTask
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SnapdTaskProgressCopyWith<$Res> get progress {
@@ -4777,6 +5003,8 @@ class __$$SnapdTaskImplCopyWithImpl<$Res>
       _$SnapdTaskImpl _value, $Res Function(_$SnapdTaskImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapdTask
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -4875,12 +5103,14 @@ class _$SnapdTaskImpl implements _SnapdTask {
                 other.readyTime == readyTime));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
       runtimeType, id, spawnTime, kind, summary, status, progress, readyTime);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapdTask
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapdTaskImplCopyWith<_$SnapdTaskImpl> get copyWith =>
@@ -4921,8 +5151,11 @@ abstract class _SnapdTask implements SnapdTask {
   SnapdTaskProgress get progress;
   @override
   DateTime? get readyTime;
+
+  /// Create a copy of SnapdTask
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapdTaskImplCopyWith<_$SnapdTaskImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -4937,8 +5170,12 @@ mixin _$SnapdTaskProgress {
   int get done => throw _privateConstructorUsedError;
   int get total => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapdTaskProgress to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapdTaskProgress
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapdTaskProgressCopyWith<SnapdTaskProgress> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -4962,6 +5199,8 @@ class _$SnapdTaskProgressCopyWithImpl<$Res, $Val extends SnapdTaskProgress>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapdTaskProgress
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -5005,6 +5244,8 @@ class __$$SnapdTaskProgressImplCopyWithImpl<$Res>
       $Res Function(_$SnapdTaskProgressImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapdTaskProgress
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -5063,11 +5304,13 @@ class _$SnapdTaskProgressImpl implements _SnapdTaskProgress {
             (identical(other.total, total) || other.total == total));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, label, done, total);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapdTaskProgress
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapdTaskProgressImplCopyWith<_$SnapdTaskProgressImpl> get copyWith =>
@@ -5097,8 +5340,11 @@ abstract class _SnapdTaskProgress implements SnapdTaskProgress {
   int get done;
   @override
   int get total;
+
+  /// Create a copy of SnapdTaskProgress
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapdTaskProgressImplCopyWith<_$SnapdTaskProgressImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -5112,8 +5358,12 @@ mixin _$SnapdConstraints {
   String? get pathPattern => throw _privateConstructorUsedError;
   List<String>? get permissions => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapdConstraints to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapdConstraints
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapdConstraintsCopyWith<SnapdConstraints> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -5137,6 +5387,8 @@ class _$SnapdConstraintsCopyWithImpl<$Res, $Val extends SnapdConstraints>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapdConstraints
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -5175,6 +5427,8 @@ class __$$SnapdConstraintImplCopyWithImpl<$Res>
       _$SnapdConstraintImpl _value, $Res Function(_$SnapdConstraintImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapdConstraints
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -5232,12 +5486,14 @@ class _$SnapdConstraintImpl implements _SnapdConstraint {
                 .equals(other._permissions, _permissions));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, pathPattern,
       const DeepCollectionEquality().hash(_permissions));
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapdConstraints
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapdConstraintImplCopyWith<_$SnapdConstraintImpl> get copyWith =>
@@ -5264,8 +5520,11 @@ abstract class _SnapdConstraint implements SnapdConstraints {
   String? get pathPattern;
   @override
   List<String>? get permissions;
+
+  /// Create a copy of SnapdConstraints
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapdConstraintImplCopyWith<_$SnapdConstraintImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -5285,8 +5544,12 @@ mixin _$SnapdRule {
   SnapdRequestLifespan get lifespan => throw _privateConstructorUsedError;
   DateTime? get expiration => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapdRule to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapdRule
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapdRuleCopyWith<SnapdRule> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -5319,6 +5582,8 @@ class _$SnapdRuleCopyWithImpl<$Res, $Val extends SnapdRule>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapdRule
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -5367,6 +5632,8 @@ class _$SnapdRuleCopyWithImpl<$Res, $Val extends SnapdRule>
     ) as $Val);
   }
 
+  /// Create a copy of SnapdRule
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SnapdConstraintsCopyWith<$Res> get constraints {
@@ -5406,6 +5673,8 @@ class __$$SnapdRuleImplCopyWithImpl<$Res>
       _$SnapdRuleImpl _value, $Res Function(_$SnapdRuleImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapdRule
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -5513,12 +5782,14 @@ class _$SnapdRuleImpl implements _SnapdRule {
                 other.expiration == expiration));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, id, timestamp, snap, interface,
       constraints, outcome, lifespan, expiration);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapdRule
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapdRuleImplCopyWith<_$SnapdRuleImpl> get copyWith =>
@@ -5562,8 +5833,11 @@ abstract class _SnapdRule implements SnapdRule {
   SnapdRequestLifespan get lifespan;
   @override
   DateTime? get expiration;
+
+  /// Create a copy of SnapdRule
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapdRuleImplCopyWith<_$SnapdRuleImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -5580,8 +5854,12 @@ mixin _$SnapdRuleMask {
   SnapdRequestOutcome get outcome => throw _privateConstructorUsedError;
   SnapdRequestLifespan get lifespan => throw _privateConstructorUsedError;
 
+  /// Serializes this SnapdRuleMask to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of SnapdRuleMask
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $SnapdRuleMaskCopyWith<SnapdRuleMask> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -5612,6 +5890,8 @@ class _$SnapdRuleMaskCopyWithImpl<$Res, $Val extends SnapdRuleMask>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of SnapdRuleMask
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -5645,6 +5925,8 @@ class _$SnapdRuleMaskCopyWithImpl<$Res, $Val extends SnapdRuleMask>
     ) as $Val);
   }
 
+  /// Create a copy of SnapdRuleMask
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $SnapdConstraintsCopyWith<$Res> get constraints {
@@ -5681,6 +5963,8 @@ class __$$SnapdRuleMaskImplCopyWithImpl<$Res>
       _$SnapdRuleMaskImpl _value, $Res Function(_$SnapdRuleMaskImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of SnapdRuleMask
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -5759,12 +6043,14 @@ class _$SnapdRuleMaskImpl implements _SnapdRuleMask {
                 other.lifespan == lifespan));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode =>
       Object.hash(runtimeType, snap, interface, constraints, outcome, lifespan);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of SnapdRuleMask
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$SnapdRuleMaskImplCopyWith<_$SnapdRuleMaskImpl> get copyWith =>
@@ -5799,9 +6085,378 @@ abstract class _SnapdRuleMask implements SnapdRuleMask {
   SnapdRequestOutcome get outcome;
   @override
   SnapdRequestLifespan get lifespan;
+
+  /// Create a copy of SnapdRuleMask
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapdRuleMaskImplCopyWith<_$SnapdRuleMaskImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+SnapdNotice _$SnapdNoticeFromJson(Map<String, dynamic> json) {
+  return _SnapdNotice.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapdNotice {
+  String get id => throw _privateConstructorUsedError;
+  SnapdNoticeType get type => throw _privateConstructorUsedError;
+  String get key => throw _privateConstructorUsedError;
+  @_SnapdDateTimeConverter()
+  DateTime get firstOccured => throw _privateConstructorUsedError;
+  @_SnapdDateTimeConverter()
+  DateTime get lastOccured => throw _privateConstructorUsedError;
+  @_SnapdDateTimeConverter()
+  DateTime get lastRepeated => throw _privateConstructorUsedError;
+  int get occurrences => throw _privateConstructorUsedError;
+  String get expireAfter => throw _privateConstructorUsedError;
+  int? get userId => throw _privateConstructorUsedError;
+  Map<String, String>? get lastData => throw _privateConstructorUsedError;
+
+  /// Serializes this SnapdNotice to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapdNotice
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapdNoticeCopyWith<SnapdNotice> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapdNoticeCopyWith<$Res> {
+  factory $SnapdNoticeCopyWith(
+          SnapdNotice value, $Res Function(SnapdNotice) then) =
+      _$SnapdNoticeCopyWithImpl<$Res, SnapdNotice>;
+  @useResult
+  $Res call(
+      {String id,
+      SnapdNoticeType type,
+      String key,
+      @_SnapdDateTimeConverter() DateTime firstOccured,
+      @_SnapdDateTimeConverter() DateTime lastOccured,
+      @_SnapdDateTimeConverter() DateTime lastRepeated,
+      int occurrences,
+      String expireAfter,
+      int? userId,
+      Map<String, String>? lastData});
+}
+
+/// @nodoc
+class _$SnapdNoticeCopyWithImpl<$Res, $Val extends SnapdNotice>
+    implements $SnapdNoticeCopyWith<$Res> {
+  _$SnapdNoticeCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapdNotice
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? type = null,
+    Object? key = null,
+    Object? firstOccured = null,
+    Object? lastOccured = null,
+    Object? lastRepeated = null,
+    Object? occurrences = null,
+    Object? expireAfter = null,
+    Object? userId = freezed,
+    Object? lastData = freezed,
+  }) {
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as SnapdNoticeType,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String,
+      firstOccured: null == firstOccured
+          ? _value.firstOccured
+          : firstOccured // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      lastOccured: null == lastOccured
+          ? _value.lastOccured
+          : lastOccured // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      lastRepeated: null == lastRepeated
+          ? _value.lastRepeated
+          : lastRepeated // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      occurrences: null == occurrences
+          ? _value.occurrences
+          : occurrences // ignore: cast_nullable_to_non_nullable
+              as int,
+      expireAfter: null == expireAfter
+          ? _value.expireAfter
+          : expireAfter // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastData: freezed == lastData
+          ? _value.lastData
+          : lastData // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapdNoticeImplCopyWith<$Res>
+    implements $SnapdNoticeCopyWith<$Res> {
+  factory _$$SnapdNoticeImplCopyWith(
+          _$SnapdNoticeImpl value, $Res Function(_$SnapdNoticeImpl) then) =
+      __$$SnapdNoticeImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      SnapdNoticeType type,
+      String key,
+      @_SnapdDateTimeConverter() DateTime firstOccured,
+      @_SnapdDateTimeConverter() DateTime lastOccured,
+      @_SnapdDateTimeConverter() DateTime lastRepeated,
+      int occurrences,
+      String expireAfter,
+      int? userId,
+      Map<String, String>? lastData});
+}
+
+/// @nodoc
+class __$$SnapdNoticeImplCopyWithImpl<$Res>
+    extends _$SnapdNoticeCopyWithImpl<$Res, _$SnapdNoticeImpl>
+    implements _$$SnapdNoticeImplCopyWith<$Res> {
+  __$$SnapdNoticeImplCopyWithImpl(
+      _$SnapdNoticeImpl _value, $Res Function(_$SnapdNoticeImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapdNotice
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? id = null,
+    Object? type = null,
+    Object? key = null,
+    Object? firstOccured = null,
+    Object? lastOccured = null,
+    Object? lastRepeated = null,
+    Object? occurrences = null,
+    Object? expireAfter = null,
+    Object? userId = freezed,
+    Object? lastData = freezed,
+  }) {
+    return _then(_$SnapdNoticeImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as SnapdNoticeType,
+      key: null == key
+          ? _value.key
+          : key // ignore: cast_nullable_to_non_nullable
+              as String,
+      firstOccured: null == firstOccured
+          ? _value.firstOccured
+          : firstOccured // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      lastOccured: null == lastOccured
+          ? _value.lastOccured
+          : lastOccured // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      lastRepeated: null == lastRepeated
+          ? _value.lastRepeated
+          : lastRepeated // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      occurrences: null == occurrences
+          ? _value.occurrences
+          : occurrences // ignore: cast_nullable_to_non_nullable
+              as int,
+      expireAfter: null == expireAfter
+          ? _value.expireAfter
+          : expireAfter // ignore: cast_nullable_to_non_nullable
+              as String,
+      userId: freezed == userId
+          ? _value.userId
+          : userId // ignore: cast_nullable_to_non_nullable
+              as int?,
+      lastData: freezed == lastData
+          ? _value._lastData
+          : lastData // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapdNoticeImpl implements _SnapdNotice {
+  const _$SnapdNoticeImpl(
+      {required this.id,
+      required this.type,
+      required this.key,
+      @_SnapdDateTimeConverter() required this.firstOccured,
+      @_SnapdDateTimeConverter() required this.lastOccured,
+      @_SnapdDateTimeConverter() required this.lastRepeated,
+      required this.occurrences,
+      required this.expireAfter,
+      this.userId,
+      final Map<String, String>? lastData})
+      : _lastData = lastData;
+
+  factory _$SnapdNoticeImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SnapdNoticeImplFromJson(json);
+
+  @override
+  final String id;
+  @override
+  final SnapdNoticeType type;
+  @override
+  final String key;
+  @override
+  @_SnapdDateTimeConverter()
+  final DateTime firstOccured;
+  @override
+  @_SnapdDateTimeConverter()
+  final DateTime lastOccured;
+  @override
+  @_SnapdDateTimeConverter()
+  final DateTime lastRepeated;
+  @override
+  final int occurrences;
+  @override
+  final String expireAfter;
+  @override
+  final int? userId;
+  final Map<String, String>? _lastData;
+  @override
+  Map<String, String>? get lastData {
+    final value = _lastData;
+    if (value == null) return null;
+    if (_lastData is EqualUnmodifiableMapView) return _lastData;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  @override
+  String toString() {
+    return 'SnapdNotice(id: $id, type: $type, key: $key, firstOccured: $firstOccured, lastOccured: $lastOccured, lastRepeated: $lastRepeated, occurrences: $occurrences, expireAfter: $expireAfter, userId: $userId, lastData: $lastData)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapdNoticeImpl &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.type, type) || other.type == type) &&
+            (identical(other.key, key) || other.key == key) &&
+            (identical(other.firstOccured, firstOccured) ||
+                other.firstOccured == firstOccured) &&
+            (identical(other.lastOccured, lastOccured) ||
+                other.lastOccured == lastOccured) &&
+            (identical(other.lastRepeated, lastRepeated) ||
+                other.lastRepeated == lastRepeated) &&
+            (identical(other.occurrences, occurrences) ||
+                other.occurrences == occurrences) &&
+            (identical(other.expireAfter, expireAfter) ||
+                other.expireAfter == expireAfter) &&
+            (identical(other.userId, userId) || other.userId == userId) &&
+            const DeepCollectionEquality().equals(other._lastData, _lastData));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      type,
+      key,
+      firstOccured,
+      lastOccured,
+      lastRepeated,
+      occurrences,
+      expireAfter,
+      userId,
+      const DeepCollectionEquality().hash(_lastData));
+
+  /// Create a copy of SnapdNotice
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapdNoticeImplCopyWith<_$SnapdNoticeImpl> get copyWith =>
+      __$$SnapdNoticeImplCopyWithImpl<_$SnapdNoticeImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapdNoticeImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapdNotice implements SnapdNotice {
+  const factory _SnapdNotice(
+      {required final String id,
+      required final SnapdNoticeType type,
+      required final String key,
+      @_SnapdDateTimeConverter() required final DateTime firstOccured,
+      @_SnapdDateTimeConverter() required final DateTime lastOccured,
+      @_SnapdDateTimeConverter() required final DateTime lastRepeated,
+      required final int occurrences,
+      required final String expireAfter,
+      final int? userId,
+      final Map<String, String>? lastData}) = _$SnapdNoticeImpl;
+
+  factory _SnapdNotice.fromJson(Map<String, dynamic> json) =
+      _$SnapdNoticeImpl.fromJson;
+
+  @override
+  String get id;
+  @override
+  SnapdNoticeType get type;
+  @override
+  String get key;
+  @override
+  @_SnapdDateTimeConverter()
+  DateTime get firstOccured;
+  @override
+  @_SnapdDateTimeConverter()
+  DateTime get lastOccured;
+  @override
+  @_SnapdDateTimeConverter()
+  DateTime get lastRepeated;
+  @override
+  int get occurrences;
+  @override
+  String get expireAfter;
+  @override
+  int? get userId;
+  @override
+  Map<String, String>? get lastData;
+
+  /// Create a copy of SnapdNotice
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapdNoticeImplCopyWith<_$SnapdNoticeImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -5814,8 +6469,12 @@ mixin _$RefreshInhibit {
   @_SnapdDateTimeConverter()
   DateTime get proceedTime => throw _privateConstructorUsedError;
 
+  /// Serializes this RefreshInhibit to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-  @JsonKey(ignore: true)
+
+  /// Create a copy of RefreshInhibit
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $RefreshInhibitCopyWith<RefreshInhibit> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -5839,6 +6498,8 @@ class _$RefreshInhibitCopyWithImpl<$Res, $Val extends RefreshInhibit>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of RefreshInhibit
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -5872,6 +6533,8 @@ class __$$RefreshInhibitImplCopyWithImpl<$Res>
       _$RefreshInhibitImpl _value, $Res Function(_$RefreshInhibitImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of RefreshInhibit
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -5913,11 +6576,13 @@ class _$RefreshInhibitImpl implements _RefreshInhibit {
                 other.proceedTime == proceedTime));
   }
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(runtimeType, proceedTime);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of RefreshInhibit
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$RefreshInhibitImplCopyWith<_$RefreshInhibitImpl> get copyWith =>
@@ -5943,8 +6608,11 @@ abstract class _RefreshInhibit implements RefreshInhibit {
   @override
   @_SnapdDateTimeConverter()
   DateTime get proceedTime;
+
+  /// Create a copy of RefreshInhibit
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$RefreshInhibitImplCopyWith<_$RefreshInhibitImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

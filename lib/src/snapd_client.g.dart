@@ -591,6 +591,51 @@ Map<String, dynamic> _$$SnapdRuleMaskImplToJson(_$SnapdRuleMaskImpl instance) =>
       'lifespan': _$SnapdRequestLifespanEnumMap[instance.lifespan]!,
     };
 
+_$SnapdNoticeImpl _$$SnapdNoticeImplFromJson(Map json) => _$SnapdNoticeImpl(
+      id: json['id'] as String,
+      type: $enumDecode(_$SnapdNoticeTypeEnumMap, json['type']),
+      key: json['key'] as String,
+      firstOccured: const _SnapdDateTimeConverter()
+          .fromJson(json['first-occured'] as String?),
+      lastOccured: const _SnapdDateTimeConverter()
+          .fromJson(json['last-occured'] as String?),
+      lastRepeated: const _SnapdDateTimeConverter()
+          .fromJson(json['last-repeated'] as String?),
+      occurrences: (json['occurrences'] as num).toInt(),
+      expireAfter: json['expire-after'] as String,
+      userId: (json['user-id'] as num?)?.toInt(),
+      lastData: (json['last-data'] as Map?)?.map(
+        (k, e) => MapEntry(k as String, e as String),
+      ),
+    );
+
+Map<String, dynamic> _$$SnapdNoticeImplToJson(_$SnapdNoticeImpl instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'type': _$SnapdNoticeTypeEnumMap[instance.type]!,
+      'key': instance.key,
+      'first-occured':
+          const _SnapdDateTimeConverter().toJson(instance.firstOccured),
+      'last-occured':
+          const _SnapdDateTimeConverter().toJson(instance.lastOccured),
+      'last-repeated':
+          const _SnapdDateTimeConverter().toJson(instance.lastRepeated),
+      'occurrences': instance.occurrences,
+      'expire-after': instance.expireAfter,
+      'user-id': instance.userId,
+      'last-data': instance.lastData,
+    };
+
+const _$SnapdNoticeTypeEnumMap = {
+  SnapdNoticeType.changeUpdate: 'change-update',
+  SnapdNoticeType.warning: 'warning',
+  SnapdNoticeType.refreshInhibit: 'refresh-inhibit',
+  SnapdNoticeType.snapRunInhibit: 'snap-run-inhibit',
+  SnapdNoticeType.interfacesRequestsPrompt: 'interfaces-requests-prompt',
+  SnapdNoticeType.interfacesRequestsRuleUpdate:
+      'interfaces-requests-rule-update',
+};
+
 _$RefreshInhibitImpl _$$RefreshInhibitImplFromJson(Map json) =>
     _$RefreshInhibitImpl(
       proceedTime: const _SnapdDateTimeConverter()
