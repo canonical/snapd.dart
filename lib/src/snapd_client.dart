@@ -859,8 +859,12 @@ class SnapdClient {
     }
 
     final raw = await _getSyncRaw('/v2/assertions/$assertion', params ?? {});
-    final yaml = loadYaml(raw, recover: true) as YamlMap? ?? YamlMap.wrap({});
-    return Map<String, dynamic>.from(yaml);
+    try {
+      final yaml = loadYaml(raw, recover: true) as YamlMap? ?? YamlMap.wrap({});
+      return Map<String, dynamic>.from(yaml);
+    } on YamlException catch (_) {
+      return {};
+    }
   }
 
   /// Logs into the snap store.
