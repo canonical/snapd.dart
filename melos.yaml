@@ -1,0 +1,9 @@
+name: snapd
+
+packages:
+  - .
+
+command:
+  publish:
+    hooks:
+      pre: dart run build_runner build
