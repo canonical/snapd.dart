@@ -8,3 +8,4 @@ coverage/
 build/
 *.g.dart
 *.freezed.dart
+.fvm

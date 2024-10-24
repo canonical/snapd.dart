@@ -8,19 +8,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
-
-    container:
-      image: dart:stable
+    runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: dart pub get
-
-      - name: Generate files
-        run: dart run build_runner build
-
-      - name: Analyze project source
-        run: dart analyze --fatal-infos --fatal-warnings .
+      - uses: actions/checkout@v4
+      - uses: Atsumi3/actions-setup-fvm@0.0.3
+      - uses: bluefireteam/melos-action@v2
+      - run: melos generate
+      - run: melos analyze --fatal-infos --fatal-warnings

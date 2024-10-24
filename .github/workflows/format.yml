@@ -8,16 +8,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
-
-    container:
-      image: dart:stable
+    runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Install dependencies
-        run: dart pub get
-
-      - name: Verify formatting
-        run: dart format --output=none --set-exit-if-changed .
+      - uses: actions/checkout@v4
+      - uses: Atsumi3/actions-setup-fvm@0.0.3
+      - uses: bluefireteam/melos-action@v2
+      - run: melos generate
+      - run: melos format --output=none --set-exit-if-changed
