@@ -1,0 +1,73 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - uses: Atsumi3/actions-setup-fvm@0.0.3
+      - uses: bluefireteam/melos-action@v2
+      - run: melos generate
+      - uses: actions/cache@v3
+        with:
+          path: .
+          key: ${{ runner.os }}-repo-${{ github.sha }}-generated
+
+  analyze:
+    runs-on: ubuntu-22.04
+    needs: setup
+    steps:
+      - uses: actions/checkout@v3
+      - name: Restore repository cache
+        uses: actions/cache@v3
+        with:
+          path: .
+          key: ${{ runner.os }}-repo-${{ github.sha }}-generated
+          restore-keys: |
+            ${{ runner.os }}-repo-
+      - uses: Atsumi3/actions-setup-fvm@0.0.3
+      - uses: bluefireteam/melos-action@v2
+      - run: melos analyze --fatal-infos
+
+  format:
+    runs-on: ubuntu-22.04
+    needs: setup
+    steps:
+      - uses: actions/checkout@v3
+      - name: Restore repository cache
+        uses: actions/cache@v3
+        with:
+          path: .
+          key: ${{ runner.os }}-repo-${{ github.sha }}-generated
+          restore-keys: |
+            ${{ runner.os }}-repo-
+      - uses: Atsumi3/actions-setup-fvm@0.0.3
+      - uses: bluefireteam/melos-action@v2
+      - run: melos format:exclude
+
+  test:
+    runs-on: ubuntu-22.04
+    needs: setup
+    steps:
+      - uses: actions/checkout@v3
+      - name: Restore repository cache
+        uses: actions/cache@v3
+        with:
+          path: .
+          key: ${{ runner.os }}-repo-${{ github.sha }}-generated
+          restore-keys: |
+            ${{ runner.os }}-repo-
+      - uses: Atsumi3/actions-setup-fvm@0.0.3
+      - uses: bluefireteam/melos-action@v2
+      - run: sudo apt update && sudo apt install -y lcov
+      - run: melos coverage
+      - uses: codecov/codecov-action@v3
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}

@@ -1,0 +1,33 @@
+name: snapd
+
+packages:
+  - packages/*
+
+command:
+  publish:
+    hooks:
+      pre: melos generate
+
+scripts:
+  generate: >
+    melos exec -c 1 --fail-fast --depends-on=build_runner -- \
+      fvm dart run build_runner build --delete-conflicting-outputs
+
+  test: >
+    melos exec -c 1 --dir-exists=test -- \
+      fvm flutter test
+
+  coverage: >
+    melos exec -c 1 --fail-fast --dir-exists=test -- \
+      fvm flutter test --coverage && melos run coverage:cleanup
+
+  coverage:cleanup: >
+    melos exec --file-exists=coverage/lcov.info -- \
+      lcov --remove coverage/lcov.info '**/*.g.dart' '**/*.freezed.dart' -o coverage/lcov.info --ignore-errors unused
+
+  format:exclude: >
+    find . -name '*.dart' \
+      ! -name '*.freezed.dart' \
+      ! -name '*.g.dart' \
+      ! -name '*.mocks.dart' \
+      | xargs fvm dart format --set-exit-if-changed

@@ -1,27 +1,7 @@
-name: snapd
-version: 0.6.4
-repository: https://github.com/canonical/snapd.dart
-description:
-  Provides a client to access snapd, which allows you to manage, search and install snaps on a Linux system.
+name: snapd_workspace
 
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
-platforms:
-  linux:
-
-dependencies:
-  collection: ^1.15.0
-  freezed_annotation: ^2.4.1
-  json_annotation: ^4.9.0
-  meta: ^1.8.0
-  path: ^1.8.0
-  yaml: ^3.1.2
-
 dev_dependencies:
-  build_runner: ^2.3.3
-  freezed: ^2.4.8
-  json_serializable: ^6.8.0
-  test: ^1.16.8
-  test_cov: ^1.0.1
-  ubuntu_lints: ^0.4.0
+  melos: ^6.2.0

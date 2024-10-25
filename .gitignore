@@ -1,8 +1,45 @@
+.DS_Store
+.atom/
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# The .vscode folder contains launch configuration and tasks you configure in
+# VS Code which you may wish to be included in version control, so this line
+# is commented out by default.
+.vscode/
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
 .dart_tool/
-.idea/
+.flutter-plugins
+.flutter-plugins-dependencies
 .packages
+.pub-cache/
+.pub/
 pubspec.lock
-test/.test_cov.dart
+/build/
 coverage/
-.idea/
-build/
+/doc/
+**/build/
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
+
+# Melos generated files
+**/pubspec_overrides.yaml
+
+# FVM Version Cache
+.fvm/
+
+# Generated files
+**/*.freezed.dart
+**/*.g.dart
+**/*.mocks.dart
