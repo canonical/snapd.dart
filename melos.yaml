@@ -24,3 +24,10 @@ scripts:
   coverage:cleanup: >
     melos exec --file-exists=coverage/lcov.info -- \
       lcov --remove coverage/lcov.info '**/*.g.dart' '**/*.freezed.dart' -o coverage/lcov.info --ignore-errors unused
+
+  format:exclude: >
+    find . -name '*.dart' \
+      ! -name '*.freezed.dart' \
+      ! -name '*.g.dart' \
+      ! -name '*.mocks.dart' \
+      | xargs fvm dart format --set-exit-if-changed
