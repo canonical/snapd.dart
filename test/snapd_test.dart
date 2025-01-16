@@ -3376,8 +3376,8 @@ void main() {
         constraints: <String, dynamic>{
           'pathPattern': '/home/user/Downloads/*',
           'permissions': ['read'],
-          'outcome': SnapdRequestOutcome.allow.toString(),
-          'lifespan': SnapdRequestLifespan.forever.toString(),
+          'outcome': 'allow',
+          'lifespan': 'forever',
         },
       ),
       SnapdRule(
@@ -3388,8 +3388,8 @@ void main() {
         constraints: <String, dynamic>{
           'pathPattern': '/home/user/Downloads/*.pdf',
           'permissions': ['read', 'write'],
-          'outcome': SnapdRequestOutcome.deny.toString(),
-          'lifespan': SnapdRequestLifespan.timespan.toString(),
+          'outcome': 'deny',
+          'lifespan': 'timespan',
           'expiration': DateTime(2003).toIso8601String(),
         },
       ),
@@ -3429,8 +3429,8 @@ void main() {
         constraints: <String, dynamic>{
           'pathPattern': '/home/user/Downloads/*',
           'permissions': ['read'],
-          'outcome': SnapdRequestOutcome.allow.toString(),
-          'lifespan': SnapdRequestLifespan.forever.toString(),
+          'outcome': 'allow',
+          'lifespan': 'forever',
         },
       ),
       SnapdRule(
@@ -3441,8 +3441,8 @@ void main() {
         constraints: <String, dynamic>{
           'pathPattern': '/home/user/Downloads/*.pdf',
           'permissions': ['read', 'write'],
-          'outcome': SnapdRequestOutcome.deny.toString(),
-          'lifespan': SnapdRequestLifespan.timespan.toString(),
+          'outcome': 'deny',
+          'lifespan': 'timespan',
           'expiration': DateTime(2003).toIso8601String(),
         },
       ),
@@ -3485,8 +3485,8 @@ void main() {
       constraints: <String, dynamic>{
         'pathPattern': '/home/user/Downloads/*',
         'permissions': ['read'],
-        'outcome': SnapdRequestOutcome.allow.toString(),
-        'lifespan': SnapdRequestLifespan.forever.toString(),
+        'outcome': 'allow',
+        'lifespan': 'forever',
       },
     );
 
