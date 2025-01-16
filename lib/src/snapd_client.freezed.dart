@@ -5349,186 +5349,6 @@ abstract class _SnapdTaskProgress implements SnapdTaskProgress {
       throw _privateConstructorUsedError;
 }
 
-SnapdConstraints _$SnapdConstraintsFromJson(Map<String, dynamic> json) {
-  return _SnapdConstraint.fromJson(json);
-}
-
-/// @nodoc
-mixin _$SnapdConstraints {
-  String? get pathPattern => throw _privateConstructorUsedError;
-  List<String>? get permissions => throw _privateConstructorUsedError;
-
-  /// Serializes this SnapdConstraints to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of SnapdConstraints
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  $SnapdConstraintsCopyWith<SnapdConstraints> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $SnapdConstraintsCopyWith<$Res> {
-  factory $SnapdConstraintsCopyWith(
-          SnapdConstraints value, $Res Function(SnapdConstraints) then) =
-      _$SnapdConstraintsCopyWithImpl<$Res, SnapdConstraints>;
-  @useResult
-  $Res call({String? pathPattern, List<String>? permissions});
-}
-
-/// @nodoc
-class _$SnapdConstraintsCopyWithImpl<$Res, $Val extends SnapdConstraints>
-    implements $SnapdConstraintsCopyWith<$Res> {
-  _$SnapdConstraintsCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of SnapdConstraints
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? pathPattern = freezed,
-    Object? permissions = freezed,
-  }) {
-    return _then(_value.copyWith(
-      pathPattern: freezed == pathPattern
-          ? _value.pathPattern
-          : pathPattern // ignore: cast_nullable_to_non_nullable
-              as String?,
-      permissions: freezed == permissions
-          ? _value.permissions
-          : permissions // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$SnapdConstraintImplCopyWith<$Res>
-    implements $SnapdConstraintsCopyWith<$Res> {
-  factory _$$SnapdConstraintImplCopyWith(_$SnapdConstraintImpl value,
-          $Res Function(_$SnapdConstraintImpl) then) =
-      __$$SnapdConstraintImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({String? pathPattern, List<String>? permissions});
-}
-
-/// @nodoc
-class __$$SnapdConstraintImplCopyWithImpl<$Res>
-    extends _$SnapdConstraintsCopyWithImpl<$Res, _$SnapdConstraintImpl>
-    implements _$$SnapdConstraintImplCopyWith<$Res> {
-  __$$SnapdConstraintImplCopyWithImpl(
-      _$SnapdConstraintImpl _value, $Res Function(_$SnapdConstraintImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of SnapdConstraints
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? pathPattern = freezed,
-    Object? permissions = freezed,
-  }) {
-    return _then(_$SnapdConstraintImpl(
-      pathPattern: freezed == pathPattern
-          ? _value.pathPattern
-          : pathPattern // ignore: cast_nullable_to_non_nullable
-              as String?,
-      permissions: freezed == permissions
-          ? _value._permissions
-          : permissions // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$SnapdConstraintImpl implements _SnapdConstraint {
-  const _$SnapdConstraintImpl(
-      {this.pathPattern, final List<String>? permissions})
-      : _permissions = permissions;
-
-  factory _$SnapdConstraintImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SnapdConstraintImplFromJson(json);
-
-  @override
-  final String? pathPattern;
-  final List<String>? _permissions;
-  @override
-  List<String>? get permissions {
-    final value = _permissions;
-    if (value == null) return null;
-    if (_permissions is EqualUnmodifiableListView) return _permissions;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(value);
-  }
-
-  @override
-  String toString() {
-    return 'SnapdConstraints(pathPattern: $pathPattern, permissions: $permissions)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$SnapdConstraintImpl &&
-            (identical(other.pathPattern, pathPattern) ||
-                other.pathPattern == pathPattern) &&
-            const DeepCollectionEquality()
-                .equals(other._permissions, _permissions));
-  }
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  int get hashCode => Object.hash(runtimeType, pathPattern,
-      const DeepCollectionEquality().hash(_permissions));
-
-  /// Create a copy of SnapdConstraints
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$SnapdConstraintImplCopyWith<_$SnapdConstraintImpl> get copyWith =>
-      __$$SnapdConstraintImplCopyWithImpl<_$SnapdConstraintImpl>(
-          this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$SnapdConstraintImplToJson(
-      this,
-    );
-  }
-}
-
-abstract class _SnapdConstraint implements SnapdConstraints {
-  const factory _SnapdConstraint(
-      {final String? pathPattern,
-      final List<String>? permissions}) = _$SnapdConstraintImpl;
-
-  factory _SnapdConstraint.fromJson(Map<String, dynamic> json) =
-      _$SnapdConstraintImpl.fromJson;
-
-  @override
-  String? get pathPattern;
-  @override
-  List<String>? get permissions;
-
-  /// Create a copy of SnapdConstraints
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SnapdConstraintImplCopyWith<_$SnapdConstraintImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
 SnapdRule _$SnapdRuleFromJson(Map<String, dynamic> json) {
   return _SnapdRule.fromJson(json);
 }
@@ -5539,9 +5359,11 @@ mixin _$SnapdRule {
   DateTime get timestamp => throw _privateConstructorUsedError;
   String get snap => throw _privateConstructorUsedError;
   String get interface => throw _privateConstructorUsedError;
-  SnapdConstraints get constraints => throw _privateConstructorUsedError;
-  SnapdRequestOutcome get outcome => throw _privateConstructorUsedError;
-  SnapdRequestLifespan get lifespan => throw _privateConstructorUsedError;
+  Map<String, dynamic> get constraints =>
+      throw _privateConstructorUsedError; // Snapd 1.67 and earlier returned the outcome, lifespan and expiration fields
+// at the top level rather than as part of `constraints`
+  SnapdRequestOutcome? get outcome => throw _privateConstructorUsedError;
+  SnapdRequestLifespan? get lifespan => throw _privateConstructorUsedError;
   DateTime? get expiration => throw _privateConstructorUsedError;
 
   /// Serializes this SnapdRule to a JSON map.
@@ -5564,12 +5386,10 @@ abstract class $SnapdRuleCopyWith<$Res> {
       DateTime timestamp,
       String snap,
       String interface,
-      SnapdConstraints constraints,
-      SnapdRequestOutcome outcome,
-      SnapdRequestLifespan lifespan,
+      Map<String, dynamic> constraints,
+      SnapdRequestOutcome? outcome,
+      SnapdRequestLifespan? lifespan,
       DateTime? expiration});
-
-  $SnapdConstraintsCopyWith<$Res> get constraints;
 }
 
 /// @nodoc
@@ -5592,8 +5412,8 @@ class _$SnapdRuleCopyWithImpl<$Res, $Val extends SnapdRule>
     Object? snap = null,
     Object? interface = null,
     Object? constraints = null,
-    Object? outcome = null,
-    Object? lifespan = null,
+    Object? outcome = freezed,
+    Object? lifespan = freezed,
     Object? expiration = freezed,
   }) {
     return _then(_value.copyWith(
@@ -5616,30 +5436,20 @@ class _$SnapdRuleCopyWithImpl<$Res, $Val extends SnapdRule>
       constraints: null == constraints
           ? _value.constraints
           : constraints // ignore: cast_nullable_to_non_nullable
-              as SnapdConstraints,
-      outcome: null == outcome
+              as Map<String, dynamic>,
+      outcome: freezed == outcome
           ? _value.outcome
           : outcome // ignore: cast_nullable_to_non_nullable
-              as SnapdRequestOutcome,
-      lifespan: null == lifespan
+              as SnapdRequestOutcome?,
+      lifespan: freezed == lifespan
           ? _value.lifespan
           : lifespan // ignore: cast_nullable_to_non_nullable
-              as SnapdRequestLifespan,
+              as SnapdRequestLifespan?,
       expiration: freezed == expiration
           ? _value.expiration
           : expiration // ignore: cast_nullable_to_non_nullable
               as DateTime?,
     ) as $Val);
-  }
-
-  /// Create a copy of SnapdRule
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $SnapdConstraintsCopyWith<$Res> get constraints {
-    return $SnapdConstraintsCopyWith<$Res>(_value.constraints, (value) {
-      return _then(_value.copyWith(constraints: value) as $Val);
-    });
   }
 }
 
@@ -5656,13 +5466,10 @@ abstract class _$$SnapdRuleImplCopyWith<$Res>
       DateTime timestamp,
       String snap,
       String interface,
-      SnapdConstraints constraints,
-      SnapdRequestOutcome outcome,
-      SnapdRequestLifespan lifespan,
+      Map<String, dynamic> constraints,
+      SnapdRequestOutcome? outcome,
+      SnapdRequestLifespan? lifespan,
       DateTime? expiration});
-
-  @override
-  $SnapdConstraintsCopyWith<$Res> get constraints;
 }
 
 /// @nodoc
@@ -5683,8 +5490,8 @@ class __$$SnapdRuleImplCopyWithImpl<$Res>
     Object? snap = null,
     Object? interface = null,
     Object? constraints = null,
-    Object? outcome = null,
-    Object? lifespan = null,
+    Object? outcome = freezed,
+    Object? lifespan = freezed,
     Object? expiration = freezed,
   }) {
     return _then(_$SnapdRuleImpl(
@@ -5705,17 +5512,17 @@ class __$$SnapdRuleImplCopyWithImpl<$Res>
           : interface // ignore: cast_nullable_to_non_nullable
               as String,
       constraints: null == constraints
-          ? _value.constraints
+          ? _value._constraints
           : constraints // ignore: cast_nullable_to_non_nullable
-              as SnapdConstraints,
-      outcome: null == outcome
+              as Map<String, dynamic>,
+      outcome: freezed == outcome
           ? _value.outcome
           : outcome // ignore: cast_nullable_to_non_nullable
-              as SnapdRequestOutcome,
-      lifespan: null == lifespan
+              as SnapdRequestOutcome?,
+      lifespan: freezed == lifespan
           ? _value.lifespan
           : lifespan // ignore: cast_nullable_to_non_nullable
-              as SnapdRequestLifespan,
+              as SnapdRequestLifespan?,
       expiration: freezed == expiration
           ? _value.expiration
           : expiration // ignore: cast_nullable_to_non_nullable
@@ -5732,10 +5539,11 @@ class _$SnapdRuleImpl implements _SnapdRule {
       required this.timestamp,
       required this.snap,
       required this.interface,
-      required this.constraints,
-      required this.outcome,
-      required this.lifespan,
-      this.expiration});
+      required final Map<String, dynamic> constraints,
+      this.outcome,
+      this.lifespan,
+      this.expiration})
+      : _constraints = constraints;
 
   factory _$SnapdRuleImpl.fromJson(Map<String, dynamic> json) =>
       _$$SnapdRuleImplFromJson(json);
@@ -5748,12 +5556,20 @@ class _$SnapdRuleImpl implements _SnapdRule {
   final String snap;
   @override
   final String interface;
+  final Map<String, dynamic> _constraints;
   @override
-  final SnapdConstraints constraints;
+  Map<String, dynamic> get constraints {
+    if (_constraints is EqualUnmodifiableMapView) return _constraints;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_constraints);
+  }
+
+// Snapd 1.67 and earlier returned the outcome, lifespan and expiration fields
+// at the top level rather than as part of `constraints`
   @override
-  final SnapdRequestOutcome outcome;
+  final SnapdRequestOutcome? outcome;
   @override
-  final SnapdRequestLifespan lifespan;
+  final SnapdRequestLifespan? lifespan;
   @override
   final DateTime? expiration;
 
@@ -5773,8 +5589,8 @@ class _$SnapdRuleImpl implements _SnapdRule {
             (identical(other.snap, snap) || other.snap == snap) &&
             (identical(other.interface, interface) ||
                 other.interface == interface) &&
-            (identical(other.constraints, constraints) ||
-                other.constraints == constraints) &&
+            const DeepCollectionEquality()
+                .equals(other._constraints, _constraints) &&
             (identical(other.outcome, outcome) || other.outcome == outcome) &&
             (identical(other.lifespan, lifespan) ||
                 other.lifespan == lifespan) &&
@@ -5784,8 +5600,16 @@ class _$SnapdRuleImpl implements _SnapdRule {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, timestamp, snap, interface,
-      constraints, outcome, lifespan, expiration);
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      timestamp,
+      snap,
+      interface,
+      const DeepCollectionEquality().hash(_constraints),
+      outcome,
+      lifespan,
+      expiration);
 
   /// Create a copy of SnapdRule
   /// with the given fields replaced by the non-null parameter values.
@@ -5809,9 +5633,9 @@ abstract class _SnapdRule implements SnapdRule {
       required final DateTime timestamp,
       required final String snap,
       required final String interface,
-      required final SnapdConstraints constraints,
-      required final SnapdRequestOutcome outcome,
-      required final SnapdRequestLifespan lifespan,
+      required final Map<String, dynamic> constraints,
+      final SnapdRequestOutcome? outcome,
+      final SnapdRequestLifespan? lifespan,
       final DateTime? expiration}) = _$SnapdRuleImpl;
 
   factory _SnapdRule.fromJson(Map<String, dynamic> json) =
@@ -5826,11 +5650,13 @@ abstract class _SnapdRule implements SnapdRule {
   @override
   String get interface;
   @override
-  SnapdConstraints get constraints;
+  Map<String, dynamic>
+      get constraints; // Snapd 1.67 and earlier returned the outcome, lifespan and expiration fields
+// at the top level rather than as part of `constraints`
   @override
-  SnapdRequestOutcome get outcome;
+  SnapdRequestOutcome? get outcome;
   @override
-  SnapdRequestLifespan get lifespan;
+  SnapdRequestLifespan? get lifespan;
   @override
   DateTime? get expiration;
 
@@ -5850,9 +5676,7 @@ SnapdRuleMask _$SnapdRuleMaskFromJson(Map<String, dynamic> json) {
 mixin _$SnapdRuleMask {
   String get snap => throw _privateConstructorUsedError;
   String get interface => throw _privateConstructorUsedError;
-  SnapdConstraints get constraints => throw _privateConstructorUsedError;
-  SnapdRequestOutcome get outcome => throw _privateConstructorUsedError;
-  SnapdRequestLifespan get lifespan => throw _privateConstructorUsedError;
+  Map<String, dynamic> get constraints => throw _privateConstructorUsedError;
 
   /// Serializes this SnapdRuleMask to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -5870,14 +5694,7 @@ abstract class $SnapdRuleMaskCopyWith<$Res> {
           SnapdRuleMask value, $Res Function(SnapdRuleMask) then) =
       _$SnapdRuleMaskCopyWithImpl<$Res, SnapdRuleMask>;
   @useResult
-  $Res call(
-      {String snap,
-      String interface,
-      SnapdConstraints constraints,
-      SnapdRequestOutcome outcome,
-      SnapdRequestLifespan lifespan});
-
-  $SnapdConstraintsCopyWith<$Res> get constraints;
+  $Res call({String snap, String interface, Map<String, dynamic> constraints});
 }
 
 /// @nodoc
@@ -5898,8 +5715,6 @@ class _$SnapdRuleMaskCopyWithImpl<$Res, $Val extends SnapdRuleMask>
     Object? snap = null,
     Object? interface = null,
     Object? constraints = null,
-    Object? outcome = null,
-    Object? lifespan = null,
   }) {
     return _then(_value.copyWith(
       snap: null == snap
@@ -5913,26 +5728,8 @@ class _$SnapdRuleMaskCopyWithImpl<$Res, $Val extends SnapdRuleMask>
       constraints: null == constraints
           ? _value.constraints
           : constraints // ignore: cast_nullable_to_non_nullable
-              as SnapdConstraints,
-      outcome: null == outcome
-          ? _value.outcome
-          : outcome // ignore: cast_nullable_to_non_nullable
-              as SnapdRequestOutcome,
-      lifespan: null == lifespan
-          ? _value.lifespan
-          : lifespan // ignore: cast_nullable_to_non_nullable
-              as SnapdRequestLifespan,
+              as Map<String, dynamic>,
     ) as $Val);
-  }
-
-  /// Create a copy of SnapdRuleMask
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $SnapdConstraintsCopyWith<$Res> get constraints {
-    return $SnapdConstraintsCopyWith<$Res>(_value.constraints, (value) {
-      return _then(_value.copyWith(constraints: value) as $Val);
-    });
   }
 }
 
@@ -5944,15 +5741,7 @@ abstract class _$$SnapdRuleMaskImplCopyWith<$Res>
       __$$SnapdRuleMaskImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String snap,
-      String interface,
-      SnapdConstraints constraints,
-      SnapdRequestOutcome outcome,
-      SnapdRequestLifespan lifespan});
-
-  @override
-  $SnapdConstraintsCopyWith<$Res> get constraints;
+  $Res call({String snap, String interface, Map<String, dynamic> constraints});
 }
 
 /// @nodoc
@@ -5971,8 +5760,6 @@ class __$$SnapdRuleMaskImplCopyWithImpl<$Res>
     Object? snap = null,
     Object? interface = null,
     Object? constraints = null,
-    Object? outcome = null,
-    Object? lifespan = null,
   }) {
     return _then(_$SnapdRuleMaskImpl(
       snap: null == snap
@@ -5984,17 +5771,9 @@ class __$$SnapdRuleMaskImplCopyWithImpl<$Res>
           : interface // ignore: cast_nullable_to_non_nullable
               as String,
       constraints: null == constraints
-          ? _value.constraints
+          ? _value._constraints
           : constraints // ignore: cast_nullable_to_non_nullable
-              as SnapdConstraints,
-      outcome: null == outcome
-          ? _value.outcome
-          : outcome // ignore: cast_nullable_to_non_nullable
-              as SnapdRequestOutcome,
-      lifespan: null == lifespan
-          ? _value.lifespan
-          : lifespan // ignore: cast_nullable_to_non_nullable
-              as SnapdRequestLifespan,
+              as Map<String, dynamic>,
     ));
   }
 }
@@ -6005,9 +5784,8 @@ class _$SnapdRuleMaskImpl implements _SnapdRuleMask {
   const _$SnapdRuleMaskImpl(
       {required this.snap,
       required this.interface,
-      required this.constraints,
-      required this.outcome,
-      required this.lifespan});
+      required final Map<String, dynamic> constraints})
+      : _constraints = constraints;
 
   factory _$SnapdRuleMaskImpl.fromJson(Map<String, dynamic> json) =>
       _$$SnapdRuleMaskImplFromJson(json);
@@ -6016,16 +5794,17 @@ class _$SnapdRuleMaskImpl implements _SnapdRuleMask {
   final String snap;
   @override
   final String interface;
+  final Map<String, dynamic> _constraints;
   @override
-  final SnapdConstraints constraints;
-  @override
-  final SnapdRequestOutcome outcome;
-  @override
-  final SnapdRequestLifespan lifespan;
+  Map<String, dynamic> get constraints {
+    if (_constraints is EqualUnmodifiableMapView) return _constraints;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_constraints);
+  }
 
   @override
   String toString() {
-    return 'SnapdRuleMask(snap: $snap, interface: $interface, constraints: $constraints, outcome: $outcome, lifespan: $lifespan)';
+    return 'SnapdRuleMask(snap: $snap, interface: $interface, constraints: $constraints)';
   }
 
   @override
@@ -6036,17 +5815,14 @@ class _$SnapdRuleMaskImpl implements _SnapdRuleMask {
             (identical(other.snap, snap) || other.snap == snap) &&
             (identical(other.interface, interface) ||
                 other.interface == interface) &&
-            (identical(other.constraints, constraints) ||
-                other.constraints == constraints) &&
-            (identical(other.outcome, outcome) || other.outcome == outcome) &&
-            (identical(other.lifespan, lifespan) ||
-                other.lifespan == lifespan));
+            const DeepCollectionEquality()
+                .equals(other._constraints, _constraints));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, snap, interface, constraints, outcome, lifespan);
+  int get hashCode => Object.hash(runtimeType, snap, interface,
+      const DeepCollectionEquality().hash(_constraints));
 
   /// Create a copy of SnapdRuleMask
   /// with the given fields replaced by the non-null parameter values.
@@ -6068,9 +5844,7 @@ abstract class _SnapdRuleMask implements SnapdRuleMask {
   const factory _SnapdRuleMask(
       {required final String snap,
       required final String interface,
-      required final SnapdConstraints constraints,
-      required final SnapdRequestOutcome outcome,
-      required final SnapdRequestLifespan lifespan}) = _$SnapdRuleMaskImpl;
+      required final Map<String, dynamic> constraints}) = _$SnapdRuleMaskImpl;
 
   factory _SnapdRuleMask.fromJson(Map<String, dynamic> json) =
       _$SnapdRuleMaskImpl.fromJson;
@@ -6080,11 +5854,7 @@ abstract class _SnapdRuleMask implements SnapdRuleMask {
   @override
   String get interface;
   @override
-  SnapdConstraints get constraints;
-  @override
-  SnapdRequestOutcome get outcome;
-  @override
-  SnapdRequestLifespan get lifespan;
+  Map<String, dynamic> get constraints;
 
   /// Create a copy of SnapdRuleMask
   /// with the given fields replaced by the non-null parameter values.

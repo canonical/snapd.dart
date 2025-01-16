@@ -42,8 +42,10 @@ enum SnapsFilter { all, enabled, refreshInhibited }
 /// Scope to search snaps.
 enum SnapFindScope { wide }
 
+@JsonEnum(fieldRename: FieldRename.kebab)
 enum SnapdRequestOutcome { allow, deny }
 
+@JsonEnum(fieldRename: FieldRename.kebab)
 enum SnapdRequestLifespan { single, session, forever, timespan }
 
 @JsonEnum(fieldRename: FieldRename.kebab)
@@ -433,18 +435,6 @@ class SnapdTaskProgress with _$SnapdTaskProgress {
       _$SnapdTaskProgressFromJson(json);
 }
 
-/// Constraints for a [SnapdRule].
-@freezed
-class SnapdConstraints with _$SnapdConstraints {
-  const factory SnapdConstraints({
-    String? pathPattern,
-    List<String>? permissions,
-  }) = _SnapdConstraint;
-
-  factory SnapdConstraints.fromJson(Map<String, dynamic> json) =>
-      _$SnapdConstraintsFromJson(json);
-}
-
 /// Details of a prompting rule.
 @freezed
 class SnapdRule with _$SnapdRule {
@@ -453,9 +443,11 @@ class SnapdRule with _$SnapdRule {
     required DateTime timestamp,
     required String snap,
     required String interface,
-    required SnapdConstraints constraints,
-    required SnapdRequestOutcome outcome,
-    required SnapdRequestLifespan lifespan,
+    required Map<String, dynamic> constraints,
+    // Snapd 1.67 and earlier returned the outcome, lifespan and expiration fields
+    // at the top level rather than as part of `constraints`
+    SnapdRequestOutcome? outcome,
+    SnapdRequestLifespan? lifespan,
     DateTime? expiration,
   }) = _SnapdRule;
 
@@ -469,10 +461,7 @@ class SnapdRuleMask with _$SnapdRuleMask {
   const factory SnapdRuleMask({
     required String snap,
     required String interface,
-    required SnapdConstraints constraints,
-    required SnapdRequestOutcome outcome,
-    required SnapdRequestLifespan lifespan,
-    // Duration? duration,
+    required Map<String, dynamic> constraints,
   }) = _SnapdRuleMask;
 
   factory SnapdRuleMask.fromJson(Map<String, dynamic> json) =>
@@ -1023,6 +1012,17 @@ class SnapdClient {
   /// Removes the prompting rule with the given [id].
   Future<void> removeRule(String id) async {
     final request = <String, dynamic>{'action': 'remove'};
+    await _postSync('/v2/interfaces/requests/rules/$id', request);
+  }
+
+  /// Modify the prompting rule with the given [id].
+  Future<void> patchRule(String id, Map<String, dynamic> constraints) async {
+    final request = <String, dynamic>{
+      'action': 'patch',
+      'rule': <String, dynamic>{
+        'constraints': constraints,
+      },
+    };
     await _postSync('/v2/interfaces/requests/rules/$id', request);
   }
 

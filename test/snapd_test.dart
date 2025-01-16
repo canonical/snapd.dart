@@ -883,8 +883,6 @@ class MockSnapdServer {
             snap: rule.snap,
             interface: rule.interface,
             constraints: rule.constraints,
-            outcome: rule.outcome,
-            lifespan: rule.lifespan,
           ),
         );
         _writeSyncResponse(
@@ -3375,25 +3373,25 @@ void main() {
         timestamp: DateTime(2000),
         snap: 'snap',
         interface: 'home',
-        constraints: const SnapdConstraints(
-          pathPattern: '/home/user/Downloads/*',
-          permissions: ['read'],
-        ),
-        outcome: SnapdRequestOutcome.allow,
-        lifespan: SnapdRequestLifespan.forever,
+        constraints: <String, dynamic>{
+          'pathPattern': '/home/user/Downloads/*',
+          'permissions': ['read'],
+          'outcome': 'allow',
+          'lifespan': 'forever',
+        },
       ),
       SnapdRule(
         id: 'rule2',
         timestamp: DateTime(2002),
         snap: 'snap2',
         interface: 'home',
-        constraints: const SnapdConstraints(
-          pathPattern: '/home/user/Downloads/*.pdf',
-          permissions: ['read', 'write'],
-        ),
-        outcome: SnapdRequestOutcome.deny,
-        lifespan: SnapdRequestLifespan.timespan,
-        expiration: DateTime(2003),
+        constraints: <String, dynamic>{
+          'pathPattern': '/home/user/Downloads/*.pdf',
+          'permissions': ['read', 'write'],
+          'outcome': 'deny',
+          'lifespan': 'timespan',
+          'expiration': DateTime(2003).toIso8601String(),
+        },
       ),
     ];
 
@@ -3428,25 +3426,25 @@ void main() {
         timestamp: DateTime(2000),
         snap: 'snap',
         interface: 'home',
-        constraints: const SnapdConstraints(
-          pathPattern: '/home/user/Downloads/*',
-          permissions: ['read'],
-        ),
-        outcome: SnapdRequestOutcome.allow,
-        lifespan: SnapdRequestLifespan.forever,
+        constraints: <String, dynamic>{
+          'pathPattern': '/home/user/Downloads/*',
+          'permissions': ['read'],
+          'outcome': 'allow',
+          'lifespan': 'forever',
+        },
       ),
       SnapdRule(
         id: 'rule2',
         timestamp: DateTime(2002),
         snap: 'snap2',
         interface: 'home',
-        constraints: const SnapdConstraints(
-          pathPattern: '/home/user/Downloads/*.pdf',
-          permissions: ['read', 'write'],
-        ),
-        outcome: SnapdRequestOutcome.deny,
-        lifespan: SnapdRequestLifespan.timespan,
-        expiration: DateTime(2003),
+        constraints: <String, dynamic>{
+          'pathPattern': '/home/user/Downloads/*.pdf',
+          'permissions': ['read', 'write'],
+          'outcome': 'deny',
+          'lifespan': 'timespan',
+          'expiration': DateTime(2003).toIso8601String(),
+        },
       ),
     ];
 
@@ -3481,15 +3479,15 @@ void main() {
       client.close();
     });
 
-    const rule = SnapdRuleMask(
+    final rule = SnapdRuleMask(
       snap: 'snap',
       interface: 'home',
-      constraints: SnapdConstraints(
-        pathPattern: '/home/user/Downloads/*',
-        permissions: ['read'],
-      ),
-      outcome: SnapdRequestOutcome.allow,
-      lifespan: SnapdRequestLifespan.forever,
+      constraints: <String, dynamic>{
+        'pathPattern': '/home/user/Downloads/*',
+        'permissions': ['read'],
+        'outcome': 'allow',
+        'lifespan': 'forever',
+      },
     );
 
     await client.addRule(rule);
@@ -3499,8 +3497,6 @@ void main() {
     expect(allRules[0].interface, rule.interface);
     expect(allRules[0].snap, equals(rule.snap));
     expect(allRules[0].constraints, equals(rule.constraints));
-    expect(allRules[0].outcome, equals(rule.outcome));
-    expect(allRules[0].lifespan, equals(rule.lifespan));
   });
 
   test('apparmor prompting', () async {
