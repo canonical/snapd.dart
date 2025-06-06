@@ -1285,6 +1285,7 @@ mixin _$Snap {
   List<SnapCategory> get categories => throw _privateConstructorUsedError;
   List<String> get tracks => throw _privateConstructorUsedError;
   List<String> get commonIds => throw _privateConstructorUsedError;
+  Map<String, List<String>> get links => throw _privateConstructorUsedError;
   List<SnapMedia> get media => throw _privateConstructorUsedError;
   @JsonKey(unknownEnumValue: SnapConfinement.unknown)
   SnapConfinement get confinement => throw _privateConstructorUsedError;
@@ -1335,6 +1336,7 @@ abstract class $SnapCopyWith<$Res> {
       List<SnapCategory> categories,
       List<String> tracks,
       List<String> commonIds,
+      Map<String, List<String>> links,
       List<SnapMedia> media,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       SnapConfinement confinement,
@@ -1389,6 +1391,7 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
     Object? categories = null,
     Object? tracks = null,
     Object? commonIds = null,
+    Object? links = null,
     Object? media = null,
     Object? confinement = null,
     Object? status = null,
@@ -1466,6 +1469,10 @@ class _$SnapCopyWithImpl<$Res, $Val extends Snap>
           ? _value.commonIds
           : commonIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      links: null == links
+          ? _value.links
+          : links // ignore: cast_nullable_to_non_nullable
+              as Map<String, List<String>>,
       media: null == media
           ? _value.media
           : media // ignore: cast_nullable_to_non_nullable
@@ -1596,6 +1603,7 @@ abstract class _$$SnapImplCopyWith<$Res> implements $SnapCopyWith<$Res> {
       List<SnapCategory> categories,
       List<String> tracks,
       List<String> commonIds,
+      Map<String, List<String>> links,
       List<SnapMedia> media,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       SnapConfinement confinement,
@@ -1649,6 +1657,7 @@ class __$$SnapImplCopyWithImpl<$Res>
     Object? categories = null,
     Object? tracks = null,
     Object? commonIds = null,
+    Object? links = null,
     Object? media = null,
     Object? confinement = null,
     Object? status = null,
@@ -1726,6 +1735,10 @@ class __$$SnapImplCopyWithImpl<$Res>
           ? _value._commonIds
           : commonIds // ignore: cast_nullable_to_non_nullable
               as List<String>,
+      links: null == links
+          ? _value._links
+          : links // ignore: cast_nullable_to_non_nullable
+              as Map<String, List<String>>,
       media: null == media
           ? _value._media
           : media // ignore: cast_nullable_to_non_nullable
@@ -1824,6 +1837,7 @@ class _$SnapImpl implements _Snap {
       final List<SnapCategory> categories = const [],
       final List<String> tracks = const [],
       final List<String> commonIds = const [],
+      final Map<String, List<String>> links = const {},
       final List<SnapMedia> media = const [],
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       this.confinement = SnapConfinement.unknown,
@@ -1849,6 +1863,7 @@ class _$SnapImpl implements _Snap {
         _categories = categories,
         _tracks = tracks,
         _commonIds = commonIds,
+        _links = links,
         _media = media;
 
   factory _$SnapImpl.fromJson(Map<String, dynamic> json) =>
@@ -1921,6 +1936,15 @@ class _$SnapImpl implements _Snap {
     return EqualUnmodifiableListView(_commonIds);
   }
 
+  final Map<String, List<String>> _links;
+  @override
+  @JsonKey()
+  Map<String, List<String>> get links {
+    if (_links is EqualUnmodifiableMapView) return _links;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_links);
+  }
+
   final List<SnapMedia> _media;
   @override
   @JsonKey()
@@ -1974,7 +1998,7 @@ class _$SnapImpl implements _Snap {
 
   @override
   String toString() {
-    return 'Snap(id: $id, name: $name, version: $version, channel: $channel, type: $type, revision: $revision, contact: $contact, description: $description, summary: $summary, channels: $channels, apps: $apps, categories: $categories, tracks: $tracks, commonIds: $commonIds, media: $media, confinement: $confinement, status: $status, devmode: $devmode, jailmode: $jailmode, private: $private, base: $base, title: $title, trackingChannel: $trackingChannel, website: $website, license: $license, mountedFrom: $mountedFrom, storeUrl: $storeUrl, hold: $hold, installDate: $installDate, downloadSize: $downloadSize, installedSize: $installedSize, publisher: $publisher, refreshInhibit: $refreshInhibit)';
+    return 'Snap(id: $id, name: $name, version: $version, channel: $channel, type: $type, revision: $revision, contact: $contact, description: $description, summary: $summary, channels: $channels, apps: $apps, categories: $categories, tracks: $tracks, commonIds: $commonIds, links: $links, media: $media, confinement: $confinement, status: $status, devmode: $devmode, jailmode: $jailmode, private: $private, base: $base, title: $title, trackingChannel: $trackingChannel, website: $website, license: $license, mountedFrom: $mountedFrom, storeUrl: $storeUrl, hold: $hold, installDate: $installDate, downloadSize: $downloadSize, installedSize: $installedSize, publisher: $publisher, refreshInhibit: $refreshInhibit)';
   }
 
   @override
@@ -2000,6 +2024,7 @@ class _$SnapImpl implements _Snap {
             const DeepCollectionEquality().equals(other._tracks, _tracks) &&
             const DeepCollectionEquality()
                 .equals(other._commonIds, _commonIds) &&
+            const DeepCollectionEquality().equals(other._links, _links) &&
             const DeepCollectionEquality().equals(other._media, _media) &&
             (identical(other.confinement, confinement) ||
                 other.confinement == confinement) &&
@@ -2049,6 +2074,7 @@ class _$SnapImpl implements _Snap {
         const DeepCollectionEquality().hash(_categories),
         const DeepCollectionEquality().hash(_tracks),
         const DeepCollectionEquality().hash(_commonIds),
+        const DeepCollectionEquality().hash(_links),
         const DeepCollectionEquality().hash(_media),
         confinement,
         status,
@@ -2102,6 +2128,7 @@ abstract class _Snap implements Snap {
       final List<SnapCategory> categories,
       final List<String> tracks,
       final List<String> commonIds,
+      final Map<String, List<String>> links,
       final List<SnapMedia> media,
       @JsonKey(unknownEnumValue: SnapConfinement.unknown)
       final SnapConfinement confinement,
@@ -2154,6 +2181,8 @@ abstract class _Snap implements Snap {
   List<String> get tracks;
   @override
   List<String> get commonIds;
+  @override
+  Map<String, List<String>> get links;
   @override
   List<SnapMedia> get media;
   @override

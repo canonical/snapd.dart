@@ -167,6 +167,7 @@ class MockSnap {
     this.installedSize,
     this.jailmode = false,
     this.license,
+    this.links,
     this.media,
     this.mountedFrom,
     this.plugs = const [],
@@ -200,6 +201,7 @@ class MockSnap {
   final String? installDate;
   final int? installedSize;
   final String? license;
+  final Map<String, List<String>>? links;
   final List<MockMedia>? media;
   final String? mountedFrom;
   final List<MockPlug> plugs;
@@ -299,6 +301,9 @@ class MockSnap {
     }
     if (license != null) {
       object['license'] = license;
+    }
+    if (links != null) {
+      object['links'] = links;
     }
     if (mountedFrom != null) {
       object['mounted-from'] = mountedFrom;
@@ -1933,6 +1938,14 @@ void main() {
           installedSize: 654321,
           jailmode: true,
           license: 'GPL-3',
+          links: {
+            'contact': [
+              'https://support.mozilla.org/kb/file-bug-report-or-feature-request-mozilla',
+            ],
+            'website': [
+              'https://www.mozilla.org/firefox/',
+            ],
+          },
           media: [
             MockMedia(type: 'icon', url: 'http://example.com/hello-icon.png'),
             MockMedia(
@@ -2017,6 +2030,14 @@ void main() {
       installedSize: 654321,
       jailmode: true,
       license: 'GPL-3',
+      links: {
+        'contact': [
+          'https://support.mozilla.org/kb/file-bug-report-or-feature-request-mozilla',
+        ],
+        'website': [
+          'https://www.mozilla.org/firefox/',
+        ],
+      },
       media: const [
         SnapMedia(type: 'icon', url: 'http://example.com/hello-icon.png'),
         SnapMedia(
