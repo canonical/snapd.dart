@@ -39,6 +39,8 @@ void main(List<String> args) async {
   var description =
       storeSnap != null ? storeSnap.description : localSnap!.description;
 
+  final links = storeSnap?.links ?? localSnap?.links;
+
   print('name:      $name');
   print('summary:   $summary');
   print('publisher: ${publisher ?? '-'}');
@@ -79,6 +81,16 @@ void main(List<String> args) async {
   }
   if (localSnap != null) {
     print('installed:    ${localSnap.version} (${localSnap.revision})');
+  }
+
+  print('links: |');
+  for (final link in links?.entries ?? <String, String>{}.entries) {
+    final urls = link.value as List<String>;
+    print('  ${link.key}: [');
+    for (final url in urls) {
+      print('    $url');
+    }
+    print('  ]');
   }
 
   client.close();
