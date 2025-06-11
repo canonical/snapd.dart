@@ -6259,6 +6259,661 @@ abstract class _SnapdNotice implements SnapdNotice {
       throw _privateConstructorUsedError;
 }
 
+SnapdSystemVolume _$SnapdSystemVolumeFromJson(Map<String, dynamic> json) {
+  return _SnapdSystemVolume.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapdSystemVolume {
+  String get volumeName => throw _privateConstructorUsedError;
+  String get name => throw _privateConstructorUsedError;
+  bool get encrypted => throw _privateConstructorUsedError;
+  List<SnapdSystemVolumeKeySlot> get keyslots =>
+      throw _privateConstructorUsedError;
+
+  /// Serializes this SnapdSystemVolume to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapdSystemVolume
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapdSystemVolumeCopyWith<SnapdSystemVolume> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapdSystemVolumeCopyWith<$Res> {
+  factory $SnapdSystemVolumeCopyWith(
+          SnapdSystemVolume value, $Res Function(SnapdSystemVolume) then) =
+      _$SnapdSystemVolumeCopyWithImpl<$Res, SnapdSystemVolume>;
+  @useResult
+  $Res call(
+      {String volumeName,
+      String name,
+      bool encrypted,
+      List<SnapdSystemVolumeKeySlot> keyslots});
+}
+
+/// @nodoc
+class _$SnapdSystemVolumeCopyWithImpl<$Res, $Val extends SnapdSystemVolume>
+    implements $SnapdSystemVolumeCopyWith<$Res> {
+  _$SnapdSystemVolumeCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapdSystemVolume
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? volumeName = null,
+    Object? name = null,
+    Object? encrypted = null,
+    Object? keyslots = null,
+  }) {
+    return _then(_value.copyWith(
+      volumeName: null == volumeName
+          ? _value.volumeName
+          : volumeName // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      encrypted: null == encrypted
+          ? _value.encrypted
+          : encrypted // ignore: cast_nullable_to_non_nullable
+              as bool,
+      keyslots: null == keyslots
+          ? _value.keyslots
+          : keyslots // ignore: cast_nullable_to_non_nullable
+              as List<SnapdSystemVolumeKeySlot>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapdSystemVolumeImplCopyWith<$Res>
+    implements $SnapdSystemVolumeCopyWith<$Res> {
+  factory _$$SnapdSystemVolumeImplCopyWith(_$SnapdSystemVolumeImpl value,
+          $Res Function(_$SnapdSystemVolumeImpl) then) =
+      __$$SnapdSystemVolumeImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String volumeName,
+      String name,
+      bool encrypted,
+      List<SnapdSystemVolumeKeySlot> keyslots});
+}
+
+/// @nodoc
+class __$$SnapdSystemVolumeImplCopyWithImpl<$Res>
+    extends _$SnapdSystemVolumeCopyWithImpl<$Res, _$SnapdSystemVolumeImpl>
+    implements _$$SnapdSystemVolumeImplCopyWith<$Res> {
+  __$$SnapdSystemVolumeImplCopyWithImpl(_$SnapdSystemVolumeImpl _value,
+      $Res Function(_$SnapdSystemVolumeImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapdSystemVolume
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? volumeName = null,
+    Object? name = null,
+    Object? encrypted = null,
+    Object? keyslots = null,
+  }) {
+    return _then(_$SnapdSystemVolumeImpl(
+      volumeName: null == volumeName
+          ? _value.volumeName
+          : volumeName // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      encrypted: null == encrypted
+          ? _value.encrypted
+          : encrypted // ignore: cast_nullable_to_non_nullable
+              as bool,
+      keyslots: null == keyslots
+          ? _value._keyslots
+          : keyslots // ignore: cast_nullable_to_non_nullable
+              as List<SnapdSystemVolumeKeySlot>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapdSystemVolumeImpl implements _SnapdSystemVolume {
+  const _$SnapdSystemVolumeImpl(
+      {required this.volumeName,
+      required this.name,
+      required this.encrypted,
+      final List<SnapdSystemVolumeKeySlot> keyslots = const []})
+      : _keyslots = keyslots;
+
+  factory _$SnapdSystemVolumeImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SnapdSystemVolumeImplFromJson(json);
+
+  @override
+  final String volumeName;
+  @override
+  final String name;
+  @override
+  final bool encrypted;
+  final List<SnapdSystemVolumeKeySlot> _keyslots;
+  @override
+  @JsonKey()
+  List<SnapdSystemVolumeKeySlot> get keyslots {
+    if (_keyslots is EqualUnmodifiableListView) return _keyslots;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_keyslots);
+  }
+
+  @override
+  String toString() {
+    return 'SnapdSystemVolume(volumeName: $volumeName, name: $name, encrypted: $encrypted, keyslots: $keyslots)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapdSystemVolumeImpl &&
+            (identical(other.volumeName, volumeName) ||
+                other.volumeName == volumeName) &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.encrypted, encrypted) ||
+                other.encrypted == encrypted) &&
+            const DeepCollectionEquality().equals(other._keyslots, _keyslots));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, volumeName, name, encrypted,
+      const DeepCollectionEquality().hash(_keyslots));
+
+  /// Create a copy of SnapdSystemVolume
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapdSystemVolumeImplCopyWith<_$SnapdSystemVolumeImpl> get copyWith =>
+      __$$SnapdSystemVolumeImplCopyWithImpl<_$SnapdSystemVolumeImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapdSystemVolumeImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapdSystemVolume implements SnapdSystemVolume {
+  const factory _SnapdSystemVolume(
+      {required final String volumeName,
+      required final String name,
+      required final bool encrypted,
+      final List<SnapdSystemVolumeKeySlot> keyslots}) = _$SnapdSystemVolumeImpl;
+
+  factory _SnapdSystemVolume.fromJson(Map<String, dynamic> json) =
+      _$SnapdSystemVolumeImpl.fromJson;
+
+  @override
+  String get volumeName;
+  @override
+  String get name;
+  @override
+  bool get encrypted;
+  @override
+  List<SnapdSystemVolumeKeySlot> get keyslots;
+
+  /// Create a copy of SnapdSystemVolume
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapdSystemVolumeImplCopyWith<_$SnapdSystemVolumeImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+SnapdSystemVolumeKeySlot _$SnapdSystemVolumeKeySlotFromJson(
+    Map<String, dynamic> json) {
+  return _SnapdSystemVolumeKeySlot.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapdSystemVolumeKeySlot {
+  /// The key slot name, used to identify the key slot.
+  String get name => throw _privateConstructorUsedError;
+  SnapdSystemVolumeKeySlotType get type => throw _privateConstructorUsedError;
+  List<String>? get roles =>
+      throw _privateConstructorUsedError; // only for platform keys
+  String? get platformName =>
+      throw _privateConstructorUsedError; // only for platform keys
+  SnapdSystemVolumeAuthMode? get authMode => throw _privateConstructorUsedError;
+
+  /// Serializes this SnapdSystemVolumeKeySlot to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapdSystemVolumeKeySlot
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapdSystemVolumeKeySlotCopyWith<SnapdSystemVolumeKeySlot> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapdSystemVolumeKeySlotCopyWith<$Res> {
+  factory $SnapdSystemVolumeKeySlotCopyWith(SnapdSystemVolumeKeySlot value,
+          $Res Function(SnapdSystemVolumeKeySlot) then) =
+      _$SnapdSystemVolumeKeySlotCopyWithImpl<$Res, SnapdSystemVolumeKeySlot>;
+  @useResult
+  $Res call(
+      {String name,
+      SnapdSystemVolumeKeySlotType type,
+      List<String>? roles,
+      String? platformName,
+      SnapdSystemVolumeAuthMode? authMode});
+}
+
+/// @nodoc
+class _$SnapdSystemVolumeKeySlotCopyWithImpl<$Res,
+        $Val extends SnapdSystemVolumeKeySlot>
+    implements $SnapdSystemVolumeKeySlotCopyWith<$Res> {
+  _$SnapdSystemVolumeKeySlotCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapdSystemVolumeKeySlot
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? type = null,
+    Object? roles = freezed,
+    Object? platformName = freezed,
+    Object? authMode = freezed,
+  }) {
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as SnapdSystemVolumeKeySlotType,
+      roles: freezed == roles
+          ? _value.roles
+          : roles // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      platformName: freezed == platformName
+          ? _value.platformName
+          : platformName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      authMode: freezed == authMode
+          ? _value.authMode
+          : authMode // ignore: cast_nullable_to_non_nullable
+              as SnapdSystemVolumeAuthMode?,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapdSystemVolumeKeySlotImplCopyWith<$Res>
+    implements $SnapdSystemVolumeKeySlotCopyWith<$Res> {
+  factory _$$SnapdSystemVolumeKeySlotImplCopyWith(
+          _$SnapdSystemVolumeKeySlotImpl value,
+          $Res Function(_$SnapdSystemVolumeKeySlotImpl) then) =
+      __$$SnapdSystemVolumeKeySlotImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String name,
+      SnapdSystemVolumeKeySlotType type,
+      List<String>? roles,
+      String? platformName,
+      SnapdSystemVolumeAuthMode? authMode});
+}
+
+/// @nodoc
+class __$$SnapdSystemVolumeKeySlotImplCopyWithImpl<$Res>
+    extends _$SnapdSystemVolumeKeySlotCopyWithImpl<$Res,
+        _$SnapdSystemVolumeKeySlotImpl>
+    implements _$$SnapdSystemVolumeKeySlotImplCopyWith<$Res> {
+  __$$SnapdSystemVolumeKeySlotImplCopyWithImpl(
+      _$SnapdSystemVolumeKeySlotImpl _value,
+      $Res Function(_$SnapdSystemVolumeKeySlotImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapdSystemVolumeKeySlot
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? type = null,
+    Object? roles = freezed,
+    Object? platformName = freezed,
+    Object? authMode = freezed,
+  }) {
+    return _then(_$SnapdSystemVolumeKeySlotImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as SnapdSystemVolumeKeySlotType,
+      roles: freezed == roles
+          ? _value._roles
+          : roles // ignore: cast_nullable_to_non_nullable
+              as List<String>?,
+      platformName: freezed == platformName
+          ? _value.platformName
+          : platformName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      authMode: freezed == authMode
+          ? _value.authMode
+          : authMode // ignore: cast_nullable_to_non_nullable
+              as SnapdSystemVolumeAuthMode?,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapdSystemVolumeKeySlotImpl implements _SnapdSystemVolumeKeySlot {
+  const _$SnapdSystemVolumeKeySlotImpl(
+      {required this.name,
+      required this.type,
+      final List<String>? roles,
+      this.platformName,
+      this.authMode})
+      : _roles = roles;
+
+  factory _$SnapdSystemVolumeKeySlotImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SnapdSystemVolumeKeySlotImplFromJson(json);
+
+  /// The key slot name, used to identify the key slot.
+  @override
+  final String name;
+  @override
+  final SnapdSystemVolumeKeySlotType type;
+  final List<String>? _roles;
+  @override
+  List<String>? get roles {
+    final value = _roles;
+    if (value == null) return null;
+    if (_roles is EqualUnmodifiableListView) return _roles;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(value);
+  }
+
+// only for platform keys
+  @override
+  final String? platformName;
+// only for platform keys
+  @override
+  final SnapdSystemVolumeAuthMode? authMode;
+
+  @override
+  String toString() {
+    return 'SnapdSystemVolumeKeySlot(name: $name, type: $type, roles: $roles, platformName: $platformName, authMode: $authMode)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapdSystemVolumeKeySlotImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.type, type) || other.type == type) &&
+            const DeepCollectionEquality().equals(other._roles, _roles) &&
+            (identical(other.platformName, platformName) ||
+                other.platformName == platformName) &&
+            (identical(other.authMode, authMode) ||
+                other.authMode == authMode));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, type,
+      const DeepCollectionEquality().hash(_roles), platformName, authMode);
+
+  /// Create a copy of SnapdSystemVolumeKeySlot
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapdSystemVolumeKeySlotImplCopyWith<_$SnapdSystemVolumeKeySlotImpl>
+      get copyWith => __$$SnapdSystemVolumeKeySlotImplCopyWithImpl<
+          _$SnapdSystemVolumeKeySlotImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapdSystemVolumeKeySlotImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapdSystemVolumeKeySlot implements SnapdSystemVolumeKeySlot {
+  const factory _SnapdSystemVolumeKeySlot(
+          {required final String name,
+          required final SnapdSystemVolumeKeySlotType type,
+          final List<String>? roles,
+          final String? platformName,
+          final SnapdSystemVolumeAuthMode? authMode}) =
+      _$SnapdSystemVolumeKeySlotImpl;
+
+  factory _SnapdSystemVolumeKeySlot.fromJson(Map<String, dynamic> json) =
+      _$SnapdSystemVolumeKeySlotImpl.fromJson;
+
+  /// The key slot name, used to identify the key slot.
+  @override
+  String get name;
+  @override
+  SnapdSystemVolumeKeySlotType get type;
+  @override
+  List<String>? get roles; // only for platform keys
+  @override
+  String? get platformName; // only for platform keys
+  @override
+  SnapdSystemVolumeAuthMode? get authMode;
+
+  /// Create a copy of SnapdSystemVolumeKeySlot
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapdSystemVolumeKeySlotImplCopyWith<_$SnapdSystemVolumeKeySlotImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SnapdSystemVolumesResponse _$SnapdSystemVolumesResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SnapdSystemVolumesResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapdSystemVolumesResponse {
+  Map<String, SnapdSystemVolume> get byContainerRole =>
+      throw _privateConstructorUsedError;
+
+  /// Serializes this SnapdSystemVolumesResponse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapdSystemVolumesResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapdSystemVolumesResponseCopyWith<SnapdSystemVolumesResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapdSystemVolumesResponseCopyWith<$Res> {
+  factory $SnapdSystemVolumesResponseCopyWith(SnapdSystemVolumesResponse value,
+          $Res Function(SnapdSystemVolumesResponse) then) =
+      _$SnapdSystemVolumesResponseCopyWithImpl<$Res,
+          SnapdSystemVolumesResponse>;
+  @useResult
+  $Res call({Map<String, SnapdSystemVolume> byContainerRole});
+}
+
+/// @nodoc
+class _$SnapdSystemVolumesResponseCopyWithImpl<$Res,
+        $Val extends SnapdSystemVolumesResponse>
+    implements $SnapdSystemVolumesResponseCopyWith<$Res> {
+  _$SnapdSystemVolumesResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapdSystemVolumesResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? byContainerRole = null,
+  }) {
+    return _then(_value.copyWith(
+      byContainerRole: null == byContainerRole
+          ? _value.byContainerRole
+          : byContainerRole // ignore: cast_nullable_to_non_nullable
+              as Map<String, SnapdSystemVolume>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapdSystemVolumesResponseImplCopyWith<$Res>
+    implements $SnapdSystemVolumesResponseCopyWith<$Res> {
+  factory _$$SnapdSystemVolumesResponseImplCopyWith(
+          _$SnapdSystemVolumesResponseImpl value,
+          $Res Function(_$SnapdSystemVolumesResponseImpl) then) =
+      __$$SnapdSystemVolumesResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({Map<String, SnapdSystemVolume> byContainerRole});
+}
+
+/// @nodoc
+class __$$SnapdSystemVolumesResponseImplCopyWithImpl<$Res>
+    extends _$SnapdSystemVolumesResponseCopyWithImpl<$Res,
+        _$SnapdSystemVolumesResponseImpl>
+    implements _$$SnapdSystemVolumesResponseImplCopyWith<$Res> {
+  __$$SnapdSystemVolumesResponseImplCopyWithImpl(
+      _$SnapdSystemVolumesResponseImpl _value,
+      $Res Function(_$SnapdSystemVolumesResponseImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapdSystemVolumesResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? byContainerRole = null,
+  }) {
+    return _then(_$SnapdSystemVolumesResponseImpl(
+      byContainerRole: null == byContainerRole
+          ? _value._byContainerRole
+          : byContainerRole // ignore: cast_nullable_to_non_nullable
+              as Map<String, SnapdSystemVolume>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapdSystemVolumesResponseImpl implements _SnapdSystemVolumesResponse {
+  const _$SnapdSystemVolumesResponseImpl(
+      {final Map<String, SnapdSystemVolume> byContainerRole = const {}})
+      : _byContainerRole = byContainerRole;
+
+  factory _$SnapdSystemVolumesResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$SnapdSystemVolumesResponseImplFromJson(json);
+
+  final Map<String, SnapdSystemVolume> _byContainerRole;
+  @override
+  @JsonKey()
+  Map<String, SnapdSystemVolume> get byContainerRole {
+    if (_byContainerRole is EqualUnmodifiableMapView) return _byContainerRole;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_byContainerRole);
+  }
+
+  @override
+  String toString() {
+    return 'SnapdSystemVolumesResponse(byContainerRole: $byContainerRole)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapdSystemVolumesResponseImpl &&
+            const DeepCollectionEquality()
+                .equals(other._byContainerRole, _byContainerRole));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_byContainerRole));
+
+  /// Create a copy of SnapdSystemVolumesResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapdSystemVolumesResponseImplCopyWith<_$SnapdSystemVolumesResponseImpl>
+      get copyWith => __$$SnapdSystemVolumesResponseImplCopyWithImpl<
+          _$SnapdSystemVolumesResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapdSystemVolumesResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapdSystemVolumesResponse
+    implements SnapdSystemVolumesResponse {
+  const factory _SnapdSystemVolumesResponse(
+          {final Map<String, SnapdSystemVolume> byContainerRole}) =
+      _$SnapdSystemVolumesResponseImpl;
+
+  factory _SnapdSystemVolumesResponse.fromJson(Map<String, dynamic> json) =
+      _$SnapdSystemVolumesResponseImpl.fromJson;
+
+  @override
+  Map<String, SnapdSystemVolume> get byContainerRole;
+
+  /// Create a copy of SnapdSystemVolumesResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapdSystemVolumesResponseImplCopyWith<_$SnapdSystemVolumesResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 RefreshInhibit _$RefreshInhibitFromJson(Map<String, dynamic> json) {
   return _RefreshInhibit.fromJson(json);
 }

@@ -498,6 +498,7 @@ class MockSnapdServer {
     List<MockSnap> storeSnaps = const [],
     List<MockSnapDeclaration> snapDeclarations = const [],
     this.systemMode,
+    Map<String, SnapdSystemVolume> systemVolumes = const {},
     this.version,
   }) {
     for (final change in changes) {
@@ -517,6 +518,9 @@ class MockSnapdServer {
     }
     for (final rule in rules) {
       this.rules.add(rule);
+    }
+    for (final systemVolume in systemVolumes.entries) {
+      this.systemVolumes[systemVolume.key] = systemVolume.value;
     }
   }
   Directory? _tempDir;
@@ -544,6 +548,7 @@ class MockSnapdServer {
   final storeSnaps = <String, MockSnap>{};
   final snapDeclarations = <String, MockSnapDeclaration>{};
   final String? systemMode;
+  final systemVolumes = <String, SnapdSystemVolume>{};
   final String? version;
 
   /// Last user agent received.
@@ -636,6 +641,8 @@ class MockSnapdServer {
       await _processPostSnap(request, path.substring('/v2/snaps/'.length));
     } else if (method == 'GET' && path == '/v2/system-info') {
       _processSystemInfo(request);
+    } else if (method == 'GET' && path == '/v2/system-volumes') {
+      _processSystemVolumes(request);
     } else {
       request.response.statusCode = HttpStatus.notFound;
       _writeErrorResponse(request.response, 'not found');
@@ -1370,6 +1377,25 @@ class MockSnapdServer {
       'system-mode': systemMode,
       'version': version,
     });
+  }
+
+  void _processSystemVolumes(HttpRequest request) {
+    final parameters = request.uri.queryParameters;
+    final containerRole = parameters['container-role'];
+
+    final response = switch (containerRole) {
+      'true' => SnapdSystemVolumesResponse(byContainerRole: systemVolumes),
+      _ => SnapdSystemVolumesResponse(
+          byContainerRole: {
+            containerRole!: systemVolumes[containerRole]!,
+          },
+        ),
+    };
+
+    _writeSyncResponse(
+      request.response,
+      response,
+    );
   }
 
   MockChange _addChange({
@@ -3549,5 +3575,37 @@ void main() {
       {'proceed-time': '1990-12-31T07:00:00.000000000+02:00'},
     );
     expect(refreshInhibit.proceedTime, DateTime.utc(1990, 12, 31, 5));
+  });
+
+  test('get system volumes', () async {
+    final mockSystemVolumes = {
+      'system-data': SnapdSystemVolume(
+        volumeName: 'volume name',
+        name: 'partition name',
+        encrypted: true,
+        keyslots: [
+          SnapdSystemVolumeKeySlot(
+            name: 'default',
+            type: SnapdSystemVolumeKeySlotType.recovery,
+          ),
+        ],
+      ),
+    };
+    final snapd = MockSnapdServer(systemVolumes: mockSystemVolumes);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final systemVolumesResponse = await client.getSystemVolumes();
+    expect(
+      systemVolumesResponse,
+      SnapdSystemVolumesResponse(byContainerRole: mockSystemVolumes),
+    );
   });
 }

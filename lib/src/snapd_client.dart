@@ -488,6 +488,55 @@ class SnapdNotice with _$SnapdNotice {
       _$SnapdNoticeFromJson(json);
 }
 
+/// Type of key slot.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdSystemVolumeKeySlotType { recovery, platform }
+
+/// The authentication mode required to unlock a platform key slot.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdSystemVolumeAuthMode { none, pin, passphrase }
+
+/// A snapd system volume.
+@freezed
+class SnapdSystemVolume with _$SnapdSystemVolume {
+  const factory SnapdSystemVolume({
+    required String volumeName,
+    required String name,
+    required bool encrypted,
+    @Default([]) List<SnapdSystemVolumeKeySlot> keyslots,
+  }) = _SnapdSystemVolume;
+
+  factory SnapdSystemVolume.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemVolumeFromJson(json);
+}
+
+/// A class to model the key slot on a LUKS container.
+@freezed
+class SnapdSystemVolumeKeySlot with _$SnapdSystemVolumeKeySlot {
+  const factory SnapdSystemVolumeKeySlot({
+    /// The key slot name, used to identify the key slot.
+    required String name,
+    required SnapdSystemVolumeKeySlotType type,
+    List<String>? roles, // only for platform keys
+    String? platformName, // only for platform keys
+    SnapdSystemVolumeAuthMode? authMode, // only for platform keys
+  }) = _SnapdSystemVolumeKeySlot;
+
+  factory SnapdSystemVolumeKeySlot.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemVolumeKeySlotFromJson(json);
+}
+
+// TODO: add docstring
+@freezed
+class SnapdSystemVolumesResponse with _$SnapdSystemVolumesResponse {
+  const factory SnapdSystemVolumesResponse({
+    @Default({}) Map<String, SnapdSystemVolume> byContainerRole,
+  }) = _SnapdSystemVolumesResponse;
+
+  factory SnapdSystemVolumesResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemVolumesResponseFromJson(json);
+}
+
 /// Contains proceed-time which is the date and time after which a refresh is
 /// forced for a running snap in the next auto-refresh in RFC3339 UTC format.
 @freezed
@@ -671,6 +720,20 @@ class SnapdClient {
     };
     final result = await _getSyncList('/v2/notices', queryParameters);
     return result.map(SnapdNotice.fromJson).toList();
+  }
+
+// TODO: add docstring
+  Future<SnapdSystemVolumesResponse> getSystemVolumes({
+    String? containerRole,
+  }) async {
+    final queryParameters = <String, String>{
+      'container-role': containerRole ?? 'true',
+    };
+    final result = await _getSync<Map<String, dynamic>>(
+      '/v2/system-volumes',
+      queryParameters,
+    );
+    return SnapdSystemVolumesResponse.fromJson(result);
   }
 
   /// Gets information on all installed snaps.

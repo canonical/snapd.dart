@@ -623,6 +623,79 @@ const _$SnapdNoticeTypeEnumMap = {
       'interfaces-requests-rule-update',
 };
 
+_$SnapdSystemVolumeImpl _$$SnapdSystemVolumeImplFromJson(Map json) =>
+    _$SnapdSystemVolumeImpl(
+      volumeName: json['volume-name'] as String,
+      name: json['name'] as String,
+      encrypted: json['encrypted'] as bool,
+      keyslots: (json['keyslots'] as List<dynamic>?)
+              ?.map((e) => SnapdSystemVolumeKeySlot.fromJson(
+                  Map<String, dynamic>.from(e as Map)))
+              .toList() ??
+          const [],
+    );
+
+Map<String, dynamic> _$$SnapdSystemVolumeImplToJson(
+        _$SnapdSystemVolumeImpl instance) =>
+    <String, dynamic>{
+      'volume-name': instance.volumeName,
+      'name': instance.name,
+      'encrypted': instance.encrypted,
+      'keyslots': instance.keyslots.map((e) => e.toJson()).toList(),
+    };
+
+_$SnapdSystemVolumeKeySlotImpl _$$SnapdSystemVolumeKeySlotImplFromJson(
+        Map json) =>
+    _$SnapdSystemVolumeKeySlotImpl(
+      name: json['name'] as String,
+      type: $enumDecode(_$SnapdSystemVolumeKeySlotTypeEnumMap, json['type']),
+      roles:
+          (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      platformName: json['platform-name'] as String?,
+      authMode: $enumDecodeNullable(
+          _$SnapdSystemVolumeAuthModeEnumMap, json['auth-mode']),
+    );
+
+Map<String, dynamic> _$$SnapdSystemVolumeKeySlotImplToJson(
+        _$SnapdSystemVolumeKeySlotImpl instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'type': _$SnapdSystemVolumeKeySlotTypeEnumMap[instance.type]!,
+      'roles': instance.roles,
+      'platform-name': instance.platformName,
+      'auth-mode': _$SnapdSystemVolumeAuthModeEnumMap[instance.authMode],
+    };
+
+const _$SnapdSystemVolumeKeySlotTypeEnumMap = {
+  SnapdSystemVolumeKeySlotType.recovery: 'recovery',
+  SnapdSystemVolumeKeySlotType.platform: 'platform',
+};
+
+const _$SnapdSystemVolumeAuthModeEnumMap = {
+  SnapdSystemVolumeAuthMode.none: 'none',
+  SnapdSystemVolumeAuthMode.pin: 'pin',
+  SnapdSystemVolumeAuthMode.passphrase: 'passphrase',
+};
+
+_$SnapdSystemVolumesResponseImpl _$$SnapdSystemVolumesResponseImplFromJson(
+        Map json) =>
+    _$SnapdSystemVolumesResponseImpl(
+      byContainerRole: (json['by-container-role'] as Map?)?.map(
+            (k, e) => MapEntry(
+                k as String,
+                SnapdSystemVolume.fromJson(
+                    Map<String, dynamic>.from(e as Map))),
+          ) ??
+          const {},
+    );
+
+Map<String, dynamic> _$$SnapdSystemVolumesResponseImplToJson(
+        _$SnapdSystemVolumesResponseImpl instance) =>
+    <String, dynamic>{
+      'by-container-role':
+          instance.byContainerRole.map((k, e) => MapEntry(k, e.toJson())),
+    };
+
 _$RefreshInhibitImpl _$$RefreshInhibitImplFromJson(Map json) =>
     _$RefreshInhibitImpl(
       proceedTime: const _SnapdDateTimeConverter()
