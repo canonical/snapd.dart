@@ -196,6 +196,7 @@ class Snap with _$Snap {
     @Default([]) List<SnapCategory> categories,
     @Default([]) List<String> tracks,
     @Default([]) List<String> commonIds,
+    @Default({}) Map<String, List<String>> links,
     @Default([]) List<SnapMedia> media,
     @JsonKey(unknownEnumValue: SnapConfinement.unknown)
     @Default(SnapConfinement.unknown)

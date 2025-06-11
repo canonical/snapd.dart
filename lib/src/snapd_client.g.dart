@@ -140,6 +140,11 @@ _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
               ?.map((e) => e as String)
               .toList() ??
           const [],
+      links: (json['links'] as Map?)?.map(
+            (k, e) => MapEntry(k as String,
+                (e as List<dynamic>).map((e) => e as String).toList()),
+          ) ??
+          const {},
       media: (json['media'] as List<dynamic>?)
               ?.map((e) =>
                   SnapMedia.fromJson(Map<String, dynamic>.from(e as Map)))
@@ -194,6 +199,7 @@ Map<String, dynamic> _$$SnapImplToJson(_$SnapImpl instance) =>
       'categories': instance.categories.map((e) => e.toJson()).toList(),
       'tracks': instance.tracks,
       'common-ids': instance.commonIds,
+      'links': instance.links,
       'media': instance.media.map((e) => e.toJson()).toList(),
       'confinement': _$SnapConfinementEnumMap[instance.confinement]!,
       'status': _$SnapStatusEnumMap[instance.status]!,
