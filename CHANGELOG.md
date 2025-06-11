@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+
+* Add Snap.links
+
 ## 0.7.0
 
 * Update methods for interacting with prompting rules to work with new Snapd APIs
