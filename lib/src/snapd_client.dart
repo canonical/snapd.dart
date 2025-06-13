@@ -1127,6 +1127,20 @@ class SnapdClient {
     return SnapdSystemVolumesResponse.fromJson(result);
   }
 
+  /// Checks whether the specified TPM FDE [recoveryKey] is valid for the
+  /// specified [containerRoles].
+  Future<void> checkRecoveryKey(
+    String recoveryKey, {
+    List<String> containerRoles = const [],
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'check-recovery-key',
+      'recovery-key': recoveryKey,
+      if (containerRoles.isNotEmpty) 'container-roles': containerRoles,
+    };
+    await _postSync('/v2/system-volumes', request);
+  }
+
   /// Terminates all active connections. If a client remains unclosed, the Dart
   /// process may not terminate.
   void close() {

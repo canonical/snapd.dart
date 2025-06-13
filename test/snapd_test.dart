@@ -490,6 +490,7 @@ class MockSnapdServer {
     this.onClassic = false,
     this.promptingEnabled = false,
     List<SnapdNotice> notices = const [],
+    Map<String, String> recoveryKeys = const {},
     this.refreshLast,
     this.refreshNext,
     List<SnapdRule> rules = const [],
@@ -522,6 +523,9 @@ class MockSnapdServer {
     for (final systemVolume in systemVolumes.entries) {
       this.systemVolumes[systemVolume.key] = systemVolume.value;
     }
+    for (final recoveryKey in recoveryKeys.entries) {
+      this.recoveryKeys[recoveryKey.key] = recoveryKey.value;
+    }
   }
   Directory? _tempDir;
   late String socketPath;
@@ -541,6 +545,7 @@ class MockSnapdServer {
   final notices = <SnapdNotice>[];
   final String? refreshLast;
   final String? refreshNext;
+  final recoveryKeys = <String, String>{};
   final removedSnaps = <String, MockSnap>{};
   final rules = <SnapdRule>[];
   final String? series;
@@ -642,7 +647,9 @@ class MockSnapdServer {
     } else if (method == 'GET' && path == '/v2/system-info') {
       _processSystemInfo(request);
     } else if (method == 'GET' && path == '/v2/system-volumes') {
-      _processSystemVolumes(request);
+      _processGetSystemVolumes(request);
+    } else if (method == 'POST' && path == '/v2/system-volumes') {
+      await _processPostSystemVolumes(request);
     } else {
       request.response.statusCode = HttpStatus.notFound;
       _writeErrorResponse(request.response, 'not found');
@@ -1379,7 +1386,7 @@ class MockSnapdServer {
     });
   }
 
-  void _processSystemVolumes(HttpRequest request) {
+  void _processGetSystemVolumes(HttpRequest request) {
     final parameters = request.uri.queryParameters;
     final containerRole = parameters['container-role'];
 
@@ -1396,6 +1403,37 @@ class MockSnapdServer {
       request.response,
       response,
     );
+  }
+
+  Future<void> _processPostSystemVolumes(HttpRequest request) async {
+    final req = await _readJson(request);
+    final action = req['action'];
+
+    switch (action) {
+      case 'check-recovery-key':
+        final keyToCheck = req['recovery-key'] as String;
+        final containerRolesToCheck =
+            (req['container-roles'] as List<dynamic>?)?.cast<String>();
+        for (final containerRole
+            in containerRolesToCheck ?? recoveryKeys.keys) {
+          if (!recoveryKeys.keys.contains(containerRole)) {
+            _writeErrorResponse(request.response, 'container role not found');
+            return;
+          }
+          if (recoveryKeys[containerRole] != keyToCheck) {
+            _writeErrorResponse(
+              request.response,
+              'cannot find matching recovery key',
+            );
+            return;
+          }
+        }
+        _writeSyncResponse(request.response, {});
+        return;
+      default:
+        _writeErrorResponse(request.response, 'unknown action');
+        return;
+    }
   }
 
   MockChange _addChange({
@@ -3607,5 +3645,60 @@ void main() {
       systemVolumesResponse,
       SnapdSystemVolumesResponse(byContainerRole: mockSystemVolumes),
     );
+  });
+
+  group('check recovery key', () {
+    const mockRecoveryKeys = {
+      'system-data': '12345-12345-12345-12345-12345-12345-12345-12345',
+      'system-save': '54321-54321-54321-54321-54321-54321-54321-54321',
+    };
+    for (final testCase in <({
+      String name,
+      List<String> containerRoles,
+      String recoveryKey,
+      bool expectError,
+    })>[
+      (
+        name: 'valid recovery key',
+        containerRoles: ['system-data'],
+        recoveryKey: '12345-12345-12345-12345-12345-12345-12345-12345',
+        expectError: false,
+      ),
+      (
+        name: 'invalid recovery key',
+        containerRoles: ['system-data'],
+        recoveryKey: '92345-12345-12345-12345-12345-12345-12345-12345',
+        expectError: true,
+      ),
+      (
+        name: 'invalid container role',
+        containerRoles: ['foo'],
+        recoveryKey: '12345-12345-12345-12345-12345-12345-12345-12345',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          recoveryKeys: mockRecoveryKeys,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        await expectLater(
+          client.checkRecoveryKey(
+            testCase.recoveryKey,
+            containerRoles: testCase.containerRoles,
+          ),
+          testCase.expectError ? throwsA(isA<SnapdException>()) : completes,
+        );
+      });
+    }
   });
 }
