@@ -58,6 +58,14 @@ enum SnapdNoticeType {
   interfacesRequestsRuleUpdate,
 }
 
+/// Type of key slot.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdSystemVolumeKeySlotType { recovery, platform }
+
+/// The authentication mode required to unlock a platform key slot.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdSystemVolumeAuthMode { none, pin, passphrase }
+
 class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
   const _SnapdDateTimeConverter();
 
@@ -488,14 +496,6 @@ class SnapdNotice with _$SnapdNotice {
       _$SnapdNoticeFromJson(json);
 }
 
-/// Type of key slot.
-@JsonEnum(fieldRename: FieldRename.kebab)
-enum SnapdSystemVolumeKeySlotType { recovery, platform }
-
-/// The authentication mode required to unlock a platform key slot.
-@JsonEnum(fieldRename: FieldRename.kebab)
-enum SnapdSystemVolumeAuthMode { none, pin, passphrase }
-
 /// A snapd system volume.
 @freezed
 class SnapdSystemVolume with _$SnapdSystemVolume {
@@ -720,20 +720,6 @@ class SnapdClient {
     };
     final result = await _getSyncList('/v2/notices', queryParameters);
     return result.map(SnapdNotice.fromJson).toList();
-  }
-
-// TODO: add docstring
-  Future<SnapdSystemVolumesResponse> getSystemVolumes({
-    String? containerRole,
-  }) async {
-    final queryParameters = <String, String>{
-      'container-role': containerRole ?? 'true',
-    };
-    final result = await _getSync<Map<String, dynamic>>(
-      '/v2/system-volumes',
-      queryParameters,
-    );
-    return SnapdSystemVolumesResponse.fromJson(result);
   }
 
   /// Gets information on all installed snaps.
@@ -1125,6 +1111,20 @@ class SnapdClient {
       'experimental': {'apparmor-prompting': false},
     };
     return _putAsync('/v2/snaps/system/conf', request);
+  }
+
+  /// Gets the TPM FDE system volumes.
+  Future<SnapdSystemVolumesResponse> getSystemVolumes({
+    String? containerRole,
+  }) async {
+    final queryParameters = <String, String>{
+      'container-role': containerRole ?? 'true',
+    };
+    final result = await _getSync<Map<String, dynamic>>(
+      '/v2/system-volumes',
+      queryParameters,
+    );
+    return SnapdSystemVolumesResponse.fromJson(result);
   }
 
   /// Terminates all active connections. If a client remains unclosed, the Dart
