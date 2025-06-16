@@ -541,6 +541,18 @@ class SnapdSystemVolumesResponse with _$SnapdSystemVolumesResponse {
       _$SnapdSystemVolumesResponseFromJson(json);
 }
 
+@freezed
+class SnapdEntropyResponse with _$SnapdEntropyResponse {
+  const factory SnapdEntropyResponse({
+    required int entropyBits,
+    required int minEntropyBits,
+    required int optimalEntropyBits,
+  }) = _SnapdEntropyResponse;
+
+  factory SnapdEntropyResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdEntropyResponseFromJson(json);
+}
+
 /// Contains proceed-time which is the date and time after which a refresh is
 /// forced for a running snap in the next auto-refresh in RFC3339 UTC format.
 @freezed
@@ -1145,6 +1157,38 @@ class SnapdClient {
       if (containerRoles.isNotEmpty) 'container-roles': containerRoles,
     };
     await _postSync('/v2/system-volumes', request);
+  }
+
+  /// Performs quality checks on the provided [passphrase]. If they're passed,
+  /// a [SnapdEntropyResponse] is returned, otherwise a [SnapdException] with
+  /// `kind` set to `"invalid-passphrase"` or `"unsupported"` is raised. In
+  /// the former case, the `value` of the exception contains a list of
+  /// `reasons` for which the check failed and the remaining fields can be
+  /// parsed as a [SnapdEntropyResponse].
+  Future<SnapdEntropyResponse> checkPassphrase(String passphrase) async {
+    final request = <String, dynamic>{
+      'action': 'check-passphrase',
+      'passphrase': passphrase,
+    };
+    final result =
+        await _postSync<Map<String, dynamic>>('/v2/system-volumes', request);
+    return SnapdEntropyResponse.fromJson(result);
+  }
+
+  /// Performs quality checks on the provided [pin]. If they're passed, a
+  /// [SnapdEntropyResponse] is returned, otherwise a [SnapdException] with
+  /// `kind` set to `"invalid-pin"` or `"unsupported"` is raised. In the former
+  /// case, the `value` of the exception contains a list of `reasons` for which
+  /// the check failed and the remaining fields can be parsed as a
+  /// [SnapdEntropyResponse].
+  Future<SnapdEntropyResponse> checkPin(String pin) async {
+    final request = <String, dynamic>{
+      'action': 'check-pin',
+      'pin': pin,
+    };
+    final result =
+        await _postSync<Map<String, dynamic>>('/v2/system-volumes', request);
+    return SnapdEntropyResponse.fromJson(result);
   }
 
   /// Terminates all active connections. If a client remains unclosed, the Dart

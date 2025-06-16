@@ -696,6 +696,21 @@ Map<String, dynamic> _$$SnapdSystemVolumesResponseImplToJson(
           instance.byContainerRole.map((k, e) => MapEntry(k, e.toJson())),
     };
 
+_$SnapdEntropyResponseImpl _$$SnapdEntropyResponseImplFromJson(Map json) =>
+    _$SnapdEntropyResponseImpl(
+      entropyBits: (json['entropy-bits'] as num).toInt(),
+      minEntropyBits: (json['min-entropy-bits'] as num).toInt(),
+      optimalEntropyBits: (json['optimal-entropy-bits'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$$SnapdEntropyResponseImplToJson(
+        _$SnapdEntropyResponseImpl instance) =>
+    <String, dynamic>{
+      'entropy-bits': instance.entropyBits,
+      'min-entropy-bits': instance.minEntropyBits,
+      'optimal-entropy-bits': instance.optimalEntropyBits,
+    };
+
 _$RefreshInhibitImpl _$$RefreshInhibitImplFromJson(Map json) =>
     _$RefreshInhibitImpl(
       proceedTime: const _SnapdDateTimeConverter()

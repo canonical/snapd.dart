@@ -6914,6 +6914,200 @@ abstract class _SnapdSystemVolumesResponse
       get copyWith => throw _privateConstructorUsedError;
 }
 
+SnapdEntropyResponse _$SnapdEntropyResponseFromJson(Map<String, dynamic> json) {
+  return _SnapdEntropyResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapdEntropyResponse {
+  int get entropyBits => throw _privateConstructorUsedError;
+  int get minEntropyBits => throw _privateConstructorUsedError;
+  int get optimalEntropyBits => throw _privateConstructorUsedError;
+
+  /// Serializes this SnapdEntropyResponse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapdEntropyResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapdEntropyResponseCopyWith<SnapdEntropyResponse> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapdEntropyResponseCopyWith<$Res> {
+  factory $SnapdEntropyResponseCopyWith(SnapdEntropyResponse value,
+          $Res Function(SnapdEntropyResponse) then) =
+      _$SnapdEntropyResponseCopyWithImpl<$Res, SnapdEntropyResponse>;
+  @useResult
+  $Res call({int entropyBits, int minEntropyBits, int optimalEntropyBits});
+}
+
+/// @nodoc
+class _$SnapdEntropyResponseCopyWithImpl<$Res,
+        $Val extends SnapdEntropyResponse>
+    implements $SnapdEntropyResponseCopyWith<$Res> {
+  _$SnapdEntropyResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapdEntropyResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entropyBits = null,
+    Object? minEntropyBits = null,
+    Object? optimalEntropyBits = null,
+  }) {
+    return _then(_value.copyWith(
+      entropyBits: null == entropyBits
+          ? _value.entropyBits
+          : entropyBits // ignore: cast_nullable_to_non_nullable
+              as int,
+      minEntropyBits: null == minEntropyBits
+          ? _value.minEntropyBits
+          : minEntropyBits // ignore: cast_nullable_to_non_nullable
+              as int,
+      optimalEntropyBits: null == optimalEntropyBits
+          ? _value.optimalEntropyBits
+          : optimalEntropyBits // ignore: cast_nullable_to_non_nullable
+              as int,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapdEntropyResponseImplCopyWith<$Res>
+    implements $SnapdEntropyResponseCopyWith<$Res> {
+  factory _$$SnapdEntropyResponseImplCopyWith(_$SnapdEntropyResponseImpl value,
+          $Res Function(_$SnapdEntropyResponseImpl) then) =
+      __$$SnapdEntropyResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int entropyBits, int minEntropyBits, int optimalEntropyBits});
+}
+
+/// @nodoc
+class __$$SnapdEntropyResponseImplCopyWithImpl<$Res>
+    extends _$SnapdEntropyResponseCopyWithImpl<$Res, _$SnapdEntropyResponseImpl>
+    implements _$$SnapdEntropyResponseImplCopyWith<$Res> {
+  __$$SnapdEntropyResponseImplCopyWithImpl(_$SnapdEntropyResponseImpl _value,
+      $Res Function(_$SnapdEntropyResponseImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapdEntropyResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? entropyBits = null,
+    Object? minEntropyBits = null,
+    Object? optimalEntropyBits = null,
+  }) {
+    return _then(_$SnapdEntropyResponseImpl(
+      entropyBits: null == entropyBits
+          ? _value.entropyBits
+          : entropyBits // ignore: cast_nullable_to_non_nullable
+              as int,
+      minEntropyBits: null == minEntropyBits
+          ? _value.minEntropyBits
+          : minEntropyBits // ignore: cast_nullable_to_non_nullable
+              as int,
+      optimalEntropyBits: null == optimalEntropyBits
+          ? _value.optimalEntropyBits
+          : optimalEntropyBits // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapdEntropyResponseImpl implements _SnapdEntropyResponse {
+  const _$SnapdEntropyResponseImpl(
+      {required this.entropyBits,
+      required this.minEntropyBits,
+      required this.optimalEntropyBits});
+
+  factory _$SnapdEntropyResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SnapdEntropyResponseImplFromJson(json);
+
+  @override
+  final int entropyBits;
+  @override
+  final int minEntropyBits;
+  @override
+  final int optimalEntropyBits;
+
+  @override
+  String toString() {
+    return 'SnapdEntropyResponse(entropyBits: $entropyBits, minEntropyBits: $minEntropyBits, optimalEntropyBits: $optimalEntropyBits)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapdEntropyResponseImpl &&
+            (identical(other.entropyBits, entropyBits) ||
+                other.entropyBits == entropyBits) &&
+            (identical(other.minEntropyBits, minEntropyBits) ||
+                other.minEntropyBits == minEntropyBits) &&
+            (identical(other.optimalEntropyBits, optimalEntropyBits) ||
+                other.optimalEntropyBits == optimalEntropyBits));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, entropyBits, minEntropyBits, optimalEntropyBits);
+
+  /// Create a copy of SnapdEntropyResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapdEntropyResponseImplCopyWith<_$SnapdEntropyResponseImpl>
+      get copyWith =>
+          __$$SnapdEntropyResponseImplCopyWithImpl<_$SnapdEntropyResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapdEntropyResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapdEntropyResponse implements SnapdEntropyResponse {
+  const factory _SnapdEntropyResponse(
+      {required final int entropyBits,
+      required final int minEntropyBits,
+      required final int optimalEntropyBits}) = _$SnapdEntropyResponseImpl;
+
+  factory _SnapdEntropyResponse.fromJson(Map<String, dynamic> json) =
+      _$SnapdEntropyResponseImpl.fromJson;
+
+  @override
+  int get entropyBits;
+  @override
+  int get minEntropyBits;
+  @override
+  int get optimalEntropyBits;
+
+  /// Create a copy of SnapdEntropyResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapdEntropyResponseImplCopyWith<_$SnapdEntropyResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 RefreshInhibit _$RefreshInhibitFromJson(Map<String, dynamic> json) {
   return _RefreshInhibit.fromJson(json);
 }

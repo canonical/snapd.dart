@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
+import 'package:meta/meta.dart';
 import 'package:snapd/snapd.dart';
 import 'package:test/test.dart';
 
@@ -500,6 +501,8 @@ class MockSnapdServer {
     List<MockSnapDeclaration> snapDeclarations = const [],
     this.systemMode,
     Map<String, SnapdSystemVolume> systemVolumes = const {},
+    List<String> validPassphrases = const [],
+    List<String> validPins = const [],
     this.version,
   }) {
     for (final change in changes) {
@@ -525,6 +528,12 @@ class MockSnapdServer {
     }
     for (final recoveryKey in recoveryKeys.entries) {
       this.recoveryKeys[recoveryKey.key] = recoveryKey.value;
+    }
+    for (final validPassphrase in validPassphrases) {
+      this.validPassphrases.add(validPassphrase);
+    }
+    for (final validPins in validPins) {
+      this.validPins.add(validPins);
     }
   }
   Directory? _tempDir;
@@ -554,6 +563,8 @@ class MockSnapdServer {
   final snapDeclarations = <String, MockSnapDeclaration>{};
   final String? systemMode;
   final systemVolumes = <String, SnapdSystemVolume>{};
+  final validPassphrases = <String>[];
+  final validPins = <String>[];
   final String? version;
 
   /// Last user agent received.
@@ -1430,6 +1441,60 @@ class MockSnapdServer {
         }
         _writeSyncResponse(request.response, {});
         return;
+
+      case 'check-passphrase':
+        final passphraseToCheck = req['passphrase'] as String;
+        if (validPassphrases.contains(passphraseToCheck)) {
+          _writeSyncResponse(
+            request.response,
+            SnapdEntropyResponse(
+              entropyBits: 20,
+              minEntropyBits: 13,
+              optimalEntropyBits: 23,
+            ),
+          );
+          return;
+        } else {
+          _writeErrorResponse(
+            request.response,
+            'invalid passphrase',
+            kind: 'invalid-passphrase',
+            value: {
+              'reasons': ['low-entropy'],
+              'entropy-bits': 10,
+              'min-entropy-bits': 13,
+              'optimal-entropy-bits': 23,
+            },
+          );
+          return;
+        }
+
+      case 'check-pin':
+        final pinToCheck = req['pin'] as String;
+        if (validPins.contains(pinToCheck)) {
+          _writeSyncResponse(
+            request.response,
+            SnapdEntropyResponse(
+              entropyBits: 20,
+              minEntropyBits: 13,
+              optimalEntropyBits: 23,
+            ),
+          );
+          return;
+        } else {
+          _writeErrorResponse(
+            request.response,
+            'invalid pin',
+            kind: 'invalid-pin',
+            value: {
+              'reasons': ['low-entropy'],
+              'entropy-bits': 10,
+              'min-entropy-bits': 13,
+              'optimal-entropy-bits': 23,
+            },
+          );
+          return;
+        }
       default:
         _writeErrorResponse(request.response, 'unknown action');
         return;
@@ -3699,6 +3764,92 @@ void main() {
             containerRoles: testCase.containerRoles,
           ),
           testCase.expectError ? throwsA(isA<SnapdException>()) : completes,
+        );
+      });
+    }
+  });
+  group('check passphrase', () {
+    const validPassphrases = ['correcthorsebatterystaple'];
+    for (final testCase in [
+      (
+        name: 'valid passphrase',
+        passphrase: 'correcthorsebatterystaple',
+        expectError: false,
+      ),
+      (
+        name: 'invalid passphrase',
+        passphrase: 'hunter2',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          validPassphrases: validPassphrases,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        await expectLater(
+          client.checkPassphrase(testCase.passphrase),
+          testCase.expectError
+              ? throwsA(
+                  isA<SnapdException>().having(
+                    (e) => e.value,
+                    'value',
+                    isNotNull,
+                  ),
+                )
+              : completes,
+        );
+      });
+    }
+  });
+  group('check pin', () {
+    const validPins = ['314159'];
+    for (final testCase in [
+      (
+        name: 'valid pin',
+        pin: '314159',
+        expectError: false,
+      ),
+      (
+        name: 'invalid pin',
+        pin: '123',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          validPins: validPins,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        await expectLater(
+          client.checkPin(testCase.pin),
+          testCase.expectError
+              ? throwsA(
+                  isA<SnapdException>().having(
+                    (e) => e.value,
+                    'value',
+                    isNotNull,
+                  ),
+                )
+              : completes,
         );
       });
     }
