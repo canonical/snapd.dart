@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
-import 'package:meta/meta.dart';
 import 'package:snapd/snapd.dart';
 import 'package:test/test.dart';
 
