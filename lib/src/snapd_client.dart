@@ -84,6 +84,7 @@ class SnapdException implements Exception {
     this.kind,
     this.status = '',
     this.statusCode = 0,
+    this.value,
   });
 
   /// Error kind.
@@ -97,6 +98,9 @@ class SnapdException implements Exception {
 
   /// The statusCode for the exception (defaults to 0).
   final int statusCode;
+
+  /// A rich object with further details on the error.
+  final Object? value;
 
   @override
   String toString() =>
@@ -629,6 +633,7 @@ class _SnapdErrorResponse extends _SnapdResponse {
         message: message,
         status: status,
         statusCode: statusCode,
+        value: value,
       );
 
   @override
@@ -637,6 +642,7 @@ class _SnapdErrorResponse extends _SnapdResponse {
         message: message,
         status: status,
         statusCode: statusCode,
+        value: value,
       );
 }
 

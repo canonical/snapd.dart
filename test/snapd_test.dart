@@ -1498,11 +1498,13 @@ class MockSnapdServer {
     HttpResponse response,
     String message, {
     String? kind,
+    Object? value,
   }) {
-    final result = {'message': message};
-    if (kind != null) {
-      result['kind'] = kind;
-    }
+    final result = {
+      'message': message,
+      if (kind != null) 'kind': kind,
+      if (value != null) 'value': value,
+    };
     _writeJson(response, {
       'type': 'error',
       'status-code': response.statusCode,
