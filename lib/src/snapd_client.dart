@@ -530,7 +530,7 @@ class SnapdSystemVolumeKeySlot with _$SnapdSystemVolumeKeySlot {
       _$SnapdSystemVolumeKeySlotFromJson(json);
 }
 
-// TODO: add docstring
+/// A class to model responses to keyslot enumeration requests.
 @freezed
 class SnapdSystemVolumesResponse with _$SnapdSystemVolumesResponse {
   const factory SnapdSystemVolumesResponse({
