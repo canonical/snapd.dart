@@ -500,6 +500,19 @@ class SnapdNotice with _$SnapdNotice {
       _$SnapdNoticeFromJson(json);
 }
 
+/// A class to model a generate-recovery-key response from snapd
+@freezed
+class SnapdGenerateRecoveryKeyResponse with _$SnapdGenerateRecoveryKeyResponse {
+  const factory SnapdGenerateRecoveryKeyResponse({
+    required String recoveryKey,
+    required String opaqueId,
+  }) = _SnapdGenerateRecoveryKeyResponse;
+
+  factory SnapdGenerateRecoveryKeyResponse.fromJson(
+          Map<String, dynamic> json) =>
+      _$SnapdGenerateRecoveryKeyResponseFromJson(json);
+}
+
 /// A snapd system volume.
 @freezed
 class SnapdSystemVolume with _$SnapdSystemVolume {
