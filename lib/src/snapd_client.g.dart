@@ -623,6 +623,20 @@ const _$SnapdNoticeTypeEnumMap = {
       'interfaces-requests-rule-update',
 };
 
+_$SnapdGenerateRecoveryKeyResponseImpl
+    _$$SnapdGenerateRecoveryKeyResponseImplFromJson(Map json) =>
+        _$SnapdGenerateRecoveryKeyResponseImpl(
+          recoveryKey: json['recovery-key'] as String,
+          opaqueId: json['opaque-id'] as String,
+        );
+
+Map<String, dynamic> _$$SnapdGenerateRecoveryKeyResponseImplToJson(
+        _$SnapdGenerateRecoveryKeyResponseImpl instance) =>
+    <String, dynamic>{
+      'recovery-key': instance.recoveryKey,
+      'opaque-id': instance.opaqueId,
+    };
+
 _$SnapdSystemVolumeImpl _$$SnapdSystemVolumeImplFromJson(Map json) =>
     _$SnapdSystemVolumeImpl(
       volumeName: json['volume-name'] as String,
