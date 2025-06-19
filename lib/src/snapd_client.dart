@@ -509,8 +509,8 @@ class SnapdGenerateRecoveryKeyResponse with _$SnapdGenerateRecoveryKeyResponse {
   }) = _SnapdGenerateRecoveryKeyResponse;
 
   factory SnapdGenerateRecoveryKeyResponse.fromJson(
-          Map<String, dynamic> json,
-          ) =>
+    Map<String, dynamic> json,
+  ) =>
       _$SnapdGenerateRecoveryKeyResponseFromJson(json);
 }
 
