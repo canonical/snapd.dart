@@ -1494,6 +1494,15 @@ class MockSnapdServer {
           );
           return;
         }
+      case 'generate-recovery-key':
+        _writeSyncResponse(
+          request.response,
+          SnapdGenerateRecoveryKeyResponse(
+            recoveryKey: '12345-12345-12345-12345-12345-12345-12345-12345',
+            opaqueId: 'opaque-id-12345',
+          ),
+        );
+        return;
       default:
         _writeErrorResponse(request.response, 'unknown action');
         return;
@@ -3852,5 +3861,26 @@ void main() {
         );
       });
     }
+  });
+  test('generate recovery key', () async {
+    final snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final response = await client.generateRecoveryKey();
+    expect(
+      response,
+      SnapdGenerateRecoveryKeyResponse(
+        recoveryKey: '12345-12345-12345-12345-12345-12345-12345-12345',
+        opaqueId: 'opaque-id-12345',
+      ),
+    );
   });
 }
