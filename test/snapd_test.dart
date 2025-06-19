@@ -4034,9 +4034,13 @@ void main() {
           expect(change.ready, isTrue);
           expect(change.kind, 'change-passphrase');
           expect(
-              snapd.validPassphrases.contains(testCase.newPassphrase), isTrue);
+            snapd.validPassphrases.contains(testCase.newPassphrase),
+            isTrue,
+          );
           expect(
-              snapd.validPassphrases.contains(testCase.oldPassphrase), isFalse);
+            snapd.validPassphrases.contains(testCase.oldPassphrase),
+            isFalse,
+          );
         }
       });
     }
