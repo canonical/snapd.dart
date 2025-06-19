@@ -1503,6 +1503,84 @@ class MockSnapdServer {
           ),
         );
         return;
+      case 'change-pin':
+        final oldPin = req['old-pin'] as String;
+        final newPin = req['new-pin'] as String;
+
+        if (oldPin.isEmpty) {
+          _writeErrorResponse(request.response, 'missing old pin');
+          return;
+        }
+
+        if (newPin.isEmpty) {
+          _writeErrorResponse(request.response, 'missing new pin');
+          return;
+        }
+
+        // Validate PINs
+        if (!validPins.contains(oldPin)) {
+          _writeErrorResponse(request.response, 'invalid old pin');
+          return;
+        }
+
+        validPins.remove(oldPin);
+        validPins.add(newPin);
+
+        // Create async change for PIN change operation
+        final change = _addChange(
+          kind: 'change-pin',
+          summary: 'Change PIN for system volume key slots',
+          ready: true,
+          tasks: [
+            MockTask(
+              id: '0',
+              kind: 'change-pin',
+              summary: 'Change PIN for system volume key slots',
+              progress: MockTaskProgress(done: 1, total: 1),
+            ),
+          ],
+        );
+        _writeAsyncResponse(request.response, change.id);
+        return;
+      case 'change-passphrase':
+        final oldPassphrase = req['old-passphrase'] as String;
+        final newPassphrase = req['new-passphrase'] as String;
+
+        if (oldPassphrase.isEmpty) {
+          _writeErrorResponse(request.response, 'missing old passphrase');
+          return;
+        }
+
+        if (newPassphrase.isEmpty) {
+          _writeErrorResponse(request.response, 'missing new passphrase');
+          return;
+        }
+
+        // Validate old passphrase
+        if (!validPassphrases.contains(oldPassphrase)) {
+          _writeErrorResponse(request.response, 'invalid old passphrase');
+          return;
+        }
+
+        validPassphrases.remove(oldPassphrase);
+        validPassphrases.add(newPassphrase);
+
+        // Create async change for passphrase change operation
+        final change = _addChange(
+          kind: 'change-passphrase',
+          summary: 'Change passphrase for system volume key slots',
+          ready: true,
+          tasks: [
+            MockTask(
+              id: '0',
+              kind: 'change-passphrase',
+              summary: 'Change passphrase for system volume key slots',
+              progress: MockTaskProgress(done: 1, total: 1),
+            ),
+          ],
+        );
+        _writeAsyncResponse(request.response, change.id);
+        return;
       default:
         _writeErrorResponse(request.response, 'unknown action');
         return;
@@ -3777,11 +3855,11 @@ void main() {
     }
   });
   group('check passphrase', () {
-    const validPassphrases = ['correcthorsebatterystaple'];
+    const validPassphrases = ['correct'];
     for (final testCase in [
       (
         name: 'valid passphrase',
-        passphrase: 'correcthorsebatterystaple',
+        passphrase: 'correct',
         expectError: false,
       ),
       (
@@ -3859,6 +3937,136 @@ void main() {
                 )
               : completes,
         );
+      });
+    }
+  });
+  group('change passphrase', () {
+    const validPassphrases = ['correct'];
+    for (final testCase in [
+      (
+        name: 'valid passphrase change',
+        oldPassphrase: 'correct',
+        newPassphrase: 'new',
+        expectError: false,
+      ),
+      (
+        name: 'invalid old passphrase',
+        oldPassphrase: 'wrong',
+        newPassphrase: 'new',
+        expectError: true,
+      ),
+      (
+        name: 'missing new passphrase',
+        oldPassphrase: 'correct',
+        newPassphrase: '',
+        expectError: true,
+      ),
+      (
+        name: 'missing old passphrase',
+        oldPassphrase: '',
+        newPassphrase: 'new',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          validPassphrases: validPassphrases,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        if (testCase.expectError) {
+          await expectLater(
+            client.changePassphrase(
+              testCase.oldPassphrase,
+              testCase.newPassphrase,
+            ),
+            throwsA(isA<SnapdException>()),
+          );
+        } else {
+          final changeId = await client.changePassphrase(
+            testCase.oldPassphrase,
+            testCase.newPassphrase,
+          );
+          final change = await client.getChange(changeId);
+          expect(change.ready, isTrue);
+          expect(change.kind, 'change-passphrase');
+          expect(
+              snapd.validPassphrases.contains(testCase.newPassphrase), isTrue);
+          expect(
+              snapd.validPassphrases.contains(testCase.oldPassphrase), isFalse);
+        }
+      });
+    }
+  });
+  group('change pin', () {
+    const validPins = ['1234'];
+    for (final testCase in [
+      (
+        name: 'valid pin change',
+        oldPin: '1234',
+        newPin: '4321',
+        expectError: false,
+      ),
+      (
+        name: 'invalid old pin',
+        oldPin: '000000',
+        newPin: '4321',
+        expectError: true,
+      ),
+      (
+        name: 'empty new pin',
+        oldPin: '1234',
+        newPin: '',
+        expectError: true,
+      ),
+      (
+        name: 'empty old pin',
+        oldPin: '',
+        newPin: '4321',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          validPins: validPins,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        if (testCase.expectError) {
+          await expectLater(
+            client.changePin(
+              testCase.oldPin,
+              testCase.newPin,
+            ),
+            throwsA(isA<SnapdException>()),
+          );
+        } else {
+          final changeId = await client.changePin(
+            testCase.oldPin,
+            testCase.newPin,
+          );
+          final change = await client.getChange(changeId);
+          expect(change.ready, isTrue);
+          expect(change.kind, 'change-pin');
+          expect(snapd.validPins.contains(testCase.newPin), isTrue);
+          expect(snapd.validPins.contains(testCase.oldPin), isFalse);
+        }
       });
     }
   });

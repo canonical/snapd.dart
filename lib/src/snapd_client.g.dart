@@ -658,6 +658,20 @@ Map<String, dynamic> _$$SnapdSystemVolumeImplToJson(
       'keyslots': instance.keyslots.map((e) => e.toJson()).toList(),
     };
 
+_$SnapdSystemVolumeTargetKeySlotImpl
+    _$$SnapdSystemVolumeTargetKeySlotImplFromJson(Map json) =>
+        _$SnapdSystemVolumeTargetKeySlotImpl(
+          containerRole: json['container-role'] as String,
+          name: json['name'] as String,
+        );
+
+Map<String, dynamic> _$$SnapdSystemVolumeTargetKeySlotImplToJson(
+        _$SnapdSystemVolumeTargetKeySlotImpl instance) =>
+    <String, dynamic>{
+      'container-role': instance.containerRole,
+      'name': instance.name,
+    };
+
 _$SnapdSystemVolumeKeySlotImpl _$$SnapdSystemVolumeKeySlotImplFromJson(
         Map json) =>
     _$SnapdSystemVolumeKeySlotImpl(

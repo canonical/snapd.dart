@@ -528,6 +528,18 @@ class SnapdSystemVolume with _$SnapdSystemVolume {
       _$SnapdSystemVolumeFromJson(json);
 }
 
+/// A class to model a targeted key slot to preform an action against.
+@freezed
+class SnapdSystemVolumeTargetKeySlot with _$SnapdSystemVolumeTargetKeySlot {
+  const factory SnapdSystemVolumeTargetKeySlot({
+    @JsonKey(name: 'container-role') required String containerRole,
+    required String name,
+  }) = _SnapdSystemVolumeTargetKeySlot;
+
+  factory SnapdSystemVolumeTargetKeySlot.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemVolumeTargetKeySlotFromJson(json);
+}
+
 /// A class to model the key slot on a LUKS container.
 @freezed
 class SnapdSystemVolumeKeySlot with _$SnapdSystemVolumeKeySlot {
@@ -1212,6 +1224,40 @@ class SnapdClient {
     final result =
         await _postSync<Map<String, dynamic>>('/v2/system-volumes', request);
     return SnapdGenerateRecoveryKeyResponse.fromJson(result);
+  }
+
+  /// Changes the PIN for the specified key slots on TPM FDE system volumes.
+  Future<String> changePin(
+    String oldPin,
+    String newPin, {
+    List<SnapdSystemVolumeTargetKeySlot>? keySlots,
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'change-pin',
+      'old-pin': oldPin,
+      'new-pin': newPin,
+    };
+    if (keySlots != null && keySlots.isNotEmpty) {
+      request['keyslots'] = keySlots.map((slot) => slot.toJson()).toList();
+    }
+    return _postAsync('/v2/system-volumes', request);
+  }
+
+  /// Changes the passphrase for the specified key slots on TPM FDE system volumes.
+  Future<String> changePassphrase(
+    String oldPassphrase,
+    String newPassphrase, {
+    List<SnapdSystemVolumeTargetKeySlot>? keySlots,
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'change-passphrase',
+      'old-passphrase': oldPassphrase,
+      'new-passphrase': newPassphrase,
+    };
+    if (keySlots != null && keySlots.isNotEmpty) {
+      request['keyslots'] = keySlots.map((slot) => slot.toJson()).toList();
+    }
+    return _postAsync('/v2/system-volumes', request);
   }
 
   /// Terminates all active connections. If a client remains unclosed, the Dart
