@@ -1217,6 +1217,11 @@ class SnapdClient {
     return SnapdEntropyResponse.fromJson(result);
   }
 
+  /// Generates a new recovery key without adding it to the system.
+  ///
+  /// Returns a [SnapdGenerateRecoveryKeyResponse] containing the generated
+  /// recovery key as well as an `opaqueId` that can be used to identify the
+  /// recovery key in future operations, such as [replaceRecoveryKey].
   Future<SnapdGenerateRecoveryKeyResponse> generateRecoveryKey() async {
     final request = <String, dynamic>{
       'action': 'generate-recovery-key',
@@ -1226,7 +1231,16 @@ class SnapdClient {
     return SnapdGenerateRecoveryKeyResponse.fromJson(result);
   }
 
-  /// Changes the PIN for the specified key slots on TPM FDE system volumes.
+  /// Changes the PIN for the specified key slots. If keylots are omitted,
+  /// snapd will target the default keyslots and container roles used during
+  /// installation:
+  /// - {“container-role”: “system-data”, “name”: “default”}
+  /// - {“container-role”: “system-data”, “name”: “default-fallback”}
+  /// - {“container-role”: “system-save”, “name”: “default-fallback”}
+  ///
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
+
   Future<String> changePin(
     String oldPin,
     String newPin, {
@@ -1243,7 +1257,15 @@ class SnapdClient {
     return _postAsync('/v2/system-volumes', request);
   }
 
-  /// Changes the passphrase for the specified key slots on TPM FDE system volumes.
+  /// Changes the passphrase for the specified key slots. If keylots are
+  /// omitted, snapd will target the default keyslots and container roles used
+  /// during installation:
+  /// - {“container-role”: “system-data”, “name”: “default”}
+  /// - {“container-role”: “system-data”, “name”: “default-fallback”}
+  /// - {“container-role”: “system-save”, “name”: “default-fallback”}
+  ///
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
   Future<String> changePassphrase(
     String oldPassphrase,
     String newPassphrase, {
@@ -1260,7 +1282,12 @@ class SnapdClient {
     return _postAsync('/v2/system-volumes', request);
   }
 
-  /// Replaces the recovery key for the specified key slots.
+  /// Replaces the existing recovery key with the one that corresponds to the
+  /// `KeyId` provided. You can generate a recovery key and obtain its `keyId`
+  /// using the [generateRecoveryKey] method.
+  ///
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
   Future<String> replaceRecoveryKey(
     String keyId, {
     List<SnapdSystemVolumeTargetKeySlot>? keySlots,
