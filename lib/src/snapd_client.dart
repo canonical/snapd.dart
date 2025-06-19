@@ -1260,6 +1260,21 @@ class SnapdClient {
     return _postAsync('/v2/system-volumes', request);
   }
 
+  /// Replaces the recovery key for the specified key slots.
+  Future<String> replaceRecoveryKey(
+    String keyId, {
+    List<SnapdSystemVolumeTargetKeySlot>? keySlots,
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'replace-recovery-key',
+      'key-id': keyId,
+    };
+    if (keySlots != null && keySlots.isNotEmpty) {
+      request['keyslots'] = keySlots.map((slot) => slot.toJson()).toList();
+    }
+    return _postAsync('/v2/system-volumes', request);
+  }
+
   /// Terminates all active connections. If a client remains unclosed, the Dart
   /// process may not terminate.
   void close() {

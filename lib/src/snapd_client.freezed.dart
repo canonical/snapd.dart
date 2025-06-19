@@ -6675,6 +6675,7 @@ SnapdSystemVolumeTargetKeySlot _$SnapdSystemVolumeTargetKeySlotFromJson(
 
 /// @nodoc
 mixin _$SnapdSystemVolumeTargetKeySlot {
+  @JsonKey(name: 'container-role')
   String get containerRole => throw _privateConstructorUsedError;
   String get name => throw _privateConstructorUsedError;
 
@@ -6696,7 +6697,8 @@ abstract class $SnapdSystemVolumeTargetKeySlotCopyWith<$Res> {
       _$SnapdSystemVolumeTargetKeySlotCopyWithImpl<$Res,
           SnapdSystemVolumeTargetKeySlot>;
   @useResult
-  $Res call({String containerRole, String name});
+  $Res call(
+      {@JsonKey(name: 'container-role') String containerRole, String name});
 }
 
 /// @nodoc
@@ -6740,7 +6742,8 @@ abstract class _$$SnapdSystemVolumeTargetKeySlotImplCopyWith<$Res>
       __$$SnapdSystemVolumeTargetKeySlotImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String containerRole, String name});
+  $Res call(
+      {@JsonKey(name: 'container-role') String containerRole, String name});
 }
 
 /// @nodoc
@@ -6779,13 +6782,15 @@ class __$$SnapdSystemVolumeTargetKeySlotImplCopyWithImpl<$Res>
 class _$SnapdSystemVolumeTargetKeySlotImpl
     implements _SnapdSystemVolumeTargetKeySlot {
   const _$SnapdSystemVolumeTargetKeySlotImpl(
-      {required this.containerRole, required this.name});
+      {@JsonKey(name: 'container-role') required this.containerRole,
+      required this.name});
 
   factory _$SnapdSystemVolumeTargetKeySlotImpl.fromJson(
           Map<String, dynamic> json) =>
       _$$SnapdSystemVolumeTargetKeySlotImplFromJson(json);
 
   @override
+  @JsonKey(name: 'container-role')
   final String containerRole;
   @override
   final String name;
@@ -6830,13 +6835,14 @@ class _$SnapdSystemVolumeTargetKeySlotImpl
 abstract class _SnapdSystemVolumeTargetKeySlot
     implements SnapdSystemVolumeTargetKeySlot {
   const factory _SnapdSystemVolumeTargetKeySlot(
-      {required final String containerRole,
+      {@JsonKey(name: 'container-role') required final String containerRole,
       required final String name}) = _$SnapdSystemVolumeTargetKeySlotImpl;
 
   factory _SnapdSystemVolumeTargetKeySlot.fromJson(Map<String, dynamic> json) =
       _$SnapdSystemVolumeTargetKeySlotImpl.fromJson;
 
   @override
+  @JsonKey(name: 'container-role')
   String get containerRole;
   @override
   String get name;

@@ -502,6 +502,7 @@ class MockSnapdServer {
     Map<String, SnapdSystemVolume> systemVolumes = const {},
     List<String> validPassphrases = const [],
     List<String> validPins = const [],
+    List<String> validKeyIds = const [],
     this.version,
   }) {
     for (final change in changes) {
@@ -534,6 +535,9 @@ class MockSnapdServer {
     for (final validPins in validPins) {
       this.validPins.add(validPins);
     }
+    for (final validKeyId in validKeyIds) {
+      this.validKeyIds.add(validKeyId);
+    }
   }
   Directory? _tempDir;
   late String socketPath;
@@ -564,6 +568,7 @@ class MockSnapdServer {
   final systemVolumes = <String, SnapdSystemVolume>{};
   final validPassphrases = <String>[];
   final validPins = <String>[];
+  final validKeyIds = <String>[];
   final String? version;
 
   /// Last user agent received.
@@ -1495,11 +1500,13 @@ class MockSnapdServer {
           return;
         }
       case 'generate-recovery-key':
+        final keyId =
+            validKeyIds.isNotEmpty ? validKeyIds.first : 'opaque-id-12345';
         _writeSyncResponse(
           request.response,
           SnapdGenerateRecoveryKeyResponse(
             recoveryKey: '12345-12345-12345-12345-12345-12345-12345-12345',
-            opaqueId: 'opaque-id-12345',
+            opaqueId: keyId,
           ),
         );
         return;
@@ -1575,6 +1582,34 @@ class MockSnapdServer {
               id: '0',
               kind: 'change-passphrase',
               summary: 'Change passphrase for system volume key slots',
+              progress: MockTaskProgress(done: 1, total: 1),
+            ),
+          ],
+        );
+        _writeAsyncResponse(request.response, change.id);
+        return;
+      case 'replace-recovery-key':
+        final keyId = req['key-id'] as String;
+
+        if (keyId.isEmpty) {
+          _writeErrorResponse(request.response, 'missing key id');
+          return;
+        }
+
+        if (!validKeyIds.contains(keyId)) {
+          _writeErrorResponse(request.response, 'invalid key id');
+          return;
+        }
+
+        final change = _addChange(
+          kind: 'replace-recovery-key',
+          summary: 'Replace recovery key for system volume key slots',
+          ready: true,
+          tasks: [
+            MockTask(
+              id: '0',
+              kind: 'replace-recovery-key',
+              summary: 'Replace recovery key for system volume key slots',
               progress: MockTaskProgress(done: 1, total: 1),
             ),
           ],
@@ -4066,6 +4101,53 @@ void main() {
           expect(change.kind, 'change-pin');
           expect(snapd.validPins.contains(testCase.newPin), isTrue);
           expect(snapd.validPins.contains(testCase.oldPin), isFalse);
+        }
+      });
+    }
+  });
+  group('replace recovery key', () {
+    const validKeyIds = ['opaque-id-12345'];
+    for (final testCase in [
+      (
+        name: 'valid key id',
+        keyId: 'opaque-id-12345',
+        expectError: false,
+      ),
+      (
+        name: 'invalid key id',
+        keyId: 'wrong-key-id',
+        expectError: true,
+      ),
+      (
+        name: 'empty key id',
+        keyId: '',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          validKeyIds: validKeyIds,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        if (testCase.expectError) {
+          await expectLater(
+            client.replaceRecoveryKey(testCase.keyId),
+            throwsA(isA<SnapdException>()),
+          );
+        } else {
+          final changeId = await client.replaceRecoveryKey(testCase.keyId);
+          final change = await client.getChange(changeId);
+          expect(change.ready, isTrue);
+          expect(change.kind, 'replace-recovery-key');
         }
       });
     }
