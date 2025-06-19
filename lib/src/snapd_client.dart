@@ -1204,6 +1204,15 @@ class SnapdClient {
     return SnapdEntropyResponse.fromJson(result);
   }
 
+  Future<SnapdGenerateRecoveryKeyResponse> generateRecoveryKey() async {
+    final request = <String, dynamic>{
+      'action': 'generate-recovery-key',
+    };
+    final result =
+        await _postSync<Map<String, dynamic>>('/v2/system-volumes', request);
+    return SnapdGenerateRecoveryKeyResponse.fromJson(result);
+  }
+
   /// Terminates all active connections. If a client remains unclosed, the Dart
   /// process may not terminate.
   void close() {
