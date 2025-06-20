@@ -1504,10 +1504,10 @@ class MockSnapdServer {
             validKeyIds.isNotEmpty ? validKeyIds.first : 'key-id-12345';
         _writeSyncResponse(
           request.response,
-          SnapdGenerateRecoveryKeyResponse(
-            recoveryKey: '12345-12345-12345-12345-12345-12345-12345-12345',
-            keyId: keyId,
-          ),
+          {
+            'recovery-key': '12345-12345-12345-12345-12345-12345-12345-12345',
+            'key-id': keyId,
+          },
         );
         return;
       case 'change-pin':
