@@ -1501,12 +1501,12 @@ class MockSnapdServer {
         }
       case 'generate-recovery-key':
         final keyId =
-            validKeyIds.isNotEmpty ? validKeyIds.first : 'opaque-id-12345';
+            validKeyIds.isNotEmpty ? validKeyIds.first : 'key-id-12345';
         _writeSyncResponse(
           request.response,
           SnapdGenerateRecoveryKeyResponse(
             recoveryKey: '12345-12345-12345-12345-12345-12345-12345-12345',
-            opaqueId: keyId,
+            keyId: keyId,
           ),
         );
         return;
@@ -4110,11 +4110,11 @@ void main() {
     }
   });
   group('replace recovery key', () {
-    const validKeyIds = ['opaque-id-12345'];
+    const validKeyIds = ['key-id-12345'];
     for (final testCase in [
       (
         name: 'valid key id',
-        keyId: 'opaque-id-12345',
+        keyId: 'key-id-12345',
         expectError: false,
       ),
       (
@@ -4173,7 +4173,7 @@ void main() {
       response,
       SnapdGenerateRecoveryKeyResponse(
         recoveryKey: '12345-12345-12345-12345-12345-12345-12345-12345',
-        opaqueId: 'opaque-id-12345',
+        keyId: 'key-id-12345',
       ),
     );
   });

@@ -627,14 +627,14 @@ _$SnapdGenerateRecoveryKeyResponseImpl
     _$$SnapdGenerateRecoveryKeyResponseImplFromJson(Map json) =>
         _$SnapdGenerateRecoveryKeyResponseImpl(
           recoveryKey: json['recovery-key'] as String,
-          opaqueId: json['opaque-id'] as String,
+          keyId: json['key-id'] as String,
         );
 
 Map<String, dynamic> _$$SnapdGenerateRecoveryKeyResponseImplToJson(
         _$SnapdGenerateRecoveryKeyResponseImpl instance) =>
     <String, dynamic>{
       'recovery-key': instance.recoveryKey,
-      'opaque-id': instance.opaqueId,
+      'key-id': instance.keyId,
     };
 
 _$SnapdSystemVolumeImpl _$$SnapdSystemVolumeImplFromJson(Map json) =>

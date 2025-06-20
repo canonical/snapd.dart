@@ -6267,7 +6267,7 @@ SnapdGenerateRecoveryKeyResponse _$SnapdGenerateRecoveryKeyResponseFromJson(
 /// @nodoc
 mixin _$SnapdGenerateRecoveryKeyResponse {
   String get recoveryKey => throw _privateConstructorUsedError;
-  String get opaqueId => throw _privateConstructorUsedError;
+  String get keyId => throw _privateConstructorUsedError;
 
   /// Serializes this SnapdGenerateRecoveryKeyResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -6287,7 +6287,7 @@ abstract class $SnapdGenerateRecoveryKeyResponseCopyWith<$Res> {
       _$SnapdGenerateRecoveryKeyResponseCopyWithImpl<$Res,
           SnapdGenerateRecoveryKeyResponse>;
   @useResult
-  $Res call({String recoveryKey, String opaqueId});
+  $Res call({String recoveryKey, String keyId});
 }
 
 /// @nodoc
@@ -6307,16 +6307,16 @@ class _$SnapdGenerateRecoveryKeyResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? recoveryKey = null,
-    Object? opaqueId = null,
+    Object? keyId = null,
   }) {
     return _then(_value.copyWith(
       recoveryKey: null == recoveryKey
           ? _value.recoveryKey
           : recoveryKey // ignore: cast_nullable_to_non_nullable
               as String,
-      opaqueId: null == opaqueId
-          ? _value.opaqueId
-          : opaqueId // ignore: cast_nullable_to_non_nullable
+      keyId: null == keyId
+          ? _value.keyId
+          : keyId // ignore: cast_nullable_to_non_nullable
               as String,
     ) as $Val);
   }
@@ -6331,7 +6331,7 @@ abstract class _$$SnapdGenerateRecoveryKeyResponseImplCopyWith<$Res>
       __$$SnapdGenerateRecoveryKeyResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({String recoveryKey, String opaqueId});
+  $Res call({String recoveryKey, String keyId});
 }
 
 /// @nodoc
@@ -6350,16 +6350,16 @@ class __$$SnapdGenerateRecoveryKeyResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? recoveryKey = null,
-    Object? opaqueId = null,
+    Object? keyId = null,
   }) {
     return _then(_$SnapdGenerateRecoveryKeyResponseImpl(
       recoveryKey: null == recoveryKey
           ? _value.recoveryKey
           : recoveryKey // ignore: cast_nullable_to_non_nullable
               as String,
-      opaqueId: null == opaqueId
-          ? _value.opaqueId
-          : opaqueId // ignore: cast_nullable_to_non_nullable
+      keyId: null == keyId
+          ? _value.keyId
+          : keyId // ignore: cast_nullable_to_non_nullable
               as String,
     ));
   }
@@ -6370,7 +6370,7 @@ class __$$SnapdGenerateRecoveryKeyResponseImplCopyWithImpl<$Res>
 class _$SnapdGenerateRecoveryKeyResponseImpl
     implements _SnapdGenerateRecoveryKeyResponse {
   const _$SnapdGenerateRecoveryKeyResponseImpl(
-      {required this.recoveryKey, required this.opaqueId});
+      {required this.recoveryKey, required this.keyId});
 
   factory _$SnapdGenerateRecoveryKeyResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -6379,11 +6379,11 @@ class _$SnapdGenerateRecoveryKeyResponseImpl
   @override
   final String recoveryKey;
   @override
-  final String opaqueId;
+  final String keyId;
 
   @override
   String toString() {
-    return 'SnapdGenerateRecoveryKeyResponse(recoveryKey: $recoveryKey, opaqueId: $opaqueId)';
+    return 'SnapdGenerateRecoveryKeyResponse(recoveryKey: $recoveryKey, keyId: $keyId)';
   }
 
   @override
@@ -6393,13 +6393,12 @@ class _$SnapdGenerateRecoveryKeyResponseImpl
             other is _$SnapdGenerateRecoveryKeyResponseImpl &&
             (identical(other.recoveryKey, recoveryKey) ||
                 other.recoveryKey == recoveryKey) &&
-            (identical(other.opaqueId, opaqueId) ||
-                other.opaqueId == opaqueId));
+            (identical(other.keyId, keyId) || other.keyId == keyId));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, recoveryKey, opaqueId);
+  int get hashCode => Object.hash(runtimeType, recoveryKey, keyId);
 
   /// Create a copy of SnapdGenerateRecoveryKeyResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -6423,7 +6422,7 @@ abstract class _SnapdGenerateRecoveryKeyResponse
     implements SnapdGenerateRecoveryKeyResponse {
   const factory _SnapdGenerateRecoveryKeyResponse(
       {required final String recoveryKey,
-      required final String opaqueId}) = _$SnapdGenerateRecoveryKeyResponseImpl;
+      required final String keyId}) = _$SnapdGenerateRecoveryKeyResponseImpl;
 
   factory _SnapdGenerateRecoveryKeyResponse.fromJson(
           Map<String, dynamic> json) =
@@ -6432,7 +6431,7 @@ abstract class _SnapdGenerateRecoveryKeyResponse
   @override
   String get recoveryKey;
   @override
-  String get opaqueId;
+  String get keyId;
 
   /// Create a copy of SnapdGenerateRecoveryKeyResponse
   /// with the given fields replaced by the non-null parameter values.

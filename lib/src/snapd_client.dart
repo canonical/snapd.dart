@@ -505,7 +505,7 @@ class SnapdNotice with _$SnapdNotice {
 class SnapdGenerateRecoveryKeyResponse with _$SnapdGenerateRecoveryKeyResponse {
   const factory SnapdGenerateRecoveryKeyResponse({
     required String recoveryKey,
-    required String opaqueId,
+    required String keyId,
   }) = _SnapdGenerateRecoveryKeyResponse;
 
   factory SnapdGenerateRecoveryKeyResponse.fromJson(
