@@ -1407,11 +1407,11 @@ class MockSnapdServer {
 
     final response = switch (containerRole) {
       'true' => SnapdSystemVolumesResponse(byContainerRole: systemVolumes),
-      _ => SnapdSystemVolumesResponse(
-          byContainerRole: {
+      _ => {
+          'by-container-role': {
             containerRole!: systemVolumes[containerRole]!,
           },
-        ),
+        }
     };
 
     _writeSyncResponse(
@@ -1449,14 +1449,11 @@ class MockSnapdServer {
       case 'check-passphrase':
         final passphraseToCheck = req['passphrase'] as String;
         if (validPassphrases.contains(passphraseToCheck)) {
-          _writeSyncResponse(
-            request.response,
-            SnapdEntropyResponse(
-              entropyBits: 20,
-              minEntropyBits: 13,
-              optimalEntropyBits: 23,
-            ),
-          );
+          _writeSyncResponse(request.response, {
+            'entropy-bits': 20,
+            'min-entropy-bits': 13,
+            'optimal-entropy-bits': 23,
+          });
           return;
         } else {
           _writeErrorResponse(
