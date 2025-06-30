@@ -521,7 +521,7 @@ class SnapdSystemVolume with _$SnapdSystemVolume {
     required String volumeName,
     required String name,
     required bool encrypted,
-    @Default([]) List<SnapdSystemVolumeKeySlot> keyslots,
+    @Default({}) Map<String, SnapdSystemVolumeKeySlot> keyslots,
   }) = _SnapdSystemVolume;
 
   factory SnapdSystemVolume.fromJson(Map<String, dynamic> json) =>
@@ -545,7 +545,6 @@ class SnapdSystemVolumeTargetKeySlot with _$SnapdSystemVolumeTargetKeySlot {
 class SnapdSystemVolumeKeySlot with _$SnapdSystemVolumeKeySlot {
   const factory SnapdSystemVolumeKeySlot({
     /// The key slot name, used to identify the key slot.
-    required String name,
     required SnapdSystemVolumeKeySlotType type,
     List<String>? roles, // only for platform keys
     String? platformName, // only for platform keys

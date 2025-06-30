@@ -1406,7 +1406,9 @@ class MockSnapdServer {
     final containerRole = parameters['container-role'];
 
     final response = switch (containerRole) {
-      'true' => SnapdSystemVolumesResponse(byContainerRole: systemVolumes),
+      'true' => {
+          'by-container-role': systemVolumes,
+        },
       _ => {
           'by-container-role': {
             containerRole!: systemVolumes[containerRole]!,
@@ -3806,12 +3808,11 @@ void main() {
         volumeName: 'volume name',
         name: 'partition name',
         encrypted: true,
-        keyslots: [
-          SnapdSystemVolumeKeySlot(
-            name: 'default',
+        keyslots: {
+          'default': SnapdSystemVolumeKeySlot(
             type: SnapdSystemVolumeKeySlotType.recovery,
           ),
-        ],
+        },
       ),
     };
     final snapd = MockSnapdServer(systemVolumes: mockSystemVolumes);

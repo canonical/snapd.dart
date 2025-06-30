@@ -642,11 +642,13 @@ _$SnapdSystemVolumeImpl _$$SnapdSystemVolumeImplFromJson(Map json) =>
       volumeName: json['volume-name'] as String,
       name: json['name'] as String,
       encrypted: json['encrypted'] as bool,
-      keyslots: (json['keyslots'] as List<dynamic>?)
-              ?.map((e) => SnapdSystemVolumeKeySlot.fromJson(
-                  Map<String, dynamic>.from(e as Map)))
-              .toList() ??
-          const [],
+      keyslots: (json['keyslots'] as Map?)?.map(
+            (k, e) => MapEntry(
+                k as String,
+                SnapdSystemVolumeKeySlot.fromJson(
+                    Map<String, dynamic>.from(e as Map))),
+          ) ??
+          const {},
     );
 
 Map<String, dynamic> _$$SnapdSystemVolumeImplToJson(
@@ -655,7 +657,7 @@ Map<String, dynamic> _$$SnapdSystemVolumeImplToJson(
       'volume-name': instance.volumeName,
       'name': instance.name,
       'encrypted': instance.encrypted,
-      'keyslots': instance.keyslots.map((e) => e.toJson()).toList(),
+      'keyslots': instance.keyslots.map((k, e) => MapEntry(k, e.toJson())),
     };
 
 _$SnapdSystemVolumeTargetKeySlotImpl
@@ -675,7 +677,6 @@ Map<String, dynamic> _$$SnapdSystemVolumeTargetKeySlotImplToJson(
 _$SnapdSystemVolumeKeySlotImpl _$$SnapdSystemVolumeKeySlotImplFromJson(
         Map json) =>
     _$SnapdSystemVolumeKeySlotImpl(
-      name: json['name'] as String,
       type: $enumDecode(_$SnapdSystemVolumeKeySlotTypeEnumMap, json['type']),
       roles:
           (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList(),
@@ -687,7 +688,6 @@ _$SnapdSystemVolumeKeySlotImpl _$$SnapdSystemVolumeKeySlotImplFromJson(
 Map<String, dynamic> _$$SnapdSystemVolumeKeySlotImplToJson(
         _$SnapdSystemVolumeKeySlotImpl instance) =>
     <String, dynamic>{
-      'name': instance.name,
       'type': _$SnapdSystemVolumeKeySlotTypeEnumMap[instance.type]!,
       'roles': instance.roles,
       'platform-name': instance.platformName,
