@@ -1403,7 +1403,7 @@ class MockSnapdServer {
 
   void _processGetSystemVolumes(HttpRequest request) {
     final parameters = request.uri.queryParameters;
-    final containerRole = parameters['container-role'];
+    final containerRole = parameters['by-container-role'];
 
     final response = switch (containerRole) {
       'true' => {

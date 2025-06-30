@@ -1161,7 +1161,7 @@ class SnapdClient {
     String? containerRole,
   }) async {
     final queryParameters = <String, String>{
-      'container-role': containerRole ?? 'true',
+      'by-container-role': containerRole ?? 'true',
     };
     final result = await _getSync<Map<String, dynamic>>(
       '/v2/system-volumes',
