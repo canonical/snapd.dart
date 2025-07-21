@@ -58,6 +58,14 @@ enum SnapdNoticeType {
   interfacesRequestsRuleUpdate,
 }
 
+/// Type of key slot.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdSystemVolumeKeySlotType { recovery, platform }
+
+/// The authentication mode required to unlock a platform key slot.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdSystemVolumeAuthMode { none, pin, passphrase }
+
 class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
   const _SnapdDateTimeConverter();
 
@@ -76,6 +84,7 @@ class SnapdException implements Exception {
     this.kind,
     this.status = '',
     this.statusCode = 0,
+    this.value,
   });
 
   /// Error kind.
@@ -89,6 +98,9 @@ class SnapdException implements Exception {
 
   /// The statusCode for the exception (defaults to 0).
   final int statusCode;
+
+  /// A rich object with further details on the error.
+  final Object? value;
 
   @override
   String toString() =>
@@ -488,6 +500,84 @@ class SnapdNotice with _$SnapdNotice {
       _$SnapdNoticeFromJson(json);
 }
 
+/// A class to model a generate-recovery-key response from snapd
+@freezed
+class SnapdGenerateRecoveryKeyResponse with _$SnapdGenerateRecoveryKeyResponse {
+  const factory SnapdGenerateRecoveryKeyResponse({
+    required String recoveryKey,
+    required String keyId,
+  }) = _SnapdGenerateRecoveryKeyResponse;
+
+  factory SnapdGenerateRecoveryKeyResponse.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$SnapdGenerateRecoveryKeyResponseFromJson(json);
+}
+
+/// A snapd system volume.
+@freezed
+class SnapdSystemVolume with _$SnapdSystemVolume {
+  const factory SnapdSystemVolume({
+    required String volumeName,
+    required String name,
+    required bool encrypted,
+    @Default({}) Map<String, SnapdSystemVolumeKeySlot> keyslots,
+  }) = _SnapdSystemVolume;
+
+  factory SnapdSystemVolume.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemVolumeFromJson(json);
+}
+
+/// A class to model a targeted key slot to preform an action against.
+@freezed
+class SnapdSystemVolumeTargetKeySlot with _$SnapdSystemVolumeTargetKeySlot {
+  const factory SnapdSystemVolumeTargetKeySlot({
+    @JsonKey(name: 'container-role') required String containerRole,
+    required String name,
+  }) = _SnapdSystemVolumeTargetKeySlot;
+
+  factory SnapdSystemVolumeTargetKeySlot.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemVolumeTargetKeySlotFromJson(json);
+}
+
+/// A class to model the key slot on a LUKS container.
+@freezed
+class SnapdSystemVolumeKeySlot with _$SnapdSystemVolumeKeySlot {
+  const factory SnapdSystemVolumeKeySlot({
+    /// The key slot name, used to identify the key slot.
+    required SnapdSystemVolumeKeySlotType type,
+    List<String>? roles, // only for platform keys
+    String? platformName, // only for platform keys
+    SnapdSystemVolumeAuthMode? authMode, // only for platform keys
+  }) = _SnapdSystemVolumeKeySlot;
+
+  factory SnapdSystemVolumeKeySlot.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemVolumeKeySlotFromJson(json);
+}
+
+/// A class to model responses to keyslot enumeration requests.
+@freezed
+class SnapdSystemVolumesResponse with _$SnapdSystemVolumesResponse {
+  const factory SnapdSystemVolumesResponse({
+    @Default({}) Map<String, SnapdSystemVolume> byContainerRole,
+  }) = _SnapdSystemVolumesResponse;
+
+  factory SnapdSystemVolumesResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemVolumesResponseFromJson(json);
+}
+
+@freezed
+class SnapdEntropyResponse with _$SnapdEntropyResponse {
+  const factory SnapdEntropyResponse({
+    required int entropyBits,
+    required int minEntropyBits,
+    required int optimalEntropyBits,
+  }) = _SnapdEntropyResponse;
+
+  factory SnapdEntropyResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdEntropyResponseFromJson(json);
+}
+
 /// Contains proceed-time which is the date and time after which a refresh is
 /// forced for a running snap in the next auto-refresh in RFC3339 UTC format.
 @freezed
@@ -580,6 +670,7 @@ class _SnapdErrorResponse extends _SnapdResponse {
         message: message,
         status: status,
         statusCode: statusCode,
+        value: value,
       );
 
   @override
@@ -588,6 +679,7 @@ class _SnapdErrorResponse extends _SnapdResponse {
         message: message,
         status: status,
         statusCode: statusCode,
+        value: value,
       );
 }
 
@@ -1062,6 +1154,150 @@ class SnapdClient {
       'experimental': {'apparmor-prompting': false},
     };
     return _putAsync('/v2/snaps/system/conf', request);
+  }
+
+  /// Gets the TPM FDE system volumes.
+  Future<SnapdSystemVolumesResponse> getSystemVolumes({
+    String? containerRole,
+  }) async {
+    final queryParameters = <String, String>{
+      'by-container-role': containerRole ?? 'true',
+    };
+    final result = await _getSync<Map<String, dynamic>>(
+      '/v2/system-volumes',
+      queryParameters,
+    );
+    return SnapdSystemVolumesResponse.fromJson(result);
+  }
+
+  /// Checks whether the specified TPM FDE [recoveryKey] is valid for the
+  /// specified [containerRoles].
+  Future<void> checkRecoveryKey(
+    String recoveryKey, {
+    List<String> containerRoles = const [],
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'check-recovery-key',
+      'recovery-key': recoveryKey,
+      if (containerRoles.isNotEmpty) 'container-roles': containerRoles,
+    };
+    await _postSync('/v2/system-volumes', request);
+  }
+
+  /// Performs quality checks on the provided [passphrase]. If they're passed,
+  /// a [SnapdEntropyResponse] is returned, otherwise a [SnapdException] with
+  /// `kind` set to `"invalid-passphrase"` or `"unsupported"` is raised. In
+  /// the former case, the `value` of the exception contains a list of
+  /// `reasons` for which the check failed and the remaining fields can be
+  /// parsed as a [SnapdEntropyResponse].
+  Future<SnapdEntropyResponse> checkPassphrase(String passphrase) async {
+    final request = <String, dynamic>{
+      'action': 'check-passphrase',
+      'passphrase': passphrase,
+    };
+    final result =
+        await _postSync<Map<String, dynamic>>('/v2/system-volumes', request);
+    return SnapdEntropyResponse.fromJson(result);
+  }
+
+  /// Performs quality checks on the provided [pin]. If they're passed, a
+  /// [SnapdEntropyResponse] is returned, otherwise a [SnapdException] with
+  /// `kind` set to `"invalid-pin"` or `"unsupported"` is raised. In the former
+  /// case, the `value` of the exception contains a list of `reasons` for which
+  /// the check failed and the remaining fields can be parsed as a
+  /// [SnapdEntropyResponse].
+  Future<SnapdEntropyResponse> checkPin(String pin) async {
+    final request = <String, dynamic>{
+      'action': 'check-pin',
+      'pin': pin,
+    };
+    final result =
+        await _postSync<Map<String, dynamic>>('/v2/system-volumes', request);
+    return SnapdEntropyResponse.fromJson(result);
+  }
+
+  /// Generates a new recovery key without adding it to the system.
+  ///
+  /// Returns a [SnapdGenerateRecoveryKeyResponse] containing the generated
+  /// recovery key as well as an `opaqueId` that can be used to identify the
+  /// recovery key in future operations, such as [replaceRecoveryKey].
+  Future<SnapdGenerateRecoveryKeyResponse> generateRecoveryKey() async {
+    final request = <String, dynamic>{
+      'action': 'generate-recovery-key',
+    };
+    final result =
+        await _postSync<Map<String, dynamic>>('/v2/system-volumes', request);
+    return SnapdGenerateRecoveryKeyResponse.fromJson(result);
+  }
+
+  /// Changes the PIN for the specified key slots. If keylots are omitted,
+  /// snapd will target the default keyslots and container roles used during
+  /// installation:
+  /// - {“container-role”: “system-data”, “name”: “default”}
+  /// - {“container-role”: “system-data”, “name”: “default-fallback”}
+  /// - {“container-role”: “system-save”, “name”: “default-fallback”}
+  ///
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
+  Future<String> changePin(
+    String oldPin,
+    String newPin, {
+    List<SnapdSystemVolumeTargetKeySlot>? keySlots,
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'change-pin',
+      'old-pin': oldPin,
+      'new-pin': newPin,
+    };
+    if (keySlots != null && keySlots.isNotEmpty) {
+      request['keyslots'] = keySlots.map((slot) => slot.toJson()).toList();
+    }
+    return _postAsync('/v2/system-volumes', request);
+  }
+
+  /// Changes the passphrase for the specified key slots. If keylots are
+  /// omitted, snapd will target the default keyslots and container roles used
+  /// during installation:
+  /// - {“container-role”: “system-data”, “name”: “default”}
+  /// - {“container-role”: “system-data”, “name”: “default-fallback”}
+  /// - {“container-role”: “system-save”, “name”: “default-fallback”}
+  ///
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
+  Future<String> changePassphrase(
+    String oldPassphrase,
+    String newPassphrase, {
+    List<SnapdSystemVolumeTargetKeySlot>? keySlots,
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'change-passphrase',
+      'old-passphrase': oldPassphrase,
+      'new-passphrase': newPassphrase,
+    };
+    if (keySlots != null && keySlots.isNotEmpty) {
+      request['keyslots'] = keySlots.map((slot) => slot.toJson()).toList();
+    }
+    return _postAsync('/v2/system-volumes', request);
+  }
+
+  /// Replaces the existing recovery key with the one that corresponds to the
+  /// `KeyId` provided. You can generate a recovery key and obtain its `keyId`
+  /// using the [generateRecoveryKey] method.
+  ///
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
+  Future<String> replaceRecoveryKey(
+    String keyId, {
+    List<SnapdSystemVolumeTargetKeySlot>? keySlots,
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'replace-recovery-key',
+      'key-id': keyId,
+    };
+    if (keySlots != null && keySlots.isNotEmpty) {
+      request['keyslots'] = keySlots.map((slot) => slot.toJson()).toList();
+    }
+    return _postAsync('/v2/system-volumes', request);
   }
 
   /// Terminates all active connections. If a client remains unclosed, the Dart

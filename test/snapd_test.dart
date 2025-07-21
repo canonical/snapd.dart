@@ -490,6 +490,7 @@ class MockSnapdServer {
     this.onClassic = false,
     this.promptingEnabled = false,
     List<SnapdNotice> notices = const [],
+    Map<String, String> recoveryKeys = const {},
     this.refreshLast,
     this.refreshNext,
     List<SnapdRule> rules = const [],
@@ -498,6 +499,10 @@ class MockSnapdServer {
     List<MockSnap> storeSnaps = const [],
     List<MockSnapDeclaration> snapDeclarations = const [],
     this.systemMode,
+    Map<String, SnapdSystemVolume> systemVolumes = const {},
+    List<String> validPassphrases = const [],
+    List<String> validPins = const [],
+    List<String> validKeyIds = const [],
     this.version,
   }) {
     for (final change in changes) {
@@ -518,6 +523,21 @@ class MockSnapdServer {
     for (final rule in rules) {
       this.rules.add(rule);
     }
+    for (final systemVolume in systemVolumes.entries) {
+      this.systemVolumes[systemVolume.key] = systemVolume.value;
+    }
+    for (final recoveryKey in recoveryKeys.entries) {
+      this.recoveryKeys[recoveryKey.key] = recoveryKey.value;
+    }
+    for (final validPassphrase in validPassphrases) {
+      this.validPassphrases.add(validPassphrase);
+    }
+    for (final validPins in validPins) {
+      this.validPins.add(validPins);
+    }
+    for (final validKeyId in validKeyIds) {
+      this.validKeyIds.add(validKeyId);
+    }
   }
   Directory? _tempDir;
   late String socketPath;
@@ -537,6 +557,7 @@ class MockSnapdServer {
   final notices = <SnapdNotice>[];
   final String? refreshLast;
   final String? refreshNext;
+  final recoveryKeys = <String, String>{};
   final removedSnaps = <String, MockSnap>{};
   final rules = <SnapdRule>[];
   final String? series;
@@ -544,6 +565,10 @@ class MockSnapdServer {
   final storeSnaps = <String, MockSnap>{};
   final snapDeclarations = <String, MockSnapDeclaration>{};
   final String? systemMode;
+  final systemVolumes = <String, SnapdSystemVolume>{};
+  final validPassphrases = <String>[];
+  final validPins = <String>[];
+  final validKeyIds = <String>[];
   final String? version;
 
   /// Last user agent received.
@@ -636,6 +661,10 @@ class MockSnapdServer {
       await _processPostSnap(request, path.substring('/v2/snaps/'.length));
     } else if (method == 'GET' && path == '/v2/system-info') {
       _processSystemInfo(request);
+    } else if (method == 'GET' && path == '/v2/system-volumes') {
+      _processGetSystemVolumes(request);
+    } else if (method == 'POST' && path == '/v2/system-volumes') {
+      await _processPostSystemVolumes(request);
     } else {
       request.response.statusCode = HttpStatus.notFound;
       _writeErrorResponse(request.response, 'not found');
@@ -1372,6 +1401,226 @@ class MockSnapdServer {
     });
   }
 
+  void _processGetSystemVolumes(HttpRequest request) {
+    final parameters = request.uri.queryParameters;
+    final containerRole = parameters['by-container-role'];
+
+    final response = switch (containerRole) {
+      'true' => {
+          'by-container-role': systemVolumes,
+        },
+      _ => {
+          'by-container-role': {
+            containerRole!: systemVolumes[containerRole]!,
+          },
+        }
+    };
+
+    _writeSyncResponse(
+      request.response,
+      response,
+    );
+  }
+
+  Future<void> _processPostSystemVolumes(HttpRequest request) async {
+    final req = await _readJson(request);
+    final action = req['action'];
+
+    switch (action) {
+      case 'check-recovery-key':
+        final keyToCheck = req['recovery-key'] as String;
+        final containerRolesToCheck =
+            (req['container-roles'] as List<dynamic>?)?.cast<String>();
+        for (final containerRole
+            in containerRolesToCheck ?? recoveryKeys.keys) {
+          if (!recoveryKeys.keys.contains(containerRole)) {
+            _writeErrorResponse(request.response, 'container role not found');
+            return;
+          }
+          if (recoveryKeys[containerRole] != keyToCheck) {
+            _writeErrorResponse(
+              request.response,
+              'cannot find matching recovery key',
+            );
+            return;
+          }
+        }
+        _writeSyncResponse(request.response, {});
+        return;
+
+      case 'check-passphrase':
+        final passphraseToCheck = req['passphrase'] as String;
+        if (validPassphrases.contains(passphraseToCheck)) {
+          _writeSyncResponse(request.response, {
+            'entropy-bits': 20,
+            'min-entropy-bits': 13,
+            'optimal-entropy-bits': 23,
+          });
+          return;
+        } else {
+          _writeErrorResponse(
+            request.response,
+            'invalid passphrase',
+            kind: 'invalid-passphrase',
+            value: {
+              'reasons': ['low-entropy'],
+              'entropy-bits': 10,
+              'min-entropy-bits': 13,
+              'optimal-entropy-bits': 23,
+            },
+          );
+          return;
+        }
+
+      case 'check-pin':
+        final pinToCheck = req['pin'] as String;
+        if (validPins.contains(pinToCheck)) {
+          _writeSyncResponse(
+            request.response,
+            SnapdEntropyResponse(
+              entropyBits: 20,
+              minEntropyBits: 13,
+              optimalEntropyBits: 23,
+            ),
+          );
+          return;
+        } else {
+          _writeErrorResponse(
+            request.response,
+            'invalid pin',
+            kind: 'invalid-pin',
+            value: {
+              'reasons': ['low-entropy'],
+              'entropy-bits': 10,
+              'min-entropy-bits': 13,
+              'optimal-entropy-bits': 23,
+            },
+          );
+          return;
+        }
+      case 'generate-recovery-key':
+        final keyId =
+            validKeyIds.isNotEmpty ? validKeyIds.first : 'key-id-12345';
+        _writeSyncResponse(
+          request.response,
+          {
+            'recovery-key': '12345-12345-12345-12345-12345-12345-12345-12345',
+            'key-id': keyId,
+          },
+        );
+        return;
+      case 'change-pin':
+        final oldPin = req['old-pin'] as String;
+        final newPin = req['new-pin'] as String;
+
+        if (oldPin.isEmpty) {
+          _writeErrorResponse(request.response, 'missing old pin');
+          return;
+        }
+
+        if (newPin.isEmpty) {
+          _writeErrorResponse(request.response, 'missing new pin');
+          return;
+        }
+
+        // Validate PINs
+        if (!validPins.contains(oldPin)) {
+          _writeErrorResponse(request.response, 'invalid old pin');
+          return;
+        }
+
+        validPins.remove(oldPin);
+        validPins.add(newPin);
+
+        // Create async change for PIN change operation
+        final change = _addChange(
+          kind: 'change-pin',
+          summary: 'Change PIN for system volume key slots',
+          ready: true,
+          tasks: [
+            MockTask(
+              id: '0',
+              kind: 'change-pin',
+              summary: 'Change PIN for system volume key slots',
+              progress: MockTaskProgress(done: 1, total: 1),
+            ),
+          ],
+        );
+        _writeAsyncResponse(request.response, change.id);
+        return;
+      case 'change-passphrase':
+        final oldPassphrase = req['old-passphrase'] as String;
+        final newPassphrase = req['new-passphrase'] as String;
+
+        if (oldPassphrase.isEmpty) {
+          _writeErrorResponse(request.response, 'missing old passphrase');
+          return;
+        }
+
+        if (newPassphrase.isEmpty) {
+          _writeErrorResponse(request.response, 'missing new passphrase');
+          return;
+        }
+
+        // Validate old passphrase
+        if (!validPassphrases.contains(oldPassphrase)) {
+          _writeErrorResponse(request.response, 'invalid old passphrase');
+          return;
+        }
+
+        validPassphrases.remove(oldPassphrase);
+        validPassphrases.add(newPassphrase);
+
+        // Create async change for passphrase change operation
+        final change = _addChange(
+          kind: 'change-passphrase',
+          summary: 'Change passphrase for system volume key slots',
+          ready: true,
+          tasks: [
+            MockTask(
+              id: '0',
+              kind: 'change-passphrase',
+              summary: 'Change passphrase for system volume key slots',
+              progress: MockTaskProgress(done: 1, total: 1),
+            ),
+          ],
+        );
+        _writeAsyncResponse(request.response, change.id);
+        return;
+      case 'replace-recovery-key':
+        final keyId = req['key-id'] as String;
+
+        if (keyId.isEmpty) {
+          _writeErrorResponse(request.response, 'missing key id');
+          return;
+        }
+
+        if (!validKeyIds.contains(keyId)) {
+          _writeErrorResponse(request.response, 'invalid key id');
+          return;
+        }
+
+        final change = _addChange(
+          kind: 'replace-recovery-key',
+          summary: 'Replace recovery key for system volume key slots',
+          ready: true,
+          tasks: [
+            MockTask(
+              id: '0',
+              kind: 'replace-recovery-key',
+              summary: 'Replace recovery key for system volume key slots',
+              progress: MockTaskProgress(done: 1, total: 1),
+            ),
+          ],
+        );
+        _writeAsyncResponse(request.response, change.id);
+        return;
+      default:
+        _writeErrorResponse(request.response, 'unknown action');
+        return;
+    }
+  }
+
   MockChange _addChange({
     String? kind,
     String summary = '',
@@ -1434,11 +1683,13 @@ class MockSnapdServer {
     HttpResponse response,
     String message, {
     String? kind,
+    Object? value,
   }) {
-    final result = {'message': message};
-    if (kind != null) {
-      result['kind'] = kind;
-    }
+    final result = {
+      'message': message,
+      if (kind != null) 'kind': kind,
+      if (value != null) 'value': value,
+    };
     _writeJson(response, {
       'type': 'error',
       'status-code': response.statusCode,
@@ -3549,5 +3800,379 @@ void main() {
       {'proceed-time': '1990-12-31T07:00:00.000000000+02:00'},
     );
     expect(refreshInhibit.proceedTime, DateTime.utc(1990, 12, 31, 5));
+  });
+
+  test('get system volumes', () async {
+    final mockSystemVolumes = {
+      'system-data': SnapdSystemVolume(
+        volumeName: 'volume name',
+        name: 'partition name',
+        encrypted: true,
+        keyslots: {
+          'default': SnapdSystemVolumeKeySlot(
+            type: SnapdSystemVolumeKeySlotType.recovery,
+          ),
+        },
+      ),
+    };
+    final snapd = MockSnapdServer(systemVolumes: mockSystemVolumes);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final systemVolumesResponse = await client.getSystemVolumes();
+    expect(
+      systemVolumesResponse,
+      SnapdSystemVolumesResponse(byContainerRole: mockSystemVolumes),
+    );
+  });
+
+  group('check recovery key', () {
+    const mockRecoveryKeys = {
+      'system-data': '12345-12345-12345-12345-12345-12345-12345-12345',
+      'system-save': '54321-54321-54321-54321-54321-54321-54321-54321',
+    };
+    for (final testCase in <({
+      String name,
+      List<String> containerRoles,
+      String recoveryKey,
+      bool expectError,
+    })>[
+      (
+        name: 'valid recovery key',
+        containerRoles: ['system-data'],
+        recoveryKey: '12345-12345-12345-12345-12345-12345-12345-12345',
+        expectError: false,
+      ),
+      (
+        name: 'invalid recovery key',
+        containerRoles: ['system-data'],
+        recoveryKey: '92345-12345-12345-12345-12345-12345-12345-12345',
+        expectError: true,
+      ),
+      (
+        name: 'invalid container role',
+        containerRoles: ['foo'],
+        recoveryKey: '12345-12345-12345-12345-12345-12345-12345-12345',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          recoveryKeys: mockRecoveryKeys,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        await expectLater(
+          client.checkRecoveryKey(
+            testCase.recoveryKey,
+            containerRoles: testCase.containerRoles,
+          ),
+          testCase.expectError ? throwsA(isA<SnapdException>()) : completes,
+        );
+      });
+    }
+  });
+  group('check passphrase', () {
+    const validPassphrases = ['correct'];
+    for (final testCase in [
+      (
+        name: 'valid passphrase',
+        passphrase: 'correct',
+        expectError: false,
+      ),
+      (
+        name: 'invalid passphrase',
+        passphrase: 'hunter2',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          validPassphrases: validPassphrases,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        await expectLater(
+          client.checkPassphrase(testCase.passphrase),
+          testCase.expectError
+              ? throwsA(
+                  isA<SnapdException>().having(
+                    (e) => e.value,
+                    'value',
+                    isNotNull,
+                  ),
+                )
+              : completes,
+        );
+      });
+    }
+  });
+  group('check pin', () {
+    const validPins = ['314159'];
+    for (final testCase in [
+      (
+        name: 'valid pin',
+        pin: '314159',
+        expectError: false,
+      ),
+      (
+        name: 'invalid pin',
+        pin: '123',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          validPins: validPins,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        await expectLater(
+          client.checkPin(testCase.pin),
+          testCase.expectError
+              ? throwsA(
+                  isA<SnapdException>().having(
+                    (e) => e.value,
+                    'value',
+                    isNotNull,
+                  ),
+                )
+              : completes,
+        );
+      });
+    }
+  });
+  group('change passphrase', () {
+    const validPassphrases = ['correct'];
+    for (final testCase in [
+      (
+        name: 'valid passphrase change',
+        oldPassphrase: 'correct',
+        newPassphrase: 'new',
+        expectError: false,
+      ),
+      (
+        name: 'invalid old passphrase',
+        oldPassphrase: 'wrong',
+        newPassphrase: 'new',
+        expectError: true,
+      ),
+      (
+        name: 'missing new passphrase',
+        oldPassphrase: 'correct',
+        newPassphrase: '',
+        expectError: true,
+      ),
+      (
+        name: 'missing old passphrase',
+        oldPassphrase: '',
+        newPassphrase: 'new',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          validPassphrases: validPassphrases,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        if (testCase.expectError) {
+          await expectLater(
+            client.changePassphrase(
+              testCase.oldPassphrase,
+              testCase.newPassphrase,
+            ),
+            throwsA(isA<SnapdException>()),
+          );
+        } else {
+          final changeId = await client.changePassphrase(
+            testCase.oldPassphrase,
+            testCase.newPassphrase,
+          );
+          final change = await client.getChange(changeId);
+          expect(change.ready, isTrue);
+          expect(change.kind, 'change-passphrase');
+          expect(
+            snapd.validPassphrases.contains(testCase.newPassphrase),
+            isTrue,
+          );
+          expect(
+            snapd.validPassphrases.contains(testCase.oldPassphrase),
+            isFalse,
+          );
+        }
+      });
+    }
+  });
+  group('change pin', () {
+    const validPins = ['1234'];
+    for (final testCase in [
+      (
+        name: 'valid pin change',
+        oldPin: '1234',
+        newPin: '4321',
+        expectError: false,
+      ),
+      (
+        name: 'invalid old pin',
+        oldPin: '000000',
+        newPin: '4321',
+        expectError: true,
+      ),
+      (
+        name: 'empty new pin',
+        oldPin: '1234',
+        newPin: '',
+        expectError: true,
+      ),
+      (
+        name: 'empty old pin',
+        oldPin: '',
+        newPin: '4321',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          validPins: validPins,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        if (testCase.expectError) {
+          await expectLater(
+            client.changePin(
+              testCase.oldPin,
+              testCase.newPin,
+            ),
+            throwsA(isA<SnapdException>()),
+          );
+        } else {
+          final changeId = await client.changePin(
+            testCase.oldPin,
+            testCase.newPin,
+          );
+          final change = await client.getChange(changeId);
+          expect(change.ready, isTrue);
+          expect(change.kind, 'change-pin');
+          expect(snapd.validPins.contains(testCase.newPin), isTrue);
+          expect(snapd.validPins.contains(testCase.oldPin), isFalse);
+        }
+      });
+    }
+  });
+  group('replace recovery key', () {
+    const validKeyIds = ['key-id-12345'];
+    for (final testCase in [
+      (
+        name: 'valid key id',
+        keyId: 'key-id-12345',
+        expectError: false,
+      ),
+      (
+        name: 'invalid key id',
+        keyId: 'wrong-key-id',
+        expectError: true,
+      ),
+      (
+        name: 'empty key id',
+        keyId: '',
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          validKeyIds: validKeyIds,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        if (testCase.expectError) {
+          await expectLater(
+            client.replaceRecoveryKey(testCase.keyId),
+            throwsA(isA<SnapdException>()),
+          );
+        } else {
+          final changeId = await client.replaceRecoveryKey(testCase.keyId);
+          final change = await client.getChange(changeId);
+          expect(change.ready, isTrue);
+          expect(change.kind, 'replace-recovery-key');
+        }
+      });
+    }
+  });
+  test('generate recovery key', () async {
+    final snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final response = await client.generateRecoveryKey();
+    expect(
+      response,
+      SnapdGenerateRecoveryKeyResponse(
+        recoveryKey: '12345-12345-12345-12345-12345-12345-12345-12345',
+        keyId: 'key-id-12345',
+      ),
+    );
   });
 }

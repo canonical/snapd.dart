@@ -623,6 +623,122 @@ const _$SnapdNoticeTypeEnumMap = {
       'interfaces-requests-rule-update',
 };
 
+_$SnapdGenerateRecoveryKeyResponseImpl
+    _$$SnapdGenerateRecoveryKeyResponseImplFromJson(Map json) =>
+        _$SnapdGenerateRecoveryKeyResponseImpl(
+          recoveryKey: json['recovery-key'] as String,
+          keyId: json['key-id'] as String,
+        );
+
+Map<String, dynamic> _$$SnapdGenerateRecoveryKeyResponseImplToJson(
+        _$SnapdGenerateRecoveryKeyResponseImpl instance) =>
+    <String, dynamic>{
+      'recovery-key': instance.recoveryKey,
+      'key-id': instance.keyId,
+    };
+
+_$SnapdSystemVolumeImpl _$$SnapdSystemVolumeImplFromJson(Map json) =>
+    _$SnapdSystemVolumeImpl(
+      volumeName: json['volume-name'] as String,
+      name: json['name'] as String,
+      encrypted: json['encrypted'] as bool,
+      keyslots: (json['keyslots'] as Map?)?.map(
+            (k, e) => MapEntry(
+                k as String,
+                SnapdSystemVolumeKeySlot.fromJson(
+                    Map<String, dynamic>.from(e as Map))),
+          ) ??
+          const {},
+    );
+
+Map<String, dynamic> _$$SnapdSystemVolumeImplToJson(
+        _$SnapdSystemVolumeImpl instance) =>
+    <String, dynamic>{
+      'volume-name': instance.volumeName,
+      'name': instance.name,
+      'encrypted': instance.encrypted,
+      'keyslots': instance.keyslots.map((k, e) => MapEntry(k, e.toJson())),
+    };
+
+_$SnapdSystemVolumeTargetKeySlotImpl
+    _$$SnapdSystemVolumeTargetKeySlotImplFromJson(Map json) =>
+        _$SnapdSystemVolumeTargetKeySlotImpl(
+          containerRole: json['container-role'] as String,
+          name: json['name'] as String,
+        );
+
+Map<String, dynamic> _$$SnapdSystemVolumeTargetKeySlotImplToJson(
+        _$SnapdSystemVolumeTargetKeySlotImpl instance) =>
+    <String, dynamic>{
+      'container-role': instance.containerRole,
+      'name': instance.name,
+    };
+
+_$SnapdSystemVolumeKeySlotImpl _$$SnapdSystemVolumeKeySlotImplFromJson(
+        Map json) =>
+    _$SnapdSystemVolumeKeySlotImpl(
+      type: $enumDecode(_$SnapdSystemVolumeKeySlotTypeEnumMap, json['type']),
+      roles:
+          (json['roles'] as List<dynamic>?)?.map((e) => e as String).toList(),
+      platformName: json['platform-name'] as String?,
+      authMode: $enumDecodeNullable(
+          _$SnapdSystemVolumeAuthModeEnumMap, json['auth-mode']),
+    );
+
+Map<String, dynamic> _$$SnapdSystemVolumeKeySlotImplToJson(
+        _$SnapdSystemVolumeKeySlotImpl instance) =>
+    <String, dynamic>{
+      'type': _$SnapdSystemVolumeKeySlotTypeEnumMap[instance.type]!,
+      'roles': instance.roles,
+      'platform-name': instance.platformName,
+      'auth-mode': _$SnapdSystemVolumeAuthModeEnumMap[instance.authMode],
+    };
+
+const _$SnapdSystemVolumeKeySlotTypeEnumMap = {
+  SnapdSystemVolumeKeySlotType.recovery: 'recovery',
+  SnapdSystemVolumeKeySlotType.platform: 'platform',
+};
+
+const _$SnapdSystemVolumeAuthModeEnumMap = {
+  SnapdSystemVolumeAuthMode.none: 'none',
+  SnapdSystemVolumeAuthMode.pin: 'pin',
+  SnapdSystemVolumeAuthMode.passphrase: 'passphrase',
+};
+
+_$SnapdSystemVolumesResponseImpl _$$SnapdSystemVolumesResponseImplFromJson(
+        Map json) =>
+    _$SnapdSystemVolumesResponseImpl(
+      byContainerRole: (json['by-container-role'] as Map?)?.map(
+            (k, e) => MapEntry(
+                k as String,
+                SnapdSystemVolume.fromJson(
+                    Map<String, dynamic>.from(e as Map))),
+          ) ??
+          const {},
+    );
+
+Map<String, dynamic> _$$SnapdSystemVolumesResponseImplToJson(
+        _$SnapdSystemVolumesResponseImpl instance) =>
+    <String, dynamic>{
+      'by-container-role':
+          instance.byContainerRole.map((k, e) => MapEntry(k, e.toJson())),
+    };
+
+_$SnapdEntropyResponseImpl _$$SnapdEntropyResponseImplFromJson(Map json) =>
+    _$SnapdEntropyResponseImpl(
+      entropyBits: (json['entropy-bits'] as num).toInt(),
+      minEntropyBits: (json['min-entropy-bits'] as num).toInt(),
+      optimalEntropyBits: (json['optimal-entropy-bits'] as num).toInt(),
+    );
+
+Map<String, dynamic> _$$SnapdEntropyResponseImplToJson(
+        _$SnapdEntropyResponseImpl instance) =>
+    <String, dynamic>{
+      'entropy-bits': instance.entropyBits,
+      'min-entropy-bits': instance.minEntropyBits,
+      'optimal-entropy-bits': instance.optimalEntropyBits,
+    };
+
 _$RefreshInhibitImpl _$$RefreshInhibitImplFromJson(Map json) =>
     _$RefreshInhibitImpl(
       proceedTime: const _SnapdDateTimeConverter()
