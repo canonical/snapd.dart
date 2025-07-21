@@ -1,5 +1,5 @@
 name: snapd
-version: 0.7.1
+version: 0.7.2
 repository: https://github.com/canonical/snapd.dart
 description:
   Provides a client to access snapd, which allows you to manage, search and install snaps on a Linux system.

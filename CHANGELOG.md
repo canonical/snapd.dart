@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.2
+
+* Add support for /v2/system-volumes
+
 ## 0.7.1
 
 * Add Snap.links
