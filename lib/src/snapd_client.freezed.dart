@@ -6864,7 +6864,6 @@ SnapdSystemVolumeKeySlot _$SnapdSystemVolumeKeySlotFromJson(
 /// @nodoc
 mixin _$SnapdSystemVolumeKeySlot {
   /// The key slot name, used to identify the key slot.
-// required String name,
   SnapdSystemVolumeKeySlotType get type => throw _privateConstructorUsedError;
   List<String>? get roles =>
       throw _privateConstructorUsedError; // only for platform keys
@@ -7008,7 +7007,6 @@ class _$SnapdSystemVolumeKeySlotImpl implements _SnapdSystemVolumeKeySlot {
       _$$SnapdSystemVolumeKeySlotImplFromJson(json);
 
   /// The key slot name, used to identify the key slot.
-// required String name,
   @override
   final SnapdSystemVolumeKeySlotType type;
   final List<String>? _roles;
@@ -7080,7 +7078,6 @@ abstract class _SnapdSystemVolumeKeySlot implements SnapdSystemVolumeKeySlot {
       _$SnapdSystemVolumeKeySlotImpl.fromJson;
 
   /// The key slot name, used to identify the key slot.
-// required String name,
   @override
   SnapdSystemVolumeKeySlotType get type;
   @override
