@@ -1239,7 +1239,6 @@ class SnapdClient {
   ///
   /// Returns the change ID for this operation, use [getChange] to get the
   /// status of this operation.
-
   Future<String> changePin(
     String oldPin,
     String newPin, {
