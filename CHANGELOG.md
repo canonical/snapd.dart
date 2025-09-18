@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.3
+
+* Add support for /v2/icons
+
 ## 0.7.2
 
 * Add support for /v2/system-volumes
