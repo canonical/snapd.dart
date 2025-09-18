@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:collection/collection.dart';
 import 'package:snapd/snapd.dart';
@@ -496,6 +497,7 @@ class MockSnapdServer {
     List<SnapdRule> rules = const [],
     this.series,
     List<MockSnap> snaps = const [],
+    Map<String, SnapIcon> snapIcons = const {},
     List<MockSnap> storeSnaps = const [],
     List<MockSnapDeclaration> snapDeclarations = const [],
     this.systemMode,
@@ -513,6 +515,9 @@ class MockSnapdServer {
     }
     for (final snap in storeSnaps) {
       this.storeSnaps[snap.name] = snap;
+    }
+    for (final snapIcon in snapIcons.entries) {
+      this.snapIcons[snapIcon.key] = snapIcon.value;
     }
     for (final declaration in snapDeclarations) {
       this.snapDeclarations[declaration.snapName] = declaration;
@@ -562,6 +567,7 @@ class MockSnapdServer {
   final rules = <SnapdRule>[];
   final String? series;
   final snaps = <String, MockSnap>{};
+  final snapIcons = <String, SnapIcon>{};
   final storeSnaps = <String, MockSnap>{};
   final snapDeclarations = <String, MockSnapDeclaration>{};
   final String? systemMode;
@@ -661,6 +667,11 @@ class MockSnapdServer {
       await _processPostSnap(request, path.substring('/v2/snaps/'.length));
     } else if (method == 'GET' && path == '/v2/system-info') {
       _processSystemInfo(request);
+    } else if (method == 'GET' && path.startsWith('/v2/icons/')) {
+      _processGetSnapIcon(
+        request,
+        path.substring('/v2/icons/'.length, path.length - '/icon'.length),
+      );
     } else if (method == 'GET' && path == '/v2/system-volumes') {
       _processGetSystemVolumes(request);
     } else if (method == 'POST' && path == '/v2/system-volumes') {
@@ -1374,6 +1385,18 @@ class MockSnapdServer {
       snapNames: [name],
     );
     _writeAsyncResponse(request.response, change.id);
+  }
+
+  void _processGetSnapIcon(HttpRequest request, String snap) {
+    final icon = snapIcons[snap];
+    if (icon == null) {
+      request.response.statusCode = HttpStatus.notFound;
+      _writeErrorResponse(request.response, 'local snap has no icon');
+      return;
+    }
+    request.response.headers.contentType = ContentType.parse(icon.contentType);
+    request.response.headers.contentLength = icon.bytes.length;
+    request.response.add(icon.bytes);
   }
 
   void _processSystemInfo(HttpRequest request) {
@@ -4174,5 +4197,52 @@ void main() {
         keyId: 'key-id-12345',
       ),
     );
+  });
+
+  group('snap icons', () {
+    for (final testCase in [
+      (
+        name: 'valid icon',
+        snap: 'firefox',
+        expectedIcon: SnapIcon(
+          contentType: 'image/png',
+          bytes: Uint8List.fromList([1, 2, 3]),
+        ),
+        expectError: false,
+      ),
+      (
+        name: 'no icon',
+        snap: 'thunderbird',
+        expectedIcon: null,
+        expectError: true,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          snapIcons: {
+            'firefox': SnapIcon(
+              contentType: 'image/png',
+              bytes: Uint8List.fromList([1, 2, 3]),
+            ),
+          },
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        final future = client.getSnapIcon(testCase.snap);
+        if (testCase.expectError) {
+          await expectLater(future, throwsA(isA<SnapdException>()));
+        } else {
+          expect(await future, equals(testCase.expectedIcon));
+        }
+      });
+    }
   });
 }

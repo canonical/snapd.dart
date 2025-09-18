@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:path/path.dart' as p;
@@ -247,6 +248,15 @@ class Snap with _$Snap {
       throw FormatException('Revision had invalid format $revision');
     }
   }
+}
+
+/// Image data for snap icons.
+@freezed
+class SnapIcon with _$SnapIcon {
+  const factory SnapIcon({
+    required String contentType,
+    required Uint8List bytes,
+  }) = _SnapIcon;
 }
 
 /// Response received from snap-declaration assertions.
@@ -780,6 +790,29 @@ class SnapdClient {
     final result =
         await _getSync<Map<String, dynamic>>('/v2/snaps/$encodedName');
     return Snap.fromJson(result);
+  }
+
+  /// Gets the snap icon for the local snap with the given [name].
+  Future<SnapIcon> getSnapIcon(String name) async {
+    final encodedName = Uri.encodeComponent(name);
+    final rawResponse = await _getSyncResponse('/v2/icons/$encodedName/icon');
+    if (rawResponse.statusCode != HttpStatus.ok) {
+      final parsedResponse = await _parseResponse(rawResponse);
+      if (parsedResponse is! _SnapdErrorResponse) {
+        throw Exception(
+          'Received unexpected response from snapd: $parsedResponse',
+        );
+      }
+      return parsedResponse.result as SnapIcon;
+    }
+    final builder = BytesBuilder(copy: false);
+    await for (final chunk in rawResponse) {
+      builder.add(chunk);
+    }
+    return SnapIcon(
+      contentType: rawResponse.headers.contentType?.toString() ?? 'unknown',
+      bytes: builder.toBytes(),
+    );
   }
 
   /// Gets information on all installed apps.

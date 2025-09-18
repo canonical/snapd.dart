@@ -2231,6 +2231,153 @@ abstract class _Snap implements Snap {
       throw _privateConstructorUsedError;
 }
 
+/// @nodoc
+mixin _$SnapIcon {
+  String get contentType => throw _privateConstructorUsedError;
+  Uint8List get bytes => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapIcon
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapIconCopyWith<SnapIcon> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapIconCopyWith<$Res> {
+  factory $SnapIconCopyWith(SnapIcon value, $Res Function(SnapIcon) then) =
+      _$SnapIconCopyWithImpl<$Res, SnapIcon>;
+  @useResult
+  $Res call({String contentType, Uint8List bytes});
+}
+
+/// @nodoc
+class _$SnapIconCopyWithImpl<$Res, $Val extends SnapIcon>
+    implements $SnapIconCopyWith<$Res> {
+  _$SnapIconCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapIcon
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? contentType = null,
+    Object? bytes = null,
+  }) {
+    return _then(_value.copyWith(
+      contentType: null == contentType
+          ? _value.contentType
+          : contentType // ignore: cast_nullable_to_non_nullable
+              as String,
+      bytes: null == bytes
+          ? _value.bytes
+          : bytes // ignore: cast_nullable_to_non_nullable
+              as Uint8List,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapIconImplCopyWith<$Res>
+    implements $SnapIconCopyWith<$Res> {
+  factory _$$SnapIconImplCopyWith(
+          _$SnapIconImpl value, $Res Function(_$SnapIconImpl) then) =
+      __$$SnapIconImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String contentType, Uint8List bytes});
+}
+
+/// @nodoc
+class __$$SnapIconImplCopyWithImpl<$Res>
+    extends _$SnapIconCopyWithImpl<$Res, _$SnapIconImpl>
+    implements _$$SnapIconImplCopyWith<$Res> {
+  __$$SnapIconImplCopyWithImpl(
+      _$SnapIconImpl _value, $Res Function(_$SnapIconImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapIcon
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? contentType = null,
+    Object? bytes = null,
+  }) {
+    return _then(_$SnapIconImpl(
+      contentType: null == contentType
+          ? _value.contentType
+          : contentType // ignore: cast_nullable_to_non_nullable
+              as String,
+      bytes: null == bytes
+          ? _value.bytes
+          : bytes // ignore: cast_nullable_to_non_nullable
+              as Uint8List,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$SnapIconImpl implements _SnapIcon {
+  const _$SnapIconImpl({required this.contentType, required this.bytes});
+
+  @override
+  final String contentType;
+  @override
+  final Uint8List bytes;
+
+  @override
+  String toString() {
+    return 'SnapIcon(contentType: $contentType, bytes: $bytes)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapIconImpl &&
+            (identical(other.contentType, contentType) ||
+                other.contentType == contentType) &&
+            const DeepCollectionEquality().equals(other.bytes, bytes));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, contentType, const DeepCollectionEquality().hash(bytes));
+
+  /// Create a copy of SnapIcon
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapIconImplCopyWith<_$SnapIconImpl> get copyWith =>
+      __$$SnapIconImplCopyWithImpl<_$SnapIconImpl>(this, _$identity);
+}
+
+abstract class _SnapIcon implements SnapIcon {
+  const factory _SnapIcon(
+      {required final String contentType,
+      required final Uint8List bytes}) = _$SnapIconImpl;
+
+  @override
+  String get contentType;
+  @override
+  Uint8List get bytes;
+
+  /// Create a copy of SnapIcon
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapIconImplCopyWith<_$SnapIconImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 SnapDeclaration _$SnapDeclarationFromJson(Map<String, dynamic> json) {
   return _SnapDeclaration.fromJson(json);
 }
