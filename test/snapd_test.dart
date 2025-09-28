@@ -1217,21 +1217,53 @@ class MockSnapdServer {
   void _processGetSnaps(HttpRequest request) {
     final parameters = request.uri.queryParameters;
     final filter = parameters['select'];
-    final filteredSnaps = snaps.values
-        .where((s) {
-          if (filter == 'refresh-inhibited' && s.refreshInhibit == null) {
-            return false;
-          } else if (filter == 'enabled' && !s.enabled) {
-            return false;
-          }
-          return true;
-        })
-        .map((snap) => snap.toJson())
-        .toList();
+    final snapNames = parameters['snaps']?.split(',');
+
+    var filteredSnaps = snaps.values.where((s) {
+      // Filter by snap names if specified
+      if (snapNames != null && !snapNames.contains(s.name)) {
+        return false;
+      }
+
+      // Apply other filters
+      if (filter == 'refresh-inhibited' && s.refreshInhibit == null) {
+        return false;
+      } else if (filter == 'enabled' && !s.enabled) {
+        return false;
+      } else if (filter == 'all') {
+        // For 'all' filter, include all revisions (mock multiple revisions)
+        return true;
+      }
+      return true;
+    });
+
+    // For 'all' filter with specific snap names, create mock multiple revisions
+    if (filter == 'all' && snapNames != null) {
+      final allRevisions = <dynamic>[];
+      for (final snapName in snapNames) {
+        final snap = snaps[snapName];
+        if (snap != null) {
+          // Add current active revision
+          final activeRevision = snap.toJson();
+          activeRevision['status'] = 'active';
+          allRevisions.add(activeRevision);
+
+          // Add mock previous revision
+          final previousRevision = Map<String, dynamic>.from(snap.toJson());
+          final currentRev = _parseRevision(snap.revision ?? '1');
+          previousRevision['revision'] = '${currentRev - 1}';
+          previousRevision['version'] = '${snap.version}-prev';
+          previousRevision['status'] = 'installed';
+          allRevisions.add(previousRevision);
+        }
+      }
+      _writeSyncResponse(request.response, allRevisions);
+      return;
+    }
 
     _writeSyncResponse(
       request.response,
-      filteredSnaps,
+      filteredSnaps.map((snap) => snap.toJson()).toList(),
     );
   }
 
@@ -1373,6 +1405,22 @@ class MockSnapdServer {
           error = 'Snap $name not installed';
         } else {
           snap.enabled = false;
+        }
+        break;
+      case 'revert':
+        final snap = snaps[name];
+        if (snap == null) {
+          error = 'Snap $name not installed';
+        } else {
+          // Mock revert by changing installed revision to previous
+          final currentRevision = _parseRevision(snap.revision ?? '1');
+          if (currentRevision <= 1) {
+            error = 'No previous revision available';
+          } else {
+            snap.installedRevision = '${currentRevision - 1}';
+            // Note: We can't change the version as it's final, but in real snapd
+            // the version would change to match the reverted revision
+          }
         }
         break;
       default:
@@ -1729,6 +1777,23 @@ class MockSnapdServer {
       }
     }
     return null;
+  }
+
+  /// Helper method to parse revision from various types, similar to SnapLocalRevision._parseRevision
+  static int _parseRevision(dynamic revision) {
+    if (revision is String) {
+      try {
+        return int.parse(revision.replaceFirst('x', '-'));
+      } on FormatException catch (_) {
+        return 0; // Default to 0 for invalid revisions
+      }
+    } else if (revision is int) {
+      return revision;
+    } else if (revision is num) {
+      return revision.toInt();
+    } else {
+      return 0; // Default to 0 for null or other types
+    }
   }
 
   void _writeSyncResponse(HttpResponse response, dynamic result) {
@@ -3545,6 +3610,137 @@ void main() {
     final change = await client.getChange(changeId);
     expect(change.ready, isTrue);
     expect(snapd.snaps['test1']!.enabled, isFalse);
+  });
+
+  test('getLocalRevisions', () async {
+    final snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'test1', revision: '5', version: '1.0.5'),
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final revisions = await client.getLocalRevisions('test1');
+    expect(revisions, hasLength(2)); // Active + previous revision
+
+    // Check active revision
+    final activeRevision = revisions.firstWhere((r) => r.active);
+    expect(activeRevision.revision, equals(5));
+    expect(activeRevision.version, equals('1.0.5'));
+    expect(activeRevision.active, isTrue);
+
+    // Check previous revision
+    final previousRevision = revisions.firstWhere((r) => !r.active);
+    expect(previousRevision.revision, equals(4));
+    expect(previousRevision.version, equals('1.0.5-prev'));
+    expect(previousRevision.active, isFalse);
+  });
+
+  test('getLocalRevisions - empty result for non-existent snap', () async {
+    final snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final revisions = await client.getLocalRevisions('non-existent');
+    expect(revisions, isEmpty);
+  });
+
+  test('getLocalRevisions - revision type handling', () async {
+    final snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'test1', revision: 'x123', version: '1.0.0'),
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final revisions = await client.getLocalRevisions('test1');
+    expect(revisions, isNotEmpty);
+
+    // Should handle 'x123' format (negative revision)
+    final activeRevision = revisions.firstWhere((r) => r.active);
+    expect(activeRevision.revision, equals(-123));
+  });
+
+  test('revertSnap', () async {
+    final snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'test1', revision: '5', version: '1.0.5'),
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps['test1']!.revision, equals('5'));
+    expect(snapd.snaps['test1']!.version, equals('1.0.5'));
+
+    final changeId = await client.revertSnap('test1');
+    final change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+
+    // Check that installed revision was changed (mock behavior)
+    expect(snapd.snaps['test1']!.installedRevision, equals('4'));
+  });
+
+  test('revertSnap - snap not installed', () async {
+    final snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final changeId = await client.revertSnap('non-existent');
+    final change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(change.err, equals('Snap non-existent not installed'));
+  });
+
+  test('revertSnap - no previous revision', () async {
+    final snapd = MockSnapdServer(snaps: [
+      MockSnap(name: 'test1', revision: '1', version: '1.0.0'),
+    ]);
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final changeId = await client.revertSnap('test1');
+    final change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(change.err, equals('No previous revision available'));
   });
 
   test('changes', () async {
