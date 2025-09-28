@@ -1264,6 +1264,221 @@ abstract class _SnapMedia implements SnapMedia {
       throw _privateConstructorUsedError;
 }
 
+SnapLocalRevision _$SnapLocalRevisionFromJson(Map<String, dynamic> json) {
+  return _SnapLocalRevision.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapLocalRevision {
+  /// The revision number of this snap.
+  @JsonKey(fromJson: SnapLocalRevision._parseRevision)
+  int get revision => throw _privateConstructorUsedError;
+
+  /// The version string of this snap.
+  String get version => throw _privateConstructorUsedError;
+
+  /// Whether this revision is currently active.
+  bool get active => throw _privateConstructorUsedError;
+
+  /// Serializes this SnapLocalRevision to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapLocalRevision
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapLocalRevisionCopyWith<SnapLocalRevision> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapLocalRevisionCopyWith<$Res> {
+  factory $SnapLocalRevisionCopyWith(
+          SnapLocalRevision value, $Res Function(SnapLocalRevision) then) =
+      _$SnapLocalRevisionCopyWithImpl<$Res, SnapLocalRevision>;
+  @useResult
+  $Res call(
+      {@JsonKey(fromJson: SnapLocalRevision._parseRevision) int revision,
+      String version,
+      bool active});
+}
+
+/// @nodoc
+class _$SnapLocalRevisionCopyWithImpl<$Res, $Val extends SnapLocalRevision>
+    implements $SnapLocalRevisionCopyWith<$Res> {
+  _$SnapLocalRevisionCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapLocalRevision
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? revision = null,
+    Object? version = null,
+    Object? active = null,
+  }) {
+    return _then(_value.copyWith(
+      revision: null == revision
+          ? _value.revision
+          : revision // ignore: cast_nullable_to_non_nullable
+              as int,
+      version: null == version
+          ? _value.version
+          : version // ignore: cast_nullable_to_non_nullable
+              as String,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapLocalRevisionImplCopyWith<$Res>
+    implements $SnapLocalRevisionCopyWith<$Res> {
+  factory _$$SnapLocalRevisionImplCopyWith(_$SnapLocalRevisionImpl value,
+          $Res Function(_$SnapLocalRevisionImpl) then) =
+      __$$SnapLocalRevisionImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(fromJson: SnapLocalRevision._parseRevision) int revision,
+      String version,
+      bool active});
+}
+
+/// @nodoc
+class __$$SnapLocalRevisionImplCopyWithImpl<$Res>
+    extends _$SnapLocalRevisionCopyWithImpl<$Res, _$SnapLocalRevisionImpl>
+    implements _$$SnapLocalRevisionImplCopyWith<$Res> {
+  __$$SnapLocalRevisionImplCopyWithImpl(_$SnapLocalRevisionImpl _value,
+      $Res Function(_$SnapLocalRevisionImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapLocalRevision
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? revision = null,
+    Object? version = null,
+    Object? active = null,
+  }) {
+    return _then(_$SnapLocalRevisionImpl(
+      revision: null == revision
+          ? _value.revision
+          : revision // ignore: cast_nullable_to_non_nullable
+              as int,
+      version: null == version
+          ? _value.version
+          : version // ignore: cast_nullable_to_non_nullable
+              as String,
+      active: null == active
+          ? _value.active
+          : active // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapLocalRevisionImpl implements _SnapLocalRevision {
+  const _$SnapLocalRevisionImpl(
+      {@JsonKey(fromJson: SnapLocalRevision._parseRevision)
+      required this.revision,
+      required this.version,
+      required this.active});
+
+  factory _$SnapLocalRevisionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SnapLocalRevisionImplFromJson(json);
+
+  /// The revision number of this snap.
+  @override
+  @JsonKey(fromJson: SnapLocalRevision._parseRevision)
+  final int revision;
+
+  /// The version string of this snap.
+  @override
+  final String version;
+
+  /// Whether this revision is currently active.
+  @override
+  final bool active;
+
+  @override
+  String toString() {
+    return 'SnapLocalRevision(revision: $revision, version: $version, active: $active)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapLocalRevisionImpl &&
+            (identical(other.revision, revision) ||
+                other.revision == revision) &&
+            (identical(other.version, version) || other.version == version) &&
+            (identical(other.active, active) || other.active == active));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, revision, version, active);
+
+  /// Create a copy of SnapLocalRevision
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapLocalRevisionImplCopyWith<_$SnapLocalRevisionImpl> get copyWith =>
+      __$$SnapLocalRevisionImplCopyWithImpl<_$SnapLocalRevisionImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapLocalRevisionImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapLocalRevision implements SnapLocalRevision {
+  const factory _SnapLocalRevision(
+      {@JsonKey(fromJson: SnapLocalRevision._parseRevision)
+      required final int revision,
+      required final String version,
+      required final bool active}) = _$SnapLocalRevisionImpl;
+
+  factory _SnapLocalRevision.fromJson(Map<String, dynamic> json) =
+      _$SnapLocalRevisionImpl.fromJson;
+
+  /// The revision number of this snap.
+  @override
+  @JsonKey(fromJson: SnapLocalRevision._parseRevision)
+  int get revision;
+
+  /// The version string of this snap.
+  @override
+  String get version;
+
+  /// Whether this revision is currently active.
+  @override
+  bool get active;
+
+  /// Create a copy of SnapLocalRevision
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapLocalRevisionImplCopyWith<_$SnapLocalRevisionImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
 Snap _$SnapFromJson(Map<String, dynamic> json) {
   return _Snap.fromJson(json);
 }
