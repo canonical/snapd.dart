@@ -902,7 +902,7 @@ class SnapdClient {
             );
           })
           .toList();
-    } catch (e) {
+    } on Exception catch (_) {
       // If there's an error (e.g., snap not found), return empty list
       return <SnapLocalRevision>[];
     }
