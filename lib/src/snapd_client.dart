@@ -213,8 +213,10 @@ class SnapLocalRevision with _$SnapLocalRevision {
   const factory SnapLocalRevision({
     /// The revision number of this snap.
     @JsonKey(fromJson: SnapLocalRevision._parseRevision) required int revision,
+
     /// The version string of this snap.
     required String version,
+
     /// Whether this revision is currently active.
     required bool active,
   }) = _SnapLocalRevision;
@@ -884,24 +886,21 @@ class SnapdClient {
 
     try {
       final result = await _getSyncList('/v2/snaps', queryParameters);
-      return result
-          .where((snap) => snap['name'] == name)
-          .map((snap) {
-            final revisionValue = snap['revision'];
-            final revision = SnapLocalRevision._parseRevision(revisionValue);
-            final version = (snap['version'] is String)
-                ? snap['version'] as String
-                : '${snap['version'] ?? ''}';
-            final status = snap['status'];
-            final active = status == 'active';
+      return result.where((snap) => snap['name'] == name).map((snap) {
+        final revisionValue = snap['revision'];
+        final revision = SnapLocalRevision._parseRevision(revisionValue);
+        final version = (snap['version'] is String)
+            ? snap['version'] as String
+            : '${snap['version'] ?? ''}';
+        final status = snap['status'];
+        final active = status == 'active';
 
-            return SnapLocalRevision(
-              revision: revision,
-              version: version,
-              active: active,
-            );
-          })
-          .toList();
+        return SnapLocalRevision(
+          revision: revision,
+          version: version,
+          active: active,
+        );
+      }).toList();
     } on Exception catch (_) {
       // If there's an error (e.g., snap not found), return empty list
       return <SnapLocalRevision>[];

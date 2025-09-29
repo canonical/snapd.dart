@@ -3617,9 +3617,11 @@ void main() {
   });
 
   test('getLocalRevisions', () async {
-    final snapd = MockSnapdServer(snaps: [
-      MockSnap(name: 'test1', revision: '5', version: '1.0.5'),
-    ],);
+    final snapd = MockSnapdServer(
+      snaps: [
+        MockSnap(name: 'test1', revision: '5', version: '1.0.5'),
+      ],
+    );
     await snapd.start();
     addTearDown(() async {
       await snapd.close();
@@ -3663,9 +3665,11 @@ void main() {
   });
 
   test('getLocalRevisions - revision type handling', () async {
-    final snapd = MockSnapdServer(snaps: [
-      MockSnap(name: 'test1', revision: 'x123', version: '1.0.0'),
-    ],);
+    final snapd = MockSnapdServer(
+      snaps: [
+        MockSnap(name: 'test1', revision: 'x123', version: '1.0.0'),
+      ],
+    );
     await snapd.start();
     addTearDown(() async {
       await snapd.close();
@@ -3685,9 +3689,11 @@ void main() {
   });
 
   test('revertSnap', () async {
-    final snapd = MockSnapdServer(snaps: [
-      MockSnap(name: 'test1', revision: '5', version: '1.0.5'),
-    ],);
+    final snapd = MockSnapdServer(
+      snaps: [
+        MockSnap(name: 'test1', revision: '5', version: '1.0.5'),
+      ],
+    );
     await snapd.start();
     addTearDown(() async {
       await snapd.close();
@@ -3728,9 +3734,11 @@ void main() {
   });
 
   test('revertSnap - no previous revision', () async {
-    final snapd = MockSnapdServer(snaps: [
-      MockSnap(name: 'test1'),
-    ],);
+    final snapd = MockSnapdServer(
+      snaps: [
+        MockSnap(name: 'test1'),
+      ],
+    );
     await snapd.start();
     addTearDown(() async {
       await snapd.close();
