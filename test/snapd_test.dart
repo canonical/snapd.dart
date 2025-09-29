@@ -1215,7 +1215,7 @@ class MockSnapdServer {
     final filter = parameters['select'];
     final snapNames = parameters['snaps']?.split(',');
 
-    var filteredSnaps = snaps.values.where((s) {
+    final filteredSnaps = snaps.values.where((s) {
       // Filter by snap names if specified
       if (snapNames != null && !snapNames.contains(s.name)) {
         return false;
@@ -1245,7 +1245,11 @@ class MockSnapdServer {
           allRevisions.add(activeRevision);
 
           // Add mock previous revision
-          final previousRevision = Map<String, dynamic>.from(snap.toJson());
+          final snapJson = snap.toJson() as Map<dynamic, dynamic>;
+          final previousRevision = <String, dynamic>{};
+          snapJson.forEach((key, value) {
+            previousRevision[key.toString()] = value;
+          });
           final currentRev = _parseRevision(snap.revision ?? '1');
           previousRevision['revision'] = '${currentRev - 1}';
           previousRevision['version'] = '${snap.version}-prev';
@@ -3528,7 +3532,7 @@ void main() {
   test('getLocalRevisions', () async {
     final snapd = MockSnapdServer(snaps: [
       MockSnap(name: 'test1', revision: '5', version: '1.0.5'),
-    ]);
+    ],);
     await snapd.start();
     addTearDown(() async {
       await snapd.close();
@@ -3574,7 +3578,7 @@ void main() {
   test('getLocalRevisions - revision type handling', () async {
     final snapd = MockSnapdServer(snaps: [
       MockSnap(name: 'test1', revision: 'x123', version: '1.0.0'),
-    ]);
+    ],);
     await snapd.start();
     addTearDown(() async {
       await snapd.close();
@@ -3596,7 +3600,7 @@ void main() {
   test('revertSnap', () async {
     final snapd = MockSnapdServer(snaps: [
       MockSnap(name: 'test1', revision: '5', version: '1.0.5'),
-    ]);
+    ],);
     await snapd.start();
     addTearDown(() async {
       await snapd.close();
@@ -3638,8 +3642,8 @@ void main() {
 
   test('revertSnap - no previous revision', () async {
     final snapd = MockSnapdServer(snaps: [
-      MockSnap(name: 'test1', revision: '1', version: '1.0.0'),
-    ]);
+      MockSnap(name: 'test1'),
+    ],);
     await snapd.start();
     addTearDown(() async {
       await snapd.close();
