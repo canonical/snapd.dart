@@ -107,6 +107,21 @@ Map<String, dynamic> _$$SnapMediaImplToJson(_$SnapMediaImpl instance) =>
       'height': instance.height,
     };
 
+_$SnapLocalRevisionImpl _$$SnapLocalRevisionImplFromJson(Map json) =>
+    _$SnapLocalRevisionImpl(
+      revision: SnapLocalRevision._parseRevision(json['revision']),
+      version: json['version'] as String,
+      active: json['active'] as bool,
+    );
+
+Map<String, dynamic> _$$SnapLocalRevisionImplToJson(
+        _$SnapLocalRevisionImpl instance) =>
+    <String, dynamic>{
+      'revision': instance.revision,
+      'version': instance.version,
+      'active': instance.active,
+    };
+
 _$SnapImpl _$$SnapImplFromJson(Map json) => _$SnapImpl(
       id: json['id'] as String,
       name: json['name'] as String,
