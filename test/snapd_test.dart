@@ -3578,8 +3578,6 @@ void main() {
     expect(snapd.snaps['test1']!.enabled, isFalse);
   });
 
-
-
   test('revertSnap', () async {
     final snapd = MockSnapdServer(
       snaps: [

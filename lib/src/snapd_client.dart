@@ -207,8 +207,6 @@ class SnapMedia with _$SnapMedia {
       _$SnapMediaFromJson(json);
 }
 
-
-
 @freezed
 class Snap with _$Snap {
   const factory Snap({
@@ -827,8 +825,6 @@ class SnapdClient {
         await _getSync<Map<String, dynamic>>('/v2/snaps/$encodedName');
     return Snap.fromJson(result);
   }
-
-
 
   /// Gets the snap icon for the local snap with the given [name].
   Future<SnapIcon> getSnapIcon(String name) async {
