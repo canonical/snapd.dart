@@ -1343,9 +1343,9 @@ class SnapdClient {
   /// provided. If [authMode] is passphrase, a [passphrase] must be provided.
   ///
   /// Optionally, you can specify [kdfTime] and [kdfType] to control the key
-  /// derivation function parameters. 
+  /// derivation function parameters.
   ///
-  /// If [keySlots] are omitted, snapd will target the default keyslots and 
+  /// If [keySlots] are omitted, snapd will target the default keyslots and
   /// container roles used during installation.
   ///
   /// Returns the change ID for this operation, use [getChange] to get the
