@@ -1638,6 +1638,47 @@ class MockSnapdServer {
         );
         _writeAsyncResponse(request.response, change.id);
         return;
+      case 'replace-platform-key':
+        final authMode = req['auth-mode'] as String?;
+
+        if (authMode == null || authMode.isEmpty) {
+          _writeErrorResponse(request.response, 'missing auth-mode');
+          return;
+        }
+
+        // Validate auth-mode and required parameters
+        if (authMode == 'pin') {
+          final pin = req['pin'] as String?;
+          if (pin == null || pin.isEmpty) {
+            _writeErrorResponse(request.response, 'missing pin');
+            return;
+          }
+        } else if (authMode == 'passphrase') {
+          final passphrase = req['passphrase'] as String?;
+          if (passphrase == null || passphrase.isEmpty) {
+            _writeErrorResponse(request.response, 'missing passphrase');
+            return;
+          }
+        } else if (authMode != 'none') {
+          _writeErrorResponse(request.response, 'invalid auth-mode');
+          return;
+        }
+
+        final change = _addChange(
+          kind: 'replace-platform-key',
+          summary: 'Replace platform key for system volume key slots',
+          ready: true,
+          tasks: [
+            MockTask(
+              id: '0',
+              kind: 'replace-platform-key',
+              summary: 'Replace platform key for system volume key slots',
+              progress: MockTaskProgress(done: 1, total: 1),
+            ),
+          ],
+        );
+        _writeAsyncResponse(request.response, change.id);
+        return;
       default:
         _writeErrorResponse(request.response, 'unknown action');
         return;
@@ -4176,6 +4217,159 @@ void main() {
         }
       });
     }
+  });
+  group('replace platform key', () {
+    test('with PIN', () async {
+      final snapd = MockSnapdServer();
+      await snapd.start();
+      addTearDown(() async {
+        await snapd.close();
+      });
+
+      final client = SnapdClient(socketPath: snapd.socketPath);
+      addTearDown(() async {
+        client.close();
+      });
+
+      final changeId = await client.replacePlatformKey(
+        authMode: SnapdSystemVolumeAuthMode.pin,
+        pin: '123456',
+      );
+      final change = await client.getChange(changeId);
+      expect(change.ready, isTrue);
+      expect(change.kind, 'replace-platform-key');
+    });
+
+    test('with passphrase', () async {
+      final snapd = MockSnapdServer();
+      await snapd.start();
+      addTearDown(() async {
+        await snapd.close();
+      });
+
+      final client = SnapdClient(socketPath: snapd.socketPath);
+      addTearDown(() async {
+        client.close();
+      });
+
+      final changeId = await client.replacePlatformKey(
+        authMode: SnapdSystemVolumeAuthMode.passphrase,
+        passphrase: 'secure-passphrase',
+      );
+      final change = await client.getChange(changeId);
+      expect(change.ready, isTrue);
+      expect(change.kind, 'replace-platform-key');
+    });
+
+    test('with none', () async {
+      final snapd = MockSnapdServer();
+      await snapd.start();
+      addTearDown(() async {
+        await snapd.close();
+      });
+
+      final client = SnapdClient(socketPath: snapd.socketPath);
+      addTearDown(() async {
+        client.close();
+      });
+
+      final changeId = await client.replacePlatformKey(
+        authMode: SnapdSystemVolumeAuthMode.none,
+      );
+      final change = await client.getChange(changeId);
+      expect(change.ready, isTrue);
+      expect(change.kind, 'replace-platform-key');
+    });
+
+    test('with PIN missing throws ArgumentError', () async {
+      final snapd = MockSnapdServer();
+      await snapd.start();
+      addTearDown(() async {
+        await snapd.close();
+      });
+
+      final client = SnapdClient(socketPath: snapd.socketPath);
+      addTearDown(() async {
+        client.close();
+      });
+
+      await expectLater(
+        client.replacePlatformKey(
+          authMode: SnapdSystemVolumeAuthMode.pin,
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('with passphrase missing throws ArgumentError', () async {
+      final snapd = MockSnapdServer();
+      await snapd.start();
+      addTearDown(() async {
+        await snapd.close();
+      });
+
+      final client = SnapdClient(socketPath: snapd.socketPath);
+      addTearDown(() async {
+        client.close();
+      });
+
+      await expectLater(
+        client.replacePlatformKey(
+          authMode: SnapdSystemVolumeAuthMode.passphrase,
+        ),
+        throwsA(isA<ArgumentError>()),
+      );
+    });
+
+    test('with optional kdf parameters', () async {
+      final snapd = MockSnapdServer();
+      await snapd.start();
+      addTearDown(() async {
+        await snapd.close();
+      });
+
+      final client = SnapdClient(socketPath: snapd.socketPath);
+      addTearDown(() async {
+        client.close();
+      });
+
+      final changeId = await client.replacePlatformKey(
+        authMode: SnapdSystemVolumeAuthMode.passphrase,
+        passphrase: 'secure-passphrase',
+        kdfTime: 1000,
+        kdfType: SnapdKdfType.argon2id,
+      );
+      final change = await client.getChange(changeId);
+      expect(change.ready, isTrue);
+      expect(change.kind, 'replace-platform-key');
+    });
+
+    test('with keyslots', () async {
+      final snapd = MockSnapdServer();
+      await snapd.start();
+      addTearDown(() async {
+        await snapd.close();
+      });
+
+      final client = SnapdClient(socketPath: snapd.socketPath);
+      addTearDown(() async {
+        client.close();
+      });
+
+      final changeId = await client.replacePlatformKey(
+        authMode: SnapdSystemVolumeAuthMode.pin,
+        pin: '654321',
+        keySlots: const [
+          SnapdSystemVolumeTargetKeySlot(
+            containerRole: 'system-data',
+            name: 'default',
+          ),
+        ],
+      );
+      final change = await client.getChange(changeId);
+      expect(change.ready, isTrue);
+      expect(change.kind, 'replace-platform-key');
+    });
   });
   test('generate recovery key', () async {
     final snapd = MockSnapdServer();
