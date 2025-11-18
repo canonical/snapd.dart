@@ -67,6 +67,10 @@ enum SnapdSystemVolumeKeySlotType { recovery, platform }
 @JsonEnum(fieldRename: FieldRename.kebab)
 enum SnapdSystemVolumeAuthMode { none, pin, passphrase }
 
+/// The key derivation function type for platform key encryption.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdKdfType { argon2id, argon2i, pbkdf2 }
+
 class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
   const _SnapdDateTimeConverter();
 
@@ -1330,6 +1334,63 @@ class SnapdClient {
     if (keySlots != null && keySlots.isNotEmpty) {
       request['keyslots'] = keySlots.map((slot) => slot.toJson()).toList();
     }
+    return _postAsync('/v2/system-volumes', request);
+  }
+
+  /// Replaces the platform key for the specified key slots with new
+  /// authentication credentials. The [authMode] specifies the authentication
+  /// method (pin, passphrase, or none). If [authMode] is pin, a [pin] must be
+  /// provided. If [authMode] is passphrase, a [passphrase] must be provided.
+  ///
+  /// Optionally, you can specify [kdfTime] and [kdfType] to control the key
+  /// derivation function parameters. 
+  ///
+  /// If [keySlots] are omitted, snapd will target the default keyslots and 
+  /// container roles used during installation.
+  ///
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
+  Future<String> replacePlatformKey({
+    required SnapdSystemVolumeAuthMode authMode,
+    String? passphrase,
+    String? pin,
+    int? kdfTime,
+    SnapdKdfType? kdfType,
+    List<SnapdSystemVolumeTargetKeySlot>? keySlots,
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'replace-platform-key',
+      'auth-mode': authMode.name,
+    };
+
+    if (authMode == SnapdSystemVolumeAuthMode.passphrase) {
+      if (passphrase == null) {
+        throw ArgumentError(
+          'passphrase is required when auth-mode is passphrase',
+        );
+      }
+      request['passphrase'] = passphrase;
+    }
+
+    if (authMode == SnapdSystemVolumeAuthMode.pin) {
+      if (pin == null) {
+        throw ArgumentError('pin is required when auth-mode is pin');
+      }
+      request['pin'] = pin;
+    }
+
+    if (kdfTime != null) {
+      request['kdf-time'] = kdfTime;
+    }
+
+    if (kdfType != null) {
+      request['kdf-type'] = kdfType.name;
+    }
+
+    if (keySlots != null && keySlots.isNotEmpty) {
+      request['keyslots'] = keySlots.map((slot) => slot.toJson()).toList();
+    }
+
     return _postAsync('/v2/system-volumes', request);
   }
 
