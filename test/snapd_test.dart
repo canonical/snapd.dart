@@ -1746,8 +1746,6 @@ class MockSnapdServer {
     return null;
   }
 
-
-
   void _writeSyncResponse(HttpResponse response, dynamic result) {
     _writeJson(response, {
       'type': 'sync',
