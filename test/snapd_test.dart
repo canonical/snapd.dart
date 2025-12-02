@@ -148,7 +148,7 @@ class MockSnap {
   MockSnap({
     required this.name,
     this.id = '',
-    this.revision = '1',
+    this.revision = 1,
     this.version = '',
     this.channel = '',
     this.contact = '',
@@ -209,7 +209,7 @@ class MockSnap {
   final bool private;
   final MockPublisher? publisher;
   final bool refreshable;
-  final String? revision;
+  final int revision;
   final List<MockSlot> slots;
   final String? status;
   final String? storeUrl;
@@ -1217,19 +1217,21 @@ class MockSnapdServer {
   void _processGetSnaps(HttpRequest request) {
     final parameters = request.uri.queryParameters;
     final filter = parameters['select'];
-
-    final filteredSnaps = snaps.values.where((s) {
-      if (filter == 'refresh-inhibited' && s.refreshInhibit == null) {
-        return false;
-      } else if (filter == 'enabled' && !s.enabled) {
-        return false;
-      }
-      return true;
-    });
+    final filteredSnaps = snaps.values
+        .where((s) {
+          if (filter == 'refresh-inhibited' && s.refreshInhibit == null) {
+            return false;
+          } else if (filter == 'enabled' && !s.enabled) {
+            return false;
+          }
+          return true;
+        })
+        .map((snap) => snap.toJson())
+        .toList();
 
     _writeSyncResponse(
       request.response,
-      filteredSnaps.map((snap) => snap.toJson()).toList(),
+      filteredSnaps,
     );
   }
 
@@ -1379,11 +1381,10 @@ class MockSnapdServer {
           error = 'Snap $name not installed';
         } else {
           // Mock revert by changing installed revision to previous
-          final currentRevision = _parseRevision(snap.revision ?? '1');
-          if (currentRevision <= 1) {
+          if (snap.revision <= 1) {
             error = 'No previous revision available';
           } else {
-            snap.installedRevision = '${currentRevision - 1}';
+            snap.installedRevision = '${snap.revision - 1}';
             // Note: We can't change the version as it's final, but in real snapd
             // the version would change to match the reverted revision
           }
@@ -1745,22 +1746,7 @@ class MockSnapdServer {
     return null;
   }
 
-  /// Helper method to parse revision from various types, similar to SnapLocalRevision._parseRevision
-  static int _parseRevision(dynamic revision) {
-    if (revision is String) {
-      try {
-        return int.parse(revision.replaceFirst('x', '-'));
-      } on FormatException catch (_) {
-        return 0; // Default to 0 for invalid revisions
-      }
-    } else if (revision is int) {
-      return revision;
-    } else if (revision is num) {
-      return revision.toInt();
-    } else {
-      return 0; // Default to 0 for null or other types
-    }
-  }
+
 
   void _writeSyncResponse(HttpResponse response, dynamic result) {
     _writeJson(response, {
@@ -2251,7 +2237,7 @@ void main() {
           description: 'Hello\nSalut\nHola',
           id: 'QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV',
           name: 'hello',
-          revision: '42',
+          revision: 42,
           summary: 'Hello is an app',
           title: 'Hello',
           type: 'app',
@@ -2356,7 +2342,7 @@ void main() {
             displayName: 'Publisher',
             validation: 'verified',
           ),
-          revision: '42',
+          revision: 42,
           status: 'available',
           storeUrl: 'https://snapcraft.io/hello',
           summary: 'Hello is an app',
@@ -3581,7 +3567,7 @@ void main() {
   test('revertSnap', () async {
     final snapd = MockSnapdServer(
       snaps: [
-        MockSnap(name: 'test1', revision: '5', version: '1.0.5'),
+        MockSnap(name: 'test1', revision: 5, version: '1.0.5'),
       ],
     );
     await snapd.start();
@@ -3594,7 +3580,7 @@ void main() {
       client.close();
     });
 
-    expect(snapd.snaps['test1']!.revision, equals('5'));
+    expect(snapd.snaps['test1']!.revision, equals(5));
     expect(snapd.snaps['test1']!.version, equals('1.0.5'));
 
     final changeId = await client.revertSnap('test1');
