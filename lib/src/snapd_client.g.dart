@@ -739,6 +739,27 @@ Map<String, dynamic> _$$SnapdEntropyResponseImplToJson(
       'optimal-entropy-bits': instance.optimalEntropyBits,
     };
 
+_$SnapdStorageEncryptedResponseImpl
+    _$$SnapdStorageEncryptedResponseImplFromJson(Map json) =>
+        _$SnapdStorageEncryptedResponseImpl(
+          status: $enumDecode(
+              _$SnapdStorageEncryptionStatusEnumMap, json['status']),
+        );
+
+Map<String, dynamic> _$$SnapdStorageEncryptedResponseImplToJson(
+        _$SnapdStorageEncryptedResponseImpl instance) =>
+    <String, dynamic>{
+      'status': _$SnapdStorageEncryptionStatusEnumMap[instance.status]!,
+    };
+
+const _$SnapdStorageEncryptionStatusEnumMap = {
+  SnapdStorageEncryptionStatus.active: 'active',
+  SnapdStorageEncryptionStatus.inactive: 'inactive',
+  SnapdStorageEncryptionStatus.recovery: 'recovery',
+  SnapdStorageEncryptionStatus.degraded: 'degraded',
+  SnapdStorageEncryptionStatus.failed: 'failed',
+};
+
 _$RefreshInhibitImpl _$$RefreshInhibitImplFromJson(Map json) =>
     _$RefreshInhibitImpl(
       proceedTime: const _SnapdDateTimeConverter()

@@ -7607,6 +7607,170 @@ abstract class _SnapdEntropyResponse implements SnapdEntropyResponse {
       get copyWith => throw _privateConstructorUsedError;
 }
 
+SnapdStorageEncryptedResponse _$SnapdStorageEncryptedResponseFromJson(
+    Map<String, dynamic> json) {
+  return _SnapdStorageEncryptedResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapdStorageEncryptedResponse {
+  SnapdStorageEncryptionStatus get status => throw _privateConstructorUsedError;
+
+  /// Serializes this SnapdStorageEncryptedResponse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapdStorageEncryptedResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapdStorageEncryptedResponseCopyWith<SnapdStorageEncryptedResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapdStorageEncryptedResponseCopyWith<$Res> {
+  factory $SnapdStorageEncryptedResponseCopyWith(
+          SnapdStorageEncryptedResponse value,
+          $Res Function(SnapdStorageEncryptedResponse) then) =
+      _$SnapdStorageEncryptedResponseCopyWithImpl<$Res,
+          SnapdStorageEncryptedResponse>;
+  @useResult
+  $Res call({SnapdStorageEncryptionStatus status});
+}
+
+/// @nodoc
+class _$SnapdStorageEncryptedResponseCopyWithImpl<$Res,
+        $Val extends SnapdStorageEncryptedResponse>
+    implements $SnapdStorageEncryptedResponseCopyWith<$Res> {
+  _$SnapdStorageEncryptedResponseCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapdStorageEncryptedResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? status = null,
+  }) {
+    return _then(_value.copyWith(
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as SnapdStorageEncryptionStatus,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapdStorageEncryptedResponseImplCopyWith<$Res>
+    implements $SnapdStorageEncryptedResponseCopyWith<$Res> {
+  factory _$$SnapdStorageEncryptedResponseImplCopyWith(
+          _$SnapdStorageEncryptedResponseImpl value,
+          $Res Function(_$SnapdStorageEncryptedResponseImpl) then) =
+      __$$SnapdStorageEncryptedResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({SnapdStorageEncryptionStatus status});
+}
+
+/// @nodoc
+class __$$SnapdStorageEncryptedResponseImplCopyWithImpl<$Res>
+    extends _$SnapdStorageEncryptedResponseCopyWithImpl<$Res,
+        _$SnapdStorageEncryptedResponseImpl>
+    implements _$$SnapdStorageEncryptedResponseImplCopyWith<$Res> {
+  __$$SnapdStorageEncryptedResponseImplCopyWithImpl(
+      _$SnapdStorageEncryptedResponseImpl _value,
+      $Res Function(_$SnapdStorageEncryptedResponseImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapdStorageEncryptedResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? status = null,
+  }) {
+    return _then(_$SnapdStorageEncryptedResponseImpl(
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as SnapdStorageEncryptionStatus,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapdStorageEncryptedResponseImpl
+    implements _SnapdStorageEncryptedResponse {
+  const _$SnapdStorageEncryptedResponseImpl({required this.status});
+
+  factory _$SnapdStorageEncryptedResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$SnapdStorageEncryptedResponseImplFromJson(json);
+
+  @override
+  final SnapdStorageEncryptionStatus status;
+
+  @override
+  String toString() {
+    return 'SnapdStorageEncryptedResponse(status: $status)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapdStorageEncryptedResponseImpl &&
+            (identical(other.status, status) || other.status == status));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, status);
+
+  /// Create a copy of SnapdStorageEncryptedResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapdStorageEncryptedResponseImplCopyWith<
+          _$SnapdStorageEncryptedResponseImpl>
+      get copyWith => __$$SnapdStorageEncryptedResponseImplCopyWithImpl<
+          _$SnapdStorageEncryptedResponseImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapdStorageEncryptedResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapdStorageEncryptedResponse
+    implements SnapdStorageEncryptedResponse {
+  const factory _SnapdStorageEncryptedResponse(
+          {required final SnapdStorageEncryptionStatus status}) =
+      _$SnapdStorageEncryptedResponseImpl;
+
+  factory _SnapdStorageEncryptedResponse.fromJson(Map<String, dynamic> json) =
+      _$SnapdStorageEncryptedResponseImpl.fromJson;
+
+  @override
+  SnapdStorageEncryptionStatus get status;
+
+  /// Create a copy of SnapdStorageEncryptedResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapdStorageEncryptedResponseImplCopyWith<
+          _$SnapdStorageEncryptedResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
 RefreshInhibit _$RefreshInhibitFromJson(Map<String, dynamic> json) {
   return _RefreshInhibit.fromJson(json);
 }
