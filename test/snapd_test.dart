@@ -500,6 +500,7 @@ class MockSnapdServer {
     Map<String, SnapIcon> snapIcons = const {},
     List<MockSnap> storeSnaps = const [],
     List<MockSnapDeclaration> snapDeclarations = const [],
+    this.storageEncryptionStatus,
     this.systemMode,
     Map<String, SnapdSystemVolume> systemVolumes = const {},
     List<String> validPassphrases = const [],
@@ -570,6 +571,7 @@ class MockSnapdServer {
   final snapIcons = <String, SnapIcon>{};
   final storeSnaps = <String, MockSnap>{};
   final snapDeclarations = <String, MockSnapDeclaration>{};
+  final String? storageEncryptionStatus;
   final String? systemMode;
   final systemVolumes = <String, SnapdSystemVolume>{};
   final validPassphrases = <String>[];
@@ -667,6 +669,8 @@ class MockSnapdServer {
       await _processPostSnap(request, path.substring('/v2/snaps/'.length));
     } else if (method == 'GET' && path == '/v2/system-info') {
       _processSystemInfo(request);
+    } else if (method == 'GET' && path == '/v2/system-info/storage-encrypted') {
+      _processStorageEncrypted(request);
     } else if (method == 'GET' && path.startsWith('/v2/icons/')) {
       _processGetSnapIcon(
         request,
@@ -1424,6 +1428,12 @@ class MockSnapdServer {
     });
   }
 
+  void _processStorageEncrypted(HttpRequest request) {
+    _writeSyncResponse(request.response, {
+      'status': storageEncryptionStatus,
+    });
+  }
+
   void _processGetSystemVolumes(HttpRequest request) {
     final parameters = request.uri.queryParameters;
     final containerRole = parameters['by-container-role'];
@@ -1819,6 +1829,24 @@ void main() {
     expect(info.series, equals('16'));
     expect(info.systemMode, equals('run'));
     expect(info.version, equals('2.49'));
+  });
+
+  test('tpmfde status', () async {
+    final snapd = MockSnapdServer(
+      storageEncryptionStatus: 'active',
+    );
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final response = await client.getStorageEncrypted();
+    expect(response.status, equals(SnapdStorageEncryptionStatus.active));
   });
 
   test('user agent', () async {

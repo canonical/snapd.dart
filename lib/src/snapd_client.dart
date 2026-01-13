@@ -71,6 +71,16 @@ enum SnapdSystemVolumeAuthMode { none, pin, passphrase }
 @JsonEnum(fieldRename: FieldRename.kebab)
 enum SnapdKdfType { argon2id, argon2i, pbkdf2 }
 
+/// The state of TPM backed FDE on the system.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdStorageEncryptionStatus {
+  active,
+  inactive,
+  recovery,
+  degraded,
+  failed
+}
+
 class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
   const _SnapdDateTimeConverter();
 
@@ -592,6 +602,17 @@ class SnapdEntropyResponse with _$SnapdEntropyResponse {
       _$SnapdEntropyResponseFromJson(json);
 }
 
+/// Response received when getting TPM backed FDE status.
+@freezed
+class SnapdStorageEncryptedResponse with _$SnapdStorageEncryptedResponse {
+  const factory SnapdStorageEncryptedResponse({
+    required SnapdStorageEncryptionStatus status,
+  }) = _SnapdStorageEncryptedResponse;
+
+  factory SnapdStorageEncryptedResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdStorageEncryptedResponseFromJson(json);
+}
+
 /// Contains proceed-time which is the date and time after which a refresh is
 /// forced for a running snap in the next auto-refresh in RFC3339 UTC format.
 @freezed
@@ -756,6 +777,14 @@ class SnapdClient {
   Future<SnapdSystemInfoResponse> systemInfo() async {
     final result = await _getSync<Map<String, dynamic>>('/v2/system-info');
     return SnapdSystemInfoResponse.fromJson(result);
+  }
+
+  /// Gets the storage encryption status.
+  Future<SnapdStorageEncryptedResponse> getStorageEncrypted() async {
+    final result = await _getSync<Map<String, dynamic>>(
+      '/v2/system-info/storage-encrypted',
+    );
+    return SnapdStorageEncryptedResponse.fromJson(result);
   }
 
   Future<List<SnapdNotice>> getNotices({
