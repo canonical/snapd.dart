@@ -1849,6 +1849,24 @@ void main() {
     expect(response.status, equals(SnapdStorageEncryptionStatus.active));
   });
 
+  test('tpmfde status indeterminate', () async {
+    final snapd = MockSnapdServer(
+      storageEncryptionStatus: 'indeterminate',
+    );
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final response = await client.getStorageEncrypted();
+    expect(response.status, equals(SnapdStorageEncryptionStatus.indeterminate));
+  });
+
   test('user agent', () async {
     final snapd = MockSnapdServer();
     await snapd.start();

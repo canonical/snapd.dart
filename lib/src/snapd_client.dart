@@ -78,7 +78,8 @@ enum SnapdStorageEncryptionStatus {
   inactive,
   recovery,
   degraded,
-  failed
+  failed,
+  indeterminate
 }
 
 class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {

@@ -758,6 +758,7 @@ const _$SnapdStorageEncryptionStatusEnumMap = {
   SnapdStorageEncryptionStatus.recovery: 'recovery',
   SnapdStorageEncryptionStatus.degraded: 'degraded',
   SnapdStorageEncryptionStatus.failed: 'failed',
+  SnapdStorageEncryptionStatus.indeterminate: 'indeterminate',
 };
 
 _$RefreshInhibitImpl _$$RefreshInhibitImplFromJson(Map json) =>
