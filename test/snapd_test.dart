@@ -148,7 +148,7 @@ class MockSnap {
   MockSnap({
     required this.name,
     this.id = '',
-    this.revision = '1',
+    this.revision = 1,
     this.version = '',
     this.channel = '',
     this.contact = '',
@@ -209,7 +209,7 @@ class MockSnap {
   final bool private;
   final MockPublisher? publisher;
   final bool refreshable;
-  final String? revision;
+  final int revision;
   final List<MockSlot> slots;
   final String? status;
   final String? storeUrl;
@@ -1375,6 +1375,21 @@ class MockSnapdServer {
           snap.enabled = false;
         }
         break;
+      case 'revert':
+        final snap = snaps[name];
+        if (snap == null) {
+          error = 'Snap $name not installed';
+        } else {
+          // Mock revert by changing installed revision to previous
+          if (snap.revision <= 1) {
+            error = 'No previous revision available';
+          } else {
+            snap.installedRevision = '${snap.revision - 1}';
+            // Note: We can't change the version as it's final, but in real snapd
+            // the version would change to match the reverted revision
+          }
+        }
+        break;
       default:
         _writeErrorResponse(request.response, 'unknown action');
         break;
@@ -2220,7 +2235,7 @@ void main() {
           description: 'Hello\nSalut\nHola',
           id: 'QRDEfjn4WJYnm0FzDKwqqRZZI77awQEV',
           name: 'hello',
-          revision: '42',
+          revision: 42,
           summary: 'Hello is an app',
           title: 'Hello',
           type: 'app',
@@ -2325,7 +2340,7 @@ void main() {
             displayName: 'Publisher',
             validation: 'verified',
           ),
-          revision: '42',
+          revision: 42,
           status: 'available',
           storeUrl: 'https://snapcraft.io/hello',
           summary: 'Hello is an app',
@@ -3545,6 +3560,73 @@ void main() {
     final change = await client.getChange(changeId);
     expect(change.ready, isTrue);
     expect(snapd.snaps['test1']!.enabled, isFalse);
+  });
+
+  test('revertSnap', () async {
+    final snapd = MockSnapdServer(
+      snaps: [
+        MockSnap(name: 'test1', revision: 5, version: '1.0.5'),
+      ],
+    );
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    expect(snapd.snaps['test1']!.revision, equals(5));
+    expect(snapd.snaps['test1']!.version, equals('1.0.5'));
+
+    final changeId = await client.revertSnap('test1');
+    final change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+
+    // Check that installed revision was changed (mock behavior)
+    expect(snapd.snaps['test1']!.installedRevision, equals('4'));
+  });
+
+  test('revertSnap - snap not installed', () async {
+    final snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final changeId = await client.revertSnap('non-existent');
+    final change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(change.err, equals('Snap non-existent not installed'));
+  });
+
+  test('revertSnap - no previous revision', () async {
+    final snapd = MockSnapdServer(
+      snaps: [
+        MockSnap(name: 'test1'),
+      ],
+    );
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final changeId = await client.revertSnap('test1');
+    final change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(change.err, equals('No previous revision available'));
   });
 
   test('changes', () async {

@@ -1106,6 +1106,36 @@ class SnapdClient {
     return _postAsync('/v2/snaps/$encodedName', request);
   }
 
+  /// Reverts the snap with the given [name] to its previous revision.
+  ///
+  /// This operation reverts the snap to the most recent locally installed
+  /// revision that is older than the currently active revision. If no such
+  /// revision exists, the operation will fail.
+  ///
+  /// Returns the change ID for this operation. Use [getChange] to monitor
+  /// the status of this operation.
+  ///
+  /// Throws [SnapdException] if the operation fails, such as when:
+  /// - The snap is not installed
+  /// - No previous revision is available to revert to
+  /// - The snap daemon encounters an error
+  ///
+  /// Example:
+  /// ```dart
+  /// try {
+  ///   final changeId = await client.revertSnap('firefox');
+  ///   final change = await client.getChange(changeId);
+  ///   print('Revert status: ${change.status}');
+  /// } catch (e) {
+  ///   print('Revert failed: $e');
+  /// }
+  /// ```
+  Future<String> revertSnap(String name) async {
+    final request = <String, dynamic>{'action': 'revert'};
+    final encodedName = Uri.encodeComponent(name);
+    return _postAsync('/v2/snaps/$encodedName', request);
+  }
+
   /// Gets the status the change with the given [id].
   Future<SnapdChange> getChange(String id) async {
     final result = await _getSync<Map<String, dynamic>>('/v2/changes/$id');
