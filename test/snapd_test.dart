@@ -1704,6 +1704,29 @@ class MockSnapdServer {
         );
         _writeAsyncResponse(request.response, change.id);
         return;
+      case 'delete-keyslots':
+        final keyslots = req['keyslots'] as List<dynamic>?;
+
+        if (keyslots == null || keyslots.isEmpty) {
+          _writeErrorResponse(request.response, 'missing keyslots');
+          return;
+        }
+
+        final change = _addChange(
+          kind: 'delete-keyslots',
+          summary: 'Delete key slots from system volumes',
+          ready: true,
+          tasks: [
+            MockTask(
+              id: '0',
+              kind: 'delete-keyslots',
+              summary: 'Delete key slots from system volumes',
+              progress: MockTaskProgress(done: 1, total: 1),
+            ),
+          ],
+        );
+        _writeAsyncResponse(request.response, change.id);
+        return;
       default:
         _writeErrorResponse(request.response, 'unknown action');
         return;
@@ -4499,6 +4522,30 @@ void main() {
       expect(change.kind, 'replace-platform-key');
     });
   });
+
+  test('delete keyslots', () async {
+    final snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final changeId = await client.deleteKeySlots(const [
+      SnapdSystemVolumeTargetKeySlot(
+        containerRole: 'system-data',
+        name: 'default',
+      ),
+    ]);
+    final change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(change.kind, 'delete-keyslots');
+  });
+
   test('generate recovery key', () async {
     final snapd = MockSnapdServer();
     await snapd.start();

@@ -1454,6 +1454,23 @@ class SnapdClient {
     return _postAsync('/v2/system-volumes', request);
   }
 
+  /// Deletes the specified key slots from the system volumes.
+  ///
+  /// This action will not permit deleting the last keyslot associated with a
+  /// role that includes "recover" mode from any container.
+  ///
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
+  Future<String> deleteKeySlots(
+    List<SnapdSystemVolumeTargetKeySlot> keySlots,
+  ) async {
+    final request = <String, dynamic>{
+      'action': 'delete-keyslots',
+      'keyslots': keySlots.map((slot) => slot.toJson()).toList(),
+    };
+    return _postAsync('/v2/system-volumes', request);
+  }
+
   /// Terminates all active connections. If a client remains unclosed, the Dart
   /// process may not terminate.
   void close() {
