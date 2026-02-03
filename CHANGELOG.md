@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.7.4
+
+* Add support for reverting snaps
+* Add support for listing snap revisions
+* Add support for `replace-platform-key` action
+* Add support for `/v2/system-info/storage-encrypted`
+* Add support for `delete-keyslots` action
+
 ## 0.7.3
 
 * Add support for /v2/icons
@@ -28,7 +36,7 @@
 
 * Add refresh inhibit properties to snap class
 * Exposes methods to interact with the prompting endpoints
- 
+
 ## 0.6.1
 
 * Downgrade version constraints due to Flutter's version pinning.
