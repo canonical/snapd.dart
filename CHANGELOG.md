@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.5
+
+* Ensure posted data is UTF-8 encoded
+
 ## 0.7.4
 
 * Add support for reverting snaps
