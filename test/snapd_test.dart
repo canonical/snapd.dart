@@ -4215,6 +4215,12 @@ void main() {
         newPassphrase: 'new',
         expectError: true,
       ),
+      (
+        name: 'correct encoding',
+        oldPassphrase: 'correct',
+        newPassphrase: 'pässwörd',
+        expectError: false,
+      ),
     ]) {
       test(testCase.name, () async {
         final snapd = MockSnapdServer(

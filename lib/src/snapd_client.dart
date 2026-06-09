@@ -743,14 +743,12 @@ class SnapdClient {
 
   /// Loads the saved authorization for this user.
   Future<void> loadAuthorization({String? path}) async {
-    if (path == null) {
-      final home = Platform.environment['HOME'];
-      if (home == null) {
-        throw 'Unable to determine home directory';
-      }
-      path = p.join(home, '.snap', 'auth.json');
-    }
-    final file = File(path);
+    final home = Platform.environment['HOME'];
+    final resolvedPath = path ??
+        (home != null
+            ? p.join(home, '.snap', 'auth.json')
+            : (throw StateError('Unable to determine home directory')));
+    final file = File(resolvedPath);
     String contents;
     try {
       contents = await file.readAsString();
@@ -1522,7 +1520,8 @@ class SnapdClient {
   Future<T> _postSync<T>(String path, [dynamic body]) async {
     final request = await _client.post('localhost', 0, path);
     _setHeaders(request);
-    request.headers.contentType = ContentType('application', 'json');
+    request.headers.contentType =
+        ContentType('application', 'json', charset: 'utf-8');
     request.write(json.encode(body));
     await request.close();
     final snapdResponse = await _parseResponse(await request.done);
@@ -1547,7 +1546,8 @@ class SnapdClient {
   Future<String> _openAsync(String method, String path, [dynamic body]) async {
     final request = await _client.open(method, 'localhost', 0, path);
     _setHeaders(request);
-    request.headers.contentType = ContentType('application', 'json');
+    request.headers.contentType =
+        ContentType('application', 'json', charset: 'utf-8');
     request.write(json.encode(body));
     await request.close();
     final snapdResponse = await _parseResponse(await request.done);
