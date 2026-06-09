@@ -743,14 +743,12 @@ class SnapdClient {
 
   /// Loads the saved authorization for this user.
   Future<void> loadAuthorization({String? path}) async {
-    if (path == null) {
-      final home = Platform.environment['HOME'];
-      if (home == null) {
-        throw 'Unable to determine home directory';
-      }
-      path = p.join(home, '.snap', 'auth.json');
-    }
-    final file = File(path);
+    final home = Platform.environment['HOME'];
+    final resolvedPath = path ??
+        (home != null
+            ? p.join(home, '.snap', 'auth.json')
+            : (throw StateError('Unable to determine home directory')));
+    final file = File(resolvedPath);
     String contents;
     try {
       contents = await file.readAsString();
