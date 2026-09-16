@@ -1030,6 +1030,7 @@ class MockSnapdServer {
     final parameters = request.uri.queryParameters;
     final query = parameters['q'];
     final name = parameters['name'];
+    final commonId = parameters['common-id'];
     var category = parameters['category'];
     final section = parameters['section'];
     final select = parameters['select'];
@@ -1047,6 +1048,9 @@ class MockSnapdServer {
     final snaps = [];
     for (final snap in storeSnaps.values) {
       if (name != null && snap.name != name) {
+        continue;
+      }
+      if (commonId != null && !(snap.commonIds?.contains(commonId) ?? false)) {
         continue;
       }
       if (query != null && !snap.name.contains(query)) {
@@ -3142,6 +3146,46 @@ void main() {
     final snaps = await client.find(scope: SnapFindScope.wide);
     expect(snaps, hasLength(1));
     expect(snaps[0].name, equals('unstable'));
+  });
+
+  test('find - common-id', () async {
+    final snapd = MockSnapdServer(
+      storeSnaps: [
+        MockSnap(
+          name: 'swordfish',
+          commonIds: ['org.example.swordfish'],
+          channels: {
+            'latest/stable': MockChannel(channel: 'latest/stable'),
+          },
+        ),
+        MockSnap(
+          name: 'bear',
+          commonIds: ['org.example.bear'],
+          channels: {
+            'latest/stable': MockChannel(channel: 'latest/stable'),
+          },
+        ),
+        MockSnap(
+          name: 'fishy',
+          channels: {
+            'latest/stable': MockChannel(channel: 'latest/stable'),
+          },
+        ),
+      ],
+    );
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final snaps = await client.find(commonId: 'org.example.bear');
+    expect(snaps, hasLength(1));
+    expect(snaps[0].name, equals('bear'));
   });
 
   test('assertions', () async {
