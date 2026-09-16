@@ -964,6 +964,8 @@ class SnapdClient {
   ///
   /// If [query] is provided, searches for snaps that match the given string.
   /// If [name] is provided, match the snap with the given name.
+  /// If [commonId] is provided, searches for snaps matching the given
+  /// common ID.
   /// If [category] is provided, search within that store category.
   /// If [filter] is provided, alter the collection searched:
   ///   - 'refresh': search refreshable snaps. Can't be used with [query] nor [name].
@@ -973,6 +975,7 @@ class SnapdClient {
   Future<List<Snap>> find({
     String? query,
     String? name,
+    String? commonId,
     String? category,
     @Deprecated('Replaced with category') String? section,
     SnapFindFilter? filter,
@@ -981,6 +984,7 @@ class SnapdClient {
     final queryParameters = <String, String>{
       if (query != null) 'q': query,
       if (name != null) 'name': name,
+      if (commonId != null) 'common-id': commonId,
       if (category != null) 'category': category,
       if (section != null) 'section': section,
       if (filter != null) 'select': filter.name,
