@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.6
+
+* Add commonId support to SnapdClient.find()
+
 ## 0.7.5
 
 * Ensure posted data is UTF-8 encoded
