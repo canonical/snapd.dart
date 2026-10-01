@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.7
+
+* fix: encode body as utf8 without sending charset in content-type header
+
 ## 0.7.6
 
 * Add commonId support to SnapdClient.find()
