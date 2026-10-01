@@ -1524,9 +1524,8 @@ class SnapdClient {
   Future<T> _postSync<T>(String path, [dynamic body]) async {
     final request = await _client.post('localhost', 0, path);
     _setHeaders(request);
-    request.headers.contentType =
-        ContentType('application', 'json', charset: 'utf-8');
-    request.write(json.encode(body));
+    request.headers.contentType = ContentType('application', 'json');
+    request.add(utf8.encode(json.encode(body)));
     await request.close();
     final snapdResponse = await _parseResponse(await request.done);
     return snapdResponse.result as T;
@@ -1550,9 +1549,8 @@ class SnapdClient {
   Future<String> _openAsync(String method, String path, [dynamic body]) async {
     final request = await _client.open(method, 'localhost', 0, path);
     _setHeaders(request);
-    request.headers.contentType =
-        ContentType('application', 'json', charset: 'utf-8');
-    request.write(json.encode(body));
+    request.headers.contentType = ContentType('application', 'json');
+    request.add(utf8.encode(json.encode(body)));
     await request.close();
     final snapdResponse = await _parseResponse(await request.done);
     return snapdResponse.change;
