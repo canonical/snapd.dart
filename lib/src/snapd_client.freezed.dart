@@ -7615,6 +7615,12 @@ SnapdStorageEncryptedResponse _$SnapdStorageEncryptedResponseFromJson(
 /// @nodoc
 mixin _$SnapdStorageEncryptedResponse {
   SnapdStorageEncryptionStatus get status => throw _privateConstructorUsedError;
+  @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
+  SnapdAutoRepairResult get autoRepairResult =>
+      throw _privateConstructorUsedError;
+  @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+  List<SnapdRecommendedRemedialAction> get recommendations =>
+      throw _privateConstructorUsedError;
 
   /// Serializes this SnapdStorageEncryptedResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -7634,7 +7640,12 @@ abstract class $SnapdStorageEncryptedResponseCopyWith<$Res> {
       _$SnapdStorageEncryptedResponseCopyWithImpl<$Res,
           SnapdStorageEncryptedResponse>;
   @useResult
-  $Res call({SnapdStorageEncryptionStatus status});
+  $Res call(
+      {SnapdStorageEncryptionStatus status,
+      @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
+      SnapdAutoRepairResult autoRepairResult,
+      @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+      List<SnapdRecommendedRemedialAction> recommendations});
 }
 
 /// @nodoc
@@ -7654,12 +7665,22 @@ class _$SnapdStorageEncryptedResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? status = null,
+    Object? autoRepairResult = null,
+    Object? recommendations = null,
   }) {
     return _then(_value.copyWith(
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as SnapdStorageEncryptionStatus,
+      autoRepairResult: null == autoRepairResult
+          ? _value.autoRepairResult
+          : autoRepairResult // ignore: cast_nullable_to_non_nullable
+              as SnapdAutoRepairResult,
+      recommendations: null == recommendations
+          ? _value.recommendations
+          : recommendations // ignore: cast_nullable_to_non_nullable
+              as List<SnapdRecommendedRemedialAction>,
     ) as $Val);
   }
 }
@@ -7673,7 +7694,12 @@ abstract class _$$SnapdStorageEncryptedResponseImplCopyWith<$Res>
       __$$SnapdStorageEncryptedResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({SnapdStorageEncryptionStatus status});
+  $Res call(
+      {SnapdStorageEncryptionStatus status,
+      @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
+      SnapdAutoRepairResult autoRepairResult,
+      @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+      List<SnapdRecommendedRemedialAction> recommendations});
 }
 
 /// @nodoc
@@ -7692,12 +7718,22 @@ class __$$SnapdStorageEncryptedResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? status = null,
+    Object? autoRepairResult = null,
+    Object? recommendations = null,
   }) {
     return _then(_$SnapdStorageEncryptedResponseImpl(
       status: null == status
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as SnapdStorageEncryptionStatus,
+      autoRepairResult: null == autoRepairResult
+          ? _value.autoRepairResult
+          : autoRepairResult // ignore: cast_nullable_to_non_nullable
+              as SnapdAutoRepairResult,
+      recommendations: null == recommendations
+          ? _value._recommendations
+          : recommendations // ignore: cast_nullable_to_non_nullable
+              as List<SnapdRecommendedRemedialAction>,
     ));
   }
 }
@@ -7706,7 +7742,13 @@ class __$$SnapdStorageEncryptedResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SnapdStorageEncryptedResponseImpl
     implements _SnapdStorageEncryptedResponse {
-  const _$SnapdStorageEncryptedResponseImpl({required this.status});
+  const _$SnapdStorageEncryptedResponseImpl(
+      {required this.status,
+      @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
+      this.autoRepairResult = SnapdAutoRepairResult.unknown,
+      @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+      final List<SnapdRecommendedRemedialAction> recommendations = const []})
+      : _recommendations = recommendations;
 
   factory _$SnapdStorageEncryptedResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -7714,10 +7756,21 @@ class _$SnapdStorageEncryptedResponseImpl
 
   @override
   final SnapdStorageEncryptionStatus status;
+  @override
+  @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
+  final SnapdAutoRepairResult autoRepairResult;
+  final List<SnapdRecommendedRemedialAction> _recommendations;
+  @override
+  @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+  List<SnapdRecommendedRemedialAction> get recommendations {
+    if (_recommendations is EqualUnmodifiableListView) return _recommendations;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_recommendations);
+  }
 
   @override
   String toString() {
-    return 'SnapdStorageEncryptedResponse(status: $status)';
+    return 'SnapdStorageEncryptedResponse(status: $status, autoRepairResult: $autoRepairResult, recommendations: $recommendations)';
   }
 
   @override
@@ -7725,12 +7778,17 @@ class _$SnapdStorageEncryptedResponseImpl
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$SnapdStorageEncryptedResponseImpl &&
-            (identical(other.status, status) || other.status == status));
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.autoRepairResult, autoRepairResult) ||
+                other.autoRepairResult == autoRepairResult) &&
+            const DeepCollectionEquality()
+                .equals(other._recommendations, _recommendations));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, status);
+  int get hashCode => Object.hash(runtimeType, status, autoRepairResult,
+      const DeepCollectionEquality().hash(_recommendations));
 
   /// Create a copy of SnapdStorageEncryptedResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -7753,7 +7811,11 @@ class _$SnapdStorageEncryptedResponseImpl
 abstract class _SnapdStorageEncryptedResponse
     implements SnapdStorageEncryptedResponse {
   const factory _SnapdStorageEncryptedResponse(
-          {required final SnapdStorageEncryptionStatus status}) =
+          {required final SnapdStorageEncryptionStatus status,
+          @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
+          final SnapdAutoRepairResult autoRepairResult,
+          @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+          final List<SnapdRecommendedRemedialAction> recommendations}) =
       _$SnapdStorageEncryptedResponseImpl;
 
   factory _SnapdStorageEncryptedResponse.fromJson(Map<String, dynamic> json) =
@@ -7761,6 +7823,12 @@ abstract class _SnapdStorageEncryptedResponse
 
   @override
   SnapdStorageEncryptionStatus get status;
+  @override
+  @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
+  SnapdAutoRepairResult get autoRepairResult;
+  @override
+  @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+  List<SnapdRecommendedRemedialAction> get recommendations;
 
   /// Create a copy of SnapdStorageEncryptedResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -7768,6 +7836,892 @@ abstract class _SnapdStorageEncryptedResponse
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SnapdStorageEncryptedResponseImplCopyWith<
           _$SnapdStorageEncryptedResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SnapdAvailabilityCheckError _$SnapdAvailabilityCheckErrorFromJson(
+    Map<String, dynamic> json) {
+  return _SnapdAvailabilityCheckError.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapdAvailabilityCheckError {
+  String get kind => throw _privateConstructorUsedError;
+  String get message => throw _privateConstructorUsedError;
+  Map<String, dynamic>? get args => throw _privateConstructorUsedError;
+  List<String> get actions => throw _privateConstructorUsedError;
+
+  /// Serializes this SnapdAvailabilityCheckError to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapdAvailabilityCheckError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapdAvailabilityCheckErrorCopyWith<SnapdAvailabilityCheckError>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapdAvailabilityCheckErrorCopyWith<$Res> {
+  factory $SnapdAvailabilityCheckErrorCopyWith(
+          SnapdAvailabilityCheckError value,
+          $Res Function(SnapdAvailabilityCheckError) then) =
+      _$SnapdAvailabilityCheckErrorCopyWithImpl<$Res,
+          SnapdAvailabilityCheckError>;
+  @useResult
+  $Res call(
+      {String kind,
+      String message,
+      Map<String, dynamic>? args,
+      List<String> actions});
+}
+
+/// @nodoc
+class _$SnapdAvailabilityCheckErrorCopyWithImpl<$Res,
+        $Val extends SnapdAvailabilityCheckError>
+    implements $SnapdAvailabilityCheckErrorCopyWith<$Res> {
+  _$SnapdAvailabilityCheckErrorCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapdAvailabilityCheckError
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? kind = null,
+    Object? message = null,
+    Object? args = freezed,
+    Object? actions = null,
+  }) {
+    return _then(_value.copyWith(
+      kind: null == kind
+          ? _value.kind
+          : kind // ignore: cast_nullable_to_non_nullable
+              as String,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      args: freezed == args
+          ? _value.args
+          : args // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      actions: null == actions
+          ? _value.actions
+          : actions // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapdAvailabilityCheckErrorImplCopyWith<$Res>
+    implements $SnapdAvailabilityCheckErrorCopyWith<$Res> {
+  factory _$$SnapdAvailabilityCheckErrorImplCopyWith(
+          _$SnapdAvailabilityCheckErrorImpl value,
+          $Res Function(_$SnapdAvailabilityCheckErrorImpl) then) =
+      __$$SnapdAvailabilityCheckErrorImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {String kind,
+      String message,
+      Map<String, dynamic>? args,
+      List<String> actions});
+}
+
+/// @nodoc
+class __$$SnapdAvailabilityCheckErrorImplCopyWithImpl<$Res>
+    extends _$SnapdAvailabilityCheckErrorCopyWithImpl<$Res,
+        _$SnapdAvailabilityCheckErrorImpl>
+    implements _$$SnapdAvailabilityCheckErrorImplCopyWith<$Res> {
+  __$$SnapdAvailabilityCheckErrorImplCopyWithImpl(
+      _$SnapdAvailabilityCheckErrorImpl _value,
+      $Res Function(_$SnapdAvailabilityCheckErrorImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapdAvailabilityCheckError
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? kind = null,
+    Object? message = null,
+    Object? args = freezed,
+    Object? actions = null,
+  }) {
+    return _then(_$SnapdAvailabilityCheckErrorImpl(
+      kind: null == kind
+          ? _value.kind
+          : kind // ignore: cast_nullable_to_non_nullable
+              as String,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      args: freezed == args
+          ? _value._args
+          : args // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      actions: null == actions
+          ? _value._actions
+          : actions // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapdAvailabilityCheckErrorImpl
+    implements _SnapdAvailabilityCheckError {
+  const _$SnapdAvailabilityCheckErrorImpl(
+      {required this.kind,
+      required this.message,
+      final Map<String, dynamic>? args,
+      final List<String> actions = const []})
+      : _args = args,
+        _actions = actions;
+
+  factory _$SnapdAvailabilityCheckErrorImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$SnapdAvailabilityCheckErrorImplFromJson(json);
+
+  @override
+  final String kind;
+  @override
+  final String message;
+  final Map<String, dynamic>? _args;
+  @override
+  Map<String, dynamic>? get args {
+    final value = _args;
+    if (value == null) return null;
+    if (_args is EqualUnmodifiableMapView) return _args;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(value);
+  }
+
+  final List<String> _actions;
+  @override
+  @JsonKey()
+  List<String> get actions {
+    if (_actions is EqualUnmodifiableListView) return _actions;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_actions);
+  }
+
+  @override
+  String toString() {
+    return 'SnapdAvailabilityCheckError(kind: $kind, message: $message, args: $args, actions: $actions)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapdAvailabilityCheckErrorImpl &&
+            (identical(other.kind, kind) || other.kind == kind) &&
+            (identical(other.message, message) || other.message == message) &&
+            const DeepCollectionEquality().equals(other._args, _args) &&
+            const DeepCollectionEquality().equals(other._actions, _actions));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      kind,
+      message,
+      const DeepCollectionEquality().hash(_args),
+      const DeepCollectionEquality().hash(_actions));
+
+  /// Create a copy of SnapdAvailabilityCheckError
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapdAvailabilityCheckErrorImplCopyWith<_$SnapdAvailabilityCheckErrorImpl>
+      get copyWith => __$$SnapdAvailabilityCheckErrorImplCopyWithImpl<
+          _$SnapdAvailabilityCheckErrorImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapdAvailabilityCheckErrorImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapdAvailabilityCheckError
+    implements SnapdAvailabilityCheckError {
+  const factory _SnapdAvailabilityCheckError(
+      {required final String kind,
+      required final String message,
+      final Map<String, dynamic>? args,
+      final List<String> actions}) = _$SnapdAvailabilityCheckErrorImpl;
+
+  factory _SnapdAvailabilityCheckError.fromJson(Map<String, dynamic> json) =
+      _$SnapdAvailabilityCheckErrorImpl.fromJson;
+
+  @override
+  String get kind;
+  @override
+  String get message;
+  @override
+  Map<String, dynamic>? get args;
+  @override
+  List<String> get actions;
+
+  /// Create a copy of SnapdAvailabilityCheckError
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapdAvailabilityCheckErrorImplCopyWith<_$SnapdAvailabilityCheckErrorImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SnapdStorageEncryption _$SnapdStorageEncryptionFromJson(
+    Map<String, dynamic> json) {
+  return _SnapdStorageEncryption.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapdStorageEncryption {
+  @JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
+  SnapdStorageEncryptionSupport get support =>
+      throw _privateConstructorUsedError;
+  String? get unavailableReason => throw _privateConstructorUsedError;
+  List<SnapdAvailabilityCheckError> get availabilityCheckErrors =>
+      throw _privateConstructorUsedError;
+  @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
+  List<SnapdStorageEncryptionFeature> get features =>
+      throw _privateConstructorUsedError;
+  @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
+  List<SnapdStorageEncryptionRequirement> get requirements =>
+      throw _privateConstructorUsedError;
+
+  /// Serializes this SnapdStorageEncryption to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapdStorageEncryption
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapdStorageEncryptionCopyWith<SnapdStorageEncryption> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapdStorageEncryptionCopyWith<$Res> {
+  factory $SnapdStorageEncryptionCopyWith(SnapdStorageEncryption value,
+          $Res Function(SnapdStorageEncryption) then) =
+      _$SnapdStorageEncryptionCopyWithImpl<$Res, SnapdStorageEncryption>;
+  @useResult
+  $Res call(
+      {@JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
+      SnapdStorageEncryptionSupport support,
+      String? unavailableReason,
+      List<SnapdAvailabilityCheckError> availabilityCheckErrors,
+      @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
+      List<SnapdStorageEncryptionFeature> features,
+      @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
+      List<SnapdStorageEncryptionRequirement> requirements});
+}
+
+/// @nodoc
+class _$SnapdStorageEncryptionCopyWithImpl<$Res,
+        $Val extends SnapdStorageEncryption>
+    implements $SnapdStorageEncryptionCopyWith<$Res> {
+  _$SnapdStorageEncryptionCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapdStorageEncryption
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? support = null,
+    Object? unavailableReason = freezed,
+    Object? availabilityCheckErrors = null,
+    Object? features = null,
+    Object? requirements = null,
+  }) {
+    return _then(_value.copyWith(
+      support: null == support
+          ? _value.support
+          : support // ignore: cast_nullable_to_non_nullable
+              as SnapdStorageEncryptionSupport,
+      unavailableReason: freezed == unavailableReason
+          ? _value.unavailableReason
+          : unavailableReason // ignore: cast_nullable_to_non_nullable
+              as String?,
+      availabilityCheckErrors: null == availabilityCheckErrors
+          ? _value.availabilityCheckErrors
+          : availabilityCheckErrors // ignore: cast_nullable_to_non_nullable
+              as List<SnapdAvailabilityCheckError>,
+      features: null == features
+          ? _value.features
+          : features // ignore: cast_nullable_to_non_nullable
+              as List<SnapdStorageEncryptionFeature>,
+      requirements: null == requirements
+          ? _value.requirements
+          : requirements // ignore: cast_nullable_to_non_nullable
+              as List<SnapdStorageEncryptionRequirement>,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapdStorageEncryptionImplCopyWith<$Res>
+    implements $SnapdStorageEncryptionCopyWith<$Res> {
+  factory _$$SnapdStorageEncryptionImplCopyWith(
+          _$SnapdStorageEncryptionImpl value,
+          $Res Function(_$SnapdStorageEncryptionImpl) then) =
+      __$$SnapdStorageEncryptionImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call(
+      {@JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
+      SnapdStorageEncryptionSupport support,
+      String? unavailableReason,
+      List<SnapdAvailabilityCheckError> availabilityCheckErrors,
+      @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
+      List<SnapdStorageEncryptionFeature> features,
+      @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
+      List<SnapdStorageEncryptionRequirement> requirements});
+}
+
+/// @nodoc
+class __$$SnapdStorageEncryptionImplCopyWithImpl<$Res>
+    extends _$SnapdStorageEncryptionCopyWithImpl<$Res,
+        _$SnapdStorageEncryptionImpl>
+    implements _$$SnapdStorageEncryptionImplCopyWith<$Res> {
+  __$$SnapdStorageEncryptionImplCopyWithImpl(
+      _$SnapdStorageEncryptionImpl _value,
+      $Res Function(_$SnapdStorageEncryptionImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapdStorageEncryption
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? support = null,
+    Object? unavailableReason = freezed,
+    Object? availabilityCheckErrors = null,
+    Object? features = null,
+    Object? requirements = null,
+  }) {
+    return _then(_$SnapdStorageEncryptionImpl(
+      support: null == support
+          ? _value.support
+          : support // ignore: cast_nullable_to_non_nullable
+              as SnapdStorageEncryptionSupport,
+      unavailableReason: freezed == unavailableReason
+          ? _value.unavailableReason
+          : unavailableReason // ignore: cast_nullable_to_non_nullable
+              as String?,
+      availabilityCheckErrors: null == availabilityCheckErrors
+          ? _value._availabilityCheckErrors
+          : availabilityCheckErrors // ignore: cast_nullable_to_non_nullable
+              as List<SnapdAvailabilityCheckError>,
+      features: null == features
+          ? _value._features
+          : features // ignore: cast_nullable_to_non_nullable
+              as List<SnapdStorageEncryptionFeature>,
+      requirements: null == requirements
+          ? _value._requirements
+          : requirements // ignore: cast_nullable_to_non_nullable
+              as List<SnapdStorageEncryptionRequirement>,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapdStorageEncryptionImpl implements _SnapdStorageEncryption {
+  const _$SnapdStorageEncryptionImpl(
+      {@JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
+      required this.support,
+      this.unavailableReason,
+      final List<SnapdAvailabilityCheckError> availabilityCheckErrors =
+          const [],
+      @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
+      final List<SnapdStorageEncryptionFeature> features = const [],
+      @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
+      final List<SnapdStorageEncryptionRequirement> requirements = const []})
+      : _availabilityCheckErrors = availabilityCheckErrors,
+        _features = features,
+        _requirements = requirements;
+
+  factory _$SnapdStorageEncryptionImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SnapdStorageEncryptionImplFromJson(json);
+
+  @override
+  @JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
+  final SnapdStorageEncryptionSupport support;
+  @override
+  final String? unavailableReason;
+  final List<SnapdAvailabilityCheckError> _availabilityCheckErrors;
+  @override
+  @JsonKey()
+  List<SnapdAvailabilityCheckError> get availabilityCheckErrors {
+    if (_availabilityCheckErrors is EqualUnmodifiableListView)
+      return _availabilityCheckErrors;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_availabilityCheckErrors);
+  }
+
+  final List<SnapdStorageEncryptionFeature> _features;
+  @override
+  @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
+  List<SnapdStorageEncryptionFeature> get features {
+    if (_features is EqualUnmodifiableListView) return _features;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_features);
+  }
+
+  final List<SnapdStorageEncryptionRequirement> _requirements;
+  @override
+  @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
+  List<SnapdStorageEncryptionRequirement> get requirements {
+    if (_requirements is EqualUnmodifiableListView) return _requirements;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_requirements);
+  }
+
+  @override
+  String toString() {
+    return 'SnapdStorageEncryption(support: $support, unavailableReason: $unavailableReason, availabilityCheckErrors: $availabilityCheckErrors, features: $features, requirements: $requirements)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapdStorageEncryptionImpl &&
+            (identical(other.support, support) || other.support == support) &&
+            (identical(other.unavailableReason, unavailableReason) ||
+                other.unavailableReason == unavailableReason) &&
+            const DeepCollectionEquality().equals(
+                other._availabilityCheckErrors, _availabilityCheckErrors) &&
+            const DeepCollectionEquality().equals(other._features, _features) &&
+            const DeepCollectionEquality()
+                .equals(other._requirements, _requirements));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      support,
+      unavailableReason,
+      const DeepCollectionEquality().hash(_availabilityCheckErrors),
+      const DeepCollectionEquality().hash(_features),
+      const DeepCollectionEquality().hash(_requirements));
+
+  /// Create a copy of SnapdStorageEncryption
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapdStorageEncryptionImplCopyWith<_$SnapdStorageEncryptionImpl>
+      get copyWith => __$$SnapdStorageEncryptionImplCopyWithImpl<
+          _$SnapdStorageEncryptionImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapdStorageEncryptionImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapdStorageEncryption implements SnapdStorageEncryption {
+  const factory _SnapdStorageEncryption(
+          {@JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
+          required final SnapdStorageEncryptionSupport support,
+          final String? unavailableReason,
+          final List<SnapdAvailabilityCheckError> availabilityCheckErrors,
+          @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
+          final List<SnapdStorageEncryptionFeature> features,
+          @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
+          final List<SnapdStorageEncryptionRequirement> requirements}) =
+      _$SnapdStorageEncryptionImpl;
+
+  factory _SnapdStorageEncryption.fromJson(Map<String, dynamic> json) =
+      _$SnapdStorageEncryptionImpl.fromJson;
+
+  @override
+  @JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
+  SnapdStorageEncryptionSupport get support;
+  @override
+  String? get unavailableReason;
+  @override
+  List<SnapdAvailabilityCheckError> get availabilityCheckErrors;
+  @override
+  @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
+  List<SnapdStorageEncryptionFeature> get features;
+  @override
+  @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
+  List<SnapdStorageEncryptionRequirement> get requirements;
+
+  /// Create a copy of SnapdStorageEncryption
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapdStorageEncryptionImplCopyWith<_$SnapdStorageEncryptionImpl>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+SnapdSystemDetails _$SnapdSystemDetailsFromJson(Map<String, dynamic> json) {
+  return _SnapdSystemDetails.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapdSystemDetails {
+  SnapdStorageEncryption get storageEncryption =>
+      throw _privateConstructorUsedError;
+
+  /// Serializes this SnapdSystemDetails to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapdSystemDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapdSystemDetailsCopyWith<SnapdSystemDetails> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapdSystemDetailsCopyWith<$Res> {
+  factory $SnapdSystemDetailsCopyWith(
+          SnapdSystemDetails value, $Res Function(SnapdSystemDetails) then) =
+      _$SnapdSystemDetailsCopyWithImpl<$Res, SnapdSystemDetails>;
+  @useResult
+  $Res call({SnapdStorageEncryption storageEncryption});
+
+  $SnapdStorageEncryptionCopyWith<$Res> get storageEncryption;
+}
+
+/// @nodoc
+class _$SnapdSystemDetailsCopyWithImpl<$Res, $Val extends SnapdSystemDetails>
+    implements $SnapdSystemDetailsCopyWith<$Res> {
+  _$SnapdSystemDetailsCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapdSystemDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? storageEncryption = null,
+  }) {
+    return _then(_value.copyWith(
+      storageEncryption: null == storageEncryption
+          ? _value.storageEncryption
+          : storageEncryption // ignore: cast_nullable_to_non_nullable
+              as SnapdStorageEncryption,
+    ) as $Val);
+  }
+
+  /// Create a copy of SnapdSystemDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $SnapdStorageEncryptionCopyWith<$Res> get storageEncryption {
+    return $SnapdStorageEncryptionCopyWith<$Res>(_value.storageEncryption,
+        (value) {
+      return _then(_value.copyWith(storageEncryption: value) as $Val);
+    });
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapdSystemDetailsImplCopyWith<$Res>
+    implements $SnapdSystemDetailsCopyWith<$Res> {
+  factory _$$SnapdSystemDetailsImplCopyWith(_$SnapdSystemDetailsImpl value,
+          $Res Function(_$SnapdSystemDetailsImpl) then) =
+      __$$SnapdSystemDetailsImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({SnapdStorageEncryption storageEncryption});
+
+  @override
+  $SnapdStorageEncryptionCopyWith<$Res> get storageEncryption;
+}
+
+/// @nodoc
+class __$$SnapdSystemDetailsImplCopyWithImpl<$Res>
+    extends _$SnapdSystemDetailsCopyWithImpl<$Res, _$SnapdSystemDetailsImpl>
+    implements _$$SnapdSystemDetailsImplCopyWith<$Res> {
+  __$$SnapdSystemDetailsImplCopyWithImpl(_$SnapdSystemDetailsImpl _value,
+      $Res Function(_$SnapdSystemDetailsImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapdSystemDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? storageEncryption = null,
+  }) {
+    return _then(_$SnapdSystemDetailsImpl(
+      storageEncryption: null == storageEncryption
+          ? _value.storageEncryption
+          : storageEncryption // ignore: cast_nullable_to_non_nullable
+              as SnapdStorageEncryption,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapdSystemDetailsImpl implements _SnapdSystemDetails {
+  const _$SnapdSystemDetailsImpl({required this.storageEncryption});
+
+  factory _$SnapdSystemDetailsImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SnapdSystemDetailsImplFromJson(json);
+
+  @override
+  final SnapdStorageEncryption storageEncryption;
+
+  @override
+  String toString() {
+    return 'SnapdSystemDetails(storageEncryption: $storageEncryption)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapdSystemDetailsImpl &&
+            (identical(other.storageEncryption, storageEncryption) ||
+                other.storageEncryption == storageEncryption));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, storageEncryption);
+
+  /// Create a copy of SnapdSystemDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapdSystemDetailsImplCopyWith<_$SnapdSystemDetailsImpl> get copyWith =>
+      __$$SnapdSystemDetailsImplCopyWithImpl<_$SnapdSystemDetailsImpl>(
+          this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapdSystemDetailsImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapdSystemDetails implements SnapdSystemDetails {
+  const factory _SnapdSystemDetails(
+          {required final SnapdStorageEncryption storageEncryption}) =
+      _$SnapdSystemDetailsImpl;
+
+  factory _SnapdSystemDetails.fromJson(Map<String, dynamic> json) =
+      _$SnapdSystemDetailsImpl.fromJson;
+
+  @override
+  SnapdStorageEncryption get storageEncryption;
+
+  /// Create a copy of SnapdSystemDetails
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapdSystemDetailsImplCopyWith<_$SnapdSystemDetailsImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+SnapdGenerateReprovisionRecoveryKeyResponse
+    _$SnapdGenerateReprovisionRecoveryKeyResponseFromJson(
+        Map<String, dynamic> json) {
+  return _SnapdGenerateReprovisionRecoveryKeyResponse.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SnapdGenerateReprovisionRecoveryKeyResponse {
+  String get recoveryKey => throw _privateConstructorUsedError;
+
+  /// Serializes this SnapdGenerateReprovisionRecoveryKeyResponse to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SnapdGenerateReprovisionRecoveryKeyResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SnapdGenerateReprovisionRecoveryKeyResponseCopyWith<
+          SnapdGenerateReprovisionRecoveryKeyResponse>
+      get copyWith => throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SnapdGenerateReprovisionRecoveryKeyResponseCopyWith<$Res> {
+  factory $SnapdGenerateReprovisionRecoveryKeyResponseCopyWith(
+          SnapdGenerateReprovisionRecoveryKeyResponse value,
+          $Res Function(SnapdGenerateReprovisionRecoveryKeyResponse) then) =
+      _$SnapdGenerateReprovisionRecoveryKeyResponseCopyWithImpl<$Res,
+          SnapdGenerateReprovisionRecoveryKeyResponse>;
+  @useResult
+  $Res call({String recoveryKey});
+}
+
+/// @nodoc
+class _$SnapdGenerateReprovisionRecoveryKeyResponseCopyWithImpl<$Res,
+        $Val extends SnapdGenerateReprovisionRecoveryKeyResponse>
+    implements $SnapdGenerateReprovisionRecoveryKeyResponseCopyWith<$Res> {
+  _$SnapdGenerateReprovisionRecoveryKeyResponseCopyWithImpl(
+      this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SnapdGenerateReprovisionRecoveryKeyResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? recoveryKey = null,
+  }) {
+    return _then(_value.copyWith(
+      recoveryKey: null == recoveryKey
+          ? _value.recoveryKey
+          : recoveryKey // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
+  }
+}
+
+/// @nodoc
+abstract class _$$SnapdGenerateReprovisionRecoveryKeyResponseImplCopyWith<$Res>
+    implements $SnapdGenerateReprovisionRecoveryKeyResponseCopyWith<$Res> {
+  factory _$$SnapdGenerateReprovisionRecoveryKeyResponseImplCopyWith(
+          _$SnapdGenerateReprovisionRecoveryKeyResponseImpl value,
+          $Res Function(_$SnapdGenerateReprovisionRecoveryKeyResponseImpl)
+              then) =
+      __$$SnapdGenerateReprovisionRecoveryKeyResponseImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String recoveryKey});
+}
+
+/// @nodoc
+class __$$SnapdGenerateReprovisionRecoveryKeyResponseImplCopyWithImpl<$Res>
+    extends _$SnapdGenerateReprovisionRecoveryKeyResponseCopyWithImpl<$Res,
+        _$SnapdGenerateReprovisionRecoveryKeyResponseImpl>
+    implements
+        _$$SnapdGenerateReprovisionRecoveryKeyResponseImplCopyWith<$Res> {
+  __$$SnapdGenerateReprovisionRecoveryKeyResponseImplCopyWithImpl(
+      _$SnapdGenerateReprovisionRecoveryKeyResponseImpl _value,
+      $Res Function(_$SnapdGenerateReprovisionRecoveryKeyResponseImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of SnapdGenerateReprovisionRecoveryKeyResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? recoveryKey = null,
+  }) {
+    return _then(_$SnapdGenerateReprovisionRecoveryKeyResponseImpl(
+      recoveryKey: null == recoveryKey
+          ? _value.recoveryKey
+          : recoveryKey // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SnapdGenerateReprovisionRecoveryKeyResponseImpl
+    implements _SnapdGenerateReprovisionRecoveryKeyResponse {
+  const _$SnapdGenerateReprovisionRecoveryKeyResponseImpl(
+      {required this.recoveryKey});
+
+  factory _$SnapdGenerateReprovisionRecoveryKeyResponseImpl.fromJson(
+          Map<String, dynamic> json) =>
+      _$$SnapdGenerateReprovisionRecoveryKeyResponseImplFromJson(json);
+
+  @override
+  final String recoveryKey;
+
+  @override
+  String toString() {
+    return 'SnapdGenerateReprovisionRecoveryKeyResponse(recoveryKey: $recoveryKey)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SnapdGenerateReprovisionRecoveryKeyResponseImpl &&
+            (identical(other.recoveryKey, recoveryKey) ||
+                other.recoveryKey == recoveryKey));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, recoveryKey);
+
+  /// Create a copy of SnapdGenerateReprovisionRecoveryKeyResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SnapdGenerateReprovisionRecoveryKeyResponseImplCopyWith<
+          _$SnapdGenerateReprovisionRecoveryKeyResponseImpl>
+      get copyWith =>
+          __$$SnapdGenerateReprovisionRecoveryKeyResponseImplCopyWithImpl<
+                  _$SnapdGenerateReprovisionRecoveryKeyResponseImpl>(
+              this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SnapdGenerateReprovisionRecoveryKeyResponseImplToJson(
+      this,
+    );
+  }
+}
+
+abstract class _SnapdGenerateReprovisionRecoveryKeyResponse
+    implements SnapdGenerateReprovisionRecoveryKeyResponse {
+  const factory _SnapdGenerateReprovisionRecoveryKeyResponse(
+          {required final String recoveryKey}) =
+      _$SnapdGenerateReprovisionRecoveryKeyResponseImpl;
+
+  factory _SnapdGenerateReprovisionRecoveryKeyResponse.fromJson(
+          Map<String, dynamic> json) =
+      _$SnapdGenerateReprovisionRecoveryKeyResponseImpl.fromJson;
+
+  @override
+  String get recoveryKey;
+
+  /// Create a copy of SnapdGenerateReprovisionRecoveryKeyResponse
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SnapdGenerateReprovisionRecoveryKeyResponseImplCopyWith<
+          _$SnapdGenerateReprovisionRecoveryKeyResponseImpl>
       get copyWith => throw _privateConstructorUsedError;
 }
 

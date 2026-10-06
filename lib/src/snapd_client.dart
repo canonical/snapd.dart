@@ -82,6 +82,40 @@ enum SnapdStorageEncryptionStatus {
   indeterminate
 }
 
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdAutoRepairResult {
+  unknown,
+  notInitialized,
+  notAttempted,
+  failedPlatformInit,
+  failedKeyslots,
+  failedEncryptionSupport,
+  success,
+}
+
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdRecommendedRemedialAction {
+  unknown,
+  permitManual,
+  requireReprovision,
+  requirePlatformReset,
+}
+
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdStorageEncryptionSupport {
+  unknown,
+  disabled,
+  available,
+  unavailable,
+  defective,
+}
+
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdStorageEncryptionFeature { unknown, passphraseAuth, pinAuth }
+
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdStorageEncryptionRequirement { unknown, volumesAuth }
+
 class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
   const _SnapdDateTimeConverter();
 
@@ -608,10 +642,72 @@ class SnapdEntropyResponse with _$SnapdEntropyResponse {
 class SnapdStorageEncryptedResponse with _$SnapdStorageEncryptedResponse {
   const factory SnapdStorageEncryptedResponse({
     required SnapdStorageEncryptionStatus status,
+    @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
+    @Default(SnapdAutoRepairResult.unknown)
+    SnapdAutoRepairResult autoRepairResult,
+    @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+    @Default([])
+    List<SnapdRecommendedRemedialAction> recommendations,
   }) = _SnapdStorageEncryptedResponse;
 
   factory SnapdStorageEncryptedResponse.fromJson(Map<String, dynamic> json) =>
       _$SnapdStorageEncryptedResponseFromJson(json);
+}
+
+/// [kind] and [actions] are strings, so new values can be sent back to snapd.
+@freezed
+class SnapdAvailabilityCheckError with _$SnapdAvailabilityCheckError {
+  const factory SnapdAvailabilityCheckError({
+    required String kind,
+    required String message,
+    Map<String, dynamic>? args,
+    @Default([]) List<String> actions,
+  }) = _SnapdAvailabilityCheckError;
+
+  factory SnapdAvailabilityCheckError.fromJson(Map<String, dynamic> json) =>
+      _$SnapdAvailabilityCheckErrorFromJson(json);
+}
+
+@freezed
+class SnapdStorageEncryption with _$SnapdStorageEncryption {
+  const factory SnapdStorageEncryption({
+    @JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
+    required SnapdStorageEncryptionSupport support,
+    String? unavailableReason,
+    @Default([]) List<SnapdAvailabilityCheckError> availabilityCheckErrors,
+    @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
+    @Default([])
+    List<SnapdStorageEncryptionFeature> features,
+    @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
+    @Default([])
+    List<SnapdStorageEncryptionRequirement> requirements,
+  }) = _SnapdStorageEncryption;
+
+  factory SnapdStorageEncryption.fromJson(Map<String, dynamic> json) =>
+      _$SnapdStorageEncryptionFromJson(json);
+}
+
+@freezed
+class SnapdSystemDetails with _$SnapdSystemDetails {
+  const factory SnapdSystemDetails({
+    required SnapdStorageEncryption storageEncryption,
+  }) = _SnapdSystemDetails;
+
+  factory SnapdSystemDetails.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemDetailsFromJson(json);
+}
+
+@freezed
+class SnapdGenerateReprovisionRecoveryKeyResponse
+    with _$SnapdGenerateReprovisionRecoveryKeyResponse {
+  const factory SnapdGenerateReprovisionRecoveryKeyResponse({
+    required String recoveryKey,
+  }) = _SnapdGenerateReprovisionRecoveryKeyResponse;
+
+  factory SnapdGenerateReprovisionRecoveryKeyResponse.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$SnapdGenerateReprovisionRecoveryKeyResponseFromJson(json);
 }
 
 /// Contains proceed-time which is the date and time after which a refresh is
@@ -1471,6 +1567,45 @@ class SnapdClient {
       'keyslots': keySlots.map((slot) => slot.toJson()).toList(),
     };
     return _postAsync('/v2/system-volumes', request);
+  }
+
+  Future<SnapdSystemDetails> getRunningSystemDetails() async {
+    final queryParameters = <String, String>{'running': 'true'};
+    final result = await _getSync<Map<String, dynamic>>(
+      '/v2/systems',
+      queryParameters,
+    );
+    return SnapdSystemDetails.fromJson(result);
+  }
+
+  /// Call [getRunningSystemDetails] first.
+  Future<SnapdSystemDetails> fixEncryptionSupport(
+    String fixAction, {
+    Map<String, dynamic>? args,
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'fix-encryption-support',
+      'fix-action': fixAction,
+      // snapd rejects empty args.
+      if (args != null && args.isNotEmpty) 'args': args,
+    };
+    final result =
+        await _postSync<Map<String, dynamic>>('/v2/systems', request);
+    return SnapdSystemDetails.fromJson(result);
+  }
+
+  Future<SnapdGenerateReprovisionRecoveryKeyResponse>
+      generateReprovisionRecoveryKey() async {
+    final request = <String, dynamic>{'action': 'generate-recovery-key'};
+    final result =
+        await _postSync<Map<String, dynamic>>('/v2/systems', request);
+    return SnapdGenerateReprovisionRecoveryKeyResponse.fromJson(result);
+  }
+
+  /// Call [getRunningSystemDetails] and [generateReprovisionRecoveryKey] first.
+  Future<String> reprovision() async {
+    final request = <String, dynamic>{'action': 'reprovision'};
+    return _postAsync('/v2/systems', request);
   }
 
   /// Terminates all active connections. If a client remains unclosed, the Dart
