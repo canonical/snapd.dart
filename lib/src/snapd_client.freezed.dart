@@ -8654,9 +8654,10 @@ class __$$SnapdGenerateReprovisionRecoveryKeyResponseImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$SnapdGenerateReprovisionRecoveryKeyResponseImpl
-    implements _SnapdGenerateReprovisionRecoveryKeyResponse {
+    extends _SnapdGenerateReprovisionRecoveryKeyResponse {
   const _$SnapdGenerateReprovisionRecoveryKeyResponseImpl(
-      {required this.recoveryKey});
+      {required this.recoveryKey})
+      : super._();
 
   factory _$SnapdGenerateReprovisionRecoveryKeyResponseImpl.fromJson(
           Map<String, dynamic> json) =>
@@ -8664,11 +8665,6 @@ class _$SnapdGenerateReprovisionRecoveryKeyResponseImpl
 
   @override
   final String recoveryKey;
-
-  @override
-  String toString() {
-    return 'SnapdGenerateReprovisionRecoveryKeyResponse(recoveryKey: $recoveryKey)';
-  }
 
   @override
   bool operator ==(Object other) {
@@ -8704,10 +8700,11 @@ class _$SnapdGenerateReprovisionRecoveryKeyResponseImpl
 }
 
 abstract class _SnapdGenerateReprovisionRecoveryKeyResponse
-    implements SnapdGenerateReprovisionRecoveryKeyResponse {
+    extends SnapdGenerateReprovisionRecoveryKeyResponse {
   const factory _SnapdGenerateReprovisionRecoveryKeyResponse(
           {required final String recoveryKey}) =
       _$SnapdGenerateReprovisionRecoveryKeyResponseImpl;
+  const _SnapdGenerateReprovisionRecoveryKeyResponse._() : super._();
 
   factory _SnapdGenerateReprovisionRecoveryKeyResponse.fromJson(
           Map<String, dynamic> json) =

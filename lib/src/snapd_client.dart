@@ -704,10 +704,16 @@ class SnapdGenerateReprovisionRecoveryKeyResponse
     required String recoveryKey,
   }) = _SnapdGenerateReprovisionRecoveryKeyResponse;
 
+  const SnapdGenerateReprovisionRecoveryKeyResponse._();
+
   factory SnapdGenerateReprovisionRecoveryKeyResponse.fromJson(
     Map<String, dynamic> json,
   ) =>
       _$SnapdGenerateReprovisionRecoveryKeyResponseFromJson(json);
+
+  @override
+  String toString() =>
+      'SnapdGenerateReprovisionRecoveryKeyResponse(recoveryKey: <redacted>)';
 }
 
 /// Contains proceed-time which is the date and time after which a refresh is
