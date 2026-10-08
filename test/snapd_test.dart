@@ -2004,12 +2004,7 @@ void main() {
       (
         name: 'not reported',
         autoRepairResult: null,
-        expected: SnapdAutoRepairResult.unknown,
-      ),
-      (
-        name: 'from a newer snapd',
-        autoRepairResult: 'future-result',
-        expected: SnapdAutoRepairResult.unknown,
+        expected: null,
       ),
     ]) {
       test(testCase.name, () async {
@@ -2047,11 +2042,6 @@ void main() {
         name: 'not reported',
         recommendations: null,
         expected: <SnapdRecommendedRemedialAction>[],
-      ),
-      (
-        name: 'from a newer snapd',
-        recommendations: ['future-action'],
-        expected: [SnapdRecommendedRemedialAction.unknown],
       ),
     ]) {
       test(testCase.name, () async {
@@ -4784,7 +4774,7 @@ void main() {
     );
   });
 
-  group('get running system details', () {
+  group('get system', () {
     test('with errors', () async {
       final snapd = MockSnapdServer(
         storageEncryption: {
@@ -4799,7 +4789,7 @@ void main() {
               'actions': ['reboot-to-fw-settings'],
             },
           ],
-          'features': ['passphrase-auth', 'pin-auth', 'future-feature'],
+          'features': ['passphrase-auth', 'pin-auth'],
           'requirements': ['volumes-auth'],
         },
       );
@@ -4813,27 +4803,26 @@ void main() {
         client.close();
       });
 
-      final details = await client.getRunningSystemDetails();
+      final details = await client.getSystem();
       expect(
         details,
         equals(
-          const SnapdSystemDetails(
+          const SnapdSystemResponse(
             storageEncryption: SnapdStorageEncryption(
               support: SnapdStorageEncryptionSupport.unavailable,
               unavailableReason:
                   'secure boot is enabled but not in deployed mode',
               availabilityCheckErrors: [
                 SnapdAvailabilityCheckError(
-                  kind: 'invalid-secure-boot-mode',
+                  kind: SnapdAvailabilityCheckErrorKind.invalidSecureBootMode,
                   message: 'secure boot is enabled but not in deployed mode',
                   args: {'enabled': true, 'mode': 'user'},
-                  actions: ['reboot-to-fw-settings'],
+                  actions: [SnapdFixAction.rebootToFwSettings],
                 ),
               ],
               features: [
                 SnapdStorageEncryptionFeature.passphraseAuth,
                 SnapdStorageEncryptionFeature.pinAuth,
-                SnapdStorageEncryptionFeature.unknown,
               ],
               requirements: [SnapdStorageEncryptionRequirement.volumesAuth],
             ),
@@ -4857,11 +4846,11 @@ void main() {
         client.close();
       });
 
-      final details = await client.getRunningSystemDetails();
+      final details = await client.getSystem();
       expect(
         details,
         equals(
-          const SnapdSystemDetails(
+          const SnapdSystemResponse(
             storageEncryption: SnapdStorageEncryption(
               support: SnapdStorageEncryptionSupport.disabled,
             ),
@@ -4875,23 +4864,29 @@ void main() {
     for (final testCase in [
       (
         name: 'with action',
-        fixAction: 'enable-tpm-via-firmware',
+        fixAction: SnapdFixAction.enableTpmViaFirmware,
         args: null,
-        remaining: ['no-hardware-root-of-trust', 'addon-drivers-present'],
+        remaining: [
+          SnapdAvailabilityCheckErrorKind.noHardwareRootOfTrust,
+          SnapdAvailabilityCheckErrorKind.addonDriversPresent,
+        ],
       ),
       (
         name: 'with args',
-        fixAction: 'proceed',
+        fixAction: SnapdFixAction.proceed,
         args: <String, dynamic>{
           'error-kinds': ['addon-drivers-present'],
         },
-        remaining: ['tpm-device-disabled', 'no-hardware-root-of-trust'],
+        remaining: [
+          SnapdAvailabilityCheckErrorKind.tpmDeviceDisabled,
+          SnapdAvailabilityCheckErrorKind.noHardwareRootOfTrust,
+        ],
       ),
       (
         name: 'with empty args',
-        fixAction: 'proceed',
+        fixAction: SnapdFixAction.proceed,
         args: <String, dynamic>{},
-        remaining: ['tpm-device-disabled'],
+        remaining: [SnapdAvailabilityCheckErrorKind.tpmDeviceDisabled],
       ),
     ]) {
       test(testCase.name, () async {
@@ -4959,6 +4954,7 @@ void main() {
         recoveryKey: '54321-54321-54321-54321-54321-54321-54321-54321',
       ),
     );
+    expect(response.toString(), isNot(contains(response.recoveryKey)));
   });
 
   test('reprovision', () async {

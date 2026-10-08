@@ -745,13 +745,10 @@ _$SnapdStorageEncryptedResponseImpl
           status: $enumDecode(
               _$SnapdStorageEncryptionStatusEnumMap, json['status']),
           autoRepairResult: $enumDecodeNullable(
-                  _$SnapdAutoRepairResultEnumMap, json['auto-repair-result'],
-                  unknownValue: SnapdAutoRepairResult.unknown) ??
-              SnapdAutoRepairResult.unknown,
+              _$SnapdAutoRepairResultEnumMap, json['auto-repair-result']),
           recommendations: (json['recommendations'] as List<dynamic>?)
-                  ?.map((e) => $enumDecode(
-                      _$SnapdRecommendedRemedialActionEnumMap, e,
-                      unknownValue: SnapdRecommendedRemedialAction.unknown))
+                  ?.map((e) =>
+                      $enumDecode(_$SnapdRecommendedRemedialActionEnumMap, e))
                   .toList() ??
               const [],
         );
@@ -761,7 +758,7 @@ Map<String, dynamic> _$$SnapdStorageEncryptedResponseImplToJson(
     <String, dynamic>{
       'status': _$SnapdStorageEncryptionStatusEnumMap[instance.status]!,
       'auto-repair-result':
-          _$SnapdAutoRepairResultEnumMap[instance.autoRepairResult]!,
+          _$SnapdAutoRepairResultEnumMap[instance.autoRepairResult],
       'recommendations': instance.recommendations
           .map((e) => _$SnapdRecommendedRemedialActionEnumMap[e]!)
           .toList(),
@@ -777,7 +774,6 @@ const _$SnapdStorageEncryptionStatusEnumMap = {
 };
 
 const _$SnapdAutoRepairResultEnumMap = {
-  SnapdAutoRepairResult.unknown: 'unknown',
   SnapdAutoRepairResult.notInitialized: 'not-initialized',
   SnapdAutoRepairResult.notAttempted: 'not-attempted',
   SnapdAutoRepairResult.failedPlatformInit: 'failed-platform-init',
@@ -787,7 +783,6 @@ const _$SnapdAutoRepairResultEnumMap = {
 };
 
 const _$SnapdRecommendedRemedialActionEnumMap = {
-  SnapdRecommendedRemedialAction.unknown: 'unknown',
   SnapdRecommendedRemedialAction.permitManual: 'permit-manual',
   SnapdRecommendedRemedialAction.requireReprovision: 'require-reprovision',
   SnapdRecommendedRemedialAction.requirePlatformReset: 'require-platform-reset',
@@ -796,13 +791,13 @@ const _$SnapdRecommendedRemedialActionEnumMap = {
 _$SnapdAvailabilityCheckErrorImpl _$$SnapdAvailabilityCheckErrorImplFromJson(
         Map json) =>
     _$SnapdAvailabilityCheckErrorImpl(
-      kind: json['kind'] as String,
+      kind: $enumDecode(_$SnapdAvailabilityCheckErrorKindEnumMap, json['kind']),
       message: json['message'] as String,
       args: (json['args'] as Map?)?.map(
         (k, e) => MapEntry(k as String, e),
       ),
       actions: (json['actions'] as List<dynamic>?)
-              ?.map((e) => e as String)
+              ?.map((e) => $enumDecode(_$SnapdFixActionEnumMap, e))
               .toList() ??
           const [],
     );
@@ -810,17 +805,77 @@ _$SnapdAvailabilityCheckErrorImpl _$$SnapdAvailabilityCheckErrorImplFromJson(
 Map<String, dynamic> _$$SnapdAvailabilityCheckErrorImplToJson(
         _$SnapdAvailabilityCheckErrorImpl instance) =>
     <String, dynamic>{
-      'kind': instance.kind,
+      'kind': _$SnapdAvailabilityCheckErrorKindEnumMap[instance.kind]!,
       'message': instance.message,
       'args': instance.args,
-      'actions': instance.actions,
+      'actions':
+          instance.actions.map((e) => _$SnapdFixActionEnumMap[e]!).toList(),
     };
+
+const _$SnapdAvailabilityCheckErrorKindEnumMap = {
+  SnapdAvailabilityCheckErrorKind.internalError: 'internal-error',
+  SnapdAvailabilityCheckErrorKind.shutdownRequired: 'shutdown-required',
+  SnapdAvailabilityCheckErrorKind.rebootRequired: 'reboot-required',
+  SnapdAvailabilityCheckErrorKind.unexpectedAction: 'unexpected-action',
+  SnapdAvailabilityCheckErrorKind.missingArgument: 'missing-argument',
+  SnapdAvailabilityCheckErrorKind.invalidArgument: 'invalid-argument',
+  SnapdAvailabilityCheckErrorKind.actionFailed: 'action-failed',
+  SnapdAvailabilityCheckErrorKind.runningInVm: 'running-in-vm',
+  SnapdAvailabilityCheckErrorKind.systemNotEfi: 'system-not-efi',
+  SnapdAvailabilityCheckErrorKind.efiVariableAccess: 'efi-variable-access',
+  SnapdAvailabilityCheckErrorKind.noSuitableTpm2Device:
+      'no-suitable-tpm2-device',
+  SnapdAvailabilityCheckErrorKind.tpmDeviceFailure: 'tpm-device-failure',
+  SnapdAvailabilityCheckErrorKind.tpmDeviceDisabled: 'tpm-device-disabled',
+  SnapdAvailabilityCheckErrorKind.tpmHierarchiesOwned: 'tpm-hierarchies-owned',
+  SnapdAvailabilityCheckErrorKind.tpmDeviceLockoutLockedOut:
+      'tpm-device-lockout-locked-out',
+  SnapdAvailabilityCheckErrorKind.insufficientTpmStorage:
+      'insufficient-tpm-storage',
+  SnapdAvailabilityCheckErrorKind.noSuitablePcrBank: 'no-suitable-pcr-bank',
+  SnapdAvailabilityCheckErrorKind.measuredBoot: 'measured-boot',
+  SnapdAvailabilityCheckErrorKind.tpmCommandFailed: 'tpm-command-failed',
+  SnapdAvailabilityCheckErrorKind.invalidTpmResponse: 'invalid-tpm-response',
+  SnapdAvailabilityCheckErrorKind.tpmCommunication: 'tpm-communication',
+  SnapdAvailabilityCheckErrorKind.unsupportedPlatform: 'unsupported-platform',
+  SnapdAvailabilityCheckErrorKind.insufficientDmaProtection:
+      'insufficient-dma-protection',
+  SnapdAvailabilityCheckErrorKind.noKernelIommu: 'no-kernel-iommu',
+  SnapdAvailabilityCheckErrorKind.hostSecurity: 'host-security',
+  SnapdAvailabilityCheckErrorKind.tpmPcrUnusable: 'tpm-pcr-unusable',
+  SnapdAvailabilityCheckErrorKind.addonDriversPresent: 'addon-drivers-present',
+  SnapdAvailabilityCheckErrorKind.sysPrepApplicationsPresent:
+      'sys-prep-applications-present',
+  SnapdAvailabilityCheckErrorKind.absolutePresent: 'absolute-present',
+  SnapdAvailabilityCheckErrorKind.invalidSecureBootMode:
+      'invalid-secure-boot-mode',
+  SnapdAvailabilityCheckErrorKind.weakSecureBootAlgorithmsDetected:
+      'weak-secure-boot-algorithms-detected',
+  SnapdAvailabilityCheckErrorKind.preOsSecureBootAuthByEnrolledDigests:
+      'pre-os-secure-boot-auth-by-enrolled-digests',
+  SnapdAvailabilityCheckErrorKind.noHardwareRootOfTrust:
+      'no-hardware-root-of-trust',
+};
+
+const _$SnapdFixActionEnumMap = {
+  SnapdFixAction.reboot: 'reboot',
+  SnapdFixAction.shutdown: 'shutdown',
+  SnapdFixAction.rebootToFwSettings: 'reboot-to-fw-settings',
+  SnapdFixAction.contactOem: 'contact-oem',
+  SnapdFixAction.contactOsVendor: 'contact-os-vendor',
+  SnapdFixAction.enableTpmViaFirmware: 'enable-tpm-via-firmware',
+  SnapdFixAction.enableAndClearTpmViaFirmware:
+      'enable-and-clear-tpm-via-firmware',
+  SnapdFixAction.clearTpmViaFirmware: 'clear-tpm-via-firmware',
+  SnapdFixAction.clearTpmSimple: 'clear-tpm-simple',
+  SnapdFixAction.clearTpm: 'clear-tpm',
+  SnapdFixAction.proceed: 'proceed',
+};
 
 _$SnapdStorageEncryptionImpl _$$SnapdStorageEncryptionImplFromJson(Map json) =>
     _$SnapdStorageEncryptionImpl(
-      support: $enumDecode(
-          _$SnapdStorageEncryptionSupportEnumMap, json['support'],
-          unknownValue: SnapdStorageEncryptionSupport.unknown),
+      support:
+          $enumDecode(_$SnapdStorageEncryptionSupportEnumMap, json['support']),
       unavailableReason: json['unavailable-reason'] as String?,
       availabilityCheckErrors:
           (json['availability-check-errors'] as List<dynamic>?)
@@ -829,15 +884,13 @@ _$SnapdStorageEncryptionImpl _$$SnapdStorageEncryptionImplFromJson(Map json) =>
                   .toList() ??
               const [],
       features: (json['features'] as List<dynamic>?)
-              ?.map((e) => $enumDecode(
-                  _$SnapdStorageEncryptionFeatureEnumMap, e,
-                  unknownValue: SnapdStorageEncryptionFeature.unknown))
+              ?.map(
+                  (e) => $enumDecode(_$SnapdStorageEncryptionFeatureEnumMap, e))
               .toList() ??
           const [],
       requirements: (json['requirements'] as List<dynamic>?)
-              ?.map((e) => $enumDecode(
-                  _$SnapdStorageEncryptionRequirementEnumMap, e,
-                  unknownValue: SnapdStorageEncryptionRequirement.unknown))
+              ?.map((e) =>
+                  $enumDecode(_$SnapdStorageEncryptionRequirementEnumMap, e))
               .toList() ??
           const [],
     );
@@ -858,7 +911,6 @@ Map<String, dynamic> _$$SnapdStorageEncryptionImplToJson(
     };
 
 const _$SnapdStorageEncryptionSupportEnumMap = {
-  SnapdStorageEncryptionSupport.unknown: 'unknown',
   SnapdStorageEncryptionSupport.disabled: 'disabled',
   SnapdStorageEncryptionSupport.available: 'available',
   SnapdStorageEncryptionSupport.unavailable: 'unavailable',
@@ -866,24 +918,22 @@ const _$SnapdStorageEncryptionSupportEnumMap = {
 };
 
 const _$SnapdStorageEncryptionFeatureEnumMap = {
-  SnapdStorageEncryptionFeature.unknown: 'unknown',
   SnapdStorageEncryptionFeature.passphraseAuth: 'passphrase-auth',
   SnapdStorageEncryptionFeature.pinAuth: 'pin-auth',
 };
 
 const _$SnapdStorageEncryptionRequirementEnumMap = {
-  SnapdStorageEncryptionRequirement.unknown: 'unknown',
   SnapdStorageEncryptionRequirement.volumesAuth: 'volumes-auth',
 };
 
-_$SnapdSystemDetailsImpl _$$SnapdSystemDetailsImplFromJson(Map json) =>
-    _$SnapdSystemDetailsImpl(
+_$SnapdSystemResponseImpl _$$SnapdSystemResponseImplFromJson(Map json) =>
+    _$SnapdSystemResponseImpl(
       storageEncryption: SnapdStorageEncryption.fromJson(
           Map<String, dynamic>.from(json['storage-encryption'] as Map)),
     );
 
-Map<String, dynamic> _$$SnapdSystemDetailsImplToJson(
-        _$SnapdSystemDetailsImpl instance) =>
+Map<String, dynamic> _$$SnapdSystemResponseImplToJson(
+        _$SnapdSystemResponseImpl instance) =>
     <String, dynamic>{
       'storage-encryption': instance.storageEncryption.toJson(),
     };

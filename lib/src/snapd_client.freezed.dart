@@ -7615,10 +7615,8 @@ SnapdStorageEncryptedResponse _$SnapdStorageEncryptedResponseFromJson(
 /// @nodoc
 mixin _$SnapdStorageEncryptedResponse {
   SnapdStorageEncryptionStatus get status => throw _privateConstructorUsedError;
-  @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
-  SnapdAutoRepairResult get autoRepairResult =>
+  SnapdAutoRepairResult? get autoRepairResult =>
       throw _privateConstructorUsedError;
-  @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
   List<SnapdRecommendedRemedialAction> get recommendations =>
       throw _privateConstructorUsedError;
 
@@ -7642,9 +7640,7 @@ abstract class $SnapdStorageEncryptedResponseCopyWith<$Res> {
   @useResult
   $Res call(
       {SnapdStorageEncryptionStatus status,
-      @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
-      SnapdAutoRepairResult autoRepairResult,
-      @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+      SnapdAutoRepairResult? autoRepairResult,
       List<SnapdRecommendedRemedialAction> recommendations});
 }
 
@@ -7665,7 +7661,7 @@ class _$SnapdStorageEncryptedResponseCopyWithImpl<$Res,
   @override
   $Res call({
     Object? status = null,
-    Object? autoRepairResult = null,
+    Object? autoRepairResult = freezed,
     Object? recommendations = null,
   }) {
     return _then(_value.copyWith(
@@ -7673,10 +7669,10 @@ class _$SnapdStorageEncryptedResponseCopyWithImpl<$Res,
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as SnapdStorageEncryptionStatus,
-      autoRepairResult: null == autoRepairResult
+      autoRepairResult: freezed == autoRepairResult
           ? _value.autoRepairResult
           : autoRepairResult // ignore: cast_nullable_to_non_nullable
-              as SnapdAutoRepairResult,
+              as SnapdAutoRepairResult?,
       recommendations: null == recommendations
           ? _value.recommendations
           : recommendations // ignore: cast_nullable_to_non_nullable
@@ -7696,9 +7692,7 @@ abstract class _$$SnapdStorageEncryptedResponseImplCopyWith<$Res>
   @useResult
   $Res call(
       {SnapdStorageEncryptionStatus status,
-      @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
-      SnapdAutoRepairResult autoRepairResult,
-      @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+      SnapdAutoRepairResult? autoRepairResult,
       List<SnapdRecommendedRemedialAction> recommendations});
 }
 
@@ -7718,7 +7712,7 @@ class __$$SnapdStorageEncryptedResponseImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? status = null,
-    Object? autoRepairResult = null,
+    Object? autoRepairResult = freezed,
     Object? recommendations = null,
   }) {
     return _then(_$SnapdStorageEncryptedResponseImpl(
@@ -7726,10 +7720,10 @@ class __$$SnapdStorageEncryptedResponseImplCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as SnapdStorageEncryptionStatus,
-      autoRepairResult: null == autoRepairResult
+      autoRepairResult: freezed == autoRepairResult
           ? _value.autoRepairResult
           : autoRepairResult // ignore: cast_nullable_to_non_nullable
-              as SnapdAutoRepairResult,
+              as SnapdAutoRepairResult?,
       recommendations: null == recommendations
           ? _value._recommendations
           : recommendations // ignore: cast_nullable_to_non_nullable
@@ -7744,9 +7738,7 @@ class _$SnapdStorageEncryptedResponseImpl
     implements _SnapdStorageEncryptedResponse {
   const _$SnapdStorageEncryptedResponseImpl(
       {required this.status,
-      @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
-      this.autoRepairResult = SnapdAutoRepairResult.unknown,
-      @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+      this.autoRepairResult,
       final List<SnapdRecommendedRemedialAction> recommendations = const []})
       : _recommendations = recommendations;
 
@@ -7757,11 +7749,10 @@ class _$SnapdStorageEncryptedResponseImpl
   @override
   final SnapdStorageEncryptionStatus status;
   @override
-  @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
-  final SnapdAutoRepairResult autoRepairResult;
+  final SnapdAutoRepairResult? autoRepairResult;
   final List<SnapdRecommendedRemedialAction> _recommendations;
   @override
-  @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+  @JsonKey()
   List<SnapdRecommendedRemedialAction> get recommendations {
     if (_recommendations is EqualUnmodifiableListView) return _recommendations;
     // ignore: implicit_dynamic_type
@@ -7812,9 +7803,7 @@ abstract class _SnapdStorageEncryptedResponse
     implements SnapdStorageEncryptedResponse {
   const factory _SnapdStorageEncryptedResponse(
           {required final SnapdStorageEncryptionStatus status,
-          @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
-          final SnapdAutoRepairResult autoRepairResult,
-          @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
+          final SnapdAutoRepairResult? autoRepairResult,
           final List<SnapdRecommendedRemedialAction> recommendations}) =
       _$SnapdStorageEncryptedResponseImpl;
 
@@ -7824,10 +7813,8 @@ abstract class _SnapdStorageEncryptedResponse
   @override
   SnapdStorageEncryptionStatus get status;
   @override
-  @JsonKey(unknownEnumValue: SnapdAutoRepairResult.unknown)
-  SnapdAutoRepairResult get autoRepairResult;
+  SnapdAutoRepairResult? get autoRepairResult;
   @override
-  @JsonKey(unknownEnumValue: SnapdRecommendedRemedialAction.unknown)
   List<SnapdRecommendedRemedialAction> get recommendations;
 
   /// Create a copy of SnapdStorageEncryptedResponse
@@ -7846,10 +7833,11 @@ SnapdAvailabilityCheckError _$SnapdAvailabilityCheckErrorFromJson(
 
 /// @nodoc
 mixin _$SnapdAvailabilityCheckError {
-  String get kind => throw _privateConstructorUsedError;
+  SnapdAvailabilityCheckErrorKind get kind =>
+      throw _privateConstructorUsedError;
   String get message => throw _privateConstructorUsedError;
   Map<String, dynamic>? get args => throw _privateConstructorUsedError;
-  List<String> get actions => throw _privateConstructorUsedError;
+  List<SnapdFixAction> get actions => throw _privateConstructorUsedError;
 
   /// Serializes this SnapdAvailabilityCheckError to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -7870,10 +7858,10 @@ abstract class $SnapdAvailabilityCheckErrorCopyWith<$Res> {
           SnapdAvailabilityCheckError>;
   @useResult
   $Res call(
-      {String kind,
+      {SnapdAvailabilityCheckErrorKind kind,
       String message,
       Map<String, dynamic>? args,
-      List<String> actions});
+      List<SnapdFixAction> actions});
 }
 
 /// @nodoc
@@ -7901,7 +7889,7 @@ class _$SnapdAvailabilityCheckErrorCopyWithImpl<$Res,
       kind: null == kind
           ? _value.kind
           : kind // ignore: cast_nullable_to_non_nullable
-              as String,
+              as SnapdAvailabilityCheckErrorKind,
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -7913,7 +7901,7 @@ class _$SnapdAvailabilityCheckErrorCopyWithImpl<$Res,
       actions: null == actions
           ? _value.actions
           : actions // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<SnapdFixAction>,
     ) as $Val);
   }
 }
@@ -7928,10 +7916,10 @@ abstract class _$$SnapdAvailabilityCheckErrorImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {String kind,
+      {SnapdAvailabilityCheckErrorKind kind,
       String message,
       Map<String, dynamic>? args,
-      List<String> actions});
+      List<SnapdFixAction> actions});
 }
 
 /// @nodoc
@@ -7958,7 +7946,7 @@ class __$$SnapdAvailabilityCheckErrorImplCopyWithImpl<$Res>
       kind: null == kind
           ? _value.kind
           : kind // ignore: cast_nullable_to_non_nullable
-              as String,
+              as SnapdAvailabilityCheckErrorKind,
       message: null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -7970,7 +7958,7 @@ class __$$SnapdAvailabilityCheckErrorImplCopyWithImpl<$Res>
       actions: null == actions
           ? _value._actions
           : actions // ignore: cast_nullable_to_non_nullable
-              as List<String>,
+              as List<SnapdFixAction>,
     ));
   }
 }
@@ -7983,7 +7971,7 @@ class _$SnapdAvailabilityCheckErrorImpl
       {required this.kind,
       required this.message,
       final Map<String, dynamic>? args,
-      final List<String> actions = const []})
+      final List<SnapdFixAction> actions = const []})
       : _args = args,
         _actions = actions;
 
@@ -7992,7 +7980,7 @@ class _$SnapdAvailabilityCheckErrorImpl
       _$$SnapdAvailabilityCheckErrorImplFromJson(json);
 
   @override
-  final String kind;
+  final SnapdAvailabilityCheckErrorKind kind;
   @override
   final String message;
   final Map<String, dynamic>? _args;
@@ -8005,10 +7993,10 @@ class _$SnapdAvailabilityCheckErrorImpl
     return EqualUnmodifiableMapView(value);
   }
 
-  final List<String> _actions;
+  final List<SnapdFixAction> _actions;
   @override
   @JsonKey()
-  List<String> get actions {
+  List<SnapdFixAction> get actions {
     if (_actions is EqualUnmodifiableListView) return _actions;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_actions);
@@ -8059,22 +8047,22 @@ class _$SnapdAvailabilityCheckErrorImpl
 abstract class _SnapdAvailabilityCheckError
     implements SnapdAvailabilityCheckError {
   const factory _SnapdAvailabilityCheckError(
-      {required final String kind,
+      {required final SnapdAvailabilityCheckErrorKind kind,
       required final String message,
       final Map<String, dynamic>? args,
-      final List<String> actions}) = _$SnapdAvailabilityCheckErrorImpl;
+      final List<SnapdFixAction> actions}) = _$SnapdAvailabilityCheckErrorImpl;
 
   factory _SnapdAvailabilityCheckError.fromJson(Map<String, dynamic> json) =
       _$SnapdAvailabilityCheckErrorImpl.fromJson;
 
   @override
-  String get kind;
+  SnapdAvailabilityCheckErrorKind get kind;
   @override
   String get message;
   @override
   Map<String, dynamic>? get args;
   @override
-  List<String> get actions;
+  List<SnapdFixAction> get actions;
 
   /// Create a copy of SnapdAvailabilityCheckError
   /// with the given fields replaced by the non-null parameter values.
@@ -8091,16 +8079,13 @@ SnapdStorageEncryption _$SnapdStorageEncryptionFromJson(
 
 /// @nodoc
 mixin _$SnapdStorageEncryption {
-  @JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
   SnapdStorageEncryptionSupport get support =>
       throw _privateConstructorUsedError;
   String? get unavailableReason => throw _privateConstructorUsedError;
   List<SnapdAvailabilityCheckError> get availabilityCheckErrors =>
       throw _privateConstructorUsedError;
-  @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
   List<SnapdStorageEncryptionFeature> get features =>
       throw _privateConstructorUsedError;
-  @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
   List<SnapdStorageEncryptionRequirement> get requirements =>
       throw _privateConstructorUsedError;
 
@@ -8121,13 +8106,10 @@ abstract class $SnapdStorageEncryptionCopyWith<$Res> {
       _$SnapdStorageEncryptionCopyWithImpl<$Res, SnapdStorageEncryption>;
   @useResult
   $Res call(
-      {@JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
-      SnapdStorageEncryptionSupport support,
+      {SnapdStorageEncryptionSupport support,
       String? unavailableReason,
       List<SnapdAvailabilityCheckError> availabilityCheckErrors,
-      @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
       List<SnapdStorageEncryptionFeature> features,
-      @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
       List<SnapdStorageEncryptionRequirement> requirements});
 }
 
@@ -8188,13 +8170,10 @@ abstract class _$$SnapdStorageEncryptionImplCopyWith<$Res>
   @override
   @useResult
   $Res call(
-      {@JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
-      SnapdStorageEncryptionSupport support,
+      {SnapdStorageEncryptionSupport support,
       String? unavailableReason,
       List<SnapdAvailabilityCheckError> availabilityCheckErrors,
-      @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
       List<SnapdStorageEncryptionFeature> features,
-      @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
       List<SnapdStorageEncryptionRequirement> requirements});
 }
 
@@ -8248,14 +8227,11 @@ class __$$SnapdStorageEncryptionImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$SnapdStorageEncryptionImpl implements _SnapdStorageEncryption {
   const _$SnapdStorageEncryptionImpl(
-      {@JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
-      required this.support,
+      {required this.support,
       this.unavailableReason,
       final List<SnapdAvailabilityCheckError> availabilityCheckErrors =
           const [],
-      @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
       final List<SnapdStorageEncryptionFeature> features = const [],
-      @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
       final List<SnapdStorageEncryptionRequirement> requirements = const []})
       : _availabilityCheckErrors = availabilityCheckErrors,
         _features = features,
@@ -8265,7 +8241,6 @@ class _$SnapdStorageEncryptionImpl implements _SnapdStorageEncryption {
       _$$SnapdStorageEncryptionImplFromJson(json);
 
   @override
-  @JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
   final SnapdStorageEncryptionSupport support;
   @override
   final String? unavailableReason;
@@ -8281,7 +8256,7 @@ class _$SnapdStorageEncryptionImpl implements _SnapdStorageEncryption {
 
   final List<SnapdStorageEncryptionFeature> _features;
   @override
-  @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
+  @JsonKey()
   List<SnapdStorageEncryptionFeature> get features {
     if (_features is EqualUnmodifiableListView) return _features;
     // ignore: implicit_dynamic_type
@@ -8290,7 +8265,7 @@ class _$SnapdStorageEncryptionImpl implements _SnapdStorageEncryption {
 
   final List<SnapdStorageEncryptionRequirement> _requirements;
   @override
-  @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
+  @JsonKey()
   List<SnapdStorageEncryptionRequirement> get requirements {
     if (_requirements is EqualUnmodifiableListView) return _requirements;
     // ignore: implicit_dynamic_type
@@ -8346,13 +8321,10 @@ class _$SnapdStorageEncryptionImpl implements _SnapdStorageEncryption {
 
 abstract class _SnapdStorageEncryption implements SnapdStorageEncryption {
   const factory _SnapdStorageEncryption(
-          {@JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
-          required final SnapdStorageEncryptionSupport support,
+          {required final SnapdStorageEncryptionSupport support,
           final String? unavailableReason,
           final List<SnapdAvailabilityCheckError> availabilityCheckErrors,
-          @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
           final List<SnapdStorageEncryptionFeature> features,
-          @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
           final List<SnapdStorageEncryptionRequirement> requirements}) =
       _$SnapdStorageEncryptionImpl;
 
@@ -8360,17 +8332,14 @@ abstract class _SnapdStorageEncryption implements SnapdStorageEncryption {
       _$SnapdStorageEncryptionImpl.fromJson;
 
   @override
-  @JsonKey(unknownEnumValue: SnapdStorageEncryptionSupport.unknown)
   SnapdStorageEncryptionSupport get support;
   @override
   String? get unavailableReason;
   @override
   List<SnapdAvailabilityCheckError> get availabilityCheckErrors;
   @override
-  @JsonKey(unknownEnumValue: SnapdStorageEncryptionFeature.unknown)
   List<SnapdStorageEncryptionFeature> get features;
   @override
-  @JsonKey(unknownEnumValue: SnapdStorageEncryptionRequirement.unknown)
   List<SnapdStorageEncryptionRequirement> get requirements;
 
   /// Create a copy of SnapdStorageEncryption
@@ -8381,30 +8350,30 @@ abstract class _SnapdStorageEncryption implements SnapdStorageEncryption {
       get copyWith => throw _privateConstructorUsedError;
 }
 
-SnapdSystemDetails _$SnapdSystemDetailsFromJson(Map<String, dynamic> json) {
-  return _SnapdSystemDetails.fromJson(json);
+SnapdSystemResponse _$SnapdSystemResponseFromJson(Map<String, dynamic> json) {
+  return _SnapdSystemResponse.fromJson(json);
 }
 
 /// @nodoc
-mixin _$SnapdSystemDetails {
+mixin _$SnapdSystemResponse {
   SnapdStorageEncryption get storageEncryption =>
       throw _privateConstructorUsedError;
 
-  /// Serializes this SnapdSystemDetails to a JSON map.
+  /// Serializes this SnapdSystemResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of SnapdSystemDetails
+  /// Create a copy of SnapdSystemResponse
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $SnapdSystemDetailsCopyWith<SnapdSystemDetails> get copyWith =>
+  $SnapdSystemResponseCopyWith<SnapdSystemResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $SnapdSystemDetailsCopyWith<$Res> {
-  factory $SnapdSystemDetailsCopyWith(
-          SnapdSystemDetails value, $Res Function(SnapdSystemDetails) then) =
-      _$SnapdSystemDetailsCopyWithImpl<$Res, SnapdSystemDetails>;
+abstract class $SnapdSystemResponseCopyWith<$Res> {
+  factory $SnapdSystemResponseCopyWith(
+          SnapdSystemResponse value, $Res Function(SnapdSystemResponse) then) =
+      _$SnapdSystemResponseCopyWithImpl<$Res, SnapdSystemResponse>;
   @useResult
   $Res call({SnapdStorageEncryption storageEncryption});
 
@@ -8412,16 +8381,16 @@ abstract class $SnapdSystemDetailsCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$SnapdSystemDetailsCopyWithImpl<$Res, $Val extends SnapdSystemDetails>
-    implements $SnapdSystemDetailsCopyWith<$Res> {
-  _$SnapdSystemDetailsCopyWithImpl(this._value, this._then);
+class _$SnapdSystemResponseCopyWithImpl<$Res, $Val extends SnapdSystemResponse>
+    implements $SnapdSystemResponseCopyWith<$Res> {
+  _$SnapdSystemResponseCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of SnapdSystemDetails
+  /// Create a copy of SnapdSystemResponse
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -8436,7 +8405,7 @@ class _$SnapdSystemDetailsCopyWithImpl<$Res, $Val extends SnapdSystemDetails>
     ) as $Val);
   }
 
-  /// Create a copy of SnapdSystemDetails
+  /// Create a copy of SnapdSystemResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -8449,11 +8418,11 @@ class _$SnapdSystemDetailsCopyWithImpl<$Res, $Val extends SnapdSystemDetails>
 }
 
 /// @nodoc
-abstract class _$$SnapdSystemDetailsImplCopyWith<$Res>
-    implements $SnapdSystemDetailsCopyWith<$Res> {
-  factory _$$SnapdSystemDetailsImplCopyWith(_$SnapdSystemDetailsImpl value,
-          $Res Function(_$SnapdSystemDetailsImpl) then) =
-      __$$SnapdSystemDetailsImplCopyWithImpl<$Res>;
+abstract class _$$SnapdSystemResponseImplCopyWith<$Res>
+    implements $SnapdSystemResponseCopyWith<$Res> {
+  factory _$$SnapdSystemResponseImplCopyWith(_$SnapdSystemResponseImpl value,
+          $Res Function(_$SnapdSystemResponseImpl) then) =
+      __$$SnapdSystemResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({SnapdStorageEncryption storageEncryption});
@@ -8463,21 +8432,21 @@ abstract class _$$SnapdSystemDetailsImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$SnapdSystemDetailsImplCopyWithImpl<$Res>
-    extends _$SnapdSystemDetailsCopyWithImpl<$Res, _$SnapdSystemDetailsImpl>
-    implements _$$SnapdSystemDetailsImplCopyWith<$Res> {
-  __$$SnapdSystemDetailsImplCopyWithImpl(_$SnapdSystemDetailsImpl _value,
-      $Res Function(_$SnapdSystemDetailsImpl) _then)
+class __$$SnapdSystemResponseImplCopyWithImpl<$Res>
+    extends _$SnapdSystemResponseCopyWithImpl<$Res, _$SnapdSystemResponseImpl>
+    implements _$$SnapdSystemResponseImplCopyWith<$Res> {
+  __$$SnapdSystemResponseImplCopyWithImpl(_$SnapdSystemResponseImpl _value,
+      $Res Function(_$SnapdSystemResponseImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of SnapdSystemDetails
+  /// Create a copy of SnapdSystemResponse
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? storageEncryption = null,
   }) {
-    return _then(_$SnapdSystemDetailsImpl(
+    return _then(_$SnapdSystemResponseImpl(
       storageEncryption: null == storageEncryption
           ? _value.storageEncryption
           : storageEncryption // ignore: cast_nullable_to_non_nullable
@@ -8488,25 +8457,25 @@ class __$$SnapdSystemDetailsImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$SnapdSystemDetailsImpl implements _SnapdSystemDetails {
-  const _$SnapdSystemDetailsImpl({required this.storageEncryption});
+class _$SnapdSystemResponseImpl implements _SnapdSystemResponse {
+  const _$SnapdSystemResponseImpl({required this.storageEncryption});
 
-  factory _$SnapdSystemDetailsImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SnapdSystemDetailsImplFromJson(json);
+  factory _$SnapdSystemResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SnapdSystemResponseImplFromJson(json);
 
   @override
   final SnapdStorageEncryption storageEncryption;
 
   @override
   String toString() {
-    return 'SnapdSystemDetails(storageEncryption: $storageEncryption)';
+    return 'SnapdSystemResponse(storageEncryption: $storageEncryption)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SnapdSystemDetailsImpl &&
+            other is _$SnapdSystemResponseImpl &&
             (identical(other.storageEncryption, storageEncryption) ||
                 other.storageEncryption == storageEncryption));
   }
@@ -8515,39 +8484,39 @@ class _$SnapdSystemDetailsImpl implements _SnapdSystemDetails {
   @override
   int get hashCode => Object.hash(runtimeType, storageEncryption);
 
-  /// Create a copy of SnapdSystemDetails
+  /// Create a copy of SnapdSystemResponse
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$SnapdSystemDetailsImplCopyWith<_$SnapdSystemDetailsImpl> get copyWith =>
-      __$$SnapdSystemDetailsImplCopyWithImpl<_$SnapdSystemDetailsImpl>(
+  _$$SnapdSystemResponseImplCopyWith<_$SnapdSystemResponseImpl> get copyWith =>
+      __$$SnapdSystemResponseImplCopyWithImpl<_$SnapdSystemResponseImpl>(
           this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SnapdSystemDetailsImplToJson(
+    return _$$SnapdSystemResponseImplToJson(
       this,
     );
   }
 }
 
-abstract class _SnapdSystemDetails implements SnapdSystemDetails {
-  const factory _SnapdSystemDetails(
+abstract class _SnapdSystemResponse implements SnapdSystemResponse {
+  const factory _SnapdSystemResponse(
           {required final SnapdStorageEncryption storageEncryption}) =
-      _$SnapdSystemDetailsImpl;
+      _$SnapdSystemResponseImpl;
 
-  factory _SnapdSystemDetails.fromJson(Map<String, dynamic> json) =
-      _$SnapdSystemDetailsImpl.fromJson;
+  factory _SnapdSystemResponse.fromJson(Map<String, dynamic> json) =
+      _$SnapdSystemResponseImpl.fromJson;
 
   @override
   SnapdStorageEncryption get storageEncryption;
 
-  /// Create a copy of SnapdSystemDetails
+  /// Create a copy of SnapdSystemResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SnapdSystemDetailsImplCopyWith<_$SnapdSystemDetailsImpl> get copyWith =>
+  _$$SnapdSystemResponseImplCopyWith<_$SnapdSystemResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
