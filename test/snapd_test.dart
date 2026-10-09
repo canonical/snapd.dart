@@ -4807,7 +4807,7 @@ void main() {
       expect(
         details,
         equals(
-          const SnapdSystemResponse(
+          const SnapdSystemsResponse(
             storageEncryption: SnapdStorageEncryption(
               support: SnapdStorageEncryptionSupport.unavailable,
               unavailableReason:
@@ -4850,7 +4850,7 @@ void main() {
       expect(
         details,
         equals(
-          const SnapdSystemResponse(
+          const SnapdSystemsResponse(
             storageEncryption: SnapdStorageEncryption(
               support: SnapdStorageEncryptionSupport.disabled,
             ),

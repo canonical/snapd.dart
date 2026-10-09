@@ -739,13 +739,13 @@ class SnapdStorageEncryption with _$SnapdStorageEncryption {
 
 /// Response received when getting the running system's details.
 @freezed
-class SnapdSystemResponse with _$SnapdSystemResponse {
-  const factory SnapdSystemResponse({
+class SnapdSystemsResponse with _$SnapdSystemsResponse {
+  const factory SnapdSystemsResponse({
     required SnapdStorageEncryption storageEncryption,
-  }) = _SnapdSystemResponse;
+  }) = _SnapdSystemsResponse;
 
-  factory SnapdSystemResponse.fromJson(Map<String, dynamic> json) =>
-      _$SnapdSystemResponseFromJson(json);
+  factory SnapdSystemsResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemsResponseFromJson(json);
 }
 
 /// The recovery key generated for [SnapdClient.reprovision].
@@ -1628,20 +1628,20 @@ class SnapdClient {
   }
 
   /// Gets the details of the running system.
-  Future<SnapdSystemResponse> getSystems() async {
+  Future<SnapdSystemsResponse> getSystems() async {
     final queryParameters = <String, String>{'running': 'true'};
     final result = await _getSync<Map<String, dynamic>>(
       '/v2/systems',
       queryParameters,
     );
-    return SnapdSystemResponse.fromJson(result);
+    return SnapdSystemsResponse.fromJson(result);
   }
 
   /// Performs [fixAction], with optional [args], to fix the errors reported by
-  /// [getSystem], and returns the updated system details.
+  /// [getSystems], and returns the updated system details.
   ///
-  /// snapd reuses the checks of the last [getSystem] call, so call it first.
-  Future<SnapdSystemResponse> fixEncryptionSupport(
+  /// snapd reuses the checks of the last [getSystems] call, so call it first.
+  Future<SnapdSystemsResponse> fixEncryptionSupport(
     SnapdFixAction fixAction, {
     Map<String, dynamic>? args,
   }) async {
@@ -1653,7 +1653,7 @@ class SnapdClient {
     };
     final result =
         await _postSync<Map<String, dynamic>>('/v2/systems', request);
-    return SnapdSystemResponse.fromJson(result);
+    return SnapdSystemsResponse.fromJson(result);
   }
 
   /// Generates a recovery key for [reprovision].
@@ -1669,7 +1669,7 @@ class SnapdClient {
   }
 
   /// Reprovisions the security device and the encrypted disks, using the
-  /// recovery key from [generateReprovisionRecoveryKey]. Call [getSystem]
+  /// recovery key from [generateReprovisionRecoveryKey]. Call [getSystems]
   /// first, since snapd reuses its checks.
   ///
   /// Returns the change ID for this operation, use [getChange] to get the

@@ -8350,30 +8350,30 @@ abstract class _SnapdStorageEncryption implements SnapdStorageEncryption {
       get copyWith => throw _privateConstructorUsedError;
 }
 
-SnapdSystemResponse _$SnapdSystemResponseFromJson(Map<String, dynamic> json) {
-  return _SnapdSystemResponse.fromJson(json);
+SnapdSystemsResponse _$SnapdSystemsResponseFromJson(Map<String, dynamic> json) {
+  return _SnapdSystemsResponse.fromJson(json);
 }
 
 /// @nodoc
-mixin _$SnapdSystemResponse {
+mixin _$SnapdSystemsResponse {
   SnapdStorageEncryption get storageEncryption =>
       throw _privateConstructorUsedError;
 
-  /// Serializes this SnapdSystemResponse to a JSON map.
+  /// Serializes this SnapdSystemsResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
-  /// Create a copy of SnapdSystemResponse
+  /// Create a copy of SnapdSystemsResponse
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $SnapdSystemResponseCopyWith<SnapdSystemResponse> get copyWith =>
+  $SnapdSystemsResponseCopyWith<SnapdSystemsResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $SnapdSystemResponseCopyWith<$Res> {
-  factory $SnapdSystemResponseCopyWith(
-          SnapdSystemResponse value, $Res Function(SnapdSystemResponse) then) =
-      _$SnapdSystemResponseCopyWithImpl<$Res, SnapdSystemResponse>;
+abstract class $SnapdSystemsResponseCopyWith<$Res> {
+  factory $SnapdSystemsResponseCopyWith(SnapdSystemsResponse value,
+          $Res Function(SnapdSystemsResponse) then) =
+      _$SnapdSystemsResponseCopyWithImpl<$Res, SnapdSystemsResponse>;
   @useResult
   $Res call({SnapdStorageEncryption storageEncryption});
 
@@ -8381,16 +8381,17 @@ abstract class $SnapdSystemResponseCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$SnapdSystemResponseCopyWithImpl<$Res, $Val extends SnapdSystemResponse>
-    implements $SnapdSystemResponseCopyWith<$Res> {
-  _$SnapdSystemResponseCopyWithImpl(this._value, this._then);
+class _$SnapdSystemsResponseCopyWithImpl<$Res,
+        $Val extends SnapdSystemsResponse>
+    implements $SnapdSystemsResponseCopyWith<$Res> {
+  _$SnapdSystemsResponseCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of SnapdSystemResponse
+  /// Create a copy of SnapdSystemsResponse
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
@@ -8405,7 +8406,7 @@ class _$SnapdSystemResponseCopyWithImpl<$Res, $Val extends SnapdSystemResponse>
     ) as $Val);
   }
 
-  /// Create a copy of SnapdSystemResponse
+  /// Create a copy of SnapdSystemsResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
@@ -8418,11 +8419,11 @@ class _$SnapdSystemResponseCopyWithImpl<$Res, $Val extends SnapdSystemResponse>
 }
 
 /// @nodoc
-abstract class _$$SnapdSystemResponseImplCopyWith<$Res>
-    implements $SnapdSystemResponseCopyWith<$Res> {
-  factory _$$SnapdSystemResponseImplCopyWith(_$SnapdSystemResponseImpl value,
-          $Res Function(_$SnapdSystemResponseImpl) then) =
-      __$$SnapdSystemResponseImplCopyWithImpl<$Res>;
+abstract class _$$SnapdSystemsResponseImplCopyWith<$Res>
+    implements $SnapdSystemsResponseCopyWith<$Res> {
+  factory _$$SnapdSystemsResponseImplCopyWith(_$SnapdSystemsResponseImpl value,
+          $Res Function(_$SnapdSystemsResponseImpl) then) =
+      __$$SnapdSystemsResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({SnapdStorageEncryption storageEncryption});
@@ -8432,21 +8433,21 @@ abstract class _$$SnapdSystemResponseImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$SnapdSystemResponseImplCopyWithImpl<$Res>
-    extends _$SnapdSystemResponseCopyWithImpl<$Res, _$SnapdSystemResponseImpl>
-    implements _$$SnapdSystemResponseImplCopyWith<$Res> {
-  __$$SnapdSystemResponseImplCopyWithImpl(_$SnapdSystemResponseImpl _value,
-      $Res Function(_$SnapdSystemResponseImpl) _then)
+class __$$SnapdSystemsResponseImplCopyWithImpl<$Res>
+    extends _$SnapdSystemsResponseCopyWithImpl<$Res, _$SnapdSystemsResponseImpl>
+    implements _$$SnapdSystemsResponseImplCopyWith<$Res> {
+  __$$SnapdSystemsResponseImplCopyWithImpl(_$SnapdSystemsResponseImpl _value,
+      $Res Function(_$SnapdSystemsResponseImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of SnapdSystemResponse
+  /// Create a copy of SnapdSystemsResponse
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? storageEncryption = null,
   }) {
-    return _then(_$SnapdSystemResponseImpl(
+    return _then(_$SnapdSystemsResponseImpl(
       storageEncryption: null == storageEncryption
           ? _value.storageEncryption
           : storageEncryption // ignore: cast_nullable_to_non_nullable
@@ -8457,25 +8458,25 @@ class __$$SnapdSystemResponseImplCopyWithImpl<$Res>
 
 /// @nodoc
 @JsonSerializable()
-class _$SnapdSystemResponseImpl implements _SnapdSystemResponse {
-  const _$SnapdSystemResponseImpl({required this.storageEncryption});
+class _$SnapdSystemsResponseImpl implements _SnapdSystemsResponse {
+  const _$SnapdSystemsResponseImpl({required this.storageEncryption});
 
-  factory _$SnapdSystemResponseImpl.fromJson(Map<String, dynamic> json) =>
-      _$$SnapdSystemResponseImplFromJson(json);
+  factory _$SnapdSystemsResponseImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SnapdSystemsResponseImplFromJson(json);
 
   @override
   final SnapdStorageEncryption storageEncryption;
 
   @override
   String toString() {
-    return 'SnapdSystemResponse(storageEncryption: $storageEncryption)';
+    return 'SnapdSystemsResponse(storageEncryption: $storageEncryption)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$SnapdSystemResponseImpl &&
+            other is _$SnapdSystemsResponseImpl &&
             (identical(other.storageEncryption, storageEncryption) ||
                 other.storageEncryption == storageEncryption));
   }
@@ -8484,40 +8485,41 @@ class _$SnapdSystemResponseImpl implements _SnapdSystemResponse {
   @override
   int get hashCode => Object.hash(runtimeType, storageEncryption);
 
-  /// Create a copy of SnapdSystemResponse
+  /// Create a copy of SnapdSystemsResponse
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$SnapdSystemResponseImplCopyWith<_$SnapdSystemResponseImpl> get copyWith =>
-      __$$SnapdSystemResponseImplCopyWithImpl<_$SnapdSystemResponseImpl>(
-          this, _$identity);
+  _$$SnapdSystemsResponseImplCopyWith<_$SnapdSystemsResponseImpl>
+      get copyWith =>
+          __$$SnapdSystemsResponseImplCopyWithImpl<_$SnapdSystemsResponseImpl>(
+              this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SnapdSystemResponseImplToJson(
+    return _$$SnapdSystemsResponseImplToJson(
       this,
     );
   }
 }
 
-abstract class _SnapdSystemResponse implements SnapdSystemResponse {
-  const factory _SnapdSystemResponse(
+abstract class _SnapdSystemsResponse implements SnapdSystemsResponse {
+  const factory _SnapdSystemsResponse(
           {required final SnapdStorageEncryption storageEncryption}) =
-      _$SnapdSystemResponseImpl;
+      _$SnapdSystemsResponseImpl;
 
-  factory _SnapdSystemResponse.fromJson(Map<String, dynamic> json) =
-      _$SnapdSystemResponseImpl.fromJson;
+  factory _SnapdSystemsResponse.fromJson(Map<String, dynamic> json) =
+      _$SnapdSystemsResponseImpl.fromJson;
 
   @override
   SnapdStorageEncryption get storageEncryption;
 
-  /// Create a copy of SnapdSystemResponse
+  /// Create a copy of SnapdSystemsResponse
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SnapdSystemResponseImplCopyWith<_$SnapdSystemResponseImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  _$$SnapdSystemsResponseImplCopyWith<_$SnapdSystemsResponseImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 SnapdGenerateReprovisionRecoveryKeyResponse

@@ -926,14 +926,14 @@ const _$SnapdStorageEncryptionRequirementEnumMap = {
   SnapdStorageEncryptionRequirement.volumesAuth: 'volumes-auth',
 };
 
-_$SnapdSystemResponseImpl _$$SnapdSystemResponseImplFromJson(Map json) =>
-    _$SnapdSystemResponseImpl(
+_$SnapdSystemsResponseImpl _$$SnapdSystemsResponseImplFromJson(Map json) =>
+    _$SnapdSystemsResponseImpl(
       storageEncryption: SnapdStorageEncryption.fromJson(
           Map<String, dynamic>.from(json['storage-encryption'] as Map)),
     );
 
-Map<String, dynamic> _$$SnapdSystemResponseImplToJson(
-        _$SnapdSystemResponseImpl instance) =>
+Map<String, dynamic> _$$SnapdSystemsResponseImplToJson(
+        _$SnapdSystemsResponseImpl instance) =>
     <String, dynamic>{
       'storage-encryption': instance.storageEncryption.toJson(),
     };
