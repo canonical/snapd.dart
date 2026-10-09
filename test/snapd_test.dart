@@ -4803,7 +4803,7 @@ void main() {
         client.close();
       });
 
-      final details = await client.getSystem();
+      final details = await client.getSystems();
       expect(
         details,
         equals(
@@ -4846,7 +4846,7 @@ void main() {
         client.close();
       });
 
-      final details = await client.getSystem();
+      final details = await client.getSystems();
       expect(
         details,
         equals(
