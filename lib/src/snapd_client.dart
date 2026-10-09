@@ -1628,7 +1628,7 @@ class SnapdClient {
   }
 
   /// Gets the details of the running system.
-  Future<SnapdSystemResponse> getSystem() async {
+  Future<SnapdSystemResponse> getSystems() async {
     final queryParameters = <String, String>{'running': 'true'};
     final result = await _getSync<Map<String, dynamic>>(
       '/v2/systems',
