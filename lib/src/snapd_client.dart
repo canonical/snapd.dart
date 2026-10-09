@@ -82,6 +82,98 @@ enum SnapdStorageEncryptionStatus {
   indeterminate
 }
 
+/// The result of snapd's automatic repair of TPM backed FDE.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdAutoRepairResult {
+  notInitialized,
+  notAttempted,
+  failedPlatformInit,
+  failedKeyslots,
+  failedEncryptionSupport,
+  success,
+}
+
+/// An action snapd recommends to repair TPM backed FDE.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdRecommendedRemedialAction {
+  permitManual,
+  requireReprovision,
+  requirePlatformReset,
+}
+
+/// Storage encryption support on the system.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdStorageEncryptionSupport {
+  disabled,
+  available,
+  unavailable,
+  defective,
+}
+
+/// A storage encryption feature the system supports.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdStorageEncryptionFeature { passphraseAuth, pinAuth }
+
+/// A requirement that must be met to use storage encryption.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdStorageEncryptionRequirement { volumesAuth }
+
+/// The kind of a [SnapdAvailabilityCheckError], as defined by secboot in
+/// efi/preinstall/error_kinds.go.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdAvailabilityCheckErrorKind {
+  internalError,
+  shutdownRequired,
+  rebootRequired,
+  unexpectedAction,
+  missingArgument,
+  invalidArgument,
+  actionFailed,
+  runningInVm,
+  systemNotEfi,
+  efiVariableAccess,
+  noSuitableTpm2Device,
+  tpmDeviceFailure,
+  tpmDeviceDisabled,
+  tpmHierarchiesOwned,
+  tpmDeviceLockoutLockedOut,
+  insufficientTpmStorage,
+  noSuitablePcrBank,
+  measuredBoot,
+  tpmCommandFailed,
+  invalidTpmResponse,
+  tpmCommunication,
+  unsupportedPlatform,
+  insufficientDmaProtection,
+  noKernelIommu,
+  hostSecurity,
+  tpmPcrUnusable,
+  addonDriversPresent,
+  sysPrepApplicationsPresent,
+  absolutePresent,
+  invalidSecureBootMode,
+  weakSecureBootAlgorithmsDetected,
+  preOsSecureBootAuthByEnrolledDigests,
+  noHardwareRootOfTrust,
+}
+
+/// An action that fixes a [SnapdAvailabilityCheckError], as defined by secboot
+/// in efi/preinstall/actions.go.
+@JsonEnum(fieldRename: FieldRename.kebab)
+enum SnapdFixAction {
+  reboot,
+  shutdown,
+  rebootToFwSettings,
+  contactOem,
+  contactOsVendor,
+  enableTpmViaFirmware,
+  enableAndClearTpmViaFirmware,
+  clearTpmViaFirmware,
+  clearTpmSimple,
+  clearTpm,
+  proceed,
+}
+
 class _SnapdDateTimeConverter implements JsonConverter<DateTime, String?> {
   const _SnapdDateTimeConverter();
 
@@ -608,10 +700,72 @@ class SnapdEntropyResponse with _$SnapdEntropyResponse {
 class SnapdStorageEncryptedResponse with _$SnapdStorageEncryptedResponse {
   const factory SnapdStorageEncryptedResponse({
     required SnapdStorageEncryptionStatus status,
+    SnapdAutoRepairResult? autoRepairResult,
+    @Default([]) List<SnapdRecommendedRemedialAction> recommendations,
   }) = _SnapdStorageEncryptedResponse;
 
   factory SnapdStorageEncryptedResponse.fromJson(Map<String, dynamic> json) =>
       _$SnapdStorageEncryptedResponseFromJson(json);
+}
+
+/// An error found when checking whether storage encryption is available.
+@freezed
+class SnapdAvailabilityCheckError with _$SnapdAvailabilityCheckError {
+  const factory SnapdAvailabilityCheckError({
+    required SnapdAvailabilityCheckErrorKind kind,
+    required String message,
+    Map<String, dynamic>? args,
+    @Default([]) List<SnapdFixAction> actions,
+  }) = _SnapdAvailabilityCheckError;
+
+  factory SnapdAvailabilityCheckError.fromJson(Map<String, dynamic> json) =>
+      _$SnapdAvailabilityCheckErrorFromJson(json);
+}
+
+/// Storage encryption support of a system.
+@freezed
+class SnapdStorageEncryption with _$SnapdStorageEncryption {
+  const factory SnapdStorageEncryption({
+    required SnapdStorageEncryptionSupport support,
+    String? unavailableReason,
+    @Default([]) List<SnapdAvailabilityCheckError> availabilityCheckErrors,
+    @Default([]) List<SnapdStorageEncryptionFeature> features,
+    @Default([]) List<SnapdStorageEncryptionRequirement> requirements,
+  }) = _SnapdStorageEncryption;
+
+  factory SnapdStorageEncryption.fromJson(Map<String, dynamic> json) =>
+      _$SnapdStorageEncryptionFromJson(json);
+}
+
+/// Response received when getting the running system's details.
+@freezed
+class SnapdSystemsResponse with _$SnapdSystemsResponse {
+  const factory SnapdSystemsResponse({
+    required SnapdStorageEncryption storageEncryption,
+  }) = _SnapdSystemsResponse;
+
+  factory SnapdSystemsResponse.fromJson(Map<String, dynamic> json) =>
+      _$SnapdSystemsResponseFromJson(json);
+}
+
+/// The recovery key generated for [SnapdClient.reprovision].
+@freezed
+class SnapdGenerateReprovisionRecoveryKeyResponse
+    with _$SnapdGenerateReprovisionRecoveryKeyResponse {
+  const factory SnapdGenerateReprovisionRecoveryKeyResponse({
+    required String recoveryKey,
+  }) = _SnapdGenerateReprovisionRecoveryKeyResponse;
+
+  const SnapdGenerateReprovisionRecoveryKeyResponse._();
+
+  factory SnapdGenerateReprovisionRecoveryKeyResponse.fromJson(
+    Map<String, dynamic> json,
+  ) =>
+      _$SnapdGenerateReprovisionRecoveryKeyResponseFromJson(json);
+
+  @override
+  String toString() =>
+      'SnapdGenerateReprovisionRecoveryKeyResponse(recoveryKey: <redacted>)';
 }
 
 /// Contains proceed-time which is the date and time after which a refresh is
@@ -1471,6 +1625,58 @@ class SnapdClient {
       'keyslots': keySlots.map((slot) => slot.toJson()).toList(),
     };
     return _postAsync('/v2/system-volumes', request);
+  }
+
+  /// Gets the details of the running system.
+  Future<SnapdSystemsResponse> getSystems() async {
+    final queryParameters = <String, String>{'running': 'true'};
+    final result = await _getSync<Map<String, dynamic>>(
+      '/v2/systems',
+      queryParameters,
+    );
+    return SnapdSystemsResponse.fromJson(result);
+  }
+
+  /// Performs [fixAction], with optional [args], to fix the errors reported by
+  /// [getSystems], and returns the updated system details.
+  ///
+  /// snapd reuses the checks of the last [getSystems] call, so call it first.
+  Future<SnapdSystemsResponse> fixEncryptionSupport(
+    SnapdFixAction fixAction, {
+    Map<String, dynamic>? args,
+  }) async {
+    final request = <String, dynamic>{
+      'action': 'fix-encryption-support',
+      'fix-action': fixAction.name.toKebabCase(),
+      // snapd rejects empty args.
+      if (args != null && args.isNotEmpty) 'args': args,
+    };
+    final result =
+        await _postSync<Map<String, dynamic>>('/v2/systems', request);
+    return SnapdSystemsResponse.fromJson(result);
+  }
+
+  /// Generates a recovery key for [reprovision].
+  ///
+  /// The key is only valid for a limited time, and [reprovision] uses it up
+  /// even if it fails.
+  Future<SnapdGenerateReprovisionRecoveryKeyResponse>
+      generateReprovisionRecoveryKey() async {
+    final request = <String, dynamic>{'action': 'generate-recovery-key'};
+    final result =
+        await _postSync<Map<String, dynamic>>('/v2/systems', request);
+    return SnapdGenerateReprovisionRecoveryKeyResponse.fromJson(result);
+  }
+
+  /// Reprovisions the security device and the encrypted disks, using the
+  /// recovery key from [generateReprovisionRecoveryKey]. Call [getSystems]
+  /// first, since snapd reuses its checks.
+  ///
+  /// Returns the change ID for this operation, use [getChange] to get the
+  /// status of this operation.
+  Future<String> reprovision() async {
+    final request = <String, dynamic>{'action': 'reprovision'};
+    return _postAsync('/v2/systems', request);
   }
 
   /// Terminates all active connections. If a client remains unclosed, the Dart

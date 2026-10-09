@@ -482,6 +482,7 @@ class MockSnapdServer {
   MockSnapdServer({
     this.accounts = const [],
     this.architecture,
+    this.autoRepairResult,
     this.buildId,
     this.categories = const [],
     List<MockChange> changes = const [],
@@ -491,6 +492,7 @@ class MockSnapdServer {
     this.onClassic = false,
     this.promptingEnabled = false,
     List<SnapdNotice> notices = const [],
+    this.recommendations,
     Map<String, String> recoveryKeys = const {},
     this.refreshLast,
     this.refreshNext,
@@ -500,6 +502,7 @@ class MockSnapdServer {
     Map<String, SnapIcon> snapIcons = const {},
     List<MockSnap> storeSnaps = const [],
     List<MockSnapDeclaration> snapDeclarations = const [],
+    this.storageEncryption,
     this.storageEncryptionStatus,
     this.systemMode,
     Map<String, SnapdSystemVolume> systemVolumes = const {},
@@ -552,6 +555,7 @@ class MockSnapdServer {
 
   final List<MockAccount> accounts;
   final String? architecture;
+  final String? autoRepairResult;
   final String? buildId;
   final List<String> categories;
   final changes = <MockChange>[];
@@ -561,6 +565,7 @@ class MockSnapdServer {
   final bool onClassic;
   bool promptingEnabled;
   final notices = <SnapdNotice>[];
+  final List<String>? recommendations;
   final String? refreshLast;
   final String? refreshNext;
   final recoveryKeys = <String, String>{};
@@ -571,6 +576,7 @@ class MockSnapdServer {
   final snapIcons = <String, SnapIcon>{};
   final storeSnaps = <String, MockSnap>{};
   final snapDeclarations = <String, MockSnapDeclaration>{};
+  Map<String, dynamic>? storageEncryption;
   final String? storageEncryptionStatus;
   final String? systemMode;
   final systemVolumes = <String, SnapdSystemVolume>{};
@@ -680,6 +686,10 @@ class MockSnapdServer {
       _processGetSystemVolumes(request);
     } else if (method == 'POST' && path == '/v2/system-volumes') {
       await _processPostSystemVolumes(request);
+    } else if (method == 'GET' && path == '/v2/systems') {
+      _processGetSystems(request);
+    } else if (method == 'POST' && path == '/v2/systems') {
+      await _processPostSystems(request);
     } else {
       request.response.statusCode = HttpStatus.notFound;
       _writeErrorResponse(request.response, 'not found');
@@ -1450,6 +1460,8 @@ class MockSnapdServer {
   void _processStorageEncrypted(HttpRequest request) {
     _writeSyncResponse(request.response, {
       'status': storageEncryptionStatus,
+      if (autoRepairResult != null) 'auto-repair-result': autoRepairResult,
+      if (recommendations != null) 'recommendations': recommendations,
     });
   }
 
@@ -1737,6 +1749,79 @@ class MockSnapdServer {
     }
   }
 
+  void _processGetSystems(HttpRequest request) {
+    if (request.uri.queryParameters['running'] != 'true') {
+      _writeErrorResponse(request.response, 'only the running system');
+      return;
+    }
+    _writeSyncResponse(
+      request.response,
+      {'storage-encryption': storageEncryption},
+    );
+  }
+
+  Future<void> _processPostSystems(HttpRequest request) async {
+    final req = await _readJson(request);
+    final action = req['action'];
+
+    switch (action) {
+      case 'fix-encryption-support':
+        final fixAction = req['fix-action'] as String?;
+        final args = req['args'] as Map<String, dynamic>?;
+        if (fixAction == null) {
+          _writeErrorResponse(request.response, 'missing fix-action');
+          return;
+        }
+        if (args != null && args.isEmpty) {
+          _writeErrorResponse(request.response, 'empty args');
+          return;
+        }
+
+        // Like secboot, only fix the error kinds in args, if any.
+        final kinds = (args?['error-kinds'] as List?)?.cast<String>();
+        final errors = (storageEncryption!['availability-check-errors'] as List)
+            .cast<Map<String, dynamic>>();
+        storageEncryption = {
+          ...storageEncryption!,
+          'availability-check-errors': [
+            for (final error in errors)
+              if (!(error['actions'] as List).contains(fixAction) ||
+                  !(kinds?.contains(error['kind']) ?? true))
+                error,
+          ],
+        };
+        _writeSyncResponse(
+          request.response,
+          {'storage-encryption': storageEncryption},
+        );
+        return;
+      case 'generate-recovery-key':
+        _writeSyncResponse(request.response, {
+          'recovery-key': '54321-54321-54321-54321-54321-54321-54321-54321',
+        });
+        return;
+      case 'reprovision':
+        final change = _addChange(
+          kind: 'fde-reprovision',
+          summary: 'Reprovision security device and encrypted disks',
+          ready: true,
+          tasks: [
+            MockTask(
+              id: '0',
+              kind: 'fde-reprovision',
+              summary: 'Reprovision security device and encrypted disks',
+              progress: MockTaskProgress(done: 1, total: 1),
+            ),
+          ],
+        );
+        _writeAsyncResponse(request.response, change.id);
+        return;
+      default:
+        _writeErrorResponse(request.response, 'unknown action');
+        return;
+    }
+  }
+
   MockChange _addChange({
     String? kind,
     String summary = '',
@@ -1907,6 +1992,77 @@ void main() {
 
     final response = await client.getStorageEncrypted();
     expect(response.status, equals(SnapdStorageEncryptionStatus.indeterminate));
+  });
+
+  group('tpmfde auto-repair result', () {
+    for (final testCase in [
+      (
+        name: 'reported',
+        autoRepairResult: 'failed-keyslots',
+        expected: SnapdAutoRepairResult.failedKeyslots,
+      ),
+      (
+        name: 'not reported',
+        autoRepairResult: null,
+        expected: null,
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          storageEncryptionStatus: 'recovery',
+          autoRepairResult: testCase.autoRepairResult,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        final response = await client.getStorageEncrypted();
+        expect(response.autoRepairResult, equals(testCase.expected));
+      });
+    }
+  });
+
+  group('tpmfde recommendations', () {
+    for (final testCase in [
+      (
+        name: 'reported',
+        recommendations: ['require-reprovision', 'permit-manual'],
+        expected: [
+          SnapdRecommendedRemedialAction.requireReprovision,
+          SnapdRecommendedRemedialAction.permitManual,
+        ],
+      ),
+      (
+        name: 'not reported',
+        recommendations: null,
+        expected: <SnapdRecommendedRemedialAction>[],
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          storageEncryptionStatus: 'recovery',
+          recommendations: testCase.recommendations,
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        final response = await client.getStorageEncrypted();
+        expect(response.recommendations, equals(testCase.expected));
+      });
+    }
   });
 
   test('user agent', () async {
@@ -4616,6 +4772,207 @@ void main() {
         keyId: 'key-id-12345',
       ),
     );
+  });
+
+  group('get system', () {
+    test('with errors', () async {
+      final snapd = MockSnapdServer(
+        storageEncryption: {
+          'support': 'unavailable',
+          'unavailable-reason':
+              'secure boot is enabled but not in deployed mode',
+          'availability-check-errors': [
+            {
+              'kind': 'invalid-secure-boot-mode',
+              'message': 'secure boot is enabled but not in deployed mode',
+              'args': {'enabled': true, 'mode': 'user'},
+              'actions': ['reboot-to-fw-settings'],
+            },
+          ],
+          'features': ['passphrase-auth', 'pin-auth'],
+          'requirements': ['volumes-auth'],
+        },
+      );
+      await snapd.start();
+      addTearDown(() async {
+        await snapd.close();
+      });
+
+      final client = SnapdClient(socketPath: snapd.socketPath);
+      addTearDown(() async {
+        client.close();
+      });
+
+      final details = await client.getSystems();
+      expect(
+        details,
+        equals(
+          const SnapdSystemsResponse(
+            storageEncryption: SnapdStorageEncryption(
+              support: SnapdStorageEncryptionSupport.unavailable,
+              unavailableReason:
+                  'secure boot is enabled but not in deployed mode',
+              availabilityCheckErrors: [
+                SnapdAvailabilityCheckError(
+                  kind: SnapdAvailabilityCheckErrorKind.invalidSecureBootMode,
+                  message: 'secure boot is enabled but not in deployed mode',
+                  args: {'enabled': true, 'mode': 'user'},
+                  actions: [SnapdFixAction.rebootToFwSettings],
+                ),
+              ],
+              features: [
+                SnapdStorageEncryptionFeature.passphraseAuth,
+                SnapdStorageEncryptionFeature.pinAuth,
+              ],
+              requirements: [SnapdStorageEncryptionRequirement.volumesAuth],
+            ),
+          ),
+        ),
+      );
+    });
+
+    test('with encryption disabled', () async {
+      // snapd sends null features when encryption is disabled.
+      final snapd = MockSnapdServer(
+        storageEncryption: {'support': 'disabled', 'features': null},
+      );
+      await snapd.start();
+      addTearDown(() async {
+        await snapd.close();
+      });
+
+      final client = SnapdClient(socketPath: snapd.socketPath);
+      addTearDown(() async {
+        client.close();
+      });
+
+      final details = await client.getSystems();
+      expect(
+        details,
+        equals(
+          const SnapdSystemsResponse(
+            storageEncryption: SnapdStorageEncryption(
+              support: SnapdStorageEncryptionSupport.disabled,
+            ),
+          ),
+        ),
+      );
+    });
+  });
+
+  group('fix encryption support', () {
+    for (final testCase in [
+      (
+        name: 'with action',
+        fixAction: SnapdFixAction.enableTpmViaFirmware,
+        args: null,
+        remaining: [
+          SnapdAvailabilityCheckErrorKind.noHardwareRootOfTrust,
+          SnapdAvailabilityCheckErrorKind.addonDriversPresent,
+        ],
+      ),
+      (
+        name: 'with args',
+        fixAction: SnapdFixAction.proceed,
+        args: <String, dynamic>{
+          'error-kinds': ['addon-drivers-present'],
+        },
+        remaining: [
+          SnapdAvailabilityCheckErrorKind.tpmDeviceDisabled,
+          SnapdAvailabilityCheckErrorKind.noHardwareRootOfTrust,
+        ],
+      ),
+      (
+        name: 'with empty args',
+        fixAction: SnapdFixAction.proceed,
+        args: <String, dynamic>{},
+        remaining: [SnapdAvailabilityCheckErrorKind.tpmDeviceDisabled],
+      ),
+    ]) {
+      test(testCase.name, () async {
+        final snapd = MockSnapdServer(
+          storageEncryption: {
+            'support': 'unavailable',
+            'availability-check-errors': [
+              {
+                'kind': 'tpm-device-disabled',
+                'message': 'TPM2 device is present but is currently disabled',
+                'actions': ['enable-tpm-via-firmware', 'reboot-to-fw-settings'],
+              },
+              {
+                'kind': 'no-hardware-root-of-trust',
+                'message': 'no hardware root-of-trust properly configured',
+                'actions': ['proceed'],
+              },
+              {
+                'kind': 'addon-drivers-present',
+                'message': 'addon drivers are present',
+                'actions': ['proceed'],
+              },
+            ],
+          },
+        );
+        await snapd.start();
+        addTearDown(() async {
+          await snapd.close();
+        });
+
+        final client = SnapdClient(socketPath: snapd.socketPath);
+        addTearDown(() async {
+          client.close();
+        });
+
+        final details = await client.fixEncryptionSupport(
+          testCase.fixAction,
+          args: testCase.args,
+        );
+        expect(
+          details.storageEncryption.availabilityCheckErrors
+              .map((error) => error.kind),
+          equals(testCase.remaining),
+        );
+      });
+    }
+  });
+
+  test('generate reprovision recovery key', () async {
+    final snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final response = await client.generateReprovisionRecoveryKey();
+    expect(
+      response,
+      SnapdGenerateReprovisionRecoveryKeyResponse(
+        recoveryKey: '54321-54321-54321-54321-54321-54321-54321-54321',
+      ),
+    );
+    expect(response.toString(), isNot(contains(response.recoveryKey)));
+  });
+
+  test('reprovision', () async {
+    final snapd = MockSnapdServer();
+    await snapd.start();
+    addTearDown(() async {
+      await snapd.close();
+    });
+
+    final client = SnapdClient(socketPath: snapd.socketPath);
+    addTearDown(() async {
+      client.close();
+    });
+
+    final changeId = await client.reprovision();
+    final change = await client.getChange(changeId);
+    expect(change.ready, isTrue);
+    expect(change.kind, 'fde-reprovision');
   });
 
   group('snap icons', () {
