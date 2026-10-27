@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.7.8
+
+* Add TPM/FDE repair API.
+* Update freezed to 4.x and freezed_annotation to 3.x.
+
 ## 0.7.7
 
 * fix: encode body as utf8 without sending charset in content-type header
