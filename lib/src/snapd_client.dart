@@ -1399,7 +1399,7 @@ class SnapdClient {
   /// Enables apparmor prompting.
   Future<String> enablePrompting() async {
     final request = <String, dynamic>{
-      'experimental': {'apparmor-prompting': true},
+      'experimental.apparmor-prompting': true,
     };
     return _putAsync('/v2/snaps/system/conf', request);
   }
@@ -1407,7 +1407,7 @@ class SnapdClient {
   /// Disables apparmor prompting.
   Future<String> disablePrompting() async {
     final request = <String, dynamic>{
-      'experimental': {'apparmor-prompting': false},
+      'experimental.apparmor-prompting': false,
     };
     return _putAsync('/v2/snaps/system/conf', request);
   }
