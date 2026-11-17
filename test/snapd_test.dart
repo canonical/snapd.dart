@@ -1001,8 +1001,7 @@ class MockSnapdServer {
   Future<void> _processPutSystemConf(HttpRequest request) async {
     final req = await _readJson(request);
     lastSystemConf = req;
-    final promptingEnabled =
-        req['experimental.apparmor-prompting'] as bool?;
+    final promptingEnabled = req['experimental.apparmor-prompting'] as bool?;
 
     if (promptingEnabled != null) {
       this.promptingEnabled = promptingEnabled;
