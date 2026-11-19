@@ -591,6 +591,7 @@ class MockSnapdServer {
   /// Last macaroon received.
   String? lastMacaroon;
   List<String>? lastDischarges;
+  Map<String, dynamic>? lastSystemConf;
 
   Future<void> start() async {
     _tempDir = await Directory.systemTemp.createTemp();
@@ -999,8 +1000,8 @@ class MockSnapdServer {
 
   Future<void> _processPutSystemConf(HttpRequest request) async {
     final req = await _readJson(request);
-    final promptingEnabled =
-        req['experimental']?['apparmor-prompting'] as bool?;
+    lastSystemConf = req;
+    final promptingEnabled = req['experimental.apparmor-prompting'] as bool?;
 
     if (promptingEnabled != null) {
       this.promptingEnabled = promptingEnabled;
@@ -4202,12 +4203,31 @@ void main() {
     expect(systemInfo.features?['apparmor-prompting']?['enabled'], isFalse);
 
     final changeId = await client.enablePrompting();
+    expect(
+      snapd.lastSystemConf,
+      equals({'experimental.apparmor-prompting': true}),
+    );
     final change = await client.getChange(changeId);
 
     expect(change.ready, isTrue);
 
     final newSystemInfo = await client.systemInfo();
     expect(newSystemInfo.features?['apparmor-prompting']?['enabled'], isTrue);
+
+    final disableChangeId = await client.disablePrompting();
+    expect(
+      snapd.lastSystemConf,
+      equals({'experimental.apparmor-prompting': false}),
+    );
+    final disableChange = await client.getChange(disableChangeId);
+
+    expect(disableChange.ready, isTrue);
+
+    final disabledSystemInfo = await client.systemInfo();
+    expect(
+      disabledSystemInfo.features?['apparmor-prompting']?['enabled'],
+      isFalse,
+    );
   });
 
   test('refresh inhibit can convert to date time', () {
