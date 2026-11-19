@@ -1,0 +1,42 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+' # tag pattern on pub.dev: 'v{{version}}'
+  workflow_dispatch:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: dart-lang/setup-dart@v1
+
+      - name: Verify tag matches pubspec version
+        run: |
+          if [ "$GITHUB_REF_TYPE" != "tag" ]; then
+            echo "::error::Publishing must be run from a version tag, got '$GITHUB_REF'"
+            exit 1
+          fi
+          version=$(sed -n 's/^version: *//p' pubspec.yaml)
+          if [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::Tag '$GITHUB_REF_NAME' does not match pubspec.yaml version '$version'"
+            exit 1
+          fi
+
+      - run: dart pub get
+
+      - name: Analyze project source
+        run: dart analyze --fatal-infos --fatal-warnings .
+
+      - name: Run tests
+        run: dart test
+
+  publish:
+    needs: verify
+    permissions:
+      id-token: write # Required for authentication using OIDC
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1
