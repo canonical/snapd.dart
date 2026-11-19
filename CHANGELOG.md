@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.9](https://github.com/canonical/snapd.dart/compare/v0.7.8...v0.7.9) (2026-11-19)
+
+
+### Bug Fixes
+
+* do not override other feature settings when enabling prompting ([eac3d63](https://github.com/canonical/snapd.dart/commit/eac3d634cbcdbe72f95b0749e1ae5bf80a91d5d0))
+* do not override other feature settings when enabling prompting ([#150](https://github.com/canonical/snapd.dart/issues/150)) ([41fafb5](https://github.com/canonical/snapd.dart/commit/41fafb5cee0a9580f2d3e28e1f410ec5df28b1c4))
+
 ## 0.7.8
 
 * Add TPM/FDE repair API.
