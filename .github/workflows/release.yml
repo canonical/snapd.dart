@@ -1,0 +1,31 @@
+name: Release
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: write # Required to dispatch the publish workflow
+      contents: write
+      issues: write
+      pull-requests: write
+
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      # Tags created with GITHUB_TOKEN do not trigger `push` workflows, so
+      # start the publish workflow explicitly on the newly created tag.
+      - name: Start publishing
+        if: steps.release.outputs.release_created == 'true'
+        run: gh workflow run publish.yml --repo "$GITHUB_REPOSITORY" --ref "$TAG"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.release.outputs.tag_name }}
