@@ -33,6 +33,7 @@ fails to start the publish run, retry it with:
 gh workflow run publish.yml --ref vX.Y.Z
 ```
 
-The `v*` tags are protected by a repository ruleset. Keep the ruleset configured
-so that only release managers can create matching tags: anyone who can push a
-matching tag can publish to pub.dev.
+Tags are protected by a repository ruleset: once created, they cannot be
+updated, force-pushed, or deleted. Anyone who can push a tag can trigger the
+`Publish` workflow, but it only publishes tags that point at a commit on `main`
+and whose name matches the version in `pubspec.yaml`.
